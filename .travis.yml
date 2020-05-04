@@ -3,6 +3,9 @@ sudo: false
 language:
   - python
 
+services:
+  - xvfb
+
 python:
   - 3.5
   - 3.6
