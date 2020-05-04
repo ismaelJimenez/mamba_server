@@ -4,6 +4,9 @@ Mamba-Controller
 
 .. image:: https://api.travis-ci.org/mamba-framework/mamba-controller.svg?branch=master
    :target: https://travis-ci.org/github/mamba-framework/mamba-controller/builds
+.. image:: https://img.shields.io/codecov/c/github/mamba-framework/mamba-controller/master.svg
+   :target: https://codecov.io/github/mamba-framework/mamba-controller?branch=master
+   :alt: Coverage report
 .. image:: https://img.shields.io/badge/license-%20MIT-blue.svg
    :target: ../master/LICENSE
 
