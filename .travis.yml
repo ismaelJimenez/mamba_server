@@ -10,11 +10,11 @@ python:
   - 3.8
 
 before_install:
-        - sudo apt-get install -y libdbus-1-3 libxkbcommon-x11-0
+  - sudo apt-get install -y libdbus-1-3 libxkbcommon-x11-0
 
 install:
+  - python -m pip install --upgrade pip
   - pip install -r requirements.txt
-  - pip install -U codecov pytest-cov
 
 script:
   - pycodestyle mamba_controller

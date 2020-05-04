@@ -1,8 +1,11 @@
 from mamba_controller.hmi import MainWindow
 from PySide2 import QtCore
+from PySide2.QtWidgets import QApplication
 
 
 def test_hello(qtbot):
+    app = QApplication([])
+
     widget = MainWindow()
     qtbot.addWidget(widget)
 
