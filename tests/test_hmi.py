@@ -8,6 +8,6 @@ def test_hello(qtbot):
     qtbot.addWidget(widget)
 
     # click in the Greet button and make sure it updates the appropriate label
-    #qtbot.mouseClick(widget.click_me, QtCore.Qt.LeftButton)
+    qtbot.mouseClick(widget.click_me, QtCore.Qt.LeftButton)
 
-    #assert widget.click_me_label.text() == "Hello!"
+    assert widget.click_me_label.text() == "Hello!"
