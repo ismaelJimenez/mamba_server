@@ -15,7 +15,7 @@ install:
 
 script:
   - pycodestyle mamba_controller
-  - pytest --cov=./ --verbose --capture=no mamba_controller
+  - pytest --cov-config=.coveragerc --cov=mamba_controller --verbose --capture=no tests
   - pip install .
 
 after_success:
