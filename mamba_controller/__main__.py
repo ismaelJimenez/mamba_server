@@ -1,7 +1,4 @@
-import sys
-from PySide2.QtWidgets import QApplication, QLabel
+from mamba_controller.hmi import execute
 
-app = QApplication(sys.argv)
-label = QLabel("Hello World!")
-label.show()
-app.exec_()
+if __name__ == '__main__':
+    execute()
