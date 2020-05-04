@@ -9,30 +9,11 @@ Somepackage
 
 Show how to structure a Python project.
 
-Inspired by https://github.com/kennethreitz/samplemod.
+Requirements
+============
 
-
-Great resources
-===============
-
-- https://manikos.github.io/a-tour-on-python-packaging
-- https://docs.python-guide.org/writing/structure/
-- http://veekaybee.github.io/2017/09/26/python-packaging/
-- https://github.com/audreyr/cookiecutter-pypackage
-- https://medium.com/@jonas.r.kemper/understanding-best-practice-python-tooling-by-comparing-popular-project-templates-6eba49229106
-
-
-Recommendations
-===============
-
-Please browse this blog post for a good summary of recommendatios and templates: https://medium.com/@jonas.r.kemper/understanding-best-practice-python-tooling-by-comparing-popular-project-templates-6eba49229106
-
-
-Python 2 or 3?
---------------
-
-- Develop your code under Python 3, test it for both Python 2 and Python 3
-  but consider Python 3 to be the default today.
+* Python 3.5+
+* Works on Linux, Windows, macOS, BSD
 
 
 Split your code into packages, modules, and functions
