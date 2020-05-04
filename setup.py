@@ -12,11 +12,11 @@ else:
         long_description = f.read()
 
 version = {}
-with open(os.path.join(_here, 'mamba-controller', 'version.py')) as f:
+with open(os.path.join(_here, 'mamba_controller', 'version.py')) as f:
     exec(f.read(), version)
 
 setup(
-    name='mamba-controller',
+    name='mamba_controller',
     version=version['__version__'],
     description=('Show how to structure a Python project.'),
     long_description=long_description,
@@ -24,7 +24,7 @@ setup(
     author_email='mamba.framework@gmail.com',
     url='https://github.com/mamba-framework/mamba-controller',
     license='MPL-2.0',
-    packages=['mamba-controller'],
+    packages=['mamba_controller'],
 #   no dependencies in this example
 #   install_requires=[
 #       'dependency==1.2.3',
