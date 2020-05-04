@@ -1,4 +1,4 @@
-from mamba_controller.hmi import MainWindow
+from mamba_controller.main_window import MainWindow
 from PySide2 import QtCore
 from PySide2.QtWidgets import QApplication
 
