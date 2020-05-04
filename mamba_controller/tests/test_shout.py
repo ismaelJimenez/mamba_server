@@ -1,4 +1,4 @@
-from somepackage import shout
+from mamba_controller import shout
 
 
 def test_shout_and_repeat():
