@@ -11,11 +11,11 @@ python:
 
 install:
   - pip install -r requirements.txt
-  - pip install -U codecov
+  - pip install -U codecov pytest-cov
 
 script:
   - pycodestyle mamba_controller
-  - pytest --verbose --capture=no mamba_controller
+  - pytest --cov=./ --verbose --capture=no mamba_controller
   - pip install .
 
 after_success:
