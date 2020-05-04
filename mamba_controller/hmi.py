@@ -1,6 +1,7 @@
 import sys
 
-from PySide2.QtWidgets import QApplication, QPushButton, QMainWindow, QWidget, QVBoxLayout, QLabel
+from PySide2.QtWidgets import QApplication, QPushButton, QMainWindow, \
+    QWidget, QVBoxLayout, QLabel
 from PySide2.QtCore import Slot
 
 
@@ -35,10 +36,12 @@ class MainWindow(QMainWindow):
     def say_hello(self):
         self.click_me_label.setText("Hello!")
 
+
 def execute():
     # You need one (and only one) QApplication instance per application.
     # Pass in sys.argv to allow command line arguments for your app.
-    # If you know you won't use command line arguments QApplication([]) works too.
+    # If you know you won't use command line arguments
+    # QApplication([]) works too.
     app = QApplication(sys.argv)
 
     window = MainWindow()
