@@ -23,7 +23,7 @@ setup(
     author='Mamba Framework',
     author_email='mamba.framework@gmail.com',
     url='https://github.com/mamba-framework/mamba-controller',
-    license='MPL-2.0',
+    license='MIT',
     packages=['mamba_controller'],
 #   no dependencies in this example
 #   install_requires=[
