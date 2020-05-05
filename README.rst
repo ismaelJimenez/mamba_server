@@ -22,6 +22,13 @@ Requirements
 * Python 3.5+
 * Works on Linux, Windows, macOS, BSD
 
+Install
+=======
+
+The quick way::
+
+    pip install barracuda
+
 
 Split your code into packages, modules, and functions
 -----------------------------------------------------
