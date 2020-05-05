@@ -21,6 +21,9 @@ after_success:
   - codecov
 notifications:
   email: false
+cache:
+  directories:
+    - $HOME/.cache/pip
 deploy:
   provider: pypi
   distributions: sdist bdist_wheel
