@@ -2,7 +2,7 @@ import sys
 
 from PySide2.QtWidgets import QApplication
 
-from mamba_controller.main_window import MainWindow
+from barracuda.main_window import MainWindow
 
 if __name__ == '__main__':
     # You need one (and only one) QApplication instance per application.

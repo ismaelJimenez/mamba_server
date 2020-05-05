@@ -1,4 +1,4 @@
-from mamba_controller import add
+from barracuda import add
 
 
 def test_my_add():
