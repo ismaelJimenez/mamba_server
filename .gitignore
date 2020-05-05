@@ -1,5 +1,8 @@
+build/
+dist/
 venv/
 .cache/
 __pycache__/
 .idea/
 .coverage
+*.egg-info

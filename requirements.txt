@@ -3,4 +3,7 @@ pycodestyle
 codecov
 pytest-cov
 pytest-qt
+setuptools
+wheel
 PySide2
+twine
