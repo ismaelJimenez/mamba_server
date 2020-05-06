@@ -14,8 +14,8 @@ install:
   - python -m pip install --upgrade pip
   - pip install -r requirements.txt
 script:
-  - pycodestyle barracuda
-  - pytest --cov-config=.coveragerc --cov=barracuda --verbose --capture=no tests
+  - pycodestyle mamba_server
+  - pytest --cov-config=.coveragerc --cov=mamba_server --verbose --capture=no tests
   - pip install .
 after_success:
   - codecov
@@ -32,4 +32,4 @@ deploy:
     secure: bzrXRMVb81OwuOifFLuW6o+izXlUJvaVnuubQey2m1qktIrGTsUU0V9cHefutCCD1oalUBYSGB08O4lmmtL3GUu1wNmZsmLsSpBEw9qCXiD0FltrrnOsVmJiX0IPq1AXADkhqYMjv1FS/T1ec9Ulx7HkPk/3mJB5rq5ElZPIBoXYyxsBzVcKeCEHs3RKQhN1e1BIaVYoAXS4RQcfSaWNlgxK+yWQctk/O+5xNH4V3/McM2XdtHDVG9FXpgfsY/I9e1RTOalHCrRJVi1g0q70qeRZhyvqfmQmqVwJNlrXoT4u/LMN2ns7BIRls8xHm8ixbD2eYzUqS6s2ssq2Zz55SMoAHpFZCF5ug7Yr+9GArH5gJeSXb2gdeMv1L5MgWMg/5UbAXh43XlN4nHBFLSM6nCcDpo5sc+JpMO8GO4IWtejw1MK+INPv4X56Cm4DiHYQstKwbHgTqdxqvw608esvdQs3dCOBF+zTCw6iRhFoAzjq9+Z6VeL9nmFTxKIGs91KzCbp/rv4Su6f7R88Q9Od5Mqxpe2nI2k6ok2mnH8P5b097d9OJsfpo5iEt4S2GJPSEq1kpcTlkOzvE+98lszyaEig7yHM96Ptp7iiCRylgc//Q6J7Zl83PUYfDrsJBpfdb8OximadHo57Yfk6vt3FuVh95IfT0LPzo9xAl5dQ6Ew=
   on:
     tags: true
-    repo: barracuda-project/barracuda
+    repo: mamba_server-project/mamba_server

@@ -1,4 +1,4 @@
-from barracuda import shout
+from mamba_server import shout
 
 
 def test_shout_and_repeat():

@@ -1,4 +1,4 @@
-from barracuda.main_window import MainWindow
+from mamba_server.main_window import MainWindow
 from PySide2 import QtCore
 from PySide2.QtWidgets import QApplication
 

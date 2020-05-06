@@ -1,5 +1,5 @@
 ================
-Barracuda
+Mamba-Server
 ================
 
 .. image:: https://api.travis-ci.org/barracuda-project/barracuda.svg?branch=master
@@ -27,7 +27,7 @@ Install
 
 The quick way::
 
-    pip install barracuda
+    pip install mamba-server
 
 
 Split your code into packages, modules, and functions

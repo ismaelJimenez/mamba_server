@@ -4,7 +4,7 @@ from pkg_resources import parse_version
 from setuptools import setup, find_packages, __version__ as setuptools_version
 
 
-with open(join(dirname(__file__), 'barracuda/VERSION'), 'rb') as f:
+with open(join(dirname(__file__), 'mamba_server/VERSION'), 'rb') as f:
     version = f.read().decode('ascii').strip()
 
 
@@ -27,25 +27,25 @@ if has_environment_marker_platform_impl_support():
 
 
 setup(
-    name='Barracuda',
+    name='Mamba-Server',
     version=version,
-    url='https://github.com/barracuda-project/barracuda',
-    project_urls = {
-        'Documentation': 'https://github.com/barracuda-project/barracuda',
-        'Source': 'https://github.com/barracuda-project/barracuda',
-        'Tracker': 'https://github.com/barracuda-project/barracuda/issues',
+    url='https://github.com/mamba-framework/mamba-server',
+    project_urls={
+        'Documentation': 'https://github.com/mamba-framework/mamba-server',
+        'Source': 'https://github.com/mamba-framework/mamba-server',
+        'Tracker': 'https://github.com/mamba-framework/mamba-server/issues',
     },
     description='Framework for controlling ground equipment',
     long_description=open('README.rst').read(),
-    author='Barracuda developers',
+    author='Mamba-Server developers',
     maintainer='Ismael Jimenez',
-    maintainer_email='barracuda.framework@gmail.com',
+    maintainer_email='mamba_server.framework@gmail.com',
     license='MIT',
     packages=find_packages(exclude=('tests', 'tests.*')),
     include_package_data=True,
     zip_safe=False,
     entry_points={
-        "gui_scripts": ["barracuda = barracuda.main_window:execute"]
+        "gui_scripts": ["mamba_server = mamba_server.main_window:execute"]
     },
     classifiers=[
         'Development Status :: 1 - Planning',

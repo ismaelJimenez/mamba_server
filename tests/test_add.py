@@ -1,4 +1,4 @@
-from barracuda import add
+from mamba_server import add
 
 
 def test_my_add():
