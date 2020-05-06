@@ -23,7 +23,7 @@ notifications:
   email: false
 cache:
   directories:
-  - "$HOME/.cache/pip"
+    - "$HOME/.cache/pip"
 deploy:
   provider: pypi
   distributions: sdist bdist_wheel
