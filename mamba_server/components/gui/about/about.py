@@ -1,8 +1,12 @@
-from PySide2.QtWidgets import QWidget, QMessageBox
+from PySide2.QtWidgets import QMessageBox
 
-class about(QWidget):
+from mamba_server.components.base.gui_component_base import GuiComponentBase
+
+
+class About(GuiComponentBase):
     def __init__(self):
-        super(about, self).__init__()
+        super(About, self).__init__()
 
     def show(self):
-        QMessageBox.about(self, "About Mamba MMI", "<b>Mamba MMI v0.1 - Genesis</b>")
+        QMessageBox.about(self, "About Mamba MMI",
+                          "<b>Mamba MMI v0.1 - Genesis</b>")

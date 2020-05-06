@@ -4,12 +4,11 @@ from PySide2.QtWidgets import QApplication, QPushButton, QMainWindow, \
     QWidget, QVBoxLayout, QLabel, QAction
 from PySide2.QtCore import Slot
 
-from .components.gui.about.about import about
+from .components.gui.about.about import About
 
 
 # Subclass QMainWindow to customise your application's main window
 class MainWindow(QMainWindow):
-
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
 
@@ -30,10 +29,11 @@ class MainWindow(QMainWindow):
         widget = QWidget()
         widget.setLayout(layout)
 
-        self.about = about()
+        self.about = About()
 
-        self.aboutAct = QAction("&About", self,
-                                statusTip="Show the application's About box",
+        self.aboutAct = QAction("&About",
+                                self,
+                                statusTip=self.about.status_tip(),
                                 triggered=self.about.show)
 
         self.helpMenu = self.menuBar().addMenu("&Help")
