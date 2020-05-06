@@ -7,4 +7,5 @@ pytest-qt
 setuptools
 wheel
 PySide2
+yapf
 twine
