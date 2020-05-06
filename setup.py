@@ -45,7 +45,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     entry_points={
-        "gui_scripts": ["mamba_server = mamba_server.main_window:execute"]
+        "gui_scripts": ["mamba = mamba_server.main_window:execute"]
     },
     classifiers=[
         'Development Status :: 1 - Planning',
