@@ -1,5 +1,6 @@
 pytest
 pycodestyle
+pylint
 codecov
 pytest-cov
 pytest-qt

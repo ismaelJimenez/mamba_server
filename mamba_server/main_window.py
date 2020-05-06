@@ -1,8 +1,10 @@
 import sys
 
 from PySide2.QtWidgets import QApplication, QPushButton, QMainWindow, \
-    QWidget, QVBoxLayout, QLabel
+    QWidget, QVBoxLayout, QLabel, QAction
 from PySide2.QtCore import Slot
+
+from .components.gui.about.about import about
 
 
 # Subclass QMainWindow to customise your application's main window
@@ -27,6 +29,15 @@ class MainWindow(QMainWindow):
 
         widget = QWidget()
         widget.setLayout(layout)
+
+        self.about = about()
+
+        self.aboutAct = QAction("&About", self,
+                                statusTip="Show the application's About box",
+                                triggered=self.about.show)
+
+        self.helpMenu = self.menuBar().addMenu("&Help")
+        self.helpMenu.addAction(self.aboutAct)
 
         # Set the central widget of the Window. Widget will expand
         # to take up all the space in the window by default.
