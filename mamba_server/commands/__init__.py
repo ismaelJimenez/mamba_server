@@ -18,7 +18,6 @@ class MambaCommand:
         """
         return self.short_desc()
 
-
     def run(self, args):
         """
         Entry point for running commands
