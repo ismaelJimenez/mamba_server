@@ -1,10 +1,18 @@
-from .version import __version__
-from .shout import shout_and_repeat
-from .add import my_add
+"""
+Mamba - a framework for controlling ground equipment
+"""
 
-# if somebody does "from somepackage import *", this is what they will
-# be able to access:
-__all__ = [
-    'shout_and_repeat',
-    'my_add',
-]
+__all__ = ['__version__', 'version_info']
+
+# Mamba version
+import pkgutil
+__version__ = pkgutil.get_data(__package__, 'VERSION').decode('ascii').strip()
+version_info = tuple(int(v) if v.isdigit() else v
+                     for v in __version__.split('.'))
+del pkgutil
+
+# Check minimum required Python version
+import sys
+if sys.version_info < (3, 5):
+    print("Mamba %s requires Python 3.5" % __version__)
+    sys.exit(1)
