@@ -8,7 +8,6 @@ class GuiComponentBase(QWidget):
         super(GuiComponentBase, self).__init__()
 
         script_dir = os.path.dirname(__file__)
-        print(script_dir)
         rel_path = "../gui/about/info.json"
 
         with open(os.path.join(script_dir, rel_path)) as f:
