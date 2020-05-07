@@ -2,4 +2,7 @@ include README.rst
 include LICENSE
 include MANIFEST.in
 
-include mamba_server/VERSION
+recursive-include mamba_server *
+
+recursive-include extras *
+recursive-include tests *
