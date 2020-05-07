@@ -4,6 +4,9 @@ from mamba_server.commands import MambaCommand
 
 
 class Command(MambaCommand):
+    def syntax(self):
+        return "<project_name>"
+
     def short_desc(self):
         return "Create new project"
 

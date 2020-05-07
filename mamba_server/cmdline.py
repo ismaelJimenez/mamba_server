@@ -1,4 +1,5 @@
 import sys
+import optparse
 import inspect
 
 import mamba_server
@@ -66,6 +67,8 @@ def execute(argv=None):
 
     cmds = _get_commands_dict()
     cmdname = _pop_command_name(argv)
+    parser = optparse.OptionParser(formatter=optparse.TitledHelpFormatter(),
+                                   conflict_handler='resolve')
 
     if not cmdname:
         _print_commands()
@@ -74,10 +77,12 @@ def execute(argv=None):
         _print_unknown_command(cmdname)
         sys.exit(2)
 
-    # if cmd == 'serve':
-    #     serve.run(argv[2:])
-    # elif cmd == 'startproject':
-    #     startproject.run(argv[2:])
+    cmd = cmds[cmdname]
+    parser.usage = "mamba %s %s" % (cmdname, cmd.syntax())
+    parser.description = cmd.long_desc()
+    opts, args = parser.parse_args(args=argv[1:])
+
+    cmd.run(argv[1:])
 
 
 if __name__ == '__main__':
