@@ -4,7 +4,7 @@ from PySide2.QtWidgets import QApplication, QPushButton, QMainWindow, \
     QWidget, QVBoxLayout, QLabel, QAction
 from PySide2.QtCore import Slot
 
-from .components.gui.about.about import About
+from mamba_server.components.gui.about.about import About
 
 
 # Subclass QMainWindow to customise your application's main window
@@ -63,3 +63,7 @@ def execute():
 
     # Your application won't reach here until you exit and the event
     # loop has stopped.
+
+
+if __name__ == '__main__':
+    execute()
