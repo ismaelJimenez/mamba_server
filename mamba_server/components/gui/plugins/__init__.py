@@ -9,9 +9,9 @@ COMPONENT_CONFIG_FILE = "component.config.json"
 SETTINGS_DESCRIPTION_FILE = "settings.json"
 
 
-class GuiPluginsBase(QWidget):
+class GuiPlugin(QWidget):
     def __init__(self, folder, context):
-        super(GuiPluginsBase, self).__init__()
+        super(GuiPlugin, self).__init__()
 
         self.context = context
         self.configuration = {}

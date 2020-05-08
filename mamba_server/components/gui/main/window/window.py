@@ -35,6 +35,7 @@ class MainWindow(QMainWindow):
     def say_hello(self):
         self.click_me_label.setText("Hello!")
 
+
 if __name__ == '__main__':
     # You need one (and only one) QApplication instance per application.
     # Pass in sys.argv to allow command line arguments for your app.

@@ -1,3 +1,5 @@
+import inspect
+
 from importlib import import_module
 from pkgutil import iter_modules
 
@@ -21,3 +23,24 @@ def walk_modules(path):
                 submod = import_module(fullpath)
                 mods.append(submod)
     return mods
+
+
+def iter_classes(module_name, search_class):
+    """Return an iterator over all classes 'search_class' defined in the given module
+    that can be instantiated.
+    """
+    for module in walk_modules(module_name):
+        for obj in vars(module).values():
+            if inspect.isclass(obj) and \
+                    issubclass(obj, search_class) and \
+                    obj.__module__ == module.__name__ and \
+                    not obj == search_class:
+                yield obj
+
+
+def get_classes_from_module(module, search_class):
+    d = {}
+    for cls in iter_classes(module, search_class):
+        cls_name = cls.__module__.split('.')[-1]
+        d[cls_name] = cls
+    return d

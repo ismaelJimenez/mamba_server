@@ -4,22 +4,12 @@ import inspect
 
 import mamba_server
 from mamba_server.commands import MambaCommand
-from mamba_server.utils.misc import walk_modules
-
-
-def _iter_command_classes(module_name):
-    for module in walk_modules(module_name):
-        for obj in vars(module).values():
-            if inspect.isclass(obj) and \
-                    issubclass(obj, MambaCommand) and \
-                    obj.__module__ == module.__name__ and \
-                    not obj == MambaCommand:
-                yield obj
+from mamba_server.utils.misc import iter_classes
 
 
 def _get_commands_from_module(module):
     d = {}
-    for cmd in _iter_command_classes(module):
+    for cmd in iter_classes(module, MambaCommand):
         cmdname = cmd.__module__.split('.')[-1]
         d[cmdname] = cmd()
     return d

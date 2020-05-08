@@ -1,5 +1,9 @@
 {
   "main": {
     "component": "window"
-  }
+  },
+  "gui_plugins": [
+    "quit",
+    "about"
+  ]
 }

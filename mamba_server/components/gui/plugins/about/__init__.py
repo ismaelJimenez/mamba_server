@@ -3,10 +3,10 @@ import pkgutil
 
 from PySide2.QtWidgets import QMessageBox
 
-from mamba_server.components.gui.plugins import GuiPluginsBase
+from mamba_server.components.gui.plugins import GuiPlugin
 
 
-class About(GuiPluginsBase):
+class About(GuiPlugin):
     def __init__(self, context=None):
         super(About, self).__init__(os.path.dirname(__file__), context)
 
