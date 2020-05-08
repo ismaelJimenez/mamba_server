@@ -1,4 +1,8 @@
 {
+  "load_screen": {
+    "component": "load_screen",
+    "min_seconds": 5
+  },
   "main": {
     "component": "window"
   },

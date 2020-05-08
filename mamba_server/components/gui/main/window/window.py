@@ -29,8 +29,6 @@ class MainWindow(QMainWindow):
         # to take up all the space in the window by default.
         self.setCentralWidget(widget)
 
-        self.show()
-
     @Slot()
     def say_hello(self):
         self.click_me_label.setText("Hello!")
