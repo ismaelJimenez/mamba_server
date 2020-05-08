@@ -1,10 +1,10 @@
 import os
 import json
 
-from PySide2.QtWidgets import QApplication, QMainWindow
+from PySide2.QtWidgets import QApplication
 
-from mamba_server.components.gui.main_window.main_window import MainWindow
-from mamba_server.components.gui.about.about import About
+from mamba_server.components.gui.main.window.window import MainWindow
+from mamba_server.components.gui.plugins.about.about import About
 
 from mamba_server.context import Context
 
@@ -18,16 +18,16 @@ def execute():
     with open(os.path.join('launch', 'default.launch.json')) as f:
         info = json.load(f)
 
-        if info['main']['component'] == "main_window":
-            #main_window = MainWindow(context)
+        if info['main']['component'] == "window":
+            #window = MainWindow(context)
             #about.initialize(context)
 
-            context.set('main_window', MainWindow(context))
+            context.set('window', MainWindow(context))
             about = About(context)
         else:
             print(info)
 
-        print(context.get('main_window'))
+        print(context.get('window'))
 
     # Start the event loop.
     app.exec_()
