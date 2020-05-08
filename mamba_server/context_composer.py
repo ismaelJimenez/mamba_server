@@ -6,7 +6,7 @@ from PySide2.QtWidgets import QApplication
 from mamba_server.components.gui.main.window.window import MainWindow
 from mamba_server.components.gui.plugins.about.about import About
 
-from mamba_server.context import Context
+from mamba_server.utils.context import Context
 
 
 
@@ -22,7 +22,7 @@ def execute():
             #window = MainWindow(context)
             #about.initialize(context)
 
-            context.set('window', MainWindow(context))
+            context.set('main_window', MainWindow(context))
             about = About(context)
         else:
             print(info)

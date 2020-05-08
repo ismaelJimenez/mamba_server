@@ -1,10 +1,6 @@
-import sys
-
 from PySide2.QtWidgets import QApplication, QPushButton, QMainWindow, \
-    QWidget, QVBoxLayout, QLabel, QAction
+    QWidget, QVBoxLayout, QLabel
 from PySide2.QtCore import Slot
-
-from mamba_server.components.gui.about.about import About
 
 
 # Subclass QMainWindow to customise your application's main window

@@ -1,6 +1,6 @@
 from mamba_server.commands import MambaCommand
 
-from mamba_server.main_window import execute
+from mamba_server.components.gui.main.window import execute
 
 
 class Command(MambaCommand):
