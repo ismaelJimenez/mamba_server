@@ -1,0 +1,6 @@
+{
+  "name": "&Quit",
+  "menu": "&File",
+  "status_tip": "Close Mamba Server",
+  "shortcut": "Ctrl+Q"
+}

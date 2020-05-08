@@ -13,13 +13,14 @@ class GuiPluginsBase(QWidget):
     def __init__(self, folder, context):
         super(GuiPluginsBase, self).__init__()
 
+        self.context = context
         self.configuration = {}
 
         with open(os.path.join(folder, COMPONENT_CONFIG_FILE)) as f:
             self.configuration = json.load(f)
 
         self._validate_configuration()
-        self._register_menu(context)
+        self._register_menu()
 
     def _validate_configuration(self):
         with open(os.path.join(os.path.dirname(__file__), SETTINGS_DESCRIPTION_FILE)) as f:
@@ -32,15 +33,16 @@ class GuiPluginsBase(QWidget):
                     else:
                         self.configuration[key] = ""
 
-    def _register_menu(self, context):
+    def _register_menu(self):
         self.action = QAction(self.configuration['name'],
                               self,
+                              shortcut=self.configuration['shortcut'],
                               statusTip=self.configuration['status_tip'],
                               triggered=self.show)
 
         # Add Menu if it is not already in menu bar
-        if self.configuration['menu'] not in [menu.title() for menu in context.get('main_window').menuBar().findChildren(QMenu)]:
-            self.menu = context.get('main_window').menuBar().addMenu(self.configuration['menu'])
+        if self.configuration['menu'] not in [menu.title() for menu in self.context.get('main_window').menuBar().findChildren(QMenu)]:
+            self.menu = self.context.get('main_window').menuBar().addMenu(self.configuration['menu'])
 
         self.menu.addAction(self.action)
 
