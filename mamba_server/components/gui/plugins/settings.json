@@ -1,0 +1,5 @@
+{
+  "name": {"description": "Plugin name", "required": true},
+  "menu": {"description": "High level Menu name shown in the menu bar", "required": true},
+  "status_tip": {"description": "Message shown in the status bar", "required": false}
+}

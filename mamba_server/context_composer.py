@@ -4,10 +4,9 @@ import json
 from PySide2.QtWidgets import QApplication
 
 from mamba_server.components.gui.main.window.window import MainWindow
-from mamba_server.components.gui.plugins.about.about import About
+from mamba_server.components.gui.plugins.about import About
 
 from mamba_server.utils.context import Context
-
 
 
 def execute():
