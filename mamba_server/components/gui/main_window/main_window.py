@@ -9,8 +9,8 @@ from mamba_server.components.gui.about.about import About
 
 # Subclass QMainWindow to customise your application's main window
 class MainWindow(QMainWindow):
-    def __init__(self, *args, **kwargs):
-        super(MainWindow, self).__init__(*args, **kwargs)
+    def __init__(self, context=None):
+        super(MainWindow, self).__init__()
 
         self.setWindowTitle("My Awesome App")
 
@@ -29,41 +29,27 @@ class MainWindow(QMainWindow):
         widget = QWidget()
         widget.setLayout(layout)
 
-        self.about = About()
-
-        self.aboutAct = QAction("&About",
-                                self,
-                                statusTip=self.about.status_tip(),
-                                triggered=self.about.show)
-
-        self.helpMenu = self.menuBar().addMenu("&Help")
-        self.helpMenu.addAction(self.aboutAct)
-
         # Set the central widget of the Window. Widget will expand
         # to take up all the space in the window by default.
         self.setCentralWidget(widget)
+
+        self.show()
 
     @Slot()
     def say_hello(self):
         self.click_me_label.setText("Hello!")
 
-
-def execute():
+if __name__ == '__main__':
     # You need one (and only one) QApplication instance per application.
     # Pass in sys.argv to allow command line arguments for your app.
     # If you know you won't use command line arguments
     # QApplication([]) works too.
-    app = QApplication(sys.argv)
+    app = QApplication([])
 
-    window = MainWindow()
-    window.show()  # IMPORTANT!!!!! Windows are hidden by default.
+    main_window = MainWindow()
 
     # Start the event loop.
     app.exec_()
 
     # Your application won't reach here until you exit and the event
     # loop has stopped.
-
-
-if __name__ == '__main__':
-    execute()
