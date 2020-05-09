@@ -3,8 +3,7 @@
 from mamba_server.exceptions import ComponentSettingsException, ComponentConfigException
 
 
-def generate_component_configuration(component_name="",
-                                     settings=None,
+def generate_component_configuration(settings=None,
                                      config_file=None,
                                      local_config=None):
     """Returns a dictionary with the component configuration.
@@ -16,8 +15,6 @@ def generate_component_configuration(component_name="",
     but have default values.
 
     Args:
-        component_name (str, optional): The component name. Only used for feedback on the error
-                                        handling.
         settings (dict, optional): The dictionary with the description of the component settings.
         config_file (dict, optional): The dictionary of the component settings retrieved from
                                       component.config.json.
@@ -40,6 +37,8 @@ def generate_component_configuration(component_name="",
     local_config = local_config or {}
 
     composed_config = dict(list(config_file.items()) + list(local_config.items()))
+
+    component_name = composed_config['name'] if 'name' in composed_config else ''
 
     for key, value in settings.items():
         if key not in composed_config:

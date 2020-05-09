@@ -11,4 +11,8 @@ search_folders = [
 ]
 
 for search_folder in search_folders:
-    subprocess.call([f'yapf -ir {os.path.abspath(search_folder)}'], shell=True)
+    subprocess.call([
+        "yapf --style='{based_on_style: pep8, column_limit: 99}' -ir " +
+        os.path.abspath(search_folder)
+    ],
+                    shell=True)

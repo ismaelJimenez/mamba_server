@@ -64,12 +64,11 @@ def test_generate_component_configuration_settings_non_existing_required_paramet
 ):
     with pytest.raises(ComponentConfigException) as excinfo:
         component.generate_component_configuration(
-            component_name='test_component_name',
             settings={'param_2': {
                 'description': 'Param 2 description',
                 'required': True
             }},
-            config_file={'param_1': 1})
+            config_file={'param_1': 1, 'name': 'test_component_name'})
 
     assert 'test_component_name' in str(excinfo.value)
 
