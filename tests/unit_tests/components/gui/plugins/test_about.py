@@ -82,7 +82,8 @@ def test_about_gui_plugin_w_menu_window(qtbot):
     assert widget.menu.actions()[0].text() == '&About'
 
 
-def test_about_gui_plugin_w_menu_window_menu_already_existing(qtbot, monkeypatch):
+def test_about_gui_plugin_w_menu_window_menu_already_existing(
+        qtbot, monkeypatch):
     main_window = MainWindow()
 
     main_window.menuBar().addMenu('&Help')
