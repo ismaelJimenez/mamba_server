@@ -3,7 +3,8 @@ import json
 
 from PySide2.QtWidgets import QWidget, QAction, QMenu
 
-from mamba_server.utils.component import generate_component_configuration, is_menu_in_bar, get_menu_in_bar
+from mamba_server.utils.component import generate_component_configuration, \
+    is_menu_in_bar, get_menu_in_bar
 
 SETTINGS_FILE = "settings.json"
 COMPONENT_CONFIG_FILE = "component.config.json"
