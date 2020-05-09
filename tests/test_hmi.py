@@ -1,6 +1,5 @@
-from mamba_server.main_window import MainWindow
+from mamba_server.components.gui.main.window import MainWindow
 from PySide2 import QtCore
-from PySide2.QtWidgets import QApplication
 
 
 def test_hello(qtbot):
