@@ -1,5 +1,5 @@
 from PySide2.QtGui import QKeySequence
-from PySide2.QtWidgets import QMenu
+from PySide2.QtWidgets import QMenu, QMessageBox
 
 from mamba_server.context import Context
 from mamba_server.components.gui.plugins.about import GuiPlugin
@@ -16,7 +16,8 @@ def test_about_gui_plugin_wo_context(qtbot):
         'menu': '&Help',
         'name': '&About',
         'shortcut': None,
-        'status_tip': "Show the application's About box"
+        'status_tip': "Show the application's About box",
+        'message_box_title': 'About Mamba Server'
     }
 
     # Test no action or menu attributes have been created
@@ -33,7 +34,8 @@ def test_about_gui_plugin_w_empty_context(qtbot):
         'menu': '&Help',
         'name': '&About',
         'shortcut': None,
-        'status_tip': "Show the application's About box"
+        'status_tip': "Show the application's About box",
+        'message_box_title': 'About Mamba Server'
     }
 
     # Test no action or menu attributes have been created
@@ -57,7 +59,8 @@ def test_about_gui_plugin_w_menu_window(qtbot):
         'menu': '&Help',
         'name': '&About',
         'shortcut': None,
-        'status_tip': "Show the application's About box"
+        'status_tip': "Show the application's About box",
+        'message_box_title': 'About Mamba Server'
     }
 
     # Test action or menu attributes have been created
@@ -79,7 +82,7 @@ def test_about_gui_plugin_w_menu_window(qtbot):
     assert widget.menu.actions()[0].text() == '&About'
 
 
-def test_about_gui_plugin_w_menu_window_menu_already_existing(qtbot):
+def test_about_gui_plugin_w_menu_window_menu_already_existing(qtbot, monkeypatch):
     main_window = MainWindow()
 
     main_window.menuBar().addMenu('&Help')
@@ -96,7 +99,8 @@ def test_about_gui_plugin_w_menu_window_menu_already_existing(qtbot):
         'menu': '&Help',
         'name': '&About',
         'shortcut': None,
-        'status_tip': "Show the application's About box"
+        'status_tip': "Show the application's About box",
+        'message_box_title': 'About Mamba Server'
     }
 
     # Test action or menu attributes have been created
@@ -116,3 +120,12 @@ def test_about_gui_plugin_w_menu_window_menu_already_existing(qtbot):
     # Test action has been added to menu
     assert len(widget.menu.actions()) == 1
     assert widget.menu.actions()[0].text() == '&About'
+
+    # Test message
+    assert 'Mamba' in widget.box_message
+    assert widget.version == ""
+
+    monkeypatch.setattr(QMessageBox, "about", lambda *args: QMessageBox.Yes)
+    widget.show()
+
+    assert widget.version != ""
