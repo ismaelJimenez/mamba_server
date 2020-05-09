@@ -14,4 +14,4 @@ class GuiPlugin(GuiPluginInterface):
         __version__ = pkgutil.get_data('mamba_server',
                                        'VERSION').decode('ascii').strip()
         QMessageBox.about(self, "About Mamba Server",
-                          f"<b>Mamba Server v{__version__}</b>")
+                          "<b>Mamba Server v{}</b>".format(__version__))

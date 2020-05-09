@@ -52,14 +52,14 @@ def generate_component_configuration(settings=None,
         if key not in composed_config:
             if 'required' not in value:
                 raise ComponentSettingsException(
-                    f'Setting "{key}" is missing required field "required"')
+                    'Setting "{}" is missing required field "required"'.format(key))
             if value['required']:
                 raise ComponentConfigException(
-                    f'Component "{component_name}" configuration is missing '
-                    f'parameter "{key}"')
+                    'Component "{}" configuration is missing '
+                    'parameter "{}"'.format(component_name, key))
             if (not value['required']) and ('default' not in value):
                 raise ComponentSettingsException(
-                    f'Setting "{key}" is missing required field "default"')
+                    'Setting "{}" is missing required field "default"'.format(key))
 
             composed_config[key] = value['default']
 
