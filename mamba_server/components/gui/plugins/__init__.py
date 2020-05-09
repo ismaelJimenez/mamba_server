@@ -3,15 +3,15 @@ import json
 
 from PySide2.QtWidgets import QWidget, QAction, QMenu
 
-from mamba_server.utils.component import generate_component_configuration
+from mamba_server.utils.component import generate_component_configuration, is_menu_in_bar, get_menu_in_bar
 
 SETTINGS_FILE = "settings.json"
 COMPONENT_CONFIG_FILE = "component.config.json"
 
 
-class GuiPlugin(QWidget):
+class GuiPluginInterface(QWidget):
     def __init__(self, folder, context):
-        super(GuiPlugin, self).__init__()
+        super(GuiPluginInterface, self).__init__()
 
         self.context = context
         self.configuration = {}
@@ -28,21 +28,23 @@ class GuiPlugin(QWidget):
         self._register_menu()
 
     def _register_menu(self):
-        self.action = QAction(self.configuration['name'],
-                              self,
-                              shortcut=self.configuration['shortcut'],
-                              statusTip=self.configuration['status_tip'],
-                              triggered=self.show)
-
         # Add Menu if it is not already in menu bar
-        if self.configuration['menu'] not in [
-                menu.title() for menu in self.context.get(
-                    'main_window').menuBar().findChildren(QMenu)
-        ]:
-            self.menu = self.context.get('main_window').menuBar().addMenu(
-                self.configuration['menu'])
+        if (self.context is not None) and self.context.get('main_window'):
+            self.action = QAction(self.configuration['name'],
+                                  self,
+                                  shortcut=self.configuration['shortcut'],
+                                  statusTip=self.configuration['status_tip'],
+                                  triggered=self.show)
 
-        self.menu.addAction(self.action)
+            if not is_menu_in_bar(self.configuration['menu'],
+                                  self.context.get('main_window')):
+                self.menu = self.context.get('main_window').menuBar().addMenu(
+                    self.configuration['menu'])
+            else:
+                self.menu = get_menu_in_bar(self.configuration['menu'],
+                                  self.context.get('main_window'))
+
+            self.menu.addAction(self.action)
 
     def show(self):
         """

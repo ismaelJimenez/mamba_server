@@ -1,4 +1,4 @@
-from mamba_server.components.gui.main.window import MainWindow
+from mamba_server.components.gui.main.window.window import MainWindow
 from PySide2 import QtCore
 
 

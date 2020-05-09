@@ -1,9 +1,9 @@
 import os
 
-from mamba_server.components.gui.plugins import GuiPlugin
+from mamba_server.components.gui.plugins import GuiPluginInterface
 
 
-class Quit(GuiPlugin):
+class Quit(GuiPluginInterface):
     def __init__(self, context=None):
         super(Quit, self).__init__(os.path.dirname(__file__), context)
 

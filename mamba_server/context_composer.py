@@ -8,7 +8,7 @@ from PySide2.QtWidgets import QApplication
 from mamba_server.components.gui.main.window.window import MainWindow
 
 from mamba_server.context import Context
-from mamba_server.components.gui.plugins import GuiPlugin
+from mamba_server.components.gui.plugins import GuiPluginInterface
 from mamba_server.utils.misc import get_classes_from_module
 from mamba_server.components.gui.load_screen.load_splash import LoadScreen
 
@@ -39,7 +39,7 @@ def execute():
                                     color=Qt.white)
 
         all_gui_plugins = get_classes_from_module(
-            'mamba_server.components.gui.plugins', GuiPlugin)
+            'mamba_server.components.gui.plugins', GuiPluginInterface)
 
         dict_gui_plugins = {}
 
