@@ -48,7 +48,7 @@ def execute():
                 dict_gui_plugins[used_gui_plugin] = all_gui_plugins[
                     used_gui_plugin](context)
             else:
-                print(f"Que ases cabesa! {used_gui_plugin}")
+                print("Que ases cabesa! {}".format(used_gui_plugin))
 
         context.set('gui_plugins', dict_gui_plugins)
 

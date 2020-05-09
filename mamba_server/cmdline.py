@@ -16,7 +16,7 @@ def _pop_command_name(argv):
 
 
 def _print_header():
-    print(f"Mamba {mamba_server.__version__}\n")
+    print("Mamba {}\n".format(mamba_server.__version__))
 
 
 def _print_commands():
