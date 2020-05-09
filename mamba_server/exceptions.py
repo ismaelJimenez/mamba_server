@@ -7,3 +7,9 @@ new exceptions here without documenting them there.
 class ComponentConfigException(Exception):
     """Indicates a missing configuration situation"""
     pass
+
+# Internal
+
+class ComponentSettingsException(Exception):
+    """Indicates a wrongly formed setting situation"""
+    pass
