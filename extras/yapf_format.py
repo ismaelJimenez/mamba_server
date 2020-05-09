@@ -4,7 +4,11 @@
 import subprocess
 import os
 
-search_folders = [os.getcwd(), os.path.join(os.getcwd(), '..', 'mamba_server')]
+search_folders = [
+    os.getcwd(),
+    os.path.join(os.getcwd(), '..', 'mamba_server'),
+    os.path.join(os.getcwd(), '..', 'tests')
+]
 
 for search_folder in search_folders:
     subprocess.call([f'yapf -ir {os.path.abspath(search_folder)}'], shell=True)

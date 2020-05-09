@@ -1,7 +1,10 @@
 from mamba_server.exceptions import ComponentSettingsException, ComponentConfigException
 
 
-def generate_component_configuration(component_name="", settings={}, config_file={}, local_config={}):
+def generate_component_configuration(component_name="",
+                                     settings={},
+                                     config_file={},
+                                     local_config={}):
     """Returns a dictionary with the component configuration.
 
     Local configurations passed via launch file have precedence over configuration file settings.
@@ -24,7 +27,8 @@ def generate_component_configuration(component_name="", settings={}, config_file
 
     """
 
-    composed_config = dict(list(config_file.items()) + list(local_config.items()))
+    composed_config = dict(
+        list(config_file.items()) + list(local_config.items()))
 
     for key, value in settings.items():
         if key not in composed_config:
@@ -33,7 +37,8 @@ def generate_component_configuration(component_name="", settings={}, config_file
                     f'Setting "{key}" is missing required field "required"')
             elif value['required']:
                 raise ComponentConfigException(
-                    f'Component "{component_name}" configuration is missing parameter "{key}"')
+                    f'Component "{component_name}" configuration is missing parameter "{key}"'
+                )
             elif (not value['required']) and ('default' not in value):
                 raise ComponentSettingsException(
                     f'Setting "{key}" is missing required field "default"')

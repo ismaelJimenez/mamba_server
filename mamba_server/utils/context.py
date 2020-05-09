@@ -9,4 +9,3 @@ class Context:
 
     def set(self, parameter, value):
         self._memory[parameter] = value
-

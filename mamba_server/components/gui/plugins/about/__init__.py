@@ -11,6 +11,7 @@ class About(GuiPlugin):
         super(About, self).__init__(os.path.dirname(__file__), context)
 
     def show(self):
-        __version__ = pkgutil.get_data('mamba_server', 'VERSION').decode('ascii').strip()
+        __version__ = pkgutil.get_data('mamba_server',
+                                       'VERSION').decode('ascii').strip()
         QMessageBox.about(self, "About Mamba Server",
                           f"<b>Mamba Server v{__version__}</b>")

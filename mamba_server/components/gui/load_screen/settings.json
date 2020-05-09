@@ -1,0 +1,6 @@
+{
+  "image": {
+    "description": "Pixmap Image",
+    "required": true
+  }
+}
