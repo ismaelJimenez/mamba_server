@@ -8,6 +8,7 @@ from mamba_server.utils.component import generate_component_configuration
 SETTINGS_FILE = "settings.json"
 COMPONENT_CONFIG_FILE = "component.config.json"
 
+
 class GuiPlugin(QWidget):
     def __init__(self, folder, context):
         super(GuiPlugin, self).__init__()
@@ -21,8 +22,8 @@ class GuiPlugin(QWidget):
         with open(os.path.join(folder, COMPONENT_CONFIG_FILE)) as f:
             file_config = json.load(f)
 
-        self.configuration = generate_component_configuration(settings=settings_description,
-                                     config_file=file_config)
+        self.configuration = generate_component_configuration(
+            settings=settings_description, config_file=file_config)
 
         self._register_menu()
 
@@ -35,8 +36,8 @@ class GuiPlugin(QWidget):
 
         # Add Menu if it is not already in menu bar
         if self.configuration['menu'] not in [
-                menu.title()
-                for menu in self.context.get('main_window').menuBar().findChildren(QMenu)
+                menu.title() for menu in self.context.get(
+                    'main_window').menuBar().findChildren(QMenu)
         ]:
             self.menu = self.context.get('main_window').menuBar().addMenu(
                 self.configuration['menu'])

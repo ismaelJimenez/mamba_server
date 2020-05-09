@@ -12,7 +12,7 @@ search_folders = [
 
 for search_folder in search_folders:
     subprocess.call([
-        "yapf --style='{based_on_style: pep8, column_limit: 99}' -ir " +
+        "yapf --style='{based_on_style: pep8}' -ir " +
         os.path.abspath(search_folder)
     ],
                     shell=True)

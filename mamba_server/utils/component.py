@@ -54,8 +54,7 @@ def generate_component_configuration(settings=None,
             if value['required']:
                 raise ComponentConfigException(
                     f'Component "{component_name}" configuration is missing '
-                    f'parameter "{key}"'
-                )
+                    f'parameter "{key}"')
             if (not value['required']) and ('default' not in value):
                 raise ComponentSettingsException(
                     f'Setting "{key}" is missing required field "default"')

@@ -1,23 +1,9 @@
 import sys
 import optparse
-import inspect
 
 import mamba_server
 from mamba_server.commands import MambaCommand
-from mamba_server.utils.misc import iter_classes
-
-
-def _get_commands_from_module(module):
-    d = {}
-    for cmd in iter_classes(module, MambaCommand):
-        cmdname = cmd.__module__.split('.')[-1]
-        d[cmdname] = cmd()
-    return d
-
-
-def _get_commands_dict():
-    cmds = _get_commands_from_module('mamba_server.commands')
-    return cmds
+from mamba_server.utils.misc import get_classes_from_module
 
 
 def _pop_command_name(argv):
@@ -38,7 +24,7 @@ def _print_commands():
     print("Usage:")
     print("  mamba <command> [args]\n")
     print("Available commands:")
-    cmds = _get_commands_dict()
+    cmds = get_classes_from_module('mamba_server.commands', MambaCommand)
     for cmdname, cmdclass in sorted(cmds.items()):
         print("  %-13s %s" % (cmdname, cmdclass.short_desc()))
     print()
@@ -55,7 +41,7 @@ def execute(argv=None):
     if argv is None:
         argv = sys.argv
 
-    cmds = _get_commands_dict()
+    cmds = get_classes_from_module('mamba_server.commands', MambaCommand)
     cmdname = _pop_command_name(argv)
     parser = optparse.OptionParser(formatter=optparse.TitledHelpFormatter(),
                                    conflict_handler='resolve')
