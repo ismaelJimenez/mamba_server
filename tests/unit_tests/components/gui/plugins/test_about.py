@@ -1,5 +1,5 @@
-from PySide2 import QtCore, QtGui
-from PySide2.QtWidgets import QMenu, QAction
+from PySide2.QtGui import QKeySequence
+from PySide2.QtWidgets import QMenu
 
 from mamba_server.context import Context
 from mamba_server.components.gui.plugins.about import GuiPlugin
@@ -67,7 +67,7 @@ def test_about_gui_plugin_w_menu_window(qtbot):
     # Test QAction text
     assert widget.action.text() == '&About'
     assert widget.action.statusTip() == "Show the application's About box"
-    assert widget.action.shortcut() == QtGui.QKeySequence(0, 0, 0, 0)
+    assert widget.action.shortcut() == QKeySequence(0, 0, 0, 0)
     assert widget.action.isEnabled()
 
     # Test menu is in menu bar
@@ -106,7 +106,7 @@ def test_about_gui_plugin_w_menu_window_menu_already_existing(qtbot):
     # Test QAction text
     assert widget.action.text() == '&About'
     assert widget.action.statusTip() == "Show the application's About box"
-    assert widget.action.shortcut() == QtGui.QKeySequence(0, 0, 0, 0)
+    assert widget.action.shortcut() == QKeySequence(0, 0, 0, 0)
     assert widget.action.isEnabled()
 
     # Test menu is in menu bar

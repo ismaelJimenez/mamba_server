@@ -6,10 +6,8 @@ class LoadScreen(QSplashScreen):
     def __init__(self):
         super(LoadScreen, self).__init__()
 
-        pixmap = QPixmap(
-            '/home/argos/Workspace/mamba-framework/mamba-server/'
-            'artwork/mamba_loading.jpg'
-        )
+        pixmap = QPixmap('/home/argos/Workspace/mamba-framework/mamba-server/'
+                         'artwork/mamba_loading.jpg')
         self.setPixmap(pixmap)
 
         screen = QGuiApplication.primaryScreen().geometry()

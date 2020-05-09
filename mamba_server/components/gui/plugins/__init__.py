@@ -42,7 +42,7 @@ class GuiPluginInterface(QWidget):
                     self.configuration['menu'])
             else:
                 self.menu = get_menu_in_bar(self.configuration['menu'],
-                                  self.context.get('main_window'))
+                                            self.context.get('main_window'))
 
             self.menu.addAction(self.action)
 
