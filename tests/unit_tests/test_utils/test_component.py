@@ -133,25 +133,3 @@ def test_generate_component_configuration_settings_non_existing_optional_paramet
             'param_2': 0
         }
 
-
-def test_is_menu_in_bar(qtbot):
-    main_window = MainWindow()
-
-    # Test Menu is not present
-    assert not component.is_menu_in_bar('menu_test', main_window)
-
-    # Test Menu is present
-    main_window.menuBar().addMenu('menu_test')
-    assert component.is_menu_in_bar('menu_test', main_window)
-
-
-def test_get_menu_in_bar(qtbot):
-    main_window = MainWindow()
-
-    # Test Menu is not present
-    assert component.get_menu_in_bar('menu_test', main_window) is None
-
-    # Test Menu is present
-    main_window.menuBar().addMenu('menu_test')
-    assert component.get_menu_in_bar('menu_test',
-                                     main_window).title() == 'menu_test'

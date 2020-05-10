@@ -67,38 +67,3 @@ def generate_component_configuration(settings=None,
 
     return composed_config
 
-
-def is_menu_in_bar(search_menu, main_window):
-    """Checks if Menu is already in Main Window Menu bar.
-
-    Args:
-        search_menu (str): The searched menu name.
-        main_window (QMainWindow): The main window application.
-
-    Returns:
-        bool: True if it menu is already in menu bar, otherwise false.
-    """
-    return search_menu in [
-        menu.title() for menu in main_window.menuBar().findChildren(QMenu)
-    ]
-
-
-def get_menu_in_bar(search_menu, main_window):
-    """Returns Menu is already in Main Window Menu bar.
-
-    Args:
-        search_menu (str): The searched menu name.
-        main_window (QMainWindow): The main window application.
-
-    Returns:
-        QMenu: Menu with title "search_menu". None is menu has not been found.
-    """
-    menu = [
-        menu for menu in main_window.menuBar().findChildren(QMenu)
-        if menu.title() == search_menu
-    ]
-
-    if len(menu) > 0:
-        return menu[0]
-
-    return None

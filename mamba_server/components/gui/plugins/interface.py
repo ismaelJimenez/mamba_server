@@ -6,8 +6,7 @@ import json
 
 from PySide2.QtWidgets import QWidget, QAction
 
-from mamba_server.utils.component import generate_component_configuration, \
-    is_menu_in_bar, get_menu_in_bar
+from mamba_server.utils.component import generate_component_configuration
 
 SETTINGS_FILE = "settings.json"
 COMPONENT_CONFIG_FILE = "component.config.json"
@@ -42,13 +41,11 @@ class GuiPluginInterface:
                                   statusTip=self.configuration['status_tip'],
                                   triggered=self.execute)
 
-            if not is_menu_in_bar(self.configuration['menu'],
-                                  self.context.get('main_window')):
-                self.menu = self.context.get('main_window').menuBar().addMenu(
+            if not self.context.get('main_window').is_menu_in_bar(self.context.get('main_window')):
+                self.menu = self.context.get('main_window').add_menu_in_bar(
                     self.configuration['menu'])
             else:
-                self.menu = get_menu_in_bar(self.configuration['menu'],
-                                            self.context.get('main_window'))
+                self.menu = self.context.get('main_window').get_menu_in_bar(self.context.get('main_window'))
 
             self.menu.addAction(self.action)
 

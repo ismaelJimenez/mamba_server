@@ -4,7 +4,6 @@ from PySide2.QtWidgets import QMenu, QMessageBox
 from mamba_server.context import Context
 from mamba_server.components.gui.plugins.about import GuiPlugin
 from mamba_server.components.gui.main.window.window import MainWindow
-from mamba_server.utils.component import is_menu_in_bar
 
 
 def test_about_gui_plugin_wo_context(qtbot):
@@ -47,7 +46,7 @@ def test_about_gui_plugin_w_menu_window(qtbot):
     main_window = MainWindow()
 
     # Test help is not in menu bar
-    assert not is_menu_in_bar('&Help', main_window)
+    assert not main_window.is_menu_in_bar('&Help')
 
     context = Context()
     context.set('main_window', main_window)
@@ -74,8 +73,7 @@ def test_about_gui_plugin_w_menu_window(qtbot):
     assert widget.action.isEnabled()
 
     # Test menu is in menu bar
-    assert len(main_window.menuBar().findChildren(QMenu)) == 1
-    assert is_menu_in_bar('&Help', main_window)
+    assert main_window.is_menu_in_bar('&Help')
 
     # Test action has been added to menu
     assert len(widget.menu.actions()) == 1
@@ -86,9 +84,9 @@ def test_about_gui_plugin_w_menu_window_menu_already_existing(
         qtbot, monkeypatch):
     main_window = MainWindow()
 
-    main_window.menuBar().addMenu('&Help')
+    main_window.add_menu_in_bar('&Help')
     # Test help is in menu bar
-    assert is_menu_in_bar('&Help', main_window)
+    assert main_window.is_menu_in_bar('&Help')
 
     context = Context()
     context.set('main_window', main_window)
@@ -115,8 +113,7 @@ def test_about_gui_plugin_w_menu_window_menu_already_existing(
     assert widget.action.isEnabled()
 
     # Test menu is in menu bar
-    assert len(main_window.menuBar().findChildren(QMenu)) == 1
-    assert is_menu_in_bar('&Help', main_window)
+    assert main_window.is_menu_in_bar('&Help')
 
     # Test action has been added to menu
     assert len(widget.menu.actions()) == 1
