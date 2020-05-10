@@ -2,8 +2,8 @@ from PySide2.QtGui import QKeySequence
 from PySide2.QtWidgets import QMenu, QMessageBox
 
 from mamba_server.context import Context
-from mamba_server.components.gui.plugins.about import GuiPlugin
-from mamba_server.components.gui.main.window.window import MainWindow
+from mamba_server.components.gui.plugins.about_qt import GuiPlugin
+from mamba_server.components.gui.main_window.main_qt import MainWindow
 
 
 def test_about_gui_plugin_wo_context(qtbot):
@@ -102,22 +102,12 @@ def test_about_gui_plugin_w_menu_window_menu_already_existing(
         'message_box_title': 'About Mamba Server'
     }
 
-    # Test action or menu attributes have been created
-    assert hasattr(widget, 'action')
-    assert hasattr(widget, 'menu')
-
-    # Test QAction text
-    assert widget.action.text() == '&About'
-    assert widget.action.statusTip() == "Show the application's About box"
-    assert widget.action.shortcut() == QKeySequence(0, 0, 0, 0)
-    assert widget.action.isEnabled()
-
     # Test menu is in menu bar
     assert main_window.is_menu_in_bar('&Help')
 
     # Test action has been added to menu
-    assert len(widget.menu.actions()) == 1
-    assert widget.menu.actions()[0].text() == '&About'
+    assert len(main_window.get_menu_in_bar('&Help').actions()) == 1
+    assert main_window.get_menu_in_bar('&Help').actions()[0].text() == '&About'
 
     # Test message
     assert 'Mamba' in widget.box_message

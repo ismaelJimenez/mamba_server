@@ -8,6 +8,6 @@
   },
   "gui_plugins": [
     "quit",
-    "about"
+    "about_tk"
   ]
 }

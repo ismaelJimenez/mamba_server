@@ -3,7 +3,7 @@ from PySide2.QtWidgets import QMenu
 
 from mamba_server.context import Context
 from mamba_server.components.gui.plugins.quit import GuiPlugin
-from mamba_server.components.gui.main.window.window import MainWindow
+from mamba_server.components.gui.main_window.main_qt import MainWindow
 
 
 def test_about_gui_plugin_w_menu_window(qtbot):

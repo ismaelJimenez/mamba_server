@@ -66,4 +66,3 @@ def generate_component_configuration(settings=None,
             composed_config[key] = value['default']
 
     return composed_config
-

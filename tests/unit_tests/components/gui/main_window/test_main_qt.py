@@ -1,4 +1,4 @@
-from mamba_server.components.gui.main.window.window import MainWindow
+from mamba_server.components.gui.main_window.main_qt import MainWindow
 
 
 def test_is_menu_in_bar(qtbot):

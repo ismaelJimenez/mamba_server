@@ -16,8 +16,6 @@ class GuiPluginInterface:
     def __init__(self, folder, context):
         super(GuiPluginInterface, self).__init__()
 
-        self.widget = QWidget()
-
         self.context = context
         self.configuration = {}
 
@@ -35,19 +33,12 @@ class GuiPluginInterface:
     def _register_menu(self):
         # Add Menu if it is not already in menu bar
         if (self.context is not None) and self.context.get('main_window'):
-            self.action = QAction(self.configuration['name'],
-                                  self.widget,
-                                  shortcut=self.configuration['shortcut'],
-                                  statusTip=self.configuration['status_tip'],
-                                  triggered=self.execute)
-
-            if not self.context.get('main_window').is_menu_in_bar(self.context.get('main_window')):
-                self.menu = self.context.get('main_window').add_menu_in_bar(
-                    self.configuration['menu'])
-            else:
-                self.menu = self.context.get('main_window').get_menu_in_bar(self.context.get('main_window'))
-
-            self.menu.addAction(self.action)
+            self.context.get('main_window').register_action(
+                menu_title=self.configuration['menu'],
+                action_name=self.configuration['name'],
+                component_action=self.execute,
+                shortcut=self.configuration['shortcut'],
+                statusTip=self.configuration['status_tip'])
 
     def execute(self):
         """
