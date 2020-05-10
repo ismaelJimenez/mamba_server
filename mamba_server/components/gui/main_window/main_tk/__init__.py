@@ -51,7 +51,7 @@ class MainWindow(MainWindowInterface):
         self.app.withdraw()
 
     def close(self):
-        self.app.destroy()
+        self.app.quit()
 
     def add_menu_in_bar(self, menu_name):
         menu = tk.Menu(self.menubar, tearoff=0)
