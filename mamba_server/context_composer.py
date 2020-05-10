@@ -14,7 +14,6 @@ from mamba_server.components.gui.load_screen.mamba_splash import LoadScreen
 
 
 def execute():
-    app = QApplication([])
     context = Context()
 
     with open(os.path.join('launch', 'default.launch.json')) as f:
@@ -63,7 +62,7 @@ def execute():
                               context.get('main_window').show)
 
     # Start the event loop.
-    app.exec_()
+    context.get('main_window').start_event_loop()
 
 
 if __name__ == '__main__':

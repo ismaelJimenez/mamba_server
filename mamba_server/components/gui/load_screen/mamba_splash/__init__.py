@@ -4,6 +4,8 @@ from PySide2.QtGui import QIcon, QPixmap, QGuiApplication
 
 class LoadScreen(QSplashScreen):
     def __init__(self):
+        self.app = QApplication([]) if QApplication.instance() is None else QApplication.instance()
+
         super(LoadScreen, self).__init__()
 
         pixmap = QPixmap('/home/argos/Workspace/mamba-framework/mamba-server/'

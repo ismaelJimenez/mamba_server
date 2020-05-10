@@ -8,6 +8,7 @@ class MainWindow:
     def __init__(self, context=None):
         super(MainWindow, self).__init__()
 
+        self.app = QApplication([]) if QApplication.instance() is None else QApplication.instance()
         self.main_window = QMainWindow()
 
         self.main_window.setWindowTitle("My Awesome App")
@@ -35,6 +36,8 @@ class MainWindow:
     def say_hello(self):
         self.click_me_label.setText("Hello!")
 
+    def start_event_loop(self):
+        self.app.exec_()
 
     def is_menu_in_bar(self, search_menu):
         """Checks if Menu is already in Main Window Menu bar.
