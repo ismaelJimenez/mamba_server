@@ -127,6 +127,6 @@ def test_about_gui_plugin_w_menu_window_menu_already_existing(
     assert widget.version == ""
 
     monkeypatch.setattr(QMessageBox, "about", lambda *args: QMessageBox.Yes)
-    widget.show()
+    widget.execute()
 
     assert widget.version != ""

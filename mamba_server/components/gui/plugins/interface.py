@@ -1,7 +1,10 @@
+""" The GuiPlugin components make services available to the application.
+"""
+
 import os
 import json
 
-from PySide2.QtWidgets import QWidget, QAction, QMenu
+from PySide2.QtWidgets import QWidget, QAction
 
 from mamba_server.utils.component import generate_component_configuration, \
     is_menu_in_bar, get_menu_in_bar
@@ -10,9 +13,11 @@ SETTINGS_FILE = "settings.json"
 COMPONENT_CONFIG_FILE = "component.config.json"
 
 
-class GuiPluginInterface(QWidget):
+class GuiPluginInterface:
     def __init__(self, folder, context):
         super(GuiPluginInterface, self).__init__()
+
+        self.widget = QWidget()
 
         self.context = context
         self.configuration = {}
@@ -32,10 +37,10 @@ class GuiPluginInterface(QWidget):
         # Add Menu if it is not already in menu bar
         if (self.context is not None) and self.context.get('main_window'):
             self.action = QAction(self.configuration['name'],
-                                  self,
+                                  self.widget,
                                   shortcut=self.configuration['shortcut'],
                                   statusTip=self.configuration['status_tip'],
-                                  triggered=self.show)
+                                  triggered=self.execute)
 
             if not is_menu_in_bar(self.configuration['menu'],
                                   self.context.get('main_window')):
@@ -47,8 +52,8 @@ class GuiPluginInterface(QWidget):
 
             self.menu.addAction(self.action)
 
-    def show(self):
+    def execute(self):
         """
-        Entry point for showing gui plugin
+        Entry point for running gui plugin
         """
         raise NotImplementedError
