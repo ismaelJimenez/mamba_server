@@ -2,29 +2,16 @@
 """
 
 import os
-import json
 
-from mamba_server.utils.component import generate_component_configuration
-
-SETTINGS_FILE = "settings.json"
-COMPONENT_CONFIG_FILE = "component.config.json"
+from mamba_server.components.interface import ComponentInterface
 
 
-class LoadScreenInterface:
+class LoadScreenInterface(ComponentInterface):
     def __init__(self, folder, context):
-        super(LoadScreenInterface, self).__init__()
-
-        self.context = context
-        self.configuration = {}
-
-        with open(os.path.join(os.path.dirname(__file__), SETTINGS_FILE)) as f:
-            settings_description = json.load(f)
-
-        with open(os.path.join(folder, COMPONENT_CONFIG_FILE)) as f:
-            file_config = json.load(f)
-
-        self.configuration = generate_component_configuration(
-            settings=settings_description, config_file=file_config)
+        super(LoadScreenInterface, self).__init__(
+            os.path.dirname(__file__),
+            folder,
+            context)
 
     def execute(self):
         """
