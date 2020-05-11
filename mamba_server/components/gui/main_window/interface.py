@@ -30,27 +30,10 @@ class MainWindowInterface:
                         menu_title,
                         action_name,
                         component_action,
-                        shortcut="",
-                        statusTip=""):
+                        shortcut='',
+                        status_tip=''):
         """
-        Entry point for an action inside a menu
-        """
-        raise NotImplementedError
-
-    def start_event_loop(self):
-        """
-        Entry point for starting event loop.
-        """
-        raise NotImplementedError
-
-    def is_menu_in_bar(self, search_menu):
-        """Checks if Menu is already in Main Window Menu bar.
-
-        Args:
-            search_menu (str): The searched menu name.
-
-        Returns:
-            bool: True if it menu is already in menu bar, otherwise false.
+        Entry point for registering a new action inside a given menu.
         """
         raise NotImplementedError
 
@@ -67,47 +50,19 @@ class MainWindowInterface:
         raise NotImplementedError
 
     def close(self):
-        raise NotImplementedError
-
-    def add_menu_in_bar(self, menu_name):
-        raise NotImplementedError
-
-    def get_menu_in_bar(self, search_menu):
-        raise NotImplementedError
-
-    def after(self, time_msec, action):
         """
-        Entry point for performing an action after given milliseconds.
-        """
-        raise NotImplementedError
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    def close(self):
-        """
-        Entry point for closing load screen
-        """
-        raise NotImplementedError
-
-    def after(self, time_msec, action):
-        """
-        Entry point for performing an action after given milliseconds.
+        Entry point for closing main screen
         """
         raise NotImplementedError
 
     def start_event_loop(self):
         """
-        Entry point for starting event loop.
+        Entry point for starting main window event loop.
+        """
+        raise NotImplementedError
+
+    def after(self, time_msec, action):
+        """
+        Entry point for performing an action after given milliseconds.
         """
         raise NotImplementedError

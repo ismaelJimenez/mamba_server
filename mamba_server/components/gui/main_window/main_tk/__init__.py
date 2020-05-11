@@ -1,38 +1,98 @@
 import os
-
 import tkinter as tk
-from tkinter import messagebox
 
 from mamba_server.components.gui.main_window.interface import MainWindowInterface
+from mamba_server.exceptions import ComponentConfigException
 
 
 class MainWindow(MainWindowInterface):
     def __init__(self, context=None):
         super(MainWindow, self).__init__(os.path.dirname(__file__), context)
 
-        self.app = tk.Tk()
+        self._app = tk.Tk()
         self.hide()
-        self.menubar = tk.Menu(self.app)
-        self.app.config(menu=self.menubar)
-        self.menus = {}
+        self._menu_bar = tk.Menu(self._app)
+        self._app.config(menu=self._menu_bar)
+        self._menus = {}
+        self._menu_actions = []  # Used for tests
 
     def register_action(self,
                         menu_title,
                         action_name,
                         component_action,
-                        shortcut="",
-                        statusTip=""):
-        if not self.is_menu_in_bar(menu_title):
-            menu = self.add_menu_in_bar(menu_title)
+                        shortcut='',
+                        status_tip=''):
+        """Register a new action inside a given menu.
+
+        Args:
+            menu_title (str): The menu name.
+            action_name (str): The action name.
+            component_action (function): The action to execute.
+            shortcut (str): Keys shorcut to execute action, if available.
+            status_tip (str): Action status tip to show, if available.
+        """
+        if not self._exists_menu(menu_title):
+            menu = self._add_menu(menu_title)
         else:
-            menu = self.get_menu_in_bar(menu_title)
+            menu = self._get_menu(menu_title)
+
+        if self._is_action_in_menu(menu_title, action_name):
+            raise ComponentConfigException("Another action '{}' already exists"
+                                           " in menu '{}'".format(menu_title, action_name))
 
         menu.add_command(label=action_name, command=component_action)
+        self._menu_actions.append('{}_{}'.format(menu_title, action_name))
+
+    def show(self):
+        """
+        Entry point for showing main screen
+        """
+        self._app.update()
+        self._app.deiconify()
+
+    def hide(self):
+        """
+        Entry point for hiding main screen
+        """
+        self._app.withdraw()
+        self._app.update()
+
+    def close(self):
+        """
+        Entry point for closing main screen
+        """
+
+        # INFO: quit() stops the TCL interpreter, so the Tkinter - app will
+        # stop. destroy() just terminates the mainloop and deletes all
+        # widgets.
+
+        self._app.quit()
 
     def start_event_loop(self):
-        self.app.mainloop()
+        """
+        Enters the main event loop and waits until close() is called.
 
-    def is_menu_in_bar(self, search_menu):
+        It is necessary to call this function to start event handling.The
+        main event loop receives events from the window system and dispatches
+        these to the application widgets.
+
+        Generally, no user interaction can take place before calling
+        start_event_loop().
+        """
+        self._app.mainloop()
+
+    def after(self, time_msec, action):
+        """ Make the application perform an action after a time delay.
+
+        Args:
+            time_msec (int): The time in milliseconds to delay he action.
+            action (function): The action to execute after time_msec delay.
+        """
+        self._app.after(int(time_msec), action)
+
+    # Internal functions
+
+    def _exists_menu(self, search_menu):
         """Checks if Menu is already in Main Window Menu bar.
 
         Args:
@@ -41,25 +101,23 @@ class MainWindow(MainWindowInterface):
         Returns:
             bool: True if it menu is already in menu bar, otherwise false.
         """
-        return search_menu in self.menus
+        return search_menu in self._menus
 
-    def show(self):
-        self.app.update()
-        self.app.deiconify()
+    def _add_menu(self, menu_name):
+        """Add a new top level menu in main window menu bar.
 
-    def hide(self):
-        self.app.withdraw()
+        Args:
+            menu_name (str): The new menu name.
 
-    def close(self):
-        self.app.quit()
-
-    def add_menu_in_bar(self, menu_name):
-        menu = tk.Menu(self.menubar, tearoff=0)
-        self.menubar.add_cascade(label=menu_name, menu=menu)
-        self.menus[menu_name] = menu
+        Returns:
+            tk.Menu: A reference to the newly created menu.
+        """
+        menu = tk.Menu(self._menu_bar, tearoff=0)
+        self._menu_bar.add_cascade(label=menu_name, menu=menu)
+        self._menus[menu_name] = menu
         return menu
 
-    def get_menu_in_bar(self, search_menu):
+    def _get_menu(self, search_menu):
         """Returns Menu is already in Main Window Menu bar.
 
         Args:
@@ -68,25 +126,20 @@ class MainWindow(MainWindowInterface):
         Returns:
             tk.Menu: Menu with title "search_menu". None is menu has not been found.
         """
-        if search_menu in self.menus:
-            return self.menus[search_menu]
+        if search_menu in self._menus:
+            return self._menus[search_menu]
 
         return None
 
-    def after(self, time_msec, action):
-        self.app.after(int(time_msec), action)
+    def _is_action_in_menu(self, search_menu, search_action):
+        """Checks if action is already in Menu.
 
-class Prueba:
-    def about(self):
-        messagebox.showinfo("Information", "Informative message")
+        Args:
+            search_menu (str): The searched menu name.
+            search_action (str): The searched action name.
 
+        Returns:
+            bool: True if it action is already in menu, otherwise false.
+        """
+        return '{}_{}'.format(search_menu, search_action) in self._menu_actions
 
-if __name__ == '__main__':
-    prueba = Prueba()
-    main_window = MainWindow()
-    #main_window.add_menu_in_bar('prueba')
-    main_window.register_action('prueba', prueba.about)
-    main_window.register_action('prueb2', prueba.about)
-
-    main_window.show()
-    main_window.start_event_loop()
