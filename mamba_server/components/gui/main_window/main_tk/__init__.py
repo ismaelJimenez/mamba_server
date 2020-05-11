@@ -10,12 +10,13 @@ class MainWindow(MainWindowInterface):
         super(MainWindow, self).__init__(os.path.dirname(__file__), context)
 
         self._app = tk.Tk()
+        self._app.protocol("WM_DELETE_WINDOW", self.close)
         self._app.title(self.configuration['title'])
         self.hide()
         self._menu_bar = tk.Menu(self._app)
         self._app.config(menu=self._menu_bar)
         self._menus = {}
-        self._menu_actions = []  # Used for tests
+        self._menu_actions = []
 
     def register_action(self,
                         menu_title,
@@ -39,7 +40,8 @@ class MainWindow(MainWindowInterface):
 
         if self._is_action_in_menu(menu_title, action_name):
             raise ComponentConfigException("Another action '{}' already exists"
-                                           " in menu '{}'".format(menu_title, action_name))
+                                           " in menu '{}'".format(
+                                               menu_title, action_name))
 
         menu.add_command(label=action_name, command=component_action)
         self._menu_actions.append('{}_{}'.format(menu_title, action_name))
@@ -143,4 +145,3 @@ class MainWindow(MainWindowInterface):
             bool: True if it action is already in menu, otherwise false.
         """
         return '{}_{}'.format(search_menu, search_action) in self._menu_actions
-

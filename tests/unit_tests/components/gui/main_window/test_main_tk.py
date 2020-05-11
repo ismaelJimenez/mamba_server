@@ -2,6 +2,7 @@ import pytest
 import tkinter as tk
 
 from mamba_server.components.gui.main_window.main_tk import MainWindow
+from mamba_server.context import Context
 from mamba_server.exceptions import ComponentConfigException
 
 
@@ -9,9 +10,20 @@ def test_main_tk_wo_context():
     widget = MainWindow()
 
     # Test default configuration
-    assert widget.configuration == {
-        'title': 'Mamba Server'
-    }
+    assert widget.configuration == {'title': 'Mamba Server'}
+
+    assert widget._menus == {}
+    assert widget._menu_actions == []
+
+    # Test window is hidden per default
+    assert widget._app.winfo_ismapped() == 0
+
+
+def test_main_tk_w_context():
+    widget = MainWindow(Context())
+
+    # Test default configuration
+    assert widget.configuration == {'title': 'Mamba Server'}
 
     assert widget._menus == {}
     assert widget._menu_actions == []
@@ -45,6 +57,10 @@ def test_main_tk_hide():
     widget.hide()
     assert widget._app.winfo_ismapped() == 0
 
+    # Test window hide does not destroy window
+    widget.show()
+    assert widget._app.winfo_ismapped() == 1
+
 
 def test_main_tk_close():
     widget = MainWindow()
@@ -64,17 +80,20 @@ def test_main_tk_close():
 
 
 def test_main_tk_register_action():
+    def dummy_func():
+        pass
+
     widget = MainWindow()
 
     assert not widget._is_action_in_menu('test_menu', 'test_action')
 
     # Add new menu
-    widget.register_action('test_menu', 'test_action', None)
+    widget.register_action('test_menu', 'test_action', dummy_func)
     assert widget._is_action_in_menu('test_menu', 'test_action')
 
     # Attempt to register the same action twice in same menu is not allowed
     with pytest.raises(ComponentConfigException) as excinfo:
-        widget.register_action('test_menu', 'test_action', None)
+        widget.register_action('test_menu', 'test_action', dummy_func)
 
     assert 'already exists in menu' in str(excinfo.value)
 
@@ -108,4 +127,3 @@ def test_internal_main_tk_get_menu():
     # Add new menu
     widget._add_menu('test_menu')
     assert widget._get_menu('test_menu') is not None
-
