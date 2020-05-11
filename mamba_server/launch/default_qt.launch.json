@@ -1,0 +1,16 @@
+{
+  "app": {
+    "min_load_screen_secs": 5
+  },
+  "load_screen": {
+    "component": "splash_qt",
+    "min_seconds": 5
+  },
+  "main_window": {
+    "component": "main_qt"
+  },
+  "gui_plugins": [
+    "quit",
+    "about_qt"
+  ]
+}

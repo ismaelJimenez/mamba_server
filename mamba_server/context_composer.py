@@ -2,47 +2,87 @@ import os
 import json
 import time
 
-from mamba_server.components.gui.main_window.main_tk import MainWindow
-
 from mamba_server.context import Context
+from mamba_server.exceptions import ComponentConfigException
+from mamba_server.components.gui.load_screen.interface import LoadScreenInterface
+from mamba_server.components.gui.main_window.interface import MainWindowInterface
 from mamba_server.components.gui.plugins.interface import GuiPluginInterface
 from mamba_server.utils.misc import get_classes_from_module
+
+from mamba_server.components.gui.main_window.main_qt import MainWindow
 from mamba_server.components.gui.load_screen.splash.splash_tk import LoadScreen
 
 
-def execute():
+def get_component(component_name, component_list):
+    if component_name in component_list:
+        return component_list[component_name]
+
+    raise ComponentConfigException("Component '{}' is not a valid component identifier".format(component_name))
+
+def get_component(used_component, module, component_type, context):
+    all_components_by_type = get_classes_from_module(
+        module, component_type)
+
+    if used_component in all_components_by_type:
+        return all_components_by_type[used_component](context)
+
+    raise ComponentConfigException("Component '{}' is not a valid component identifier".format(used_component))
+
+
+
+def get_components(used_components, module, component_type, context):
+    all_components_by_type = get_classes_from_module(
+        module, component_type)
+
+    dict_used_components = {}
+
+    for used_component in used_components:
+        if used_component in all_components_by_type:
+            dict_used_components[used_component] = all_components_by_type[
+                used_component](context)
+        else:
+            raise ComponentConfigException("Component '{}' is not a valid component identifier".format(used_component))
+
+    return dict_used_components
+
+
+def execute(launch_file):
     context = Context()
 
-    with open(os.path.join('launch', 'default.launch.json')) as f:
-        info = json.load(f)
+    with open(launch_file) as f:
+        launch_config = json.load(f)
 
-        if 'load_screen' in info:
-            load_screen = LoadScreen(context)
+        # Start Load Screen Component, if any
+        if 'load_screen' in launch_config:
+            load_screen = get_component(launch_config['load_screen']['component'],
+                                         'mamba_server.components.gui.load_screen',
+                                         LoadScreenInterface, context)
             load_screen.show()
 
-            start_time = time.time()
+            min_load_screen_time = None
 
-        if info['main']['component'] == "window":
-            context.set('main_window', MainWindow(context))
-        else:
-            print(info)
+            if ('app' in launch_config) and ('min_load_screen_secs' in launch_config['app']):
+                min_load_screen_time = launch_config['app']['min_load_screen_secs']
+                start_time = time.time()
 
-        all_gui_plugins = get_classes_from_module(
-            'mamba_server.components.gui.plugins', GuiPluginInterface)
+        # Start Main Window Component, if any
+        if 'main_window' in launch_config:
+            main_window = get_component(launch_config['main_window']['component'],
+                                         'mamba_server.components.gui.main_window',
+                                         MainWindowInterface, context)
 
-        dict_gui_plugins = {}
+            context.set('main_window', main_window)
 
-        for used_gui_plugin in info['gui_plugins']:
-            if used_gui_plugin in all_gui_plugins:
-                dict_gui_plugins[used_gui_plugin] = all_gui_plugins[
-                    used_gui_plugin](context)
-            else:
-                print("Que ases cabesa! {}".format(used_gui_plugin))
+        # Instantiate GUI Plugins, if any
+        if 'gui_plugins' in launch_config:
+            gui_plugins = get_components(launch_config['gui_plugins'],
+                                        'mamba_server.components.gui.plugins',
+                                        GuiPluginInterface, context)
 
-        context.set('gui_plugins', dict_gui_plugins)
+            context.set('gui_plugins', gui_plugins)
 
-        if 'load_screen' in info:
-            min_splash_time = info['load_screen']["min_seconds"] * 1000
+        if ('load_screen' in launch_config) and ('app' in launch_config) and ('min_load_screen_secs' in launch_config['app']):
+            min_splash_time = launch_config['load_screen']["min_seconds"] * 1000
 
             load_screen.after(min_splash_time - (time.time() - start_time),
                               load_screen.close)
@@ -51,9 +91,12 @@ def execute():
                 min_splash_time - (time.time() - start_time),
                 context.get('main_window').show)
 
+        else:
+            context.get('main_window').show()
+
     # Start the event loop.
     context.get('main_window').start_event_loop()
 
 
 if __name__ == '__main__':
-    execute()
+    execute(os.path.join('launch', 'default_tk.launch.json'))
