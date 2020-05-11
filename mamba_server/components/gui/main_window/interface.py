@@ -14,6 +14,7 @@ class MainWindowInterface:
     def __init__(self, folder, context):
         super(MainWindowInterface, self).__init__()
 
+        # Retrieve component configuration
         self.context = context
         self.configuration = {}
 
