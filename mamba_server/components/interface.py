@@ -15,8 +15,8 @@ class ComponentInterface:
         super(ComponentInterface, self).__init__()
 
         # Retrieve component configuration
-        self.context = context
-        self.configuration = {}
+        self._context = context
+        self._configuration = {}
 
         with open(os.path.join(settings_folder, SETTINGS_FILE)) as f:
             settings_description = json.load(f)
@@ -24,5 +24,5 @@ class ComponentInterface:
         with open(os.path.join(config_folder, COMPONENT_CONFIG_FILE)) as f:
             file_config = json.load(f)
 
-        self.configuration = generate_component_configuration(
+        self._configuration = generate_component_configuration(
             settings=settings_description, config_file=file_config)

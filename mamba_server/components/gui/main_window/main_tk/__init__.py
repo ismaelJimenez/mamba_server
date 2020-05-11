@@ -15,7 +15,7 @@ class MainWindow(MainWindowInterface):
 
         self._app = tk.Tk()
         self._app.protocol("WM_DELETE_WINDOW", self.close)
-        self._app.title(self.configuration['title'])
+        self._app.title(self._configuration['title'])
         self.hide()
         self._menu_bar = tk.Menu(self._app)
         self._app.config(menu=self._menu_bar)

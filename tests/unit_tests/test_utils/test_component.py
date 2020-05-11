@@ -2,7 +2,6 @@ import pytest
 
 from mamba_server.utils import component
 from mamba_server.exceptions import ComponentConfigException, ComponentSettingsException
-from mamba_server.components.gui.main_window.main_qt.window import MainWindow
 
 
 def test_generate_component_configuration_wo_settings_file_local():

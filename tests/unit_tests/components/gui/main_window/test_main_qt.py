@@ -9,7 +9,7 @@ def test_main_qt_wo_context():
     widget = MainWindow()
 
     # Test default configuration
-    assert widget.configuration == {'title': 'Mamba Server'}
+    assert widget._configuration == {'title': 'Mamba Server'}
 
     assert widget._menus == {}
     assert widget._menu_actions == []
@@ -23,7 +23,7 @@ def test_main_qt_w_context():
     widget = MainWindow(Context())
 
     # Test default configuration
-    assert widget.configuration == {'title': 'Mamba Server'}
+    assert widget._configuration == {'title': 'Mamba Server'}
 
     assert widget._menus == {}
     assert widget._menu_actions == []

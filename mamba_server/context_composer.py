@@ -7,7 +7,7 @@ from mamba_server.components.gui.main_window.main_tk import MainWindow
 from mamba_server.context import Context
 from mamba_server.components.gui.plugins.interface import GuiPluginInterface
 from mamba_server.utils.misc import get_classes_from_module
-from mamba_server.components.gui.load_screen.splash_tk import LoadScreen
+from mamba_server.components.gui.load_screen.splash.splash_tk import LoadScreen
 
 
 def execute():

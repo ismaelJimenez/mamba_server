@@ -12,7 +12,6 @@ from mamba_server.components.gui.load_screen.interface import \
 
 class LoadScreen(LoadScreenInterface):
     """ Splash screen implemented with Qt5 """
-
     def __init__(self, context=None):
         super(LoadScreen, self).__init__(os.path.dirname(__file__), context)
 
@@ -21,7 +20,7 @@ class LoadScreen(LoadScreenInterface):
             )
 
         self._app = QSplashScreen()
-        self._app.setPixmap(QPixmap(self.configuration['image']))
+        self._app.setPixmap(QPixmap(self._configuration['image']))
 
         screen = QGuiApplication.primaryScreen().geometry()
         self._app.move((screen.width() - self._app.size().width()) / 2,

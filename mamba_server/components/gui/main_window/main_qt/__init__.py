@@ -20,7 +20,7 @@ class MainWindow(MainWindowInterface):
             []) if QApplication.instance() is None else QApplication.instance(
             )
         self._app = QMainWindow()
-        self._app.setWindowTitle(self.configuration['title'])
+        self._app.setWindowTitle(self._configuration['title'])
         self._menu_bar = self._app.menuBar()
         self._menus = {}
         self._menu_actions = []
