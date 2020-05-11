@@ -1,4 +1,4 @@
-""" Splash screen implemented with tkinter"""
+""" Splash screen implemented with TkInter """
 
 import os
 import tkinter as tk
@@ -8,7 +8,7 @@ from mamba_server.components.gui.load_screen.interface import \
 
 
 class LoadScreen(LoadScreenInterface):
-    """ Splash screen implemented with tkinter"""
+    """ Splash screen implemented with TkInter """
 
     def __init__(self, context=None):
         super(LoadScreen, self).__init__(os.path.dirname(__file__), context)

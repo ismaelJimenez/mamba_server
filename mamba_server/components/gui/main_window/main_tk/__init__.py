@@ -1,11 +1,15 @@
+""" Main window implemented with TkInter """
+
 import os
 import tkinter as tk
 
-from mamba_server.components.gui.main_window.interface import MainWindowInterface
+from mamba_server.components.gui.main_window.interface import \
+    MainWindowInterface
 from mamba_server.exceptions import ComponentConfigException
 
 
 class MainWindow(MainWindowInterface):
+    """ Main window implemented with TkInter """
     def __init__(self, context=None):
         super(MainWindow, self).__init__(os.path.dirname(__file__), context)
 
@@ -127,7 +131,8 @@ class MainWindow(MainWindowInterface):
             search_menu (str): The searched menu name.
 
         Returns:
-            tk.Menu: Menu with title "search_menu". None is menu has not been found.
+            tk.Menu: Menu with title "search_menu". None is menu has
+                     not been found.
         """
         if search_menu in self._menus:
             return self._menus[search_menu]

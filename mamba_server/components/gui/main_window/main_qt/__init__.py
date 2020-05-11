@@ -1,13 +1,18 @@
+""" Main window implemented with Qt5 """
+
 import os
 
-from PySide2.QtWidgets import QApplication, QMainWindow, QWidget, QMenu, QAction
+from PySide2.QtWidgets import QApplication, QMainWindow, QWidget, \
+    QMenu, QAction
 from PySide2.QtCore import QTimer
 
-from mamba_server.components.gui.main_window.interface import MainWindowInterface
+from mamba_server.components.gui.main_window.interface import \
+    MainWindowInterface
 from mamba_server.exceptions import ComponentConfigException
 
 
 class MainWindow(MainWindowInterface):
+    """ Main window implemented with Qt5 """
     def __init__(self, context=None):
         super(MainWindow, self).__init__(os.path.dirname(__file__), context)
 
@@ -130,7 +135,8 @@ class MainWindow(MainWindowInterface):
             search_menu (str): The searched menu name.
 
         Returns:
-            QMenu: Menu with title "search_menu". None is menu has not been found.
+            QMenu: Menu with title "search_menu". None is menu has
+                   not been found.
         """
         if search_menu in self._menus:
             return self._menus[search_menu]

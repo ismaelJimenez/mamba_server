@@ -1,20 +1,15 @@
-""" The LoadScreen components enable showing an screen during load.
-"""
+""" The LoadScreen components enable showing an screen during load."""
 
 import os
 
 from mamba_server.components.interface import ComponentInterface
 
-SETTINGS_FILE = "settings.json"
-COMPONENT_CONFIG_FILE = "component.config.json"
-
 
 class MainWindowInterface(ComponentInterface):
+    """ The LoadScreen components enable showing an screen during load."""
     def __init__(self, folder, context):
-        super(MainWindowInterface, self).__init__(
-            os.path.dirname(__file__),
-            folder,
-            context)
+        super(MainWindowInterface, self).__init__(os.path.dirname(__file__),
+                                                  folder, context)
 
     def register_action(self,
                         menu_title,
