@@ -1,7 +1,4 @@
-import pytest
-import tkinter as tk
-
-from mamba_server.components.gui.load_screen.splash.splash_tk import LoadScreen
+from mamba_server.components.gui.load_screen.splash.splash_qt import LoadScreen
 from mamba_server.context import Context
 
 
@@ -12,13 +9,10 @@ def test_splash_tk_wo_context():
     assert widget.configuration == {'image': '/home/argos/Workspace/'
                                              'mamba-framework/mamba-server/'
                                              'artwork/mamba_loading.png'}
-    assert 'photo' == widget._image.type()
-    assert widget._canvas.winfo_exists()
+    assert not widget._app.pixmap().isNull()
 
     # Test window is hidden per default
-    assert widget._app.winfo_ismapped() == 0
-
-    widget.close()
+    assert widget._app.isHidden()
 
 
 def test_splash_tk_w_context():
@@ -28,72 +22,65 @@ def test_splash_tk_w_context():
     assert widget.configuration == {'image': '/home/argos/Workspace/'
                                              'mamba-framework/mamba-server/'
                                              'artwork/mamba_loading.png'}
-    assert 'photo' == widget._image.type()
-    assert widget._canvas.winfo_exists()
+    assert not widget._app.pixmap().isNull()
 
     # Test window is hidden per default
-    assert widget._app.winfo_ismapped() == 0
-
-    widget.close()
+    assert widget._app.isHidden()
 
 
-def test_splash_tk_show():
+def test_splash_qt_show():
     widget = LoadScreen()
 
     # Test window is hidden per default
-    assert widget._app.winfo_ismapped() == 0
+    assert not widget._app.isVisible()
 
     # Test window show
     widget.show()
-    assert widget._app.winfo_ismapped() == 1
-
-    widget.close()
+    assert widget._app.isVisible()
 
 
-def test_splash_tk_hide():
+def test_splash_qt_hide():
     widget = LoadScreen()
 
     # Test window is hidden per default
-    assert widget._app.winfo_ismapped() == 0
+    assert not widget._app.isVisible()
 
     # Test window show
     widget.show()
-    assert widget._app.winfo_ismapped() == 1
+    assert widget._app.isVisible()
 
     # Test window hide
     widget.hide()
-    assert widget._app.winfo_ismapped() == 0
+    assert not widget._app.isVisible()
 
     # Test window hide does not destroy window
     widget.show()
-    assert widget._app.winfo_ismapped() == 1
-
-    widget.close()
+    assert widget._app.isVisible()
 
 
-def test_splash_tk_close():
+def test_splash_qt_close():
     widget = LoadScreen()
 
     # Test window show
     widget.show()
-    assert widget._app.winfo_ismapped() == 1
+    assert widget._app.isVisible()
 
     # Test window close
     widget.close()
-
-    with pytest.raises(tk.TclError) as excinfo:
-        widget._app.winfo_ismapped()
-    assert 'application has been destroyed' in str(excinfo.value)
+    assert not widget._app.isVisible()
 
 
-def test_splash_tk_event_loop_after_close():
+def test_main_qt_event_loop_after():
     widget = LoadScreen()
 
+    # Test window show
+    widget.show()
+    assert widget._app.isVisible()
+
     # Close window after 100 milliseconds
-    widget.after(100, widget.close)
+    widget.after(100, widget._qt_app.quit)
     widget.start_event_loop()
 
-    with pytest.raises(tk.TclError) as excinfo:
-        widget._app.winfo_ismapped()
-    assert 'application has been destroyed' in str(excinfo.value)
+    # If it gets here it worked
+    assert True
 
