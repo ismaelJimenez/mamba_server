@@ -18,7 +18,7 @@ def execute():
 
         if 'load_screen' in info:
             load_screen = LoadScreen(context)
-            load_screen.execute()
+            load_screen.show()
 
             start_time = time.time()
 
@@ -47,8 +47,9 @@ def execute():
             load_screen.after(min_splash_time - (time.time() - start_time),
                               load_screen.close)
 
-            context.get('main_window').after(min_splash_time - (time.time() - start_time),
-                              context.get('main_window').show)
+            context.get('main_window').after(
+                min_splash_time - (time.time() - start_time),
+                context.get('main_window').show)
 
     # Start the event loop.
     context.get('main_window').start_event_loop()

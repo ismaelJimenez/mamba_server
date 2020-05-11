@@ -105,7 +105,6 @@ def test_main_tk_event_loop_after():
     widget.after(100, widget.close)
     widget.start_event_loop()
 
-    # Test window is hidden per default
     assert widget._app.winfo_ismapped() == 0
 
 

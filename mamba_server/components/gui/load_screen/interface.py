@@ -13,26 +13,32 @@ class LoadScreenInterface(ComponentInterface):
             folder,
             context)
 
-    def execute(self):
+    def show(self):
         """
-        Entry point for running load screen
+        Entry point for showing main screen
+        """
+        raise NotImplementedError
+
+    def hide(self):
+        """
+        Entry point for hiding main screen
         """
         raise NotImplementedError
 
     def close(self):
         """
-        Entry point for closing load screen
+        Entry point for closing main screen
+        """
+        raise NotImplementedError
+
+    def start_event_loop(self):
+        """
+        Entry point for starting main window event loop.
         """
         raise NotImplementedError
 
     def after(self, time_msec, action):
         """
         Entry point for performing an action after given milliseconds.
-        """
-        raise NotImplementedError
-
-    def start_event_loop(self):
-        """
-        Entry point for starting event loop.
         """
         raise NotImplementedError

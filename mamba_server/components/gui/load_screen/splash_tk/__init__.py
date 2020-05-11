@@ -1,5 +1,4 @@
 import os
-
 import tkinter as tk
 
 from mamba_server.components.gui.load_screen.interface import LoadScreenInterface
@@ -9,41 +8,73 @@ class LoadScreen(LoadScreenInterface):
     def __init__(self, context=None):
         super(LoadScreen, self).__init__(os.path.dirname(__file__), context)
 
-        self.app = tk.Tk()
+        self._app = tk.Tk()
+        self._app.overrideredirect(True)
+        self.hide()
 
-    def execute(self):
         image_file = self.configuration['image']
-        self.image = tk.PhotoImage(file=image_file)
+        self._image = tk.PhotoImage(file=image_file)
 
-        # show no frame
-        self.app.overrideredirect(True)
-        screen_width = self.app.winfo_screenwidth()
-        screen_height = self.app.winfo_screenheight()
-        self.app.geometry('%dx%d+%d+%d' % (self.image.width(), self.image.height(),
-                                       (screen_width - self.image.width()) / 2,
-                                       (screen_height - self.image.height()) / 2))
+        screen_width = self._app.winfo_screenwidth()
+        screen_height = self._app.winfo_screenheight()
+        self._app.geometry('%dx%d+%d+%d' %
+                          (self._image.width(), self._image.height(),
+                           (screen_width - self._image.width()) / 2,
+                           (screen_height - self._image.height()) / 2))
 
-        canvas = tk.Canvas(self.app,
-                           height=self.image.height(),
-                           width=self.image.width(),
+        self._canvas = tk.Canvas(self._app,
+                           height=self._image.height(),
+                           width=self._image.width(),
                            bg="brown")
-        canvas.create_image(self.image.width() / 2, self.image.height() / 2, image=self.image)
-        canvas.pack()
+        self._canvas.create_image(self._image.width() / 2,
+                            self._image.height() / 2,
+                            image=self._image)
+        self._canvas.pack()
 
-        self.app.update()
+    def show(self):
+        """
+        Entry point for showing main screen
+        """
+        self._app.update()
+        self._app.deiconify()
+
+    def hide(self):
+        """
+        Entry point for hiding main screen
+        """
+        self._app.withdraw()
+        self._app.update()
 
     def close(self):
-        self.app.destroy()
+        """
+        Entry point for closing main screen
+        """
 
-    def after(self, time_msec, action):
-        self.app.after(int(time_msec), action)
+        # INFO: quit() stops the TCL interpreter, so the Tkinter - app will
+        # stop. destroy() just terminates the mainloop and deletes all
+        # widgets.
+
+        self._app.destroy()
 
     def start_event_loop(self):
-        self.app.mainloop()
+        """
+        Enters the main event loop and waits until close() is called.
 
+        It is necessary to call this function to start event handling.The
+        main event loop receives events from the window system and dispatches
+        these to the application widgets.
 
-if __name__ == '__main__':
-    load_screen = LoadScreen()
-    load_screen.execute()
-    load_screen.start_event_loop()
+        Generally, no user interaction can take place before calling
+        start_event_loop().
+        """
+        self._app.mainloop()
+
+    def after(self, time_msec, action):
+        """ Make the application perform an action after a time delay.
+
+        Args:
+            time_msec (int): The time in milliseconds to delay he action.
+            action (function): The action to execute after time_msec delay.
+        """
+        self._app.after(int(time_msec), action)
 
