@@ -9,9 +9,12 @@ def test_splash_tk_wo_context():
     widget = LoadScreen()
 
     # Test default configuration
-    assert widget.configuration == {'image': '/home/argos/Workspace/'
-                                             'mamba-framework/mamba-server/'
-                                             'artwork/mamba_loading.png'}
+    assert widget.configuration == {
+        'image':
+        '/home/argos/Workspace/'
+        'mamba-framework/mamba-server/'
+        'artwork/mamba_loading.png'
+    }
     assert 'photo' == widget._image.type()
     assert widget._canvas.winfo_exists()
 
@@ -25,9 +28,12 @@ def test_splash_tk_w_context():
     widget = LoadScreen(Context())
 
     # Test default configuration
-    assert widget.configuration == {'image': '/home/argos/Workspace/'
-                                             'mamba-framework/mamba-server/'
-                                             'artwork/mamba_loading.png'}
+    assert widget.configuration == {
+        'image':
+        '/home/argos/Workspace/'
+        'mamba-framework/mamba-server/'
+        'artwork/mamba_loading.png'
+    }
     assert 'photo' == widget._image.type()
     assert widget._canvas.winfo_exists()
 
@@ -96,4 +102,3 @@ def test_splash_tk_event_loop_after_close():
     with pytest.raises(tk.TclError) as excinfo:
         widget._app.winfo_ismapped()
     assert 'application has been destroyed' in str(excinfo.value)
-

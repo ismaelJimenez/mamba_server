@@ -1,10 +1,15 @@
+""" Splash screen implemented with tkinter"""
+
 import os
 import tkinter as tk
 
-from mamba_server.components.gui.load_screen.interface import LoadScreenInterface
+from mamba_server.components.gui.load_screen.interface import \
+    LoadScreenInterface
 
 
 class LoadScreen(LoadScreenInterface):
+    """ Splash screen implemented with tkinter"""
+
     def __init__(self, context=None):
         super(LoadScreen, self).__init__(os.path.dirname(__file__), context)
 
@@ -18,17 +23,17 @@ class LoadScreen(LoadScreenInterface):
         screen_width = self._app.winfo_screenwidth()
         screen_height = self._app.winfo_screenheight()
         self._app.geometry('%dx%d+%d+%d' %
-                          (self._image.width(), self._image.height(),
-                           (screen_width - self._image.width()) / 2,
-                           (screen_height - self._image.height()) / 2))
+                           (self._image.width(), self._image.height(),
+                            (screen_width - self._image.width()) / 2,
+                            (screen_height - self._image.height()) / 2))
 
         self._canvas = tk.Canvas(self._app,
-                           height=self._image.height(),
-                           width=self._image.width(),
-                           bg="brown")
+                                 height=self._image.height(),
+                                 width=self._image.width(),
+                                 bg="brown")
         self._canvas.create_image(self._image.width() / 2,
-                            self._image.height() / 2,
-                            image=self._image)
+                                  self._image.height() / 2,
+                                  image=self._image)
         self._canvas.pack()
 
     def show(self):
@@ -77,4 +82,3 @@ class LoadScreen(LoadScreenInterface):
             action (function): The action to execute after time_msec delay.
         """
         self._app.after(int(time_msec), action)
-

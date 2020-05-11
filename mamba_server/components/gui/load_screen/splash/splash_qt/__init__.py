@@ -1,13 +1,18 @@
+""" Splash screen implemented with qt"""
+
 import os
 
 from PySide2.QtWidgets import QApplication, QSplashScreen
 from PySide2.QtGui import QPixmap, QGuiApplication
 from PySide2.QtCore import QTimer
 
-from mamba_server.components.gui.load_screen.interface import LoadScreenInterface
+from mamba_server.components.gui.load_screen.interface import \
+    LoadScreenInterface
 
 
 class LoadScreen(LoadScreenInterface):
+    """ Splash screen implemented with qt"""
+
     def __init__(self, context=None):
         super(LoadScreen, self).__init__(os.path.dirname(__file__), context)
 
@@ -19,9 +24,8 @@ class LoadScreen(LoadScreenInterface):
         self._app.setPixmap(QPixmap(self.configuration['image']))
 
         screen = QGuiApplication.primaryScreen().geometry()
-        self._app.move(
-            (screen.width() - self._app.size().width()) / 2,
-            (screen.height() - self._app.size().height()) / 2)
+        self._app.move((screen.width() - self._app.size().width()) / 2,
+                       (screen.height() - self._app.size().height()) / 2)
 
     def show(self):
         """
