@@ -38,7 +38,7 @@ class GuiPluginInterface:
                 action_name=self.configuration['name'],
                 component_action=self.execute,
                 shortcut=self.configuration['shortcut'],
-                statusTip=self.configuration['status_tip'])
+                status_tip=self.configuration['status_tip'])
 
     def execute(self):
         """

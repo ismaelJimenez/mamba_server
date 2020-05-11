@@ -10,6 +10,7 @@ class MainWindow(MainWindowInterface):
         super(MainWindow, self).__init__(os.path.dirname(__file__), context)
 
         self._app = tk.Tk()
+        self._app.title(self.configuration['title'])
         self.hide()
         self._menu_bar = tk.Menu(self._app)
         self._app.config(menu=self._menu_bar)
