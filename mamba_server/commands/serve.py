@@ -1,11 +1,14 @@
+import os
 from mamba_server.commands import MambaCommand
 
-from mamba_server.cmdline import execute
+from mamba_server.context_composer import execute
 
 
 class Command(MambaCommand):
-    def short_desc(self):
+    @staticmethod
+    def short_desc():
         return "Start mamba server"
 
-    def run(self, args):
-        execute()
+    @staticmethod
+    def run(args):
+        execute(os.path.join('launch', 'default_tk.launch.json'))

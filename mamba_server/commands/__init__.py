@@ -1,24 +1,28 @@
 class MambaCommand:
-    def syntax(self):
+    @staticmethod
+    def syntax():
         """
         Command syntax (preferably one-line). Do not include command name.
         """
         return ""
 
-    def short_desc(self):
+    @staticmethod
+    def short_desc():
         """
         A short description of the command
         """
         return ""
 
-    def long_desc(self):
+    @staticmethod
+    def long_desc():
         """A long description of the command. Return short description when not
         available. It cannot contain newlines, since contents will be formatted
         by optparser which removes newlines and wraps text.
         """
-        return self.short_desc()
+        return MambaCommand.short_desc()
 
-    def run(self, args):
+    @staticmethod
+    def run(args):
         """
         Entry point for running commands
         """

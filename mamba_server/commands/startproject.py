@@ -4,13 +4,16 @@ from mamba_server.commands import MambaCommand
 
 
 class Command(MambaCommand):
-    def syntax(self):
+    @staticmethod
+    def syntax():
         return "<project_name>"
 
-    def short_desc(self):
+    @staticmethod
+    def short_desc():
         return "Create new project"
 
-    def run(self, args):
+    @staticmethod
+    def run(args):
         project_name = args[0]
 
         os.mkdir(project_name)
