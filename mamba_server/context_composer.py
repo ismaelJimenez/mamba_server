@@ -4,8 +4,10 @@ import time
 
 from mamba_server.context import Context
 from mamba_server.utils.misc import get_component, get_components
-from mamba_server.components.gui.load_screen.interface import LoadScreenInterface
-from mamba_server.components.gui.main_window.interface import MainWindowInterface
+from mamba_server.components.gui.load_screen.interface import \
+    LoadScreenInterface
+from mamba_server.components.gui.main_window.interface import \
+    MainWindowInterface
 from mamba_server.components.gui.plugins.interface import GuiPluginInterface
 
 

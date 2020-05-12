@@ -3,6 +3,7 @@ include LICENSE
 include MANIFEST.in
 
 recursive-include mamba_server *
+recursive-include artwork *.png
 
 recursive-include extras *
 recursive-include tests *
