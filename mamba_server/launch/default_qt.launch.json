@@ -1,12 +1,9 @@
 {
-  "app": {
-    "min_load_screen_secs": 5
-  },
   "load_screen": {
     "component": "splash_qt",
     "min_seconds": 5
   },
-  "main_window": {
+  "app": {
     "component": "main_qt"
   },
   "gui_plugins": [

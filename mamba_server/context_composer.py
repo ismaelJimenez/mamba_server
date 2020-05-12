@@ -58,13 +58,13 @@ def execute(launch_file):
 
             min_load_screen_time = None
 
-            if ('app' in launch_config) and ('min_load_screen_secs' in launch_config['app']):
-                min_load_screen_time = launch_config['app']['min_load_screen_secs'] * 1000
+            if 'min_seconds' in launch_config['load_screen']:
+                min_load_screen_time = launch_config['load_screen']['min_seconds'] * 1000
                 start_time = time.time()
 
         # Start Main Window Component, if any
-        if 'main_window' in launch_config:
-            main_window = get_component(launch_config['main_window']['component'],
+        if 'app' in launch_config:
+            main_window = get_component(launch_config['app']['component'],
                                          'mamba_server.components.gui.main_window',
                                          MainWindowInterface, context)
 
@@ -83,10 +83,13 @@ def execute(launch_file):
                               load_screen.close)
             load_screen.start_event_loop()
 
-        # Start the event loop.
-        context.get('main_window').show()
-        context.get('main_window').start_event_loop()
+        # Start Main Window Component, if any
+        if 'app' in launch_config:
+            context.get('main_window').show()
+
+            # Start the event loop.
+            context.get('main_window').start_event_loop()
 
 
 if __name__ == '__main__':
-    execute(os.path.join('launch', 'default_qt.launch.json'))
+    execute(os.path.join('launch', 'default_tk.launch.json'))
