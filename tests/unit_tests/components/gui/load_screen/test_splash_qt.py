@@ -6,7 +6,7 @@ def test_splash_tk_wo_context():
     widget = LoadScreen()
 
     # Test default configuration
-    assert 'mamba-server/artwork/mamba_loading.png' in widget._configuration['image']
+    assert 'artwork/mamba_loading.png' in widget._configuration['image']
     assert not widget._app.pixmap().isNull()
 
     # Test window is hidden per default
@@ -19,7 +19,7 @@ def test_splash_tk_w_context():
     widget = LoadScreen(Context())
 
     # Test default configuration
-    assert 'mamba-server/artwork/mamba_loading.png' in widget._configuration['image']
+    assert 'artwork/mamba_loading.png' in widget._configuration['image']
     assert not widget._app.pixmap().isNull()
 
     # Test window is hidden per default
