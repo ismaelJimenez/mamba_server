@@ -1,9 +1,11 @@
-"""Mamba generic utility functions for commands and components"""
+""" Mamba generic utility functions for commands and components """
 
 import inspect
 
 from importlib import import_module
 from pkgutil import iter_modules
+
+from mamba_server.exceptions import LaunchFileException
 
 
 def get_classes_from_module(module, search_class):
@@ -16,6 +18,67 @@ def get_classes_from_module(module, search_class):
         cls_name = cls.__module__.split('.')[-1]
         classes_dict[cls_name] = cls
     return classes_dict
+
+
+def get_component(used_component, module, component_type, context):
+    """Returns an instantiated component with context.
+
+    Args:
+        used_component (str): The identifier of the component.
+        module (str): The folder where to look for the component.
+        component_type (class): The class type of the component.
+        context (Context): The application context to instantiate
+                           the component with.
+
+    Returns:
+        The instantiated component.
+
+    Raises:
+        LaunchFileException: If no component with the given id is found.
+
+    """
+
+    all_components_by_type = get_classes_from_module(module, component_type)
+
+    if used_component in all_components_by_type:
+        return all_components_by_type[used_component](context)
+
+    raise LaunchFileException(
+        "'{}' is not a valid component identifier".format(used_component))
+
+
+def get_components(used_components, module, component_type, context):
+    """Returns a dictionary of instantiated components with context.
+
+    Args:
+        used_components (list<str>): The identifiers of the components.
+        module (str): The folder where to look for the components.
+        component_type (class): The class type of the components.
+        context (Context): The application context to instantiate
+                           the components with.
+
+    Returns:
+        The instantiated dictionary of components.
+
+    Raises:
+        LaunchFileException: If a given component id is not found.
+
+    """
+
+    all_components_by_type = get_classes_from_module(module, component_type)
+
+    dict_used_components = {}
+
+    for used_component in used_components:
+        if used_component in all_components_by_type:
+            dict_used_components[used_component] = all_components_by_type[
+                used_component](context)
+        else:
+            raise LaunchFileException(
+                "'{}' is not a valid component identifier".format(
+                    used_component))
+
+    return dict_used_components
 
 
 def _walk_modules(path):

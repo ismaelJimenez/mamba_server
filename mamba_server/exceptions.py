@@ -10,6 +10,11 @@ class ComponentConfigException(Exception):
     pass
 
 
+class LaunchFileException(Exception):
+    """Indicates a wrong launch file situation"""
+    pass
+
+
 # Internal
 
 

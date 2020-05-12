@@ -60,6 +60,3 @@ def test_about_gui_plugin_w_menu_window():
     # Test menu is in menu bar
     assert main_window._exists_menu('Help')
     assert main_window._is_action_in_menu('Help', 'About')
-
-
-
