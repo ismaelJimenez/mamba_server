@@ -3,6 +3,7 @@
 import os
 import tkinter as tk
 
+from mamba_server.utils.misc import path_from_string
 from mamba_server.components.gui.load_screen.interface import \
     LoadScreenInterface
 
@@ -16,7 +17,7 @@ class LoadScreen(LoadScreenInterface):
         self._app.overrideredirect(True)
         self.hide()
 
-        image_file = self._configuration['image']
+        image_file = path_from_string(self._configuration['image'])
         self._image = tk.PhotoImage(file=image_file)
 
         screen_width = self._app.winfo_screenwidth()

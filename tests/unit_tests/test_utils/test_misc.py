@@ -27,7 +27,8 @@ class TestClass:
         pass
 
     def test_get_classes_from_module_commands(self):
-        cmds = misc.get_classes_from_module('mamba_server.commands', MambaCommand)
+        cmds = misc.get_classes_from_module('mamba_server.commands',
+                                            MambaCommand)
         assert len(cmds) == 2
         assert 'serve' in cmds
         assert 'startproject' in cmds
@@ -36,15 +37,17 @@ class TestClass:
         assert misc.get_classes_from_module('mamba_server.commands',
                                             GuiPluginInterface) == {}
 
-    def test_get_classes_from_module_components_class_gui_plugin_recursive(self):
-        classes_dict = misc.get_classes_from_module('mamba_server.components.gui',
-                                                    GuiPluginInterface)
+    def test_get_classes_from_module_components_class_gui_plugin_recursive(
+            self):
+        classes_dict = misc.get_classes_from_module(
+            'mamba_server.components.gui', GuiPluginInterface)
         assert len(classes_dict) == 3
         assert 'about_qt' in classes_dict
         assert 'about_tk' in classes_dict
         assert 'quit' in classes_dict
 
-    def test_get_classes_from_module_components_class_gui_plugin_subfolder(self):
+    def test_get_classes_from_module_components_class_gui_plugin_subfolder(
+            self):
         classes_dict = misc.get_classes_from_module(
             'mamba_server.components.gui.plugins.about.about_qt',
             GuiPluginInterface)
@@ -53,13 +56,14 @@ class TestClass:
 
     def test_get_component_valid_id_and_type(self):
         components_dict = misc.get_component(
-            'about_qt', 'mamba_server.components.gui.plugins', GuiPluginInterface,
-            Context())
+            'about_qt', 'mamba_server.components.gui.plugins',
+            GuiPluginInterface, Context())
         assert components_dict is not None
 
     def test_get_component_valid_id_wrong_type(self):
         with pytest.raises(LaunchFileException) as excinfo:
-            misc.get_component('about_qt', 'mamba_server.components.gui.plugins',
+            misc.get_component('about_qt',
+                               'mamba_server.components.gui.plugins',
                                LoadScreenInterface, Context())
 
         assert 'not a valid component identifier' in str(excinfo.value)
@@ -81,7 +85,11 @@ class TestClass:
         assert 'not a valid component identifier' in str(excinfo.value)
 
     def test_path_from_string(self):
-        assert "../artwork/mamba_loading.png" == misc.path_from_string("..\\artwork\\mamba_loading.png")
-        assert "C:/artwork/mamba_loading.png" == misc.path_from_string("C:\\artwork\\mamba_loading.png")
-        assert "/home/artwork/mamba_loading.png" == misc.path_from_string("/home/artwork/mamba_loading.png")
-        assert "../artwork/mamba_loading.png" == misc.path_from_string("../artwork/mamba_loading.png")
+        assert "../artwork/mamba_loading.png" == misc.path_from_string(
+            "..\\artwork\\mamba_loading.png")
+        assert "C:/artwork/mamba_loading.png" == misc.path_from_string(
+            "C:\\artwork\\mamba_loading.png")
+        assert "/home/artwork/mamba_loading.png" == misc.path_from_string(
+            "/home/artwork/mamba_loading.png")
+        assert "../artwork/mamba_loading.png" == misc.path_from_string(
+            "../artwork/mamba_loading.png")

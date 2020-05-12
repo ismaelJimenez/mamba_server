@@ -6,6 +6,7 @@ from PySide2.QtWidgets import QApplication, QSplashScreen
 from PySide2.QtGui import QPixmap, QGuiApplication
 from PySide2.QtCore import QTimer
 
+from mamba_server.utils.misc import path_from_string
 from mamba_server.components.gui.load_screen.interface import \
     LoadScreenInterface
 
@@ -20,7 +21,8 @@ class LoadScreen(LoadScreenInterface):
             )
 
         self._app = QSplashScreen()
-        self._app.setPixmap(QPixmap(self._configuration['image']))
+        self._app.setPixmap(
+            QPixmap(path_from_string(self._configuration['image'])))
 
         screen = QGuiApplication.primaryScreen().geometry()
         self._app.move((screen.width() - self._app.size().width()) / 2,

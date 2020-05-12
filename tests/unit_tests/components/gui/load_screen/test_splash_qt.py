@@ -1,89 +1,86 @@
+import os
+
 from mamba_server.components.gui.load_screen.splash.splash_qt import LoadScreen
 from mamba_server.context import Context
 
 
-def test_splash_tk_wo_context():
-    widget = LoadScreen()
+class TestClass:
+    def setup_class(self):
+        """ setup_class called once for the class """
+        os.chdir(
+            os.path.join(os.path.dirname(__file__), '..', '..', '..', '..'))
 
-    # Test default configuration
-    assert 'artwork/mamba_loading.png' in widget._configuration['image']
-    assert not widget._app.pixmap().isNull()
+    def teardown_class(self):
+        """ teardown_class called once for the class """
+        pass
 
-    # Test window is hidden per default
-    assert widget._app.isHidden()
+    def setup_method(self):
+        """ setup_method called for every method """
+        self.widget = LoadScreen(Context())
 
-    widget.close()
+    def teardown_method(self):
+        """ teardown_method called for every method """
+        self.widget.close()
 
+    def test_splash_tk_wo_context(self):
+        self.widget = LoadScreen()
 
-def test_splash_tk_w_context():
-    widget = LoadScreen(Context())
+        # Test default configuration
+        assert 'mamba_loading.png' in self.widget._configuration['image']
+        assert not self.widget._app.pixmap().isNull()
 
-    # Test default configuration
-    assert 'artwork/mamba_loading.png' in widget._configuration['image']
-    assert not widget._app.pixmap().isNull()
+        # Test window is hidden per default
+        assert self.widget._app.isHidden()
 
-    # Test window is hidden per default
-    assert widget._app.isHidden()
+    def test_splash_tk_w_context(self):
+        # Test default configuration
+        assert 'mamba_loading.png' in self.widget._configuration['image']
+        assert not self.widget._app.pixmap().isNull()
 
-    widget.close()
+        # Test window is hidden per default
+        assert self.widget._app.isHidden()
 
+    def test_splash_qt_show(self):
+        # Test window is hidden per default
+        assert not self.widget._app.isVisible()
 
-def test_splash_qt_show():
-    widget = LoadScreen()
+        # Test window show
+        self.widget.show()
+        assert self.widget._app.isVisible()
 
-    # Test window is hidden per default
-    assert not widget._app.isVisible()
+    def test_splash_qt_hide(self):
+        # Test window is hidden per default
+        assert not self.widget._app.isVisible()
 
-    # Test window show
-    widget.show()
-    assert widget._app.isVisible()
+        # Test window show
+        self.widget.show()
+        assert self.widget._app.isVisible()
 
-    widget.close()
+        # Test window hide
+        self.widget.hide()
+        assert not self.widget._app.isVisible()
 
+        # Test window hide does not destroy window
+        self.widget.show()
+        assert self.widget._app.isVisible()
 
-def test_splash_qt_hide():
-    widget = LoadScreen()
+    def test_splash_qt_close(self):
+        # Test window show
+        self.widget.show()
+        assert self.widget._app.isVisible()
 
-    # Test window is hidden per default
-    assert not widget._app.isVisible()
+        # Test window close
+        self.widget.close()
+        assert not self.widget._app.isVisible()
 
-    # Test window show
-    widget.show()
-    assert widget._app.isVisible()
+    def test_main_qt_event_loop_after(self):
+        # Test window show
+        self.widget.show()
+        assert self.widget._app.isVisible()
 
-    # Test window hide
-    widget.hide()
-    assert not widget._app.isVisible()
+        # Close window after 100 milliseconds
+        self.widget.after(100, self.widget._qt_app.quit)
+        self.widget.start_event_loop()
 
-    # Test window hide does not destroy window
-    widget.show()
-    assert widget._app.isVisible()
-
-    widget.close()
-
-
-def test_splash_qt_close():
-    widget = LoadScreen()
-
-    # Test window show
-    widget.show()
-    assert widget._app.isVisible()
-
-    # Test window close
-    widget.close()
-    assert not widget._app.isVisible()
-
-
-def test_main_qt_event_loop_after():
-    widget = LoadScreen()
-
-    # Test window show
-    widget.show()
-    assert widget._app.isVisible()
-
-    # Close window after 100 milliseconds
-    widget.after(100, widget._qt_app.quit)
-    widget.start_event_loop()
-
-    # If it gets here it worked
-    assert True
+        # If it gets here it worked
+        assert True

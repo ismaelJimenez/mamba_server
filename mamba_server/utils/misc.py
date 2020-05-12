@@ -22,7 +22,7 @@ def path_from_string(path_str):
     path = os.path.join(*re.split(r' |/|\\', path_str))
 
     if path_str[0] == '/':  # Fix for absolute path
-        path = '/'+path
+        path = '/' + path
 
     return path
 
