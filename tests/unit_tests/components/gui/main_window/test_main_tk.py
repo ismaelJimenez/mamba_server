@@ -18,6 +18,9 @@ def test_main_tk_wo_context():
     # Test window is hidden per default
     assert widget._app.winfo_ismapped() == 0
 
+    widget.close()
+    widget._app.destroy()
+
 
 def test_main_tk_w_context():
     widget = MainWindow(Context())
@@ -31,6 +34,9 @@ def test_main_tk_w_context():
     # Test window is hidden per default
     assert widget._app.winfo_ismapped() == 0
 
+    widget.close()
+    widget._app.destroy()
+
 
 def test_main_tk_show():
     widget = MainWindow()
@@ -41,6 +47,9 @@ def test_main_tk_show():
     # Test window show
     widget.show()
     assert widget._app.winfo_ismapped() == 1
+
+    widget.close()
+    widget._app.destroy()
 
 
 def test_main_tk_hide():
@@ -61,6 +70,9 @@ def test_main_tk_hide():
     widget.show()
     assert widget._app.winfo_ismapped() == 1
 
+    widget.close()
+    widget._app.destroy()
+
 
 def test_main_tk_close():
     widget = MainWindow()
@@ -77,6 +89,8 @@ def test_main_tk_close():
     #with pytest.raises(tk.TclError) as excinfo:
     #    widget._app.winfo_ismapped()
     #assert 'application has been destroyed' in str(excinfo.value)
+
+    widget._app.destroy()
 
 
 def test_main_tk_register_action():
@@ -97,6 +111,9 @@ def test_main_tk_register_action():
 
     assert 'already exists in menu' in str(excinfo.value)
 
+    widget.close()
+    widget._app.destroy()
+
 
 def test_main_tk_event_loop_after():
     widget = MainWindow()
@@ -106,6 +123,9 @@ def test_main_tk_event_loop_after():
     widget.start_event_loop()
 
     assert widget._app.winfo_ismapped() == 0
+
+    widget.close()
+    widget._app.destroy()
 
 
 def test_internal_main_tk_add_menu():
@@ -117,6 +137,9 @@ def test_internal_main_tk_add_menu():
     widget._add_menu('test_menu')
     assert widget._exists_menu('test_menu')
 
+    widget.close()
+    widget._app.destroy()
+
 
 def test_internal_main_tk_get_menu():
     widget = MainWindow()
@@ -126,3 +149,6 @@ def test_internal_main_tk_get_menu():
     # Add new menu
     widget._add_menu('test_menu')
     assert widget._get_menu('test_menu') is not None
+
+    widget.close()
+    widget._app.destroy()

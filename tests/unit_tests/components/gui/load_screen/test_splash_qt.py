@@ -17,6 +17,7 @@ def test_splash_tk_wo_context():
     # Test window is hidden per default
     assert widget._app.isHidden()
 
+    widget.close()
 
 def test_splash_tk_w_context():
     widget = LoadScreen(Context())
@@ -33,6 +34,8 @@ def test_splash_tk_w_context():
     # Test window is hidden per default
     assert widget._app.isHidden()
 
+    widget.close()
+
 
 def test_splash_qt_show():
     widget = LoadScreen()
@@ -43,6 +46,8 @@ def test_splash_qt_show():
     # Test window show
     widget.show()
     assert widget._app.isVisible()
+
+    widget.close()
 
 
 def test_splash_qt_hide():
@@ -62,6 +67,8 @@ def test_splash_qt_hide():
     # Test window hide does not destroy window
     widget.show()
     assert widget._app.isVisible()
+
+    widget.close()
 
 
 def test_splash_qt_close():
