@@ -55,17 +55,17 @@ def test_get_component_valid_id_wrong_type():
 
 def test_get_components_valid_id_and_type():
     components_dict = misc.get_components(
-        ['about_qt', 'about_tk'], 'mamba_server.components.gui.plugins',
-        GuiPluginInterface, Context())
+        ['about_qt', 'quit'], 'mamba_server.components.gui.plugins',
+        GuiPluginInterface, None)
     assert len(components_dict) == 2
     assert 'about_qt' in components_dict
-    assert 'about_tk' in components_dict
+    assert 'quit' in components_dict
 
 
 def test_get_components_invalid_id():
     with pytest.raises(LaunchFileException) as excinfo:
         misc.get_components(['about_qt', 'about_tk_fail'],
                             'mamba_server.components.gui.plugins',
-                            GuiPluginInterface, Context())
+                            GuiPluginInterface, None)
 
     assert 'not a valid component identifier' in str(excinfo.value)
