@@ -3,8 +3,8 @@
 
 class Context:
     """Application context class"""
-
-    _memory = {}
+    def __init__(self):
+        self._memory = {}
 
     def get(self, parameter):
         """Returns the value of a context parameter, or None if it
