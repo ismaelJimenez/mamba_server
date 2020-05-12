@@ -11,7 +11,8 @@ from mamba_server.exceptions import LaunchFileException
 
 
 def path_from_string(path_str):
-    """Return a valid path from a given path string, formatted with windows or linux slashes.
+    """Return a valid path from a given path string, formatted with windows
+       or linux slashes.
 
     Args:
         path_str (str): The path string formatted in windows or linux style.
