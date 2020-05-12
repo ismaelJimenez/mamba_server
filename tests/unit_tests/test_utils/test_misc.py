@@ -79,3 +79,9 @@ class TestClass:
                                 GuiPluginInterface, Context())
 
         assert 'not a valid component identifier' in str(excinfo.value)
+
+    def test_path_from_string(self):
+        assert "../artwork/mamba_loading.png" == misc.path_from_string("..\\artwork\\mamba_loading.png")
+        assert "C:/artwork/mamba_loading.png" == misc.path_from_string("C:\\artwork\\mamba_loading.png")
+        assert "/home/artwork/mamba_loading.png" == misc.path_from_string("/home/artwork/mamba_loading.png")
+        assert "../artwork/mamba_loading.png" == misc.path_from_string("../artwork/mamba_loading.png")

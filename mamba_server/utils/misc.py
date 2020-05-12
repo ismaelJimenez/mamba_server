@@ -1,11 +1,30 @@
 """ Mamba generic utility functions for commands and components """
 
+import os
+import re
 import inspect
 
 from importlib import import_module
 from pkgutil import iter_modules
 
 from mamba_server.exceptions import LaunchFileException
+
+
+def path_from_string(path_str):
+    """Return a valid path from a given path string, formatted with windows or linux slashes.
+
+    Args:
+        path_str (str): The path string formatted in windows or linux style.
+
+    Returns:
+        The valid path string.
+    """
+    path = os.path.join(*re.split(r' |/|\\', path_str))
+
+    if path_str[0] == '/':  # Fix for absolute path
+        path = '/'+path
+
+    return path
 
 
 def get_classes_from_module(module, search_class):
