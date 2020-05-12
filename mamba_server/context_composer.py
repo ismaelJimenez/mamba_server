@@ -9,9 +9,6 @@ from mamba_server.components.gui.main_window.interface import MainWindowInterfac
 from mamba_server.components.gui.plugins.interface import GuiPluginInterface
 from mamba_server.utils.misc import get_classes_from_module
 
-from mamba_server.components.gui.main_window.main_qt import MainWindow
-from mamba_server.components.gui.load_screen.splash.splash_tk import LoadScreen
-
 
 def get_component(component_name, component_list):
     if component_name in component_list:
@@ -62,7 +59,7 @@ def execute(launch_file):
             min_load_screen_time = None
 
             if ('app' in launch_config) and ('min_load_screen_secs' in launch_config['app']):
-                min_load_screen_time = launch_config['app']['min_load_screen_secs']
+                min_load_screen_time = launch_config['app']['min_load_screen_secs'] * 1000
                 start_time = time.time()
 
         # Start Main Window Component, if any
@@ -81,22 +78,15 @@ def execute(launch_file):
 
             context.set('gui_plugins', gui_plugins)
 
-        if ('load_screen' in launch_config) and ('app' in launch_config) and ('min_load_screen_secs' in launch_config['app']):
-            min_splash_time = launch_config['load_screen']["min_seconds"] * 1000
-
-            load_screen.after(min_splash_time - (time.time() - start_time),
+        if ('load_screen' in launch_config) and (min_load_screen_time is not None):
+            load_screen.after(min_load_screen_time - (time.time() - start_time),
                               load_screen.close)
+            load_screen.start_event_loop()
 
-            context.get('main_window').after(
-                min_splash_time - (time.time() - start_time),
-                context.get('main_window').show)
-
-        else:
-            context.get('main_window').show()
-
-    # Start the event loop.
-    context.get('main_window').start_event_loop()
+        # Start the event loop.
+        context.get('main_window').show()
+        context.get('main_window').start_event_loop()
 
 
 if __name__ == '__main__':
-    execute(os.path.join('launch', 'default_tk.launch.json'))
+    execute(os.path.join('launch', 'default_qt.launch.json'))

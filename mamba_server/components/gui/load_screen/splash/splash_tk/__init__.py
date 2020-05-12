@@ -37,27 +37,28 @@ class LoadScreen(LoadScreenInterface):
 
     def show(self):
         """
-        Entry point for showing main screen
+        Entry point for showing load screen
         """
         self._app.update()
         self._app.deiconify()
 
     def hide(self):
         """
-        Entry point for hiding main screen
+        Entry point for hiding load screen
         """
         self._app.withdraw()
         self._app.update()
 
     def close(self):
         """
-        Entry point for closing main screen
+        Entry point for closing load screen
         """
 
         # INFO: quit() stops the TCL interpreter, so the Tkinter - app will
         # stop. destroy() just terminates the mainloop and deletes all
         # widgets.
 
+        self._app.quit()
         self._app.destroy()
 
     def start_event_loop(self):

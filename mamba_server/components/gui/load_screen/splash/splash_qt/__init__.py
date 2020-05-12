@@ -28,21 +28,22 @@ class LoadScreen(LoadScreenInterface):
 
     def show(self):
         """
-        Entry point for showing main screen
+        Entry point for showing load screen
         """
         self._app.show()
 
     def hide(self):
         """
-        Entry point for hiding main screen
+        Entry point for hiding load screen
         """
         self._app.hide()
 
     def close(self):
         """
-        Entry point for closing main screen
+        Entry point for closing load screen
         """
         self._app.close()
+        self._qt_app.quit()
 
     def start_event_loop(self):
         """
