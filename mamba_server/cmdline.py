@@ -1,5 +1,5 @@
 import sys
-from os import path
+from os import path, getcwd
 import optparse
 
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
@@ -65,8 +65,9 @@ def execute(argv=None):
     opts, args = parser.parse_args(args=argv[1:])
 
     mamba_dir = path.dirname(path.abspath(__file__))
+    project_dir = getcwd()
 
-    cmd.run(args, opts, mamba_dir)
+    cmd.run(args, opts, mamba_dir, project_dir)
 
 
 if __name__ == '__main__':
