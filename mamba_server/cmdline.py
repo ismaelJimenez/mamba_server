@@ -1,9 +1,14 @@
 import sys
+from os import path
 import optparse
 
+sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+
+#pylint: disable=wrong-import-position
 import mamba_server
 from mamba_server.commands import MambaCommand
 from mamba_server.utils.misc import get_classes_from_module
+#pylint: enable=wrong-import-position
 
 
 def _pop_command_name(argv):
@@ -59,7 +64,9 @@ def execute(argv=None):
     cmd.add_options(parser)
     opts, args = parser.parse_args(args=argv[1:])
 
-    cmd.run(args, opts)
+    mamba_dir = path.dirname(path.abspath(__file__))
+
+    cmd.run(args, opts, mamba_dir)
 
 
 if __name__ == '__main__':

@@ -17,7 +17,9 @@ class LoadScreen(LoadScreenInterface):
         self._app.overrideredirect(True)
         self.hide()
 
-        image_file = path_from_string(self._configuration['image'])
+        image_file = os.path.join(
+            self._context.get('mamba_dir'),
+            path_from_string(self._configuration['image']))
         self._image = tk.PhotoImage(file=image_file)
 
         screen_width = self._app.winfo_screenwidth()

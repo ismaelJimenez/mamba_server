@@ -22,7 +22,9 @@ class LoadScreen(LoadScreenInterface):
 
         self._app = QSplashScreen()
         self._app.setPixmap(
-            QPixmap(path_from_string(self._configuration['image'])))
+            QPixmap(
+                os.path.join(self._context.get('mamba_dir'),
+                             path_from_string(self._configuration['image']))))
 
         screen = QGuiApplication.primaryScreen().geometry()
         self._app.move((screen.width() - self._app.size().width()) / 2,

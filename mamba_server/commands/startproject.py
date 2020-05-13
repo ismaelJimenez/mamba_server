@@ -13,7 +13,7 @@ class Command(MambaCommand):
         return "Create new project"
 
     @staticmethod
-    def run(args, opts):
+    def run(args, opts, mamba_dir):
         project_name = args[0]
 
         os.mkdir(project_name)

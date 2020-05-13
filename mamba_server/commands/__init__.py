@@ -29,7 +29,7 @@ class MambaCommand:
         pass
 
     @staticmethod
-    def run(args, opts):
+    def run(args, opts, mamba_dir):
         """
         Entry point for running commands
         """

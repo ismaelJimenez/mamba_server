@@ -11,8 +11,9 @@ from mamba_server.components.gui.main_window.interface import \
 from mamba_server.components.gui.plugins.interface import GuiPluginInterface
 
 
-def execute(launch_file):
+def execute(launch_file, mamba_dir):
     context = Context()
+    context.set('mamba_dir', mamba_dir)
 
     with open(launch_file) as f:
         launch_config = json.load(f)
