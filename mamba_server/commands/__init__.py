@@ -22,7 +22,14 @@ class MambaCommand:
         return MambaCommand.short_desc()
 
     @staticmethod
-    def run(args):
+    def add_options(parser):
+        """
+        Populate option parse with options available for this command
+        """
+        pass
+
+    @staticmethod
+    def run(args, opts):
         """
         Entry point for running commands
         """

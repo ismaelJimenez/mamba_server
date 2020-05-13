@@ -13,11 +13,15 @@ class Command(MambaCommand):
         return "Create new project"
 
     @staticmethod
-    def run(args):
+    def run(args, opts):
         project_name = args[0]
 
         os.mkdir(project_name)
+        with open(os.path.join(project_name, 'mamba.cfg'), 'w') as fp:
+            pass
         os.mkdir(os.path.join(project_name, 'components'))
+        with open(os.path.join(project_name, 'components', '__init__.py'), 'w') as fp:
+            pass
         os.mkdir(os.path.join(project_name, 'components', 'drivers'))
         os.mkdir(os.path.join(project_name, 'components', 'gui'))
 

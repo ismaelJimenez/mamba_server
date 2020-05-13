@@ -56,9 +56,10 @@ def execute(argv=None):
     cmd = cmds[cmdname]
     parser.usage = "mamba %s %s" % (cmdname, cmd.syntax())
     parser.description = cmd.long_desc()
+    cmd.add_options(parser)
     opts, args = parser.parse_args(args=argv[1:])
 
-    cmd.run(argv[1:])
+    cmd.run(args, opts)
 
 
 if __name__ == '__main__':
