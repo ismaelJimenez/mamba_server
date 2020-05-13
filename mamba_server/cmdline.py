@@ -67,7 +67,7 @@ def execute(argv=None):
     mamba_dir = path.dirname(path.abspath(__file__))
     project_dir = getcwd()
 
-    cmd.run(args, opts, mamba_dir, project_dir)
+    sys.exit(cmd.run(args, opts, mamba_dir, project_dir))
 
 
 if __name__ == '__main__':

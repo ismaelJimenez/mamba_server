@@ -1,28 +1,11 @@
 import tempfile
 from tempfile import mkdtemp
-from os.path import join, dirname, exists
+from os.path import join, exists
 from shutil import rmtree
-import os
 import sys
 import subprocess
 
-from importlib import import_module
-
-
-def get_pythonpath():
-    """Return a PYTHONPATH suitable to use in processes so that they find this
-    installation of Mamba"""
-    scrapy_path = import_module('mamba_server').__path__[0]
-    return dirname(scrapy_path) + os.pathsep + os.environ.get('PYTHONPATH', '')
-
-
-def get_testenv():
-    """Return a OS environment dict suitable to fork processes that need to import
-    this installation of Mamba, instead of a system installed one.
-    """
-    env = os.environ.copy()
-    env['PYTHONPATH'] = get_pythonpath()
-    return env
+from mamba_server.utils.test import get_testenv
 
 
 def call(self, *new_args, **kwargs):
@@ -58,11 +41,18 @@ class TestClass:
         """ teardown_method called for every method """
         pass
 
-    def test_startproject(self):
+    def test_startproject_in_new_folder(self):
         assert call(self, 'startproject', self.project_name) == 0
 
         assert exists(join(self.proj_path, 'mamba.cfg'))
+        assert exists(join(self.proj_path, 'launch'))
+        assert exists(join(self.proj_path, 'launch', 'default.launch.json'))
         assert exists(join(self.proj_path, 'components'))
         assert exists(join(self.proj_path, 'components', '__init__.py'))
+        assert exists(join(self.proj_path, 'components', 'drivers'))
+        assert exists(join(self.proj_path, 'components', 'drivers', '__init__.py'))
+        assert exists(join(self.proj_path, 'components', 'gui'))
+        assert exists(join(self.proj_path, 'components', 'gui', '__init__.py'))
 
         assert call(self, 'startproject', self.project_name) == 1
+        assert call(self, 'startproject', 'wrong---project---name') == 1
