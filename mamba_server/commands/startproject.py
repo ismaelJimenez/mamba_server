@@ -20,7 +20,8 @@ class Command(MambaCommand):
         with open(os.path.join(project_name, 'mamba.cfg'), 'w') as fp:
             pass
         os.mkdir(os.path.join(project_name, 'components'))
-        with open(os.path.join(project_name, 'components', '__init__.py'), 'w') as fp:
+        with open(os.path.join(project_name, 'components', '__init__.py'),
+                  'w') as fp:
             pass
         os.mkdir(os.path.join(project_name, 'components', 'drivers'))
         os.mkdir(os.path.join(project_name, 'components', 'gui'))
