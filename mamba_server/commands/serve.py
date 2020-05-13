@@ -38,7 +38,8 @@ class Command(MambaCommand):
             _list_launch_files(mamba_dir, project_dir)
             return
         if opts.dump:
-            template_file = _find_launch_file(opts.dump, mamba_dir, project_dir)
+            template_file = _find_launch_file(opts.dump, mamba_dir,
+                                              project_dir)
             if template_file:
                 with open(template_file, "r") as f:
                     print(f.read())
@@ -48,6 +49,8 @@ class Command(MambaCommand):
             launch_file = _find_launch_file(opts.run, mamba_dir, project_dir)
             if launch_file is not None:
                 execute(launch_file, mamba_dir)
+            else:
+                return 1
 
 
 def _find_launch_file(launch_file_name, mamba_dir, project_dir):
@@ -56,10 +59,11 @@ def _find_launch_file(launch_file_name, mamba_dir, project_dir):
     if exists(launch_file):
         return launch_file
 
-    launch_file = join(project_dir, LAUNCH_FILES_DIR,
-                       '{}.launch.json'.format(launch_file_name))
-    if exists(launch_file):
-        return launch_file
+    if project_dir is not None:
+        launch_file = join(project_dir, LAUNCH_FILES_DIR,
+                           '{}.launch.json'.format(launch_file_name))
+        if exists(launch_file):
+            return launch_file
 
     print("Unable to find launch file: %s\n" % launch_file_name)
     print('Use "mamba serve --list" to see all available launch files.')

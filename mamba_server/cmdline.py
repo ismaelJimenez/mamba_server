@@ -1,5 +1,6 @@
 import sys
 from os import path, getcwd
+from os.path import exists, join
 import optparse
 
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
@@ -65,8 +66,8 @@ def execute(argv=None):
     opts, args = parser.parse_args(args=argv[1:])
 
     mamba_dir = path.dirname(path.abspath(__file__))
-    project_dir = getcwd()
 
+    project_dir = getcwd() if exists(join(getcwd(), 'mamba.cfg')) else None
     sys.exit(cmd.run(args, opts, mamba_dir, project_dir))
 
 

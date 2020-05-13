@@ -2,6 +2,7 @@ import os
 import re
 
 from os.path import join, exists, abspath
+from os import getcwd
 from importlib import import_module
 from shutil import ignore_patterns, copy2, copystat
 
@@ -54,29 +55,29 @@ class Command(MambaCommand):
     @staticmethod
     def run(args, opts, mamba_dir, project_dir):
         if len(args) != 1:
-            raise UsageError("Incorrect number of arguments for 'mamba startproject'")
+            raise UsageError(
+                "Incorrect number of arguments for 'mamba startproject'")
 
         project_name = args[0]
 
-        project_dir = join(project_dir, project_name)
+        project_dir = join(getcwd(), project_name)
 
         if exists(join(project_dir, 'mamba.cfg')):
-            exitcode = 1
-            print('Error: mamba.cfg already exists in {}'.format(abspath(project_dir)))
-            return exitcode
+            print('Error: mamba.cfg already exists in {}'.format(
+                abspath(project_dir)))
+            return 1
 
         if not Command._is_valid_name(project_name):
-            exitcode = 1
-            return exitcode
+            return 1
 
         templates_dir = Command.templates_dir(mamba_dir)
         Command._copytree(templates_dir, abspath(project_dir))
 
         print("New Mamba project '{}', using template directory '{}', "
               "created in:".format(project_name, templates_dir))
-        print("    %s\n" % abspath(project_dir))
+        print("    {}\n".format(abspath(project_dir)))
         print("You can launch your default project with:")
-        print("    cd %s" % project_dir)
+        print("    cd {}".format(project_dir))
         print("    mamba serve -r default")
 
     @staticmethod

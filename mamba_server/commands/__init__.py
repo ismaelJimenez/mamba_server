@@ -22,6 +22,14 @@ class MambaCommand:
         return MambaCommand.short_desc()
 
     @staticmethod
+    def help():
+        """An extensive help for the command. It will be shown when using the
+        "help" command. It can contain newlines, since no post-formatting will
+        be applied to its contents.
+        """
+        return MambaCommand.long_desc()
+
+    @staticmethod
     def add_options(parser):
         """
         Populate option parse with options available for this command

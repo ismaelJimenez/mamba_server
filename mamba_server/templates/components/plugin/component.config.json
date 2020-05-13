@@ -1,0 +1,6 @@
+{
+  "name": "Custom_Action",
+  "menu": "Custom_Menu",
+  "status_tip": "Example status tip",
+  "shortcut": ""
+}
