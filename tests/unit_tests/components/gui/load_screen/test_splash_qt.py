@@ -18,7 +18,10 @@ class TestClass:
     def setup_method(self):
         """ setup_method called for every method """
         context = Context()
-        context.set('mamba_dir', os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', '..', 'mamba_server'))
+        context.set(
+            'mamba_dir',
+            os.path.join(os.path.dirname(__file__), '..', '..', '..', '..',
+                         '..', 'mamba_server'))
         self.widget = LoadScreen(context)
 
     def teardown_method(self):

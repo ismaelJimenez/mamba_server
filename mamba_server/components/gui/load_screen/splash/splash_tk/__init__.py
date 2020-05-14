@@ -15,11 +15,12 @@ class LoadScreen(LoadScreenInterface):
         super(LoadScreen, self).__init__(os.path.dirname(__file__), context)
 
         try:
-            image_file = os.path.join(self._context.get('mamba_dir'),
-                             path_from_string(self._configuration['image']))
+            image_file = os.path.join(
+                self._context.get('mamba_dir'),
+                path_from_string(self._configuration['image']))
         except AttributeError as e:
             raise ComponentConfigException("Image file '{}' not found".format(
-                                               path_from_string(self._configuration['image'])))
+                path_from_string(self._configuration['image'])))
 
         self._app = tk.Tk()
         self._app.overrideredirect(True)

@@ -1,4 +1,4 @@
-import os
+""" Compose context from launch file """
 import json
 import time
 
@@ -12,6 +12,7 @@ from mamba_server.components.gui.plugins.interface import GuiPluginInterface
 
 
 def execute(launch_file, mamba_dir, project_dir):
+    """ Compose context from launch file """
     context = Context()
     context.set('mamba_dir', mamba_dir)
     context.set('project_dir', project_dir)
@@ -21,15 +22,14 @@ def execute(launch_file, mamba_dir, project_dir):
     if project_dir is not None:
         component_folders.append('components')
 
-    with open(launch_file) as f:
-        launch_config = json.load(f)
+    with open(launch_file) as file:
+        launch_config = json.load(file)
 
         # Start Load Screen Component, if any
         if 'load_screen' in launch_config:
             load_screen = get_component(
-                launch_config['load_screen']['component'],
-                component_folders, LoadScreenInterface,
-                context)
+                launch_config['load_screen']['component'], component_folders,
+                LoadScreenInterface, context)
             load_screen.show()
 
             min_load_screen_time = None
@@ -41,19 +41,17 @@ def execute(launch_file, mamba_dir, project_dir):
 
         # Start Main Window Component, if any
         if 'app' in launch_config:
-            main_window = get_component(
-                launch_config['app']['component'],
-                component_folders, MainWindowInterface,
-                context)
+            main_window = get_component(launch_config['app']['component'],
+                                        component_folders, MainWindowInterface,
+                                        context)
 
             context.set('main_window', main_window)
 
         # Instantiate GUI Plugins, if any
         if 'gui_plugins' in launch_config:
-            gui_plugins = get_components(
-                launch_config['gui_plugins'],
-                component_folders, GuiPluginInterface,
-                context)
+            gui_plugins = get_components(launch_config['gui_plugins'],
+                                         component_folders, GuiPluginInterface,
+                                         context)
 
             context.set('gui_plugins', gui_plugins)
 
@@ -70,7 +68,3 @@ def execute(launch_file, mamba_dir, project_dir):
 
             # Start the event loop.
             context.get('main_window').start_event_loop()
-
-
-if __name__ == '__main__':
-    execute(os.path.join('launch', 'default_qt.launch.json'))

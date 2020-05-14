@@ -70,8 +70,7 @@ def get_component(used_component, modules, component_type, context):
 
         if len(intersection) > 0:
             raise LaunchFileException(
-                "Component identifier '{}' is duplicated".format(
-                    intersection))
+                "Component identifier '{}' is duplicated".format(intersection))
 
         all_components_by_type.update(components_in_module)
 
@@ -112,8 +111,7 @@ def get_components(used_components, modules, component_type, context):
 
         if len(intersection) > 0:
             raise LaunchFileException(
-                "Component identifier '{}' is duplicated".format(
-                    intersection))
+                "Component identifier '{}' is duplicated".format(intersection))
 
         all_components_by_type.update(components_in_module)
 

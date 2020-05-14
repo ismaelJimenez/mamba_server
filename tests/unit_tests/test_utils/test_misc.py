@@ -29,9 +29,11 @@ class TestClass:
         sys.path.append(join(self.temp_path, self.project_name))
 
         # Initialize plugin in local folder
-        assert cmd_exec(self, 'mamba_server.cmdline', 'startproject', self.project_name) == 0
+        assert cmd_exec(self, 'mamba_server.cmdline', 'startproject',
+                        self.project_name) == 0
         self.cwd = join(self.temp_path, self.project_name)
-        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'plugin', 'plugin_1') == 0
+        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'plugin',
+                        'plugin_1') == 0
         assert exists(join(self.proj_path, 'components', 'plugin', 'plugin_1'))
 
         os.chdir(join(self.temp_path, self.project_name))
@@ -79,12 +81,10 @@ class TestClass:
         assert len(classes_dict) == 1
         assert 'about_qt' in classes_dict
 
-    def test_get_classes_from_module_components_local(
-            self):
+    def test_get_classes_from_module_components_local(self):
         # Test component load
-        classes_dict = misc.get_classes_from_module(
-            'components',
-            GuiPluginInterface)
+        classes_dict = misc.get_classes_from_module('components',
+                                                    GuiPluginInterface)
         assert len(classes_dict) == 1
         assert 'plugin_1' in classes_dict
 
@@ -94,9 +94,8 @@ class TestClass:
             GuiPluginInterface, Context())
         assert components_dict is not None
 
-        components_dict = misc.get_component(
-            'plugin_1', ['components.plugin'],
-            GuiPluginInterface, Context())
+        components_dict = misc.get_component('plugin_1', ['components.plugin'],
+                                             GuiPluginInterface, Context())
         assert components_dict is not None
 
     def test_get_component_valid_id_and_type(self):
@@ -114,7 +113,8 @@ class TestClass:
         assert 'not a valid component identifier' in str(excinfo.value)
 
     def test_get_components_duplicated_component(self):
-        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'plugin', 'quit') == 0
+        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'plugin',
+                        'quit') == 0
         assert exists(join(self.proj_path, 'components', 'plugin', 'quit'))
 
         with pytest.raises(LaunchFileException) as excinfo:
@@ -140,7 +140,8 @@ class TestClass:
         assert 'plugin_1' in components_dict
 
         components_dict = misc.get_components(
-            ['about_qt', 'quit', 'plugin_1'], ['mamba_server.components.gui.plugins', 'components'],
+            ['about_qt', 'quit', 'plugin_1'],
+            ['mamba_server.components.gui.plugins', 'components'],
             GuiPluginInterface, Context())
         assert len(components_dict) == 3
         assert 'about_qt' in components_dict
@@ -148,12 +149,14 @@ class TestClass:
         assert 'plugin_1' in components_dict
 
     def test_get_components_duplicated_component(self):
-        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'plugin', 'quit') == 0
+        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'plugin',
+                        'quit') == 0
         assert exists(join(self.proj_path, 'components', 'plugin', 'quit'))
 
         with pytest.raises(LaunchFileException) as excinfo:
             misc.get_components(
-                ['quit'], ['mamba_server.components.gui.plugins', 'components'],
+                ['quit'],
+                ['mamba_server.components.gui.plugins', 'components'],
                 GuiPluginInterface, Context())
 
         assert 'is duplicated' in str(excinfo.value)

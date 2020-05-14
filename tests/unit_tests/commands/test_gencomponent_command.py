@@ -28,11 +28,13 @@ class TestClass:
         rmtree(self.temp_path)
 
     def test_gencomponent_valid_project_folder(self):
-        assert cmd_exec(self, 'mamba_server.cmdline', 'startproject', self.project_name) == 0
+        assert cmd_exec(self, 'mamba_server.cmdline', 'startproject',
+                        self.project_name) == 0
 
         self.cwd = join(self.temp_path, self.project_name)
 
-        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'plugin', 'plugin_1') == 0
+        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'plugin',
+                        'plugin_1') == 0
         assert exists(join(self.proj_path, 'components', 'plugin'))
         assert exists(join(self.proj_path, 'components', 'plugin', 'plugin_1'))
         assert exists(
@@ -42,7 +44,8 @@ class TestClass:
             join(self.proj_path, 'components', 'plugin', 'plugin_1',
                  'component.config.json'))
 
-        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'main', 'main_1') == 0
+        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'main',
+                        'main_1') == 0
         assert exists(join(self.proj_path, 'components', 'main'))
         assert exists(join(self.proj_path, 'components', 'main', 'main_1'))
         assert exists(
@@ -52,9 +55,11 @@ class TestClass:
             join(self.proj_path, 'components', 'main', 'main_1',
                  'component.config.json'))
 
-        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'load_screen', 'load_screen_1') == 0
+        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent',
+                        'load_screen', 'load_screen_1') == 0
         assert exists(join(self.proj_path, 'components', 'load_screen'))
-        assert exists(join(self.proj_path, 'components', 'load_screen', 'load_screen_1'))
+        assert exists(
+            join(self.proj_path, 'components', 'load_screen', 'load_screen_1'))
         assert exists(
             join(self.proj_path, 'components', 'load_screen', 'load_screen_1',
                  '__init__.py'))
@@ -63,20 +68,30 @@ class TestClass:
                  'component.config.json'))
 
     def test_gencomponent_valid_project_folder_duplicated_name(self):
-        assert cmd_exec(self, 'mamba_server.cmdline', 'startproject', self.project_name) == 0
+        assert cmd_exec(self, 'mamba_server.cmdline', 'startproject',
+                        self.project_name) == 0
 
         self.cwd = join(self.temp_path, self.project_name)
 
-        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'plugin', 'plugin_1') == 0
-        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'plugin', 'plugin_1') == 1
+        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'plugin',
+                        'plugin_1') == 0
+        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'plugin',
+                        'plugin_1') == 1
 
-        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'load_screen', 'load_screen_1') == 0
-        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'load_screen', 'load_screen_1') == 1
+        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent',
+                        'load_screen', 'load_screen_1') == 0
+        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent',
+                        'load_screen', 'load_screen_1') == 1
 
-        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'main', 'main_1') == 0
-        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'main', 'main_1') == 1
+        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'main',
+                        'main_1') == 0
+        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'main',
+                        'main_1') == 1
 
     def test_gencomponent_invalid_project(self):
-        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'plugin', 'plugin_1') == 1
-        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'load_screen', 'load_screen_1') == 1
-        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'main', 'main_1') == 1
+        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'plugin',
+                        'plugin_1') == 1
+        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent',
+                        'load_screen', 'load_screen_1') == 1
+        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'main',
+                        'main_1') == 1

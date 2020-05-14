@@ -28,7 +28,8 @@ class TestClass:
         pass
 
     def test_startproject_in_new_folder(self):
-        assert cmd_exec(self, 'mamba_server.cmdline', 'startproject', self.project_name) == 0
+        assert cmd_exec(self, 'mamba_server.cmdline', 'startproject',
+                        self.project_name) == 0
 
         assert exists(join(self.proj_path, 'mamba.cfg'))
         assert exists(join(self.proj_path, 'launch'))
@@ -36,5 +37,7 @@ class TestClass:
         assert exists(join(self.proj_path, 'components'))
         assert exists(join(self.proj_path, 'components', '__init__.py'))
 
-        assert cmd_exec(self, 'mamba_server.cmdline', 'startproject', self.project_name) == 1
-        assert cmd_exec(self, 'mamba_server.cmdline', 'startproject', 'wrong---project---name') == 1
+        assert cmd_exec(self, 'mamba_server.cmdline', 'startproject',
+                        self.project_name) == 1
+        assert cmd_exec(self, 'mamba_server.cmdline', 'startproject',
+                        'wrong---project---name') == 1

@@ -24,16 +24,15 @@ class LoadScreen(LoadScreenInterface):
         self._app = QSplashScreen()
 
         try:
-            image_file = os.path.join(self._context.get('mamba_dir'),
-                             path_from_string(self._configuration['image']))
+            image_file = os.path.join(
+                self._context.get('mamba_dir'),
+                path_from_string(self._configuration['image']))
         except AttributeError as e:
             raise ComponentConfigException("Image file '{}' not found".format(
-                                               path_from_string(self._configuration['image'])))
+                path_from_string(self._configuration['image'])))
 
         self._app.setPixmap(
-            QPixmap(
-                os.path.join(self._context.get('mamba_dir'),
-                             path_from_string(self._configuration['image']))))
+            QPixmap(image_file))
 
         screen = QGuiApplication.primaryScreen().geometry()
         self._app.move((screen.width() - self._app.size().width()) / 2,
