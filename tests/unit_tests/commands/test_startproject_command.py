@@ -33,7 +33,7 @@ class TestClass:
 
         assert exists(join(self.proj_path, 'mamba.cfg'))
         assert exists(join(self.proj_path, 'launch'))
-        assert exists(join(self.proj_path, 'launch', 'default.launch.json'))
+        assert exists(join(self.proj_path, 'launch', 'project-compose.yml'))
         assert exists(join(self.proj_path, 'components'))
         assert exists(join(self.proj_path, 'components', '__init__.py'))
 

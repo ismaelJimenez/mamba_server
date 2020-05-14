@@ -1,6 +1,7 @@
 """ Compose context from launch file """
 import json
 import time
+import yaml
 
 from mamba_server.context import Context
 from mamba_server.utils.misc import get_component, get_components
@@ -23,7 +24,7 @@ def execute(launch_file, mamba_dir, project_dir):
         component_folders.append('components')
 
     with open(launch_file) as file:
-        launch_config = json.load(file)
+        launch_config = yaml.load(file, Loader=yaml.FullLoader)
 
         # Start Load Screen Component, if any
         if 'load_screen' in launch_config:

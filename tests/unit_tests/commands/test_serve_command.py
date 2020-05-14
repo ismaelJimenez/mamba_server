@@ -45,10 +45,10 @@ class TestClass:
         assert cmd_exec(self, 'mamba_server.cmdline', 'serve', '-l') == 0
         output = cmd_exec_output(self, 'mamba_server.cmdline', 'serve', '-l')
         assert 'Available launch files' in output
-        assert 'mamba_qt' in output
+        assert 'mamba-qt' in output
         assert '[DEFAULT]' in output
         assert 'Local' in output
-        assert '- default' in output
+        assert '- project' in output
 
     def test_serve_non_existing(self):
         assert cmd_exec(self, 'mamba_server.cmdline', 'serve',
