@@ -20,7 +20,7 @@ def generate_component_configuration(settings=None,
         settings (dict, optional): The dictionary with the description of the
                                    component settings.
         config_file (dict, optional): The dictionary of the component settings
-                                      retrieved from component.config.json.
+                                      retrieved from config.yml.
         local_config (dict, optional): The dictionary of the component
                                        settings passed via launch file.
 

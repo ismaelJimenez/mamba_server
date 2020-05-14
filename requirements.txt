@@ -1,4 +1,5 @@
 pytest
+pyyaml
 pycodestyle
 pylint
 codecov

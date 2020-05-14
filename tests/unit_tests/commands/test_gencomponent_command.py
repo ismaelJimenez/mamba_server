@@ -42,7 +42,7 @@ class TestClass:
                  '__init__.py'))
         assert exists(
             join(self.proj_path, 'components', 'plugin', 'plugin_1',
-                 'component.config.json'))
+                 'config.yml'))
 
         assert cmd_exec(self, 'mamba_server.cmdline', 'generate', 'main',
                         'main_1') == 0
@@ -53,7 +53,7 @@ class TestClass:
                  '__init__.py'))
         assert exists(
             join(self.proj_path, 'components', 'main', 'main_1',
-                 'component.config.json'))
+                 'config.yml'))
 
         assert cmd_exec(self, 'mamba_server.cmdline', 'generate',
                         'load_screen', 'load_screen_1') == 0
@@ -65,7 +65,7 @@ class TestClass:
                  '__init__.py'))
         assert exists(
             join(self.proj_path, 'components', 'load_screen', 'load_screen_1',
-                 'component.config.json'))
+                 'config.yml'))
 
     def test_generate_valid_project_folder_duplicated_name(self):
         assert cmd_exec(self, 'mamba_server.cmdline', 'start',
