@@ -1,22 +1,8 @@
-import tempfile
 from tempfile import mkdtemp
 from os.path import join, exists
 from shutil import rmtree
-import sys
-import subprocess
 
-from mamba_server.utils.test import get_testenv
-
-
-def call(self, *new_args, **kwargs):
-    with tempfile.TemporaryFile() as out:
-        args = (sys.executable, '-m', 'mamba_server.cmdline') + new_args
-        return subprocess.call(args,
-                               stdout=out,
-                               stderr=out,
-                               cwd=self.cwd,
-                               env=self.env,
-                               **kwargs)
+from mamba_server.utils.test import get_testenv, cmd_exec
 
 
 class TestClass:
@@ -42,7 +28,7 @@ class TestClass:
         pass
 
     def test_startproject_in_new_folder(self):
-        assert call(self, 'startproject', self.project_name) == 0
+        assert cmd_exec(self, 'mamba_server.cmdline', 'startproject', self.project_name) == 0
 
         assert exists(join(self.proj_path, 'mamba.cfg'))
         assert exists(join(self.proj_path, 'launch'))
@@ -50,5 +36,5 @@ class TestClass:
         assert exists(join(self.proj_path, 'components'))
         assert exists(join(self.proj_path, 'components', '__init__.py'))
 
-        assert call(self, 'startproject', self.project_name) == 1
-        assert call(self, 'startproject', 'wrong---project---name') == 1
+        assert cmd_exec(self, 'mamba_server.cmdline', 'startproject', self.project_name) == 1
+        assert cmd_exec(self, 'mamba_server.cmdline', 'startproject', 'wrong---project---name') == 1

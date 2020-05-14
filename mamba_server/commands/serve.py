@@ -48,7 +48,7 @@ class Command(MambaCommand):
         if opts.run:
             launch_file = _find_launch_file(opts.run, mamba_dir, project_dir)
             if launch_file is not None:
-                execute(launch_file, mamba_dir)
+                execute(launch_file, mamba_dir, project_dir)
             else:
                 return 1
 

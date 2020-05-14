@@ -4,6 +4,9 @@ This module contains some assorted functions used in tests
 import os
 from os.path import dirname
 from importlib import import_module
+import tempfile
+import subprocess
+import sys
 
 
 def get_testenv():
@@ -14,6 +17,16 @@ def get_testenv():
     env['PYTHONPATH'] = _get_pythonpath()
     return env
 
+
+def cmd_exec(self, cmd, *new_args, **kwargs):
+    with tempfile.TemporaryFile() as out:
+        args = (sys.executable, '-m', 'mamba_server.cmdline') + new_args
+        return subprocess.call(args,
+                               stdout=out,
+                               stderr=out,
+                               cwd=self.cwd,
+                               env=self.env,
+                               **kwargs)
 
 # Internal
 

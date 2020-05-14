@@ -67,7 +67,12 @@ def execute(argv=None):
 
     mamba_dir = path.dirname(path.abspath(__file__))
 
-    project_dir = getcwd() if exists(join(getcwd(), 'mamba.cfg')) else None
+    if exists(join(getcwd(), 'mamba.cfg')):
+        project_dir = getcwd()
+        sys.path.insert(0, join(project_dir))
+    else:
+        project_dir = None
+
     sys.exit(cmd.run(args, opts, mamba_dir, project_dir))
 
 

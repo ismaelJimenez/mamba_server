@@ -40,12 +40,12 @@ def get_classes_from_module(module, search_class):
     return classes_dict
 
 
-def get_component(used_component, module, component_type, context):
+def get_component(used_component, modules, component_type, context):
     """Returns an instantiated component with context.
 
     Args:
         used_component (str): The identifier of the component.
-        module (str): The folder where to look for the component.
+        modules (list<str>): The folders where to look for the component.
         component_type (class): The class type of the component.
         context (Context): The application context to instantiate
                            the component with.
@@ -58,7 +58,22 @@ def get_component(used_component, module, component_type, context):
 
     """
 
-    all_components_by_type = get_classes_from_module(module, component_type)
+    all_components_by_type = {}
+
+    for module in modules:
+        components_in_module = get_classes_from_module(module, component_type)
+
+        all_components_set = set(all_components_by_type)
+        new_components_set = set(components_in_module)
+
+        intersection = all_components_set.intersection(new_components_set)
+
+        if len(intersection) > 0:
+            raise LaunchFileException(
+                "Component identifier '{}' is duplicated".format(
+                    intersection))
+
+        all_components_by_type.update(components_in_module)
 
     if used_component in all_components_by_type:
         return all_components_by_type[used_component](context)
@@ -67,12 +82,12 @@ def get_component(used_component, module, component_type, context):
         "'{}' is not a valid component identifier".format(used_component))
 
 
-def get_components(used_components, module, component_type, context):
+def get_components(used_components, modules, component_type, context):
     """Returns a dictionary of instantiated components with context.
 
     Args:
         used_components (list<str>): The identifiers of the components.
-        module (str): The folder where to look for the components.
+        modules (list<str>): The folders where to look for the components.
         component_type (class): The class type of the components.
         context (Context): The application context to instantiate
                            the components with.
@@ -85,7 +100,22 @@ def get_components(used_components, module, component_type, context):
 
     """
 
-    all_components_by_type = get_classes_from_module(module, component_type)
+    all_components_by_type = {}
+
+    for module in modules:
+        components_in_module = get_classes_from_module(module, component_type)
+
+        all_components_set = set(all_components_by_type)
+        new_components_set = set(components_in_module)
+
+        intersection = all_components_set.intersection(new_components_set)
+
+        if len(intersection) > 0:
+            raise LaunchFileException(
+                "Component identifier '{}' is duplicated".format(
+                    intersection))
+
+        all_components_by_type.update(components_in_module)
 
     dict_used_components = {}
 

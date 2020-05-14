@@ -11,9 +11,15 @@ from mamba_server.components.gui.main_window.interface import \
 from mamba_server.components.gui.plugins.interface import GuiPluginInterface
 
 
-def execute(launch_file, mamba_dir):
+def execute(launch_file, mamba_dir, project_dir):
     context = Context()
     context.set('mamba_dir', mamba_dir)
+    context.set('project_dir', project_dir)
+
+    component_folders = ['mamba_server.components']
+
+    if project_dir is not None:
+        component_folders.append('components')
 
     with open(launch_file) as f:
         launch_config = json.load(f)
@@ -22,7 +28,7 @@ def execute(launch_file, mamba_dir):
         if 'load_screen' in launch_config:
             load_screen = get_component(
                 launch_config['load_screen']['component'],
-                'mamba_server.components.gui.load_screen', LoadScreenInterface,
+                component_folders, LoadScreenInterface,
                 context)
             load_screen.show()
 
@@ -37,7 +43,7 @@ def execute(launch_file, mamba_dir):
         if 'app' in launch_config:
             main_window = get_component(
                 launch_config['app']['component'],
-                'mamba_server.components.gui.main_window', MainWindowInterface,
+                component_folders, MainWindowInterface,
                 context)
 
             context.set('main_window', main_window)
@@ -46,7 +52,7 @@ def execute(launch_file, mamba_dir):
         if 'gui_plugins' in launch_config:
             gui_plugins = get_components(
                 launch_config['gui_plugins'],
-                'mamba_server.components.gui.plugins', GuiPluginInterface,
+                component_folders, GuiPluginInterface,
                 context)
 
             context.set('gui_plugins', gui_plugins)
