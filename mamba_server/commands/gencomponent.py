@@ -45,7 +45,7 @@ class Command(MambaCommand):
     def run(args, mamba_dir, project_dir):
         if project_dir is None:
             print(
-                "Mamba: 'mamba gencomponent' can only be used inside a Mamba Project"
+                "error: 'mamba gencomponent' can only be used inside a Mamba Project"
             )
             return 1
 
@@ -58,14 +58,14 @@ class Command(MambaCommand):
         module = _sanitize_module_name(component_name)
 
         if component_type not in COMPONENT_TYPES:
-            print("Mamba: '{}' is not a valid component type".format(
+            print("error: '{}' is not a valid component type".format(
                 component_type))
             return 1
 
         component_dir = join(project_dir, 'components', component_type, module)
 
         if exists(component_dir):
-            print('Error: component {} already exists in {}'.format(
+            print('error: component {} already exists in {}'.format(
                 module, abspath(component_dir)))
             return 1
 

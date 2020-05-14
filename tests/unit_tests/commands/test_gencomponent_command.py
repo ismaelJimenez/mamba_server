@@ -87,7 +87,7 @@ class TestClass:
 
         output = cmd_exec_output(self, 'mamba_server.cmdline', 'gencomponent',
                                  'plugin', 'plugin_2')
-        assert 'Error' in output
+        assert 'error' in output
         assert 'already exists' in output
 
         assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent',
@@ -105,7 +105,7 @@ class TestClass:
         output = cmd_exec_output(self, 'mamba_server.cmdline', 'gencomponent',
                                  'load_screen', 'load_screen_2')
 
-        assert 'Error' in output
+        assert 'error' in output
         assert 'already exists' in output
 
         assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'main',
@@ -123,16 +123,50 @@ class TestClass:
         output = cmd_exec_output(self, 'mamba_server.cmdline', 'gencomponent',
                                  'main', 'main_2')
 
-        assert 'Error' in output
+        assert 'error' in output
         assert 'already exists' in output
+
+        output = cmd_exec_output(self, 'mamba_server.cmdline', 'gencomponent', 'wrong', 'comp_1')
+        assert 'error' in output
+        assert 'not a valid component type' in output
 
     def test_gencomponent_invalid_project(self):
         assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'plugin',
                         'plugin_1') == 1
+
+        output = cmd_exec_output(self, 'mamba_server.cmdline', 'gencomponent', 'plugin',
+                        'plugin_1')
+        assert 'error' in output
+        assert 'can only be used inside a Mamba Project' in output
+
         assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent',
                         'load_screen', 'load_screen_1') == 1
+
+        output = cmd_exec_output(self, 'mamba_server.cmdline', 'gencomponent',
+                        'load_screen', 'load_screen_1')
+        assert 'error' in output
+        assert 'can only be used inside a Mamba Project' in output
+
         assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'main',
                         'main_1') == 1
+
+        output = cmd_exec_output(self, 'mamba_server.cmdline', 'gencomponent', 'main',
+                        'main_1')
+        assert 'error' in output
+        assert 'can only be used inside a Mamba Project' in output
+
+    def test_gencomponent_incomplete_arguments(self):
+        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent') == 2
+
+        output = cmd_exec_output(self, 'mamba_server.cmdline', 'gencomponent')
+        assert 'error' in output
+        assert 'component_type, component_name' in output
+
+        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'plugin') == 2
+
+        output = cmd_exec_output(self, 'mamba_server.cmdline', 'gencomponent', 'plugin')
+        assert 'error' in output
+        assert 'component_name' in output
 
     def test_gencomponent_help(self):
         assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent',
