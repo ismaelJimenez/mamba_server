@@ -11,11 +11,6 @@ Mamba-Server
    :target: ../master/LICENSE
 
 
-Overview
-===========
-
-Show how to structure a Python project.
-
 Requirements
 ============
 
