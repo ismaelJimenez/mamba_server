@@ -11,6 +11,10 @@ Mamba-Server
    :target: ../master/LICENSE
 
 
+Overview
+============
+Framework for controlling ground equipment
+
 Requirements
 ============
 
