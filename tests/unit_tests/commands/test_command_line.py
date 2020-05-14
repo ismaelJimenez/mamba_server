@@ -29,8 +29,7 @@ class TestClass:
 
     def test_command_line_help(self):
         assert cmd_exec(self, 'mamba_server.cmdline', '-h') == 0
-        output = cmd_exec_output(
-            self, 'mamba_server.cmdline', '-h')
+        output = cmd_exec_output(self, 'mamba_server.cmdline', '-h')
         assert 'Usage' in output
         assert 'mamba <command>' in output
         assert 'gencomponent' in output
@@ -38,8 +37,7 @@ class TestClass:
         assert 'startproject' in output
 
         assert cmd_exec(self, 'mamba_server.cmdline') == 0
-        output = cmd_exec_output(
-            self, 'mamba_server.cmdline')
+        output = cmd_exec_output(self, 'mamba_server.cmdline')
         assert 'Usage' in output
         assert 'mamba <command>' in output
         assert 'gencomponent' in output

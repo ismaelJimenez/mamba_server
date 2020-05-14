@@ -28,10 +28,8 @@ class TestClass:
         rmtree(self.temp_path)
 
     def test_serve_help(self):
-        assert cmd_exec(self, 'mamba_server.cmdline', 'serve',
-                        '-h') == 0
-        output = cmd_exec_output(
-            self, 'mamba_server.cmdline', 'serve', '-h')
+        assert cmd_exec(self, 'mamba_server.cmdline', 'serve', '-h') == 0
+        output = cmd_exec_output(self, 'mamba_server.cmdline', 'serve', '-h')
         assert 'Usage' in output
         assert 'mamba serve' in output
         assert 'Options' in output
@@ -44,10 +42,8 @@ class TestClass:
 
         self.cwd = join(self.temp_path, self.project_name)
 
-        assert cmd_exec(self, 'mamba_server.cmdline', 'serve',
-                        '-l') == 0
-        output = cmd_exec_output(
-            self, 'mamba_server.cmdline', 'serve', '-l')
+        assert cmd_exec(self, 'mamba_server.cmdline', 'serve', '-l') == 0
+        output = cmd_exec_output(self, 'mamba_server.cmdline', 'serve', '-l')
         assert 'Available launch files' in output
         assert 'mamba_qt' in output
         assert '[DEFAULT]' in output

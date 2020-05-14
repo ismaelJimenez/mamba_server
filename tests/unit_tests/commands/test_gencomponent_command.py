@@ -76,9 +76,8 @@ class TestClass:
         assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'plugin',
                         'plugin_1') == 0
 
-        output = cmd_exec_output(
-            self, 'mamba_server.cmdline', 'gencomponent', 'plugin',
-                        'plugin_2')
+        output = cmd_exec_output(self, 'mamba_server.cmdline', 'gencomponent',
+                                 'plugin', 'plugin_2')
         assert 'Component' in output
         assert 'plugin_2' in output
         assert 'created in' in output
@@ -86,18 +85,16 @@ class TestClass:
         assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'plugin',
                         'plugin_1') == 1
 
-        output = cmd_exec_output(
-            self, 'mamba_server.cmdline', 'gencomponent', 'plugin',
-                        'plugin_2')
+        output = cmd_exec_output(self, 'mamba_server.cmdline', 'gencomponent',
+                                 'plugin', 'plugin_2')
         assert 'Error' in output
         assert 'already exists' in output
 
         assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent',
                         'load_screen', 'load_screen_1') == 0
 
-        output = cmd_exec_output(
-            self, 'mamba_server.cmdline', 'gencomponent', 'load_screen',
-                        'load_screen_2')
+        output = cmd_exec_output(self, 'mamba_server.cmdline', 'gencomponent',
+                                 'load_screen', 'load_screen_2')
         assert 'Component' in output
         assert 'load_screen_2' in output
         assert 'created in' in output
@@ -105,9 +102,8 @@ class TestClass:
         assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent',
                         'load_screen', 'load_screen_1') == 1
 
-        output = cmd_exec_output(
-            self, 'mamba_server.cmdline', 'gencomponent', 'load_screen',
-                        'load_screen_2')
+        output = cmd_exec_output(self, 'mamba_server.cmdline', 'gencomponent',
+                                 'load_screen', 'load_screen_2')
 
         assert 'Error' in output
         assert 'already exists' in output
@@ -115,9 +111,8 @@ class TestClass:
         assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'main',
                         'main_1') == 0
 
-        output = cmd_exec_output(
-            self, 'mamba_server.cmdline', 'gencomponent', 'main',
-                        'main_2')
+        output = cmd_exec_output(self, 'mamba_server.cmdline', 'gencomponent',
+                                 'main', 'main_2')
         assert 'Component' in output
         assert 'main_2' in output
         assert 'created in' in output
@@ -125,9 +120,8 @@ class TestClass:
         assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'main',
                         'main_1') == 1
 
-        output = cmd_exec_output(
-            self, 'mamba_server.cmdline', 'gencomponent', 'main',
-                        'main_2')
+        output = cmd_exec_output(self, 'mamba_server.cmdline', 'gencomponent',
+                                 'main', 'main_2')
 
         assert 'Error' in output
         assert 'already exists' in output
@@ -143,8 +137,8 @@ class TestClass:
     def test_gencomponent_help(self):
         assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent',
                         '-h') == 0
-        output = cmd_exec_output(
-            self, 'mamba_server.cmdline', 'gencomponent', '-h')
+        output = cmd_exec_output(self, 'mamba_server.cmdline', 'gencomponent',
+                                 '-h')
         assert 'Usage' in output
         assert 'mamba gencomponent <component_type> <component_name>' in output
         assert 'Options' in output
