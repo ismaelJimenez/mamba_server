@@ -36,7 +36,7 @@ setup(
         'Tracker': 'https://github.com/mamba-framework/mamba-server/issues',
     },
     description='Framework for controlling ground equipment',
-    long_description=open('README.md').read(),
+    long_description=open('README.rst').read(),
     author='Mamba-Server developers',
     maintainer='Ismael Jimenez',
     maintainer_email='mamba_server.framework@gmail.com',
