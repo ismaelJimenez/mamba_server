@@ -1,14 +1,15 @@
 import os
+import pytest
 
 from mamba_server.components.gui.load_screen.splash.splash_qt import LoadScreen
+from mamba_server.exceptions import ComponentConfigException
 from mamba_server.context import Context
 
 
 class TestClass:
     def setup_class(self):
         """ setup_class called once for the class """
-        os.chdir(
-            os.path.join(os.path.dirname(__file__), '..', '..', '..', '..'))
+        pass
 
     def teardown_class(self):
         """ teardown_class called once for the class """
@@ -16,21 +17,20 @@ class TestClass:
 
     def setup_method(self):
         """ setup_method called for every method """
-        self.widget = LoadScreen(Context())
+        context = Context()
+        context.set('mamba_dir', os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', '..', 'mamba_server'))
+        self.widget = LoadScreen(context)
 
     def teardown_method(self):
         """ teardown_method called for every method """
         self.widget.close()
 
     def test_splash_tk_wo_context(self):
-        self.widget = LoadScreen()
+        with pytest.raises(ComponentConfigException) as excinfo:
+            LoadScreen()
 
-        # Test default configuration
-        assert 'mamba_loading.png' in self.widget._configuration['image']
-        assert not self.widget._app.pixmap().isNull()
-
-        # Test window is hidden per default
-        assert self.widget._app.isHidden()
+        assert 'Image file' in str(excinfo.value)
+        assert 'not found' in str(excinfo.value)
 
     def test_splash_tk_w_context(self):
         # Test default configuration

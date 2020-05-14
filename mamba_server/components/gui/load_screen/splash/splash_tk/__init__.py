@@ -6,6 +6,7 @@ import tkinter as tk
 from mamba_server.utils.misc import path_from_string
 from mamba_server.components.gui.load_screen.interface import \
     LoadScreenInterface
+from mamba_server.exceptions import ComponentConfigException
 
 
 class LoadScreen(LoadScreenInterface):
@@ -13,13 +14,17 @@ class LoadScreen(LoadScreenInterface):
     def __init__(self, context=None):
         super(LoadScreen, self).__init__(os.path.dirname(__file__), context)
 
+        try:
+            image_file = os.path.join(self._context.get('mamba_dir'),
+                             path_from_string(self._configuration['image']))
+        except AttributeError as e:
+            raise ComponentConfigException("Image file '{}' not found".format(
+                                               path_from_string(self._configuration['image'])))
+
         self._app = tk.Tk()
         self._app.overrideredirect(True)
         self.hide()
 
-        image_file = os.path.join(
-            self._context.get('mamba_dir'),
-            path_from_string(self._configuration['image']))
         self._image = tk.PhotoImage(file=image_file)
 
         screen_width = self._app.winfo_screenwidth()

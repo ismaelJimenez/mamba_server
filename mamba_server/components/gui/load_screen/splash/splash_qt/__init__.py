@@ -7,6 +7,7 @@ from PySide2.QtGui import QPixmap, QGuiApplication
 from PySide2.QtCore import QTimer
 
 from mamba_server.utils.misc import path_from_string
+from mamba_server.exceptions import ComponentConfigException
 from mamba_server.components.gui.load_screen.interface import \
     LoadScreenInterface
 
@@ -21,6 +22,14 @@ class LoadScreen(LoadScreenInterface):
             )
 
         self._app = QSplashScreen()
+
+        try:
+            image_file = os.path.join(self._context.get('mamba_dir'),
+                             path_from_string(self._configuration['image']))
+        except AttributeError as e:
+            raise ComponentConfigException("Image file '{}' not found".format(
+                                               path_from_string(self._configuration['image'])))
+
         self._app.setPixmap(
             QPixmap(
                 os.path.join(self._context.get('mamba_dir'),
