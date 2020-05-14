@@ -1,3 +1,5 @@
+""" Mamba server start command """
+
 from os import listdir
 from os.path import join, exists
 from mamba_server.commands import MambaCommand
@@ -9,6 +11,7 @@ LAUNCH_FILES_DIR = 'launch'
 
 
 class Command(MambaCommand):
+    """ Mamba server start command """
     @staticmethod
     def short_desc():
         return "Start mamba server"
@@ -17,33 +20,33 @@ class Command(MambaCommand):
     def add_arguments(parser):
         MambaCommand.add_arguments(parser)
         parser.add_argument("-l",
-                          "--list",
-                          dest="list",
-                          action="store_true",
-                          help="List available launch files")
+                            "--list",
+                            dest="list",
+                            action="store_true",
+                            help="List available launch files")
         parser.add_argument("-d",
-                          "--dump",
-                          dest="dump",
-                          metavar="store_true",
-                          help="Dump launch file to standard output")
+                            "--dump",
+                            dest="dump",
+                            metavar="store_true",
+                            help="Dump launch file to standard output")
         parser.add_argument("-r",
-                          "--run",
-                          dest="run",
-                          default=DEFAULT_LAUNCH_FILE,
-                          help="Uses a custom launch file.")
+                            "--run",
+                            dest="run",
+                            default=DEFAULT_LAUNCH_FILE,
+                            help="Uses a custom launch file.")
 
     @staticmethod
     def run(args, mamba_dir, project_dir):
         if args.list:
             _list_launch_files(mamba_dir, project_dir)
-            return
+            return 0
         if args.dump:
             template_file = _find_launch_file(args.dump, mamba_dir,
                                               project_dir)
             if template_file:
-                with open(template_file, "r") as f:
-                    print(f.read())
-            return
+                with open(template_file, "r") as file:
+                    print(file.read())
+            return 0
 
         if args.run:
             launch_file = _find_launch_file(args.run, mamba_dir, project_dir)
@@ -51,6 +54,8 @@ class Command(MambaCommand):
                 execute(launch_file, mamba_dir, project_dir)
             else:
                 return 1
+
+        return 1
 
 
 def _find_launch_file(launch_file_name, mamba_dir, project_dir):

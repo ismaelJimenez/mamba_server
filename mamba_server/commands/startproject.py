@@ -1,3 +1,5 @@
+""" Create a new Mamba project folder """
+
 import os
 import re
 
@@ -7,13 +9,13 @@ from importlib import import_module
 from shutil import ignore_patterns, copy2, copystat
 
 from mamba_server.commands import MambaCommand
-from mamba_server.exceptions import UsageError
 
 TEMPLATES_DIR = "templates"
 IGNORE = ignore_patterns('*.pyc', '.svn')
 
 
 class Command(MambaCommand):
+    """ Create a new Mamba project folder """
     @staticmethod
     def syntax():
         return "<project_name>"
@@ -21,10 +23,6 @@ class Command(MambaCommand):
     @staticmethod
     def short_desc():
         return "Create new project"
-
-    @staticmethod
-    def templates_dir(mamba_dir):
-        return os.path.join(mamba_dir, TEMPLATES_DIR, 'project')
 
     @staticmethod
     def _copytree(src, dst):
@@ -71,7 +69,7 @@ class Command(MambaCommand):
         if not Command._is_valid_name(project_name):
             return 1
 
-        templates_dir = Command.templates_dir(mamba_dir)
+        templates_dir = _templates_dir(mamba_dir)
         Command._copytree(templates_dir, abspath(project_dir))
 
         print("New Mamba project '{}', using template directory '{}', "
@@ -80,6 +78,8 @@ class Command(MambaCommand):
         print("You can launch your default project with:")
         print("    cd {}".format(project_dir))
         print("    mamba serve -r default")
+
+        return 0
 
     @staticmethod
     def _is_valid_name(project_name):
@@ -98,3 +98,7 @@ class Command(MambaCommand):
         else:
             return True
         return False
+
+
+def _templates_dir(mamba_dir):
+    return os.path.join(mamba_dir, TEMPLATES_DIR, 'project')

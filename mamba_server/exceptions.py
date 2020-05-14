@@ -7,12 +7,10 @@ new exceptions here without documenting them there.
 
 class ComponentConfigException(Exception):
     """Indicates a missing configuration situation"""
-    pass
 
 
 class LaunchFileException(Exception):
     """Indicates a wrong launch file situation"""
-    pass
 
 
 # Commands
@@ -30,4 +28,3 @@ class UsageError(Exception):
 
 class ComponentSettingsException(Exception):
     """Indicates a wrongly formed setting situation"""
-    pass

@@ -1,3 +1,4 @@
+""" Components creation command """
 import os
 import string
 
@@ -5,7 +6,6 @@ from os.path import join, exists, abspath
 from shutil import copytree
 
 from mamba_server.commands import MambaCommand
-from mamba_server.exceptions import UsageError
 
 TEMPLATES_DIR = "templates"
 
@@ -17,6 +17,7 @@ COMPONENT_TYPES = {
 
 
 class Command(MambaCommand):
+    """ Components creation command """
     @staticmethod
     def syntax():
         return "<component_type> <component_name>"
@@ -29,29 +30,23 @@ class Command(MambaCommand):
     def add_arguments(parser):
         MambaCommand.add_arguments(parser)
         parser.add_argument("-l",
-                          "--list",
-                          dest="list",
-                          action="store_true",
-                          help="List available component types")
+                            "--list",
+                            dest="list",
+                            action="store_true",
+                            help="List available component types")
         parser.add_argument("component_type", help="Component type template")
         parser.add_argument("component_name", help="New component name")
 
     @staticmethod
-    def templates_dir(mamba_dir, component_type):
-        return os.path.join(mamba_dir, TEMPLATES_DIR, 'components',
-                            component_type)
-
-    @staticmethod
     def run(args, mamba_dir, project_dir):
         if project_dir is None:
-            print(
-                "error: 'mamba gencomponent' can only be used inside a Mamba Project"
-            )
+            print("error: 'mamba gencomponent' can only be used inside a "
+                  "Mamba Project")
             return 1
 
         if args.list:
             _list_component_types()
-            return
+            return 0
 
         component_type = args.component_type
         component_name = args.component_name
@@ -69,7 +64,7 @@ class Command(MambaCommand):
                 module, abspath(component_dir)))
             return 1
 
-        templates_dir = Command.templates_dir(mamba_dir, component_type)
+        templates_dir = _templates_dir(mamba_dir, component_type)
         copytree(templates_dir, abspath(component_dir))
 
         print("Component '{}', using template '{}', "
@@ -77,6 +72,12 @@ class Command(MambaCommand):
         print("    {}\n".format(abspath(component_dir)))
         print(
             "To use the component, please add it to the project launch file.")
+
+        return 0
+
+
+def _templates_dir(mamba_dir, component_type):
+    return os.path.join(mamba_dir, TEMPLATES_DIR, 'components', component_type)
 
 
 def _list_component_types():

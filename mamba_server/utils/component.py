@@ -1,7 +1,5 @@
 """Component handling utility functions"""
 
-from PySide2.QtWidgets import QMenu
-
 from mamba_server.exceptions import ComponentSettingsException
 from mamba_server.exceptions import ComponentConfigException
 

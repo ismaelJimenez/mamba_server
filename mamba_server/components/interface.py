@@ -1,5 +1,4 @@
-""" The Generic component interface.
-"""
+""" The Generic component interface """
 
 import os
 import json
@@ -11,6 +10,7 @@ COMPONENT_CONFIG_FILE = "component.config.json"
 
 
 class ComponentInterface:
+    """ The Generic component interface """
     def __init__(self, settings_folder, config_folder, context):
         super(ComponentInterface, self).__init__()
 
@@ -18,11 +18,11 @@ class ComponentInterface:
         self._context = context
         self._configuration = {}
 
-        with open(os.path.join(settings_folder, SETTINGS_FILE)) as f:
-            settings_description = json.load(f)
+        with open(os.path.join(settings_folder, SETTINGS_FILE)) as file:
+            settings_description = json.load(file)
 
-        with open(os.path.join(config_folder, COMPONENT_CONFIG_FILE)) as f:
-            file_config = json.load(f)
+        with open(os.path.join(config_folder, COMPONENT_CONFIG_FILE)) as file:
+            file_config = json.load(file)
 
         self._configuration = generate_component_configuration(
             settings=settings_description, config_file=file_config)

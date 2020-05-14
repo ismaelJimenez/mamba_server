@@ -27,7 +27,7 @@ class LoadScreen(LoadScreenInterface):
             image_file = os.path.join(
                 self._context.get('mamba_dir'),
                 path_from_string(self._configuration['image']))
-        except AttributeError as e:
+        except AttributeError:
             raise ComponentConfigException("Image file '{}' not found".format(
                 path_from_string(self._configuration['image'])))
 

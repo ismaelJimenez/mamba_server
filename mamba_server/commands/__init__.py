@@ -1,4 +1,8 @@
+""" Generic mamba server command interface """
+
+
 class MambaCommand:
+    """ Mamba server command interface """
     @staticmethod
     def syntax():
         """
@@ -34,7 +38,6 @@ class MambaCommand:
         """
         Populate option parse with options available for this command
         """
-        pass
 
     @staticmethod
     def run(args, mamba_dir, project_dir):

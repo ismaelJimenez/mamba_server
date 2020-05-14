@@ -126,7 +126,8 @@ class TestClass:
         assert 'error' in output
         assert 'already exists' in output
 
-        output = cmd_exec_output(self, 'mamba_server.cmdline', 'gencomponent', 'wrong', 'comp_1')
+        output = cmd_exec_output(self, 'mamba_server.cmdline', 'gencomponent',
+                                 'wrong', 'comp_1')
         assert 'error' in output
         assert 'not a valid component type' in output
 
@@ -134,8 +135,8 @@ class TestClass:
         assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'plugin',
                         'plugin_1') == 1
 
-        output = cmd_exec_output(self, 'mamba_server.cmdline', 'gencomponent', 'plugin',
-                        'plugin_1')
+        output = cmd_exec_output(self, 'mamba_server.cmdline', 'gencomponent',
+                                 'plugin', 'plugin_1')
         assert 'error' in output
         assert 'can only be used inside a Mamba Project' in output
 
@@ -143,15 +144,15 @@ class TestClass:
                         'load_screen', 'load_screen_1') == 1
 
         output = cmd_exec_output(self, 'mamba_server.cmdline', 'gencomponent',
-                        'load_screen', 'load_screen_1')
+                                 'load_screen', 'load_screen_1')
         assert 'error' in output
         assert 'can only be used inside a Mamba Project' in output
 
         assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'main',
                         'main_1') == 1
 
-        output = cmd_exec_output(self, 'mamba_server.cmdline', 'gencomponent', 'main',
-                        'main_1')
+        output = cmd_exec_output(self, 'mamba_server.cmdline', 'gencomponent',
+                                 'main', 'main_1')
         assert 'error' in output
         assert 'can only be used inside a Mamba Project' in output
 
@@ -162,9 +163,11 @@ class TestClass:
         assert 'error' in output
         assert 'component_type, component_name' in output
 
-        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'plugin') == 2
+        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent',
+                        'plugin') == 2
 
-        output = cmd_exec_output(self, 'mamba_server.cmdline', 'gencomponent', 'plugin')
+        output = cmd_exec_output(self, 'mamba_server.cmdline', 'gencomponent',
+                                 'plugin')
         assert 'error' in output
         assert 'component_name' in output
 

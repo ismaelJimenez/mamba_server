@@ -10,8 +10,8 @@ import sys
 
 
 def get_testenv():
-    """Return a OS environment dict suitable to fork processes that need to import
-    this installation of Mamba, instead of a system installed one.
+    """Return a OS environment dict suitable to fork processes that need
+    to import this installation of Mamba, instead of a system installed one.
     """
     env = os.environ.copy()
     env['PYTHONPATH'] = _get_pythonpath()
@@ -19,8 +19,9 @@ def get_testenv():
 
 
 def cmd_exec(self, cmd, *new_args, **kwargs):
+    """ Execute external command and return output status """
     with tempfile.TemporaryFile() as out:
-        args = (sys.executable, '-m', 'mamba_server.cmdline') + new_args
+        args = (sys.executable, '-m', cmd) + new_args
         return subprocess.call(args,
                                stdout=out,
                                stderr=out,
@@ -30,8 +31,9 @@ def cmd_exec(self, cmd, *new_args, **kwargs):
 
 
 def cmd_exec_output(self, cmd, *new_args, **kwargs):
+    """ Execute external command and return terminal output """
     with tempfile.TemporaryFile() as out:
-        args = (sys.executable, '-m', 'mamba_server.cmdline') + new_args
+        args = (sys.executable, '-m', cmd) + new_args
         subprocess.call(args,
                         stdout=out,
                         stderr=out,
