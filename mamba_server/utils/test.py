@@ -29,6 +29,19 @@ def cmd_exec(self, cmd, *new_args, **kwargs):
                                **kwargs)
 
 
+def cmd_exec_output(self, cmd, *new_args, **kwargs):
+    with tempfile.TemporaryFile() as out:
+        args = (sys.executable, '-m', 'mamba_server.cmdline') + new_args
+        subprocess.call(args,
+                        stdout=out,
+                        stderr=out,
+                        cwd=self.cwd,
+                        env=self.env,
+                        **kwargs)
+        out.seek(0)
+        return out.read().decode('utf-8')
+
+
 # Internal
 
 

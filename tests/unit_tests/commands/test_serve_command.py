@@ -1,23 +1,8 @@
-import tempfile
 from tempfile import mkdtemp
-from os import chdir
-from os.path import join, exists
+from os.path import join
 from shutil import rmtree
-import sys
-import subprocess
 
-from mamba_server.utils.test import get_testenv
-
-
-def call(self, *new_args, **kwargs):
-    with tempfile.TemporaryFile() as out:
-        args = (sys.executable, '-m', 'mamba_server.cmdline') + new_args
-        return subprocess.call(args,
-                               stdout=out,
-                               stderr=out,
-                               cwd=self.cwd,
-                               env=self.env,
-                               **kwargs)
+from mamba_server.utils.test import get_testenv, cmd_exec, cmd_exec_output
 
 
 class TestClass:
@@ -42,5 +27,35 @@ class TestClass:
         """ teardown_method called for every method """
         rmtree(self.temp_path)
 
+    def test_serve_help(self):
+        assert cmd_exec(self, 'mamba_server.cmdline', 'serve',
+                        '-h') == 0
+        output = cmd_exec_output(
+            self, 'mamba_server.cmdline', 'serve', '-h')
+        assert 'Usage' in output
+        assert 'mamba serve' in output
+        assert 'Options' in output
+        assert '--help' in output
+        assert '--list' in output
+
+    def test_serve_list(self):
+        assert cmd_exec(self, 'mamba_server.cmdline', 'startproject',
+                        self.project_name) == 0
+
+        self.cwd = join(self.temp_path, self.project_name)
+
+        assert cmd_exec(self, 'mamba_server.cmdline', 'serve',
+                        '-l') == 0
+        output = cmd_exec_output(
+            self, 'mamba_server.cmdline', 'serve', '-l')
+        assert 'Available launch files' in output
+        assert 'mamba_qt' in output
+        assert '[DEFAULT]' in output
+        assert 'Local' in output
+        assert '- default' in output
+
     def test_serve_non_existing(self):
-        assert call(self, 'serve', '-r non_existing') == 1
+        assert cmd_exec(self, 'mamba_server.cmdline', 'serve',
+                        '-r non_existing') == 1
+        assert 'Unable to find launch file' in cmd_exec_output(
+            self, 'mamba_server.cmdline', 'serve', '-r non_existing')
