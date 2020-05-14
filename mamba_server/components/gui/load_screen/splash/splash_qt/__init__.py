@@ -31,8 +31,7 @@ class LoadScreen(LoadScreenInterface):
             raise ComponentConfigException("Image file '{}' not found".format(
                 path_from_string(self._configuration['image'])))
 
-        self._app.setPixmap(
-            QPixmap(image_file))
+        self._app.setPixmap(QPixmap(image_file))
 
         screen = QGuiApplication.primaryScreen().geometry()
         self._app.move((screen.width() - self._app.size().width()) / 2,

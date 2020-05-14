@@ -46,6 +46,7 @@ def execute(argv=None):
 
     sys.exit(cmd.run(args, opts, mamba_dir, project_dir))
 
+
 # Internal
 
 
@@ -79,6 +80,7 @@ def _print_unknown_command(cmdname):
     _print_header()
     print("Unknown command: %s\n" % cmdname)
     print('Use "mamba" to see available commands')
+
 
 if __name__ == '__main__':
     execute()
