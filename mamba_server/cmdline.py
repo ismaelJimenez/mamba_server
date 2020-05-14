@@ -1,3 +1,4 @@
+""" Mamba command line launcher """
 import sys
 from os import path, getcwd
 from os.path import exists, join
@@ -12,38 +13,8 @@ from mamba_server.utils.misc import get_classes_from_module
 #pylint: enable=wrong-import-position
 
 
-def _pop_command_name(argv):
-    i = 0
-    for arg in argv[1:]:
-        if not arg.startswith('-'):
-            del argv[i]
-            return arg
-        i += 1
-
-
-def _print_header():
-    print("Mamba {}\n".format(mamba_server.__version__))
-
-
-def _print_commands():
-    _print_header()
-    print("Usage:")
-    print("  mamba <command> [args]\n")
-    print("Available commands:")
-    cmds = get_classes_from_module('mamba_server.commands', MambaCommand)
-    for cmdname, cmdclass in sorted(cmds.items()):
-        print("  %-13s %s" % (cmdname, cmdclass.short_desc()))
-    print()
-    print('Use "mamba <command> -h" to see more info about a command')
-
-
-def _print_unknown_command(cmdname):
-    _print_header()
-    print("Unknown command: %s\n" % cmdname)
-    print('Use "mamba" to see available commands')
-
-
 def execute(argv=None):
+    """ Mamba command line launcher """
     if argv is None:
         argv = sys.argv
 
@@ -52,7 +23,7 @@ def execute(argv=None):
     parser = optparse.OptionParser(formatter=optparse.TitledHelpFormatter(),
                                    conflict_handler='resolve')
 
-    if not cmdname:
+    if cmdname is None:
         _print_commands()
         sys.exit(0)
     elif cmdname not in cmds:
@@ -75,6 +46,39 @@ def execute(argv=None):
 
     sys.exit(cmd.run(args, opts, mamba_dir, project_dir))
 
+# Internal
+
+
+def _pop_command_name(argv):
+    i = 0
+    for arg in argv[1:]:
+        if not arg.startswith('-'):
+            del argv[i]
+            return arg
+        i += 1
+    return None
+
+
+def _print_header():
+    print("Mamba {}\n".format(mamba_server.__version__))
+
+
+def _print_commands():
+    _print_header()
+    print("Usage:")
+    print("  mamba <command> [args]\n")
+    print("Available commands:")
+    cmds = get_classes_from_module('mamba_server.commands', MambaCommand)
+    for cmdname, cmdclass in sorted(cmds.items()):
+        print("  %-13s %s" % (cmdname, cmdclass.short_desc()))
+    print()
+    print('Use "mamba <command> -h" to see more info about a command')
+
+
+def _print_unknown_command(cmdname):
+    _print_header()
+    print("Unknown command: %s\n" % cmdname)
+    print('Use "mamba" to see available commands')
 
 if __name__ == '__main__':
     execute()
