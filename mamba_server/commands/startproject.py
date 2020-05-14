@@ -53,12 +53,13 @@ class Command(MambaCommand):
         copystat(src, dst)
 
     @staticmethod
-    def run(args, opts, mamba_dir, project_dir):
-        if len(args) != 1:
-            raise UsageError(
-                "Incorrect number of arguments for 'mamba startproject'")
+    def add_arguments(parser):
+        MambaCommand.add_arguments(parser)
+        parser.add_argument("project_name", help="New project folder name")
 
-        project_name = args[0]
+    @staticmethod
+    def run(args, mamba_dir, project_dir):
+        project_name = args.project_name
 
         project_dir = join(getcwd(), project_name)
 

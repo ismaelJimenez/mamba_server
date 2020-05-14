@@ -30,9 +30,9 @@ class TestClass:
     def test_serve_help(self):
         assert cmd_exec(self, 'mamba_server.cmdline', 'serve', '-h') == 0
         output = cmd_exec_output(self, 'mamba_server.cmdline', 'serve', '-h')
-        assert 'Usage' in output
+        assert 'usage' in output
         assert 'mamba serve' in output
-        assert 'Options' in output
+        assert 'optional arguments' in output
         assert '--help' in output
         assert '--list' in output
 

@@ -26,13 +26,15 @@ class Command(MambaCommand):
         return "Create new component"
 
     @staticmethod
-    def add_options(parser):
-        MambaCommand.add_options(parser)
-        parser.add_option("-l",
+    def add_arguments(parser):
+        MambaCommand.add_arguments(parser)
+        parser.add_argument("-l",
                           "--list",
                           dest="list",
                           action="store_true",
                           help="List available component types")
+        parser.add_argument("component_type", help="Component type template")
+        parser.add_argument("component_name", help="New component name")
 
     @staticmethod
     def templates_dir(mamba_dir, component_type):
@@ -40,22 +42,19 @@ class Command(MambaCommand):
                             component_type)
 
     @staticmethod
-    def run(args, opts, mamba_dir, project_dir):
+    def run(args, mamba_dir, project_dir):
         if project_dir is None:
             print(
                 "Mamba: 'mamba gencomponent' can only be used inside a Mamba Project"
             )
             return 1
 
-        if opts.list:
+        if args.list:
             _list_component_types()
             return
 
-        if len(args) != 2:
-            raise UsageError(
-                "Incorrect number of arguments for 'mamba gencomponent'")
-
-        component_type, component_name = args[0:2]
+        component_type = args.component_type
+        component_name = args.component_name
         module = _sanitize_module_name(component_name)
 
         if component_type not in COMPONENT_TYPES:

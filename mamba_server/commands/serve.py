@@ -14,39 +14,39 @@ class Command(MambaCommand):
         return "Start mamba server"
 
     @staticmethod
-    def add_options(parser):
-        MambaCommand.add_options(parser)
-        parser.add_option("-l",
+    def add_arguments(parser):
+        MambaCommand.add_arguments(parser)
+        parser.add_argument("-l",
                           "--list",
                           dest="list",
                           action="store_true",
                           help="List available launch files")
-        parser.add_option("-d",
+        parser.add_argument("-d",
                           "--dump",
                           dest="dump",
                           metavar="store_true",
                           help="Dump launch file to standard output")
-        parser.add_option("-r",
+        parser.add_argument("-r",
                           "--run",
                           dest="run",
                           default=DEFAULT_LAUNCH_FILE,
                           help="Uses a custom launch file.")
 
     @staticmethod
-    def run(args, opts, mamba_dir, project_dir):
-        if opts.list:
+    def run(args, mamba_dir, project_dir):
+        if args.list:
             _list_launch_files(mamba_dir, project_dir)
             return
-        if opts.dump:
-            template_file = _find_launch_file(opts.dump, mamba_dir,
+        if args.dump:
+            template_file = _find_launch_file(args.dump, mamba_dir,
                                               project_dir)
             if template_file:
                 with open(template_file, "r") as f:
                     print(f.read())
             return
 
-        if opts.run:
-            launch_file = _find_launch_file(opts.run, mamba_dir, project_dir)
+        if args.run:
+            launch_file = _find_launch_file(args.run, mamba_dir, project_dir)
             if launch_file is not None:
                 execute(launch_file, mamba_dir, project_dir)
             else:

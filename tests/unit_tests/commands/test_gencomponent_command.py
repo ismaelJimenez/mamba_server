@@ -139,8 +139,11 @@ class TestClass:
                         '-h') == 0
         output = cmd_exec_output(self, 'mamba_server.cmdline', 'gencomponent',
                                  '-h')
-        assert 'Usage' in output
+        assert 'usage' in output
         assert 'mamba gencomponent <component_type> <component_name>' in output
-        assert 'Options' in output
+        assert 'positional arguments' in output
+        assert 'component_type' in output
+        assert 'component_name' in output
+        assert 'optional arguments' in output
         assert '--help' in output
         assert '--list' in output

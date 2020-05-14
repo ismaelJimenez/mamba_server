@@ -2,7 +2,7 @@
 import sys
 from os import path, getcwd
 from os.path import exists, join
-import optparse
+from argparse import ArgumentParser
 
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
@@ -20,8 +20,7 @@ def execute(argv=None):
 
     cmds = get_classes_from_module('mamba_server.commands', MambaCommand)
     cmdname = _pop_command_name(argv)
-    parser = optparse.OptionParser(formatter=optparse.TitledHelpFormatter(),
-                                   conflict_handler='resolve')
+    parser = ArgumentParser()
 
     if cmdname is None:
         _print_commands()
@@ -33,8 +32,9 @@ def execute(argv=None):
     cmd = cmds[cmdname]
     parser.usage = "mamba %s %s" % (cmdname, cmd.syntax())
     parser.description = cmd.long_desc()
-    cmd.add_options(parser)
-    opts, args = parser.parse_args(args=argv[1:])
+    cmd.add_arguments(parser)
+
+    args = parser.parse_args(args=argv[1:])
 
     mamba_dir = path.dirname(path.abspath(__file__))
 
@@ -44,7 +44,7 @@ def execute(argv=None):
     else:
         project_dir = None
 
-    sys.exit(cmd.run(args, opts, mamba_dir, project_dir))
+    sys.exit(cmd.run(args, mamba_dir, project_dir))
 
 
 # Internal

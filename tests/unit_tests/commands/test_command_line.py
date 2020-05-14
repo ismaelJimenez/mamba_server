@@ -43,3 +43,7 @@ class TestClass:
         assert 'gencomponent' in output
         assert 'serve' in output
         assert 'startproject' in output
+
+        assert cmd_exec(self, 'mamba_server.cmdline', 'wrong_command') == 2
+        output = cmd_exec_output(self, 'mamba_server.cmdline', 'wrong_command')
+        assert 'Unknown command' in output

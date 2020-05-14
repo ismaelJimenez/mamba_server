@@ -30,14 +30,14 @@ class MambaCommand:
         return MambaCommand.long_desc()
 
     @staticmethod
-    def add_options(parser):
+    def add_arguments(parser):
         """
         Populate option parse with options available for this command
         """
         pass
 
     @staticmethod
-    def run(args, opts, mamba_dir, project_dir):
+    def run(args, mamba_dir, project_dir):
         """
         Entry point for running commands
         """
