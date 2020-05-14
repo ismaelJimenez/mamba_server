@@ -10,7 +10,7 @@ from mamba_server.exceptions import UsageError
 TEMPLATES_DIR = "templates"
 
 COMPONENT_TYPES = {
-    'app': "Application main graphical component.",
+    'main': "Application main graphical component.",
     'plugin': "Application plugin component.",
     'load_screen': "Load screen component.",
 }
