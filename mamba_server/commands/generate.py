@@ -40,7 +40,7 @@ class Command(MambaCommand):
     @staticmethod
     def run(args, mamba_dir, project_dir):
         if project_dir is None:
-            print("error: 'mamba gencomponent' can only be used inside a "
+            print("error: 'mamba generate' can only be used inside a "
                   "Mamba Project")
             return 1
 

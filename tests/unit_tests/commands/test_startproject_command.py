@@ -27,8 +27,8 @@ class TestClass:
         """ teardown_method called for every method """
         pass
 
-    def test_startproject_in_new_folder(self):
-        assert cmd_exec(self, 'mamba_server.cmdline', 'startproject',
+    def test_start_in_new_folder(self):
+        assert cmd_exec(self, 'mamba_server.cmdline', 'start',
                         self.project_name) == 0
 
         assert exists(join(self.proj_path, 'mamba.cfg'))
@@ -37,35 +37,35 @@ class TestClass:
         assert exists(join(self.proj_path, 'components'))
         assert exists(join(self.proj_path, 'components', '__init__.py'))
 
-        output = cmd_exec_output(self, 'mamba_server.cmdline', 'startproject',
+        output = cmd_exec_output(self, 'mamba_server.cmdline', 'start',
                                  self.project_name + '2')
 
         assert 'New Mamba project' in output
         assert 'launch your default project with' in output
 
-        assert cmd_exec(self, 'mamba_server.cmdline', 'startproject',
+        assert cmd_exec(self, 'mamba_server.cmdline', 'start',
                         self.project_name) == 1
 
-        output = cmd_exec_output(self, 'mamba_server.cmdline', 'startproject',
+        output = cmd_exec_output(self, 'mamba_server.cmdline', 'start',
                                  self.project_name)
         assert 'Error' in output
         assert 'mamba.cfg already exists' in output
 
-        assert cmd_exec(self, 'mamba_server.cmdline', 'startproject',
+        assert cmd_exec(self, 'mamba_server.cmdline', 'start',
                         'wrong---project---name') == 1
 
-        output = cmd_exec_output(self, 'mamba_server.cmdline', 'startproject',
+        output = cmd_exec_output(self, 'mamba_server.cmdline', 'start',
                                  'wrong---project---name')
         assert 'Error' in output
         assert 'Project names must begin with a letter' in output
 
-    def test_startproject_help(self):
-        assert cmd_exec(self, 'mamba_server.cmdline', 'startproject',
+    def test_start_help(self):
+        assert cmd_exec(self, 'mamba_server.cmdline', 'start',
                         '-h') == 0
-        output = cmd_exec_output(self, 'mamba_server.cmdline', 'startproject',
+        output = cmd_exec_output(self, 'mamba_server.cmdline', 'start',
                                  '-h')
         assert 'usage' in output
-        assert 'mamba startproject <project_name>' in output
+        assert 'mamba start <project_name>' in output
         assert 'positional arguments' in output
         assert 'project_name' in output
         assert 'optional arguments' in output

@@ -37,7 +37,7 @@ class TestClass:
         assert '--list' in output
 
     def test_serve_list(self):
-        assert cmd_exec(self, 'mamba_server.cmdline', 'startproject',
+        assert cmd_exec(self, 'mamba_server.cmdline', 'start',
                         self.project_name) == 0
 
         self.cwd = join(self.temp_path, self.project_name)

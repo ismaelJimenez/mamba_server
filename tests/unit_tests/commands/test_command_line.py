@@ -32,17 +32,17 @@ class TestClass:
         output = cmd_exec_output(self, 'mamba_server.cmdline', '-h')
         assert 'Usage' in output
         assert 'mamba <command>' in output
-        assert 'gencomponent' in output
+        assert 'generate' in output
         assert 'serve' in output
-        assert 'startproject' in output
+        assert 'start' in output
 
         assert cmd_exec(self, 'mamba_server.cmdline') == 0
         output = cmd_exec_output(self, 'mamba_server.cmdline')
         assert 'Usage' in output
         assert 'mamba <command>' in output
-        assert 'gencomponent' in output
+        assert 'generate' in output
         assert 'serve' in output
-        assert 'startproject' in output
+        assert 'start' in output
 
         assert cmd_exec(self, 'mamba_server.cmdline', 'wrong_command') == 2
         output = cmd_exec_output(self, 'mamba_server.cmdline', 'wrong_command')

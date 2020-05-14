@@ -29,10 +29,10 @@ class TestClass:
         sys.path.append(join(self.temp_path, self.project_name))
 
         # Initialize plugin in local folder
-        assert cmd_exec(self, 'mamba_server.cmdline', 'startproject',
+        assert cmd_exec(self, 'mamba_server.cmdline', 'start',
                         self.project_name) == 0
         self.cwd = join(self.temp_path, self.project_name)
-        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'plugin',
+        assert cmd_exec(self, 'mamba_server.cmdline', 'generate', 'plugin',
                         'plugin_1') == 0
         assert exists(join(self.proj_path, 'components', 'plugin', 'plugin_1'))
 
@@ -57,8 +57,8 @@ class TestClass:
                                             MambaCommand)
         assert len(cmds) == 3
         assert 'serve' in cmds
-        assert 'startproject' in cmds
-        assert 'gencomponent' in cmds
+        assert 'start' in cmds
+        assert 'generate' in cmds
 
     def test_get_classes_from_module_commands_class_gui_plugin(self):
         assert misc.get_classes_from_module('mamba_server.commands',
@@ -113,7 +113,7 @@ class TestClass:
         assert 'not a valid component identifier' in str(excinfo.value)
 
     def test_get_components_duplicated_component(self):
-        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'plugin',
+        assert cmd_exec(self, 'mamba_server.cmdline', 'generate', 'plugin',
                         'quit') == 0
         assert exists(join(self.proj_path, 'components', 'plugin', 'quit'))
 
@@ -149,7 +149,7 @@ class TestClass:
         assert 'plugin_1' in components_dict
 
     def test_get_components_duplicated_component(self):
-        assert cmd_exec(self, 'mamba_server.cmdline', 'gencomponent', 'plugin',
+        assert cmd_exec(self, 'mamba_server.cmdline', 'generate', 'plugin',
                         'quit') == 0
         assert exists(join(self.proj_path, 'components', 'plugin', 'quit'))
 
