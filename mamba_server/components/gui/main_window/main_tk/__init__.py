@@ -22,7 +22,8 @@ class MainWindow(MainWindowInterface):
         self._menus = {}
         self._menu_actions = []
 
-        self._context.rx.subscribe('quit', self.close)
+        if self._context is not None:
+            self._context.rx.subscribe('quit', self.close)
 
     def register_action(self,
                         menu_title,
@@ -66,7 +67,7 @@ class MainWindow(MainWindowInterface):
         self._app.withdraw()
         self._app.update()
 
-    def close(self):
+    def close(self, rx_on_next_value=None):
         """
         Entry point for closing main screen
         """

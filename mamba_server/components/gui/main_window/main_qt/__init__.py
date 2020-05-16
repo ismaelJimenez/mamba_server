@@ -26,7 +26,8 @@ class MainWindow(MainWindowInterface):
         self._menu_actions = []
         self._action_widgets = []  # Storage of actions
 
-        self._context.rx.subscribe('quit', self.close)
+        if self._context is not None:
+            self._context.rx.subscribe('quit', self.close)
 
     def register_action(self,
                         menu_title,
@@ -77,7 +78,7 @@ class MainWindow(MainWindowInterface):
         """
         self._app.hide()
 
-    def close(self):
+    def close(self, rx_on_next_value=None):
         """
         Entry point for closing main screen
         """

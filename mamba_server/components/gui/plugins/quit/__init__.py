@@ -14,5 +14,5 @@ class GuiPlugin(GuiPluginInterface):
         """
         Entry point for running gui plugin
         """
-        self._context.rx.emit('quit')
-
+        if self._context is not None:
+            self._context.rx.on_next('quit')

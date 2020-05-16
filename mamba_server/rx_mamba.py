@@ -14,12 +14,13 @@ class Signal:
         self._block = False
         self._slots = []
 
-    def emit(self, *args, **kwargs):
+    def on_next(self, *args, **kwargs):
         """
-        Calls all the connected slots with the provided args and kwargs
-        unless block is activated
-        """
+        Notifies all subscribed observers with the value.
 
+        Args:
+            value (any): The callable on_next to register.
+        """
         if self._block:
             return
 
@@ -155,15 +156,17 @@ class SignalFactory(dict):
         """
         self.pop(name, None)
 
-    def emit(self, signal_name, *args, **kwargs):
+    def on_next(self, observable_name, value=None):
         """
-        Emits a signal by name if it exists. Any additional args or kwargs are
-        passed to the signal
-        :param signal_name: the signal name to emit
+        Notifies all subscribed observers of the given observable
+        with the value.
+
+        Args:
+            observable_name (str): The observable name.
+            value (any): The callable on_next to register.
         """
-        assert signal_name in self, "{} is not a registered signal".format(
-            signal_name)
-        self[signal_name].emit(*args, **kwargs)
+        if observable_name in self:
+            self[observable_name].on_next(value)
 
     def subscribe(self, observable_name, on_next):
         """
@@ -175,7 +178,7 @@ class SignalFactory(dict):
             on_next (callable): The callable on_next to register.
         """
         if observable_name not in self:
-            self.register(observable_name, on_next)
+            self.register(observable_name)
 
         self[observable_name].subscribe(on_next)
 

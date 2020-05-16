@@ -129,7 +129,7 @@ class TestClassSignal:
         """ Test emitting signal to standalone function """
         signal = Signal()
         signal.subscribe(dummy_test_func)
-        signal.emit(self, 'Method')
+        signal.on_next(self, 'Method')
         assert self.check_val == 'Method'
         # Expected function to be called once
         assert self.func_call_count == 1
@@ -143,7 +143,7 @@ class TestClassSignal:
         signal = Signal()
         signal.subscribe(local_method)
         del local_method
-        signal.emit(self, 'Method')
+        signal.on_next(self, 'Method')
         assert self.check_val is None
         # Expected function not to be called
         assert self.func_call_count == 0
@@ -153,7 +153,7 @@ class TestClassSignal:
         signal = Signal()
         partial_func = partial(dummy_test_func, self, 'Partial')
         signal.subscribe(partial_func)
-        signal.emit()
+        signal.on_next()
         assert self.check_val == 'Partial'
         # Expected function to be called once
         assert self.func_call_count == 1
@@ -162,7 +162,7 @@ class TestClassSignal:
         """ Test emitting signal to lambda """
         signal = Signal()
         signal.subscribe(lambda value: dummy_test_func(self, value))
-        signal.emit('Lambda')
+        signal.on_next('Lambda')
         assert self.check_val == 'Lambda'
         # Expected function to be called once
         assert self.func_call_count == 1
@@ -172,7 +172,7 @@ class TestClassSignal:
         signal = Signal()
         dummy_class = DummySlotClass()
         signal.subscribe(dummy_class.set_val)
-        signal.emit('ClassMethod')
+        signal.on_next('ClassMethod')
         assert dummy_class.check_val == 'ClassMethod'
         # Expected function to be called once
         assert dummy_class.func_call_count == 1
@@ -184,7 +184,7 @@ class TestClassSignal:
         signal.subscribe(dummy_class.set_val)
         signal.subscribe(lambda value: dummy_test_func(self, value))
         del dummy_class
-        signal.emit(1)
+        signal.on_next(1)
         assert self.check_val == 1
         # Expected function to be called once
         assert self.func_call_count == 1
@@ -249,7 +249,7 @@ class TestClassSignal:
         signal.subscribe(dummy_test_func)
         signal.subscribe(local_method)
         signal.disconnect(dummy_test_func)
-        signal.emit(self, 1)
+        signal.on_next(self, 1)
         # Expected 1 connected after disconnect
         assert len(signal._slots) == 1
         # Expected function to be called once
@@ -312,10 +312,10 @@ class TestClassSignalClass:
         dummy_signal_class_1.cSignal.subscribe(dummy_slot_class.set_val)
         dummy_signal_class_2 = DummySignalClass()
         dummy_signal_class_2.cSignal.subscribe(dummy_slot_class.set_val_2)
-        dummy_signal_class_1.cSignal.emit(1)
+        dummy_signal_class_1.cSignal.on_next(1)
         assert dummy_slot_class.check_val == 1
         assert dummy_slot_class.func_call_count == 1
-        dummy_signal_class_2.cSignal.emit(3)
+        dummy_signal_class_2.cSignal.on_next(3)
         assert dummy_slot_class.check_val == 1
         assert dummy_slot_class.check_val_2 == 3
         assert dummy_slot_class.func_call_count == 1
@@ -334,10 +334,10 @@ class TestClassSignalFactory:
         dummy_signal_class_2.cSignalFactory.register('Spam')
         dummy_signal_class_2.cSignalFactory['Spam'].subscribe(
             dummy_slot_class.set_val_2)
-        dummy_signal_class_1.cSignalFactory['Spam'].emit(1)
+        dummy_signal_class_1.cSignalFactory['Spam'].on_next(1)
         assert dummy_slot_class.check_val == 1
         assert dummy_slot_class.func_call_count == 1
-        dummy_signal_class_2.cSignalFactory['Spam'].emit(3)
+        dummy_signal_class_2.cSignalFactory['Spam'].on_next(3)
         assert dummy_slot_class.check_val == 1
         assert dummy_slot_class.func_call_count == 1
         assert dummy_slot_class.check_val_2 == 3
@@ -359,7 +359,7 @@ class TestClassSignalFactoryClass:
         dummy_signal_class.signalFactory.register('Spam')
         dummy_signal_class.signalFactory.subscribe('Spam',
                                                    dummy_slot_class.set_val)
-        dummy_signal_class.signalFactory.emit('Spam', 1)
+        dummy_signal_class.signalFactory.on_next('Spam', 1)
         assert dummy_slot_class.check_val == 1
         assert dummy_slot_class.func_call_count == 1
 
@@ -369,7 +369,7 @@ class TestClassSignalFactoryClass:
         dummy_slot_class = DummySlotClass()
         dummy_signal_class.signalFactory.subscribe('Spam',
                                                    dummy_slot_class.set_val)
-        dummy_signal_class.signalFactory.emit('Spam', 1)
+        dummy_signal_class.signalFactory.on_next('Spam', 1)
         assert dummy_slot_class.check_val == 1
         assert dummy_slot_class.func_call_count == 1
 
@@ -380,7 +380,7 @@ class TestClassSignalFactoryClass:
         dummy_signal_class.signalFactory.register('Spam')
         dummy_signal_class.signalFactory['Spam'].subscribe(
             dummy_slot_class.set_val)
-        dummy_signal_class.signalFactory['Spam'].emit(1)
+        dummy_signal_class.signalFactory['Spam'].on_next(1)
         assert dummy_slot_class.check_val == 1
         assert dummy_slot_class.func_call_count == 1
 
@@ -393,8 +393,8 @@ class TestClassSignalFactoryClass:
         dummy_signal_class.signalFactory.register('Eggs',
                                                   dummy_slot_class.set_val_2)
         dummy_signal_class.signalFactory.block('Spam')
-        dummy_signal_class.signalFactory.emit('Spam', 1)
-        dummy_signal_class.signalFactory.emit('Eggs', 2)
+        dummy_signal_class.signalFactory.on_next('Spam', 1)
+        dummy_signal_class.signalFactory.on_next('Eggs', 2)
         assert dummy_slot_class.check_val is None
         assert dummy_slot_class.check_val_2 == 2
         assert dummy_slot_class.func_call_count == 0
@@ -410,8 +410,8 @@ class TestClassSignalFactoryClass:
                                                   dummy_slot_class.set_val_2)
         dummy_signal_class.signalFactory.block('Spam')
         dummy_signal_class.signalFactory.block('Spam', False)
-        dummy_signal_class.signalFactory.emit('Spam', 1)
-        dummy_signal_class.signalFactory.emit('Eggs', 2)
+        dummy_signal_class.signalFactory.on_next('Spam', 1)
+        dummy_signal_class.signalFactory.on_next('Eggs', 2)
         assert dummy_slot_class.check_val == 1
         assert dummy_slot_class.check_val_2 == 2
         assert dummy_slot_class.func_call_count == 1
@@ -426,8 +426,8 @@ class TestClassSignalFactoryClass:
         dummy_signal_class.signalFactory.register('Eggs',
                                                   dummy_slot_class.set_val_2)
         dummy_signal_class.signalFactory.block()
-        dummy_signal_class.signalFactory.emit('Spam', 1)
-        dummy_signal_class.signalFactory.emit('Eggs', 2)
+        dummy_signal_class.signalFactory.on_next('Spam', 1)
+        dummy_signal_class.signalFactory.on_next('Eggs', 2)
         assert dummy_slot_class.check_val is None
         assert dummy_slot_class.check_val_2 is None
         assert dummy_slot_class.func_call_count == 0
@@ -443,8 +443,8 @@ class TestClassSignalFactoryClass:
                                                   dummy_slot_class.set_val_2)
         dummy_signal_class.signalFactory.block()
         dummy_signal_class.signalFactory.block(is_blocked=False)
-        dummy_signal_class.signalFactory.emit('Spam', 1)
-        dummy_signal_class.signalFactory.emit('Eggs', 2)
+        dummy_signal_class.signalFactory.on_next('Spam', 1)
+        dummy_signal_class.signalFactory.on_next('Eggs', 2)
         assert dummy_slot_class.check_val == 1
         assert dummy_slot_class.check_val_2 == 2
         assert dummy_slot_class.func_call_count == 1
