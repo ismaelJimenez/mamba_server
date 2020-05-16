@@ -1,4 +1,5 @@
 pytest
+rx
 pyyaml
 pycodestyle
 pylint
