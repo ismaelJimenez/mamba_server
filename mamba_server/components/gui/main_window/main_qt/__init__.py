@@ -26,6 +26,8 @@ class MainWindow(MainWindowInterface):
         self._menu_actions = []
         self._action_widgets = []  # Storage of actions
 
+        self._context.rx.subscribe('quit', self.close)
+
     def register_action(self,
                         menu_title,
                         action_name,

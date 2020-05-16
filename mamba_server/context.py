@@ -1,10 +1,13 @@
 """Application context that is shared between components"""
 
+from mamba_server.rx_mamba import SignalFactory
+
 
 class Context:
     """Application context class"""
     def __init__(self):
         self._memory = {}
+        self.rx = SignalFactory()
 
     def get(self, parameter):
         """Returns the value of a context parameter, or None if it
