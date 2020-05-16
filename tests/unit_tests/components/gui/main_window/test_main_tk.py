@@ -7,19 +7,11 @@ from mamba_server.exceptions import ComponentConfigException
 
 
 def test_main_tk_wo_context():
-    widget = MainWindow()
+    with pytest.raises(TypeError) as excinfo:
+        MainWindow()
 
-    # Test default configuration
-    assert widget._configuration == {'title': 'Mamba Server'}
-
-    assert widget._menus == {}
-    assert widget._menu_actions == []
-
-    # Test window is hidden per default
-    assert widget._app.winfo_ismapped() == 0
-
-    widget.close()
-    widget._app.destroy()
+    assert "missing 1 required positional argument" in str(
+        excinfo.value)
 
 
 def test_main_tk_w_context():
@@ -39,7 +31,7 @@ def test_main_tk_w_context():
 
 
 def test_main_tk_show():
-    widget = MainWindow()
+    widget = MainWindow(Context())
 
     # Test window is hidden per default
     assert widget._app.winfo_ismapped() == 0
@@ -53,7 +45,7 @@ def test_main_tk_show():
 
 
 def test_main_tk_hide():
-    widget = MainWindow()
+    widget = MainWindow(Context())
 
     # Test window is hidden per default
     assert widget._app.winfo_ismapped() == 0
@@ -75,7 +67,7 @@ def test_main_tk_hide():
 
 
 def test_main_tk_close():
-    widget = MainWindow()
+    widget = MainWindow(Context())
 
     # Test window show
     widget.show()
@@ -97,7 +89,7 @@ def test_main_tk_register_action():
     def dummy_func():
         pass
 
-    widget = MainWindow()
+    widget = MainWindow(Context())
 
     assert not widget._is_action_in_menu('test_menu', 'test_action')
 
@@ -116,7 +108,7 @@ def test_main_tk_register_action():
 
 
 def test_main_tk_event_loop_after():
-    widget = MainWindow()
+    widget = MainWindow(Context())
 
     # Close window after 100 milliseconds
     widget.after(100, widget.close)
@@ -129,7 +121,7 @@ def test_main_tk_event_loop_after():
 
 
 def test_internal_main_tk_add_menu():
-    widget = MainWindow()
+    widget = MainWindow(Context())
 
     assert not widget._exists_menu('test_menu')
 
@@ -142,7 +134,7 @@ def test_internal_main_tk_add_menu():
 
 
 def test_internal_main_tk_get_menu():
-    widget = MainWindow()
+    widget = MainWindow(Context())
 
     assert widget._get_menu('test_menu') is None
 

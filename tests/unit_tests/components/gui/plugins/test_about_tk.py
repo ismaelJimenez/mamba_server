@@ -1,26 +1,20 @@
+import pytest
+
 from mamba_server.context import Context
 from mamba_server.components.gui.plugins.about.about_tk import GuiPlugin
 from mamba_server.components.gui.main_window.main_tk import MainWindow
 
 
 def test_about_gui_plugin_wo_context():
-    widget = GuiPlugin()
+    with pytest.raises(TypeError) as excinfo:
+        GuiPlugin()
 
-    # Test default configuration
-    assert widget._configuration == {
-        'menu': 'Help',
-        'name': 'About',
-        'shortcut': None,
-        'status_tip': "Show the application's About box",
-        'message_box_title': 'About Mamba Server'
-    }
-
-    assert widget._box_message == "Mamba Server v{}"
-    assert widget._version != ""
+    assert "missing 1 required positional argument" in str(
+        excinfo.value)
 
 
 def test_about_gui_plugin_w_empty_context():
-    widget = GuiPlugin()
+    widget = GuiPlugin(Context())
 
     # Test default configuration
     assert widget._configuration == {
@@ -36,12 +30,12 @@ def test_about_gui_plugin_w_empty_context():
 
 
 def test_about_gui_plugin_w_menu_window():
-    main_window = MainWindow()
+    context = Context()
+    main_window = MainWindow(context)
 
     # Test help is not in menu bar
     assert not main_window._exists_menu('Help')
 
-    context = Context()
     context.set('main_window', main_window)
     widget = GuiPlugin(context)
 

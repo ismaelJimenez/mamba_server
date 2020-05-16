@@ -11,7 +11,7 @@ from mamba_server.components.gui.plugins.interface import GuiPluginInterface
 
 class GuiPlugin(GuiPluginInterface):
     """ Plugin to show About message implemented in TkInter """
-    def __init__(self, context=None):
+    def __init__(self, context):
         super(GuiPlugin, self).__init__(os.path.dirname(__file__), context)
 
         self._box_message = "Mamba Server v{}"

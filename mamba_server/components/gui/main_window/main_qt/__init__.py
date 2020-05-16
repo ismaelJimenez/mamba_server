@@ -13,7 +13,7 @@ from mamba_server.exceptions import ComponentConfigException
 
 class MainWindow(MainWindowInterface):
     """ Main window implemented with Qt5 """
-    def __init__(self, context=None):
+    def __init__(self, context):
         super(MainWindow, self).__init__(os.path.dirname(__file__), context)
 
         self._qt_app = QApplication(
@@ -26,8 +26,7 @@ class MainWindow(MainWindowInterface):
         self._menu_actions = []
         self._action_widgets = []  # Storage of actions
 
-        if self._context is not None:
-            self._context.rx.subscribe('quit', self.close)
+        self._context.rx.subscribe('quit', self.close)
 
     def register_action(self,
                         menu_title,

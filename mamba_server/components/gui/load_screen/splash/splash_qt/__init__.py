@@ -14,7 +14,7 @@ from mamba_server.components.gui.load_screen.interface import \
 
 class LoadScreen(LoadScreenInterface):
     """ Splash screen implemented with Qt5 """
-    def __init__(self, context=None):
+    def __init__(self, context):
         super(LoadScreen, self).__init__(os.path.dirname(__file__), context)
 
         self._qt_app = QApplication(

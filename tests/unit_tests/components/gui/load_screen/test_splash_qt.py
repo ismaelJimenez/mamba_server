@@ -29,11 +29,11 @@ class TestClass:
         self.widget.close()
 
     def test_splash_tk_wo_context(self):
-        with pytest.raises(ComponentConfigException) as excinfo:
+        with pytest.raises(TypeError) as excinfo:
             LoadScreen()
 
-        assert 'Image file' in str(excinfo.value)
-        assert 'not found' in str(excinfo.value)
+        assert "missing 1 required positional argument" in str(
+            excinfo.value)
 
     def test_splash_tk_w_context(self):
         # Test default configuration

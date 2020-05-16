@@ -11,7 +11,7 @@ from mamba_server.exceptions import ComponentConfigException
 
 class LoadScreen(LoadScreenInterface):
     """ Splash screen implemented with TkInter """
-    def __init__(self, context=None):
+    def __init__(self, context):
         super(LoadScreen, self).__init__(os.path.dirname(__file__), context)
 
         try:

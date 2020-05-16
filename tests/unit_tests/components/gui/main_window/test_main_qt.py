@@ -6,20 +6,11 @@ from mamba_server.exceptions import ComponentConfigException
 
 
 def test_main_qt_wo_context():
-    widget = MainWindow()
+    with pytest.raises(TypeError) as excinfo:
+        MainWindow()
 
-    # Test default configuration
-    assert widget._configuration == {'title': 'Mamba Server'}
-
-    assert widget._menus == {}
-    assert widget._menu_actions == []
-    assert widget._action_widgets == []
-
-    # Test window is hidden per default
-    assert widget._app.isHidden()
-
-    widget.close()
-    widget._qt_app.quit()
+    assert "missing 1 required positional argument" in str(
+        excinfo.value)
 
 
 def test_main_qt_w_context():
@@ -40,7 +31,7 @@ def test_main_qt_w_context():
 
 
 def test_main_qt_show():
-    widget = MainWindow()
+    widget = MainWindow(Context())
 
     # Test window is hidden per default
     assert not widget._app.isVisible()
@@ -54,7 +45,7 @@ def test_main_qt_show():
 
 
 def test_main_qt_hide():
-    widget = MainWindow()
+    widget = MainWindow(Context())
 
     # Test window is hidden per default
     assert not widget._app.isVisible()
@@ -76,7 +67,7 @@ def test_main_qt_hide():
 
 
 def test_main_qt_close():
-    widget = MainWindow()
+    widget = MainWindow(Context())
 
     # Test window show
     widget.show()
@@ -93,7 +84,7 @@ def test_main_qt_register_action():
     def dummy_func():
         pass
 
-    widget = MainWindow()
+    widget = MainWindow(Context())
 
     assert not widget._is_action_in_menu('test_menu', 'test_action')
 
@@ -112,7 +103,7 @@ def test_main_qt_register_action():
 
 
 def test_main_qt_event_loop_after():
-    widget = MainWindow()
+    widget = MainWindow(Context())
 
     # Test window show
     widget.show()
@@ -130,7 +121,7 @@ def test_main_qt_event_loop_after():
 
 
 def test_internal_main_qt_add_menu():
-    widget = MainWindow()
+    widget = MainWindow(Context())
 
     assert not widget._exists_menu('test_menu')
 
@@ -143,7 +134,7 @@ def test_internal_main_qt_add_menu():
 
 
 def test_internal_main_qt_get_menu():
-    widget = MainWindow()
+    widget = MainWindow(Context())
 
     assert widget._get_menu('test_menu') is None
 
