@@ -3,7 +3,7 @@
 import pytest
 from functools import partial
 
-from mamba_server.rx_mamba import Signal, ClassSignal, ClassSignalFactory, SignalFactory
+from mamba_server.rx_mamba import Signal, SignalFactory
 
 
 class DummySlotClass:
@@ -289,69 +289,12 @@ class TestClassSignal:
 
 class DummySignalClass(object):
     """A dummy class to check for instance handling of signals"""
-    cSignal = ClassSignal()
-    cSignalFactory = ClassSignalFactory()
-
     def __init__(self):
         self.signal = Signal()
         self.signalFactory = SignalFactory()
 
 
-class TestClassSignalClass:
-    def test_class_signal_assign_to_property(self):
-        """ Test assigning to a ClassSignal property """
-        dummy_signal_class = DummySignalClass()
-        with pytest.raises(RuntimeError) as excinfo:
-            dummy_signal_class.cSignal = None
-        assert 'Cannot assign to a Signal object' in str(excinfo.value)
-
-    def test_class_signal_emit(self):
-        """ Test emitting signals from class signal and that instances of the class are unique """
-        dummy_signal_class_1 = DummySignalClass()
-        dummy_slot_class = DummySlotClass()
-        dummy_signal_class_1.cSignal.subscribe(dummy_slot_class.set_val)
-        dummy_signal_class_2 = DummySignalClass()
-        dummy_signal_class_2.cSignal.subscribe(dummy_slot_class.set_val_2)
-        dummy_signal_class_1.cSignal.on_next(1)
-        assert dummy_slot_class.check_val == 1
-        assert dummy_slot_class.func_call_count == 1
-        dummy_signal_class_2.cSignal.on_next(3)
-        assert dummy_slot_class.check_val == 1
-        assert dummy_slot_class.check_val_2 == 3
-        assert dummy_slot_class.func_call_count == 1
-        assert dummy_slot_class.func_call_count_2 == 1
-
-
-class TestClassSignalFactory:
-    def test_class_signal_factory_emit(self):
-        """Test emitting signals from class signal factory and that class instances are unique"""
-        dummy_signal_class_1 = DummySignalClass()
-        dummy_slot_class = DummySlotClass()
-        dummy_signal_class_1.cSignalFactory.register('Spam')
-        dummy_signal_class_1.cSignalFactory['Spam'].subscribe(
-            dummy_slot_class.set_val)
-        dummy_signal_class_2 = DummySignalClass()
-        dummy_signal_class_2.cSignalFactory.register('Spam')
-        dummy_signal_class_2.cSignalFactory['Spam'].subscribe(
-            dummy_slot_class.set_val_2)
-        dummy_signal_class_1.cSignalFactory['Spam'].on_next(1)
-        assert dummy_slot_class.check_val == 1
-        assert dummy_slot_class.func_call_count == 1
-        dummy_signal_class_2.cSignalFactory['Spam'].on_next(3)
-        assert dummy_slot_class.check_val == 1
-        assert dummy_slot_class.func_call_count == 1
-        assert dummy_slot_class.check_val_2 == 3
-        assert dummy_slot_class.func_call_count_2 == 1
-
-
 class TestClassSignalFactoryClass:
-    def test_class_signal_factory_class_assign_to_property(self):
-        """ Test assigning to a ClassSignalFactory property """
-        dummy_signal_class = DummySignalClass()
-        with pytest.raises(RuntimeError) as excinfo:
-            dummy_signal_class.cSignalFactory = None
-        assert 'Cannot assign to a Signal object' in str(excinfo.value)
-
     def test_class_signal_factory_class_connect(self):
         """ Test SignalFactory indirect signal connection """
         dummy_signal_class = DummySignalClass()
@@ -383,80 +326,6 @@ class TestClassSignalFactoryClass:
         dummy_signal_class.signalFactory['Spam'].on_next(1)
         assert dummy_slot_class.check_val == 1
         assert dummy_slot_class.func_call_count == 1
-
-    def test_class_signal_factory_block_single(self):
-        """ Test blocking single channel with signal factory """
-        dummy_signal_class = DummySignalClass()
-        dummy_slot_class = DummySlotClass()
-        dummy_signal_class.signalFactory.register('Spam',
-                                                  dummy_slot_class.set_val)
-        dummy_signal_class.signalFactory.register('Eggs',
-                                                  dummy_slot_class.set_val_2)
-        dummy_signal_class.signalFactory.block('Spam')
-        dummy_signal_class.signalFactory.on_next('Spam', 1)
-        dummy_signal_class.signalFactory.on_next('Eggs', 2)
-        assert dummy_slot_class.check_val is None
-        assert dummy_slot_class.check_val_2 == 2
-        assert dummy_slot_class.func_call_count == 0
-        assert dummy_slot_class.func_call_count_2 == 1
-
-    def test_class_signal_factory_unblock_single(self):
-        """ Test unblocking a single channel with signal factory """
-        dummy_signal_class = DummySignalClass()
-        dummy_slot_class = DummySlotClass()
-        dummy_signal_class.signalFactory.register('Spam',
-                                                  dummy_slot_class.set_val)
-        dummy_signal_class.signalFactory.register('Eggs',
-                                                  dummy_slot_class.set_val_2)
-        dummy_signal_class.signalFactory.block('Spam')
-        dummy_signal_class.signalFactory.block('Spam', False)
-        dummy_signal_class.signalFactory.on_next('Spam', 1)
-        dummy_signal_class.signalFactory.on_next('Eggs', 2)
-        assert dummy_slot_class.check_val == 1
-        assert dummy_slot_class.check_val_2 == 2
-        assert dummy_slot_class.func_call_count == 1
-        assert dummy_slot_class.func_call_count_2 == 1
-
-    def test_class_signal_factory_block_all(self):
-        """ Test blocking all signals from signal factory """
-        dummy_signal_class = DummySignalClass()
-        dummy_slot_class = DummySlotClass()
-        dummy_signal_class.signalFactory.register('Spam',
-                                                  dummy_slot_class.set_val)
-        dummy_signal_class.signalFactory.register('Eggs',
-                                                  dummy_slot_class.set_val_2)
-        dummy_signal_class.signalFactory.block()
-        dummy_signal_class.signalFactory.on_next('Spam', 1)
-        dummy_signal_class.signalFactory.on_next('Eggs', 2)
-        assert dummy_slot_class.check_val is None
-        assert dummy_slot_class.check_val_2 is None
-        assert dummy_slot_class.func_call_count == 0
-        assert dummy_slot_class.func_call_count_2 == 0
-
-    def test_class_signal_factory_unblock_all(self):
-        """ Test unblocking all signals from signal factory """
-        dummy_signal_class = DummySignalClass()
-        dummy_slot_class = DummySlotClass()
-        dummy_signal_class.signalFactory.register('Spam',
-                                                  dummy_slot_class.set_val)
-        dummy_signal_class.signalFactory.register('Eggs',
-                                                  dummy_slot_class.set_val_2)
-        dummy_signal_class.signalFactory.block()
-        dummy_signal_class.signalFactory.block(is_blocked=False)
-        dummy_signal_class.signalFactory.on_next('Spam', 1)
-        dummy_signal_class.signalFactory.on_next('Eggs', 2)
-        assert dummy_slot_class.check_val == 1
-        assert dummy_slot_class.check_val_2 == 2
-        assert dummy_slot_class.func_call_count == 1
-        assert dummy_slot_class.func_call_count_2 == 1
-
-    def test_class_signal_factory_block_invalid_channel(self):
-        """ Test blocking an invalid channel from signal factory """
-        dummy_signal_class = DummySignalClass()
-
-        with pytest.raises(RuntimeError) as excinfo:
-            dummy_signal_class.signalFactory.block('Spam')
-        assert 'Could not find signal matching Spam' in str(excinfo.value)
 
     def test_class_signal_factory_deregister(self):
         """ Test unregistering from SignalFactory """

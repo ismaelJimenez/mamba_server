@@ -111,25 +111,6 @@ class Signal:
         """Clears the signal of all connected slots"""
         self._slots = []
 
-    def block(self, is_blocked):
-        """Sets blocking of the signal"""
-        self._block = bool(is_blocked)
-
-
-class ClassSignal:
-    """
-    The class signal allows a signal to be set on a class rather than
-    an instance. This emulates the behavior of a PyQt signal
-    """
-    _map = {}
-
-    def __get__(self, instance, owner):
-        tmp = self._map.setdefault(self, weakref.WeakKeyDictionary())
-        return tmp.setdefault(instance, Signal())
-
-    def __set__(self, instance, value):
-        raise RuntimeError("Cannot assign to a Signal object")
-
 
 class SignalFactory(dict):
     """
@@ -181,50 +162,3 @@ class SignalFactory(dict):
             self.register(observable_name)
 
         self[observable_name].subscribe(on_next)
-
-    def block(self, signals=None, is_blocked=True):
-        """
-        Sets the block on any provided signals, or to all signals
-
-        :param signals: defaults to all signals. Accepts either a single
-        string or a list of strings
-        :param is_blocked: the state to set the signal to
-        """
-        if signals and isinstance(signals, str):
-            signals = [signals]
-
-        signals = signals or self.keys()
-
-        for signal in signals:
-            if signal not in self:
-                raise RuntimeError(
-                    "Could not find signal matching {}".format(signal))
-            self[signal].block(is_blocked)
-
-
-class ClassSignalFactory:
-    """
-    The class signal allows a signal factory to be set on a class rather than
-    an instance.
-    """
-    _map = {}
-    _names = set()
-
-    def __get__(self, instance, owner):
-        tmp = self._map.setdefault(self, weakref.WeakKeyDictionary())
-
-        signal = tmp.setdefault(instance, SignalFactory())
-        for name in self._names:
-            signal.register(name)
-
-        return signal
-
-    def __set__(self, instance, value):
-        raise RuntimeError("Cannot assign to a Signal object")
-
-    def register(self, name):
-        """
-        Registers a new signal with the given name
-        :param name: The signal to register
-        """
-        self._names.add(name)
