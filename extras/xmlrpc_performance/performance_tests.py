@@ -14,7 +14,6 @@ proc = subprocess.Popen(['python3', '-u', 'minimal_xmlrpc_server.py'],
 
 try:
     time.sleep(1)
-    s = xmlrpc.client.ServerProxy('http://localhost:8000')
     xmlrpc_time = timeit.timeit(
         "s.pow(2,3)",
         setup=
@@ -24,6 +23,10 @@ try:
                               setup="s = {'pow': pow}",
                               number=NUMBER_OF_LOOPS) / NUMBER_OF_LOOPS
     pow_time = timeit.timeit("s(2,3)", setup="s = pow",
+                             number=NUMBER_OF_LOOPS) / NUMBER_OF_LOOPS
+
+    rx_time = timeit.timeit("subject.on_next(pow(2,3))",
+                             setup='from rx.subject import Subject; subject = Subject(); subject.subscribe(on_next=lambda i: None)',
                              number=NUMBER_OF_LOOPS) / NUMBER_OF_LOOPS
 
 finally:
@@ -36,5 +39,25 @@ finally:
         f'Time for calling a function in a xmlrpc server: {xmlrpc_time - pow_time}'
     )
     print(
+       f'Time for calling a function with a Rx: {rx_time - pow_time}'
+    )
+    print(
         f'Xmlrpc is {int((xmlrpc_time - pow_time) / (dict_time - pow_time))} times slower as a dictionary'
     )
+    print(
+        f'Rx is {int((rx_time - pow_time) / (dict_time - pow_time))} times slower as a dictionary'
+    )
+
+# from rx.subject import Subject
+#
+# subject = Subject()
+# subject.subscribe(
+#     on_next=lambda i: print("Received ASDF {0}".format(i))
+# )
+# subject.on_next(1)
+
+
+
+
+#x =
+#x(1)
