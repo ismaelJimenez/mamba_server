@@ -46,37 +46,40 @@ class Signal:
                 # at this point
                 slot(*args, **kwargs)
 
-    def connect(self, slot):
+    def subscribe(self, on_next):
         """
-        Connects the signal to any callable object
+        Adds a new observer to the observable.
+
+        Args:
+            on_next (callable): The callable on_next to register.
         """
-        if not callable(slot):
+        if not callable(on_next):
             raise ValueError(
                 "Connection to non-callable '{}' object failed".format(
-                    slot.__class__.__name__))
+                    on_next.__class__.__name__))
 
-        if isinstance(slot, partial) or '<' in slot.__name__:
+        if isinstance(on_next, partial) or '<' in on_next.__name__:
             # If it's a partial or a lambda. The '<' check is the only py2
             # and py3 compatible way I could find
-            if slot not in self._slots:
-                self._slots.append(slot)
-        elif inspect.ismethod(slot):
+            if on_next not in self._slots:
+                self._slots.append(on_next)
+        elif inspect.ismethod(on_next):
             # Check if it's an instance method and store it with the instance
             # as the key
-            slot_self = slot.__self__
+            slot_self = on_next.__self__
             slot_dict = weakref.WeakKeyDictionary()
-            slot_dict[slot_self] = slot.__func__
+            slot_dict[slot_self] = on_next.__func__
             if slot_dict not in self._slots:
                 self._slots.append(slot_dict)
         else:
             # If it's just a function then just store it as a weakref.
-            new_slot_ref = weakref.ref(slot)
+            new_slot_ref = weakref.ref(on_next)
             if new_slot_ref not in self._slots:
                 self._slots.append(new_slot_ref)
 
     def disconnect(self, slot):
         """
-        Disconnects the slot from the signal
+        Disconnects the on_next from the signal
         """
         if not callable(slot):
             return
@@ -143,7 +146,7 @@ class SignalFactory(dict):
             self[name] = Signal()
 
         for slot in slots:
-            self[name].connect(slot)
+            self[name].subscribe(slot)
 
     def deregister(self, name):
         """
@@ -162,15 +165,19 @@ class SignalFactory(dict):
             signal_name)
         self[signal_name].emit(*args, **kwargs)
 
-    def connect(self, signal_name, slot):
+    def subscribe(self, observable_name, on_next):
         """
-        Connects a given signal to a given slot
-        :param signal_name: the signal name to connect to
-        :param slot: the callable slot to register
+        Adds a new observer to a given observable. If observable doesnt exists
+        yet, it gets created.
+
+        Args:
+            observable_name (str): The signal name to connect to.
+            on_next (callable): The callable on_next to register.
         """
-        assert signal_name in self, "{} is not a registered signal".format(
-            signal_name)
-        self[signal_name].connect(slot)
+        if observable_name not in self:
+            self.register(observable_name, on_next)
+
+        self[observable_name].subscribe(on_next)
 
     def block(self, signals=None, is_blocked=True):
         """
