@@ -24,7 +24,7 @@ class GuiPlugin(GuiPluginInterface):
             op_filter=lambda rx_dict: rx_dict['menu'] == self._configuration[
                 'menu'] and rx_dict['action'] == self._configuration['name'])
 
-    def execute(self, rx_on_next_value):
+    def execute(self, rx_on_next_value=None):
         app = tk.Tk()
         app.overrideredirect(1)
         app.withdraw()

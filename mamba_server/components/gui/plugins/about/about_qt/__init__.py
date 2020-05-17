@@ -27,6 +27,6 @@ class GuiPlugin(GuiPluginInterface):
             op_filter=lambda rx_dict: rx_dict['menu'] == self._configuration[
                 'menu'] and rx_dict['action'] == self._configuration['name'])
 
-    def execute(self, rx_on_next_value):
+    def execute(self, rx_on_next_value=None):
         QMessageBox.about(QWidget(), self._configuration['message_box_title'],
                           self._box_message)
