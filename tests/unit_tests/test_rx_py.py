@@ -1,11 +1,11 @@
-""" Subject tests. Based on PySignal tests """
+""" Rx_Py Subject Factory tests """
 
 import pytest
 
 from mamba_server.rx_py import SubjectFactory
 
 
-class DummySlotClass:
+class DummyObservableClass:
     """ A dummy class to check for on_next handling """
     check_val = None
     func_call_count = 0
@@ -23,87 +23,75 @@ class DummySlotClass:
         self.func_call_count_2 += 1
 
 
-def dummy_test_func(test, value):
-    """A test standalone function for signals to attach onto"""
-    test.check_val = value
-    test.func_call_count += 1
+class TestClassSubjectFactoryClass:
+    def test_subject_factory_register(self):
+        """ Test new subject registration """
+        dummy_subject_factory = SubjectFactory()
+        dummy_observable_class = DummyObservableClass()
+        dummy_subject_factory.register('TestSubject')
+        dummy_subject_factory.subscribe('TestSubject',
+                                        dummy_observable_class.set_val)
+        dummy_subject_factory.on_next('TestSubject', 1)
+        assert dummy_observable_class.check_val == 1
+        assert dummy_observable_class.func_call_count == 1
 
+    def test_subject_factory_subscribe_to_non_existing_subject(self):
+        """ Test SubjectFactory subscribing to non existing subject """
+        dummy_subject_factory = SubjectFactory()
+        dummy_observable_class = DummyObservableClass()
+        dummy_subject_factory.subscribe('TestSubject',
+                                        dummy_observable_class.set_val)
+        dummy_subject_factory.on_next('TestSubject', 1)
+        assert dummy_observable_class.check_val == 1
+        assert dummy_observable_class.func_call_count == 1
 
-class DummySignalClass(object):
-    """A dummy class to check for instance handling of signals"""
-    def __init__(self):
-        self.signalFactory = SubjectFactory()
+    def test_subject_factory_subscribe_on_next(self):
+        """ Test notification to all subscribed observers """
+        dummy_subject_factory = SubjectFactory()
+        dummy_observable_class = DummyObservableClass()
+        dummy_subject_factory.register('TestSubject')
+        dummy_subject_factory.subscribe('TestSubject',
+                                        dummy_observable_class.set_val)
+        dummy_subject_factory.on_next('TestSubject', 1)
+        assert dummy_observable_class.check_val == 1
+        assert dummy_observable_class.func_call_count == 1
 
+    def test_subject_factory_subscribe_filter(self):
+        """ Test notification to all subscribed observers using filters """
+        dummy_subject_factory = SubjectFactory()
+        dummy_observable_class = DummyObservableClass()
+        dummy_subject_factory.subscribe(subject_name='TestSubject',
+                                        on_next=dummy_observable_class.set_val,
+                                        op_filter=lambda value: value % 2 == 0)
+        dummy_subject_factory.subscribe(
+            subject_name='TestSubject',
+            on_next=dummy_observable_class.set_val_2)
 
-class TestClassSignalFactoryClass:
-    def test_class_signal_factory_class_connect(self):
-        """ Test SubjectFactory indirect signal connection """
-        dummy_signal_class = DummySignalClass()
-        dummy_slot_class = DummySlotClass()
-        dummy_signal_class.signalFactory.register('Spam')
-        dummy_signal_class.signalFactory.subscribe('Spam',
-                                                   dummy_slot_class.set_val)
-        dummy_signal_class.signalFactory.on_next('Spam', 1)
-        assert dummy_slot_class.check_val == 1
-        assert dummy_slot_class.func_call_count == 1
+        dummy_subject_factory.on_next('TestSubject', 1)
+        assert dummy_observable_class.check_val is None
+        assert dummy_observable_class.func_call_count == 0
+        assert dummy_observable_class.check_val_2 == 1
+        assert dummy_observable_class.func_call_count_2 == 1
 
-    def test_class_signal_factory_connect_invalid_channel(self):
-        """ Test SubjectFactory connecting to invalid channel """
-        dummy_signal_class = DummySignalClass()
-        dummy_slot_class = DummySlotClass()
-        dummy_signal_class.signalFactory.subscribe('Spam',
-                                                   dummy_slot_class.set_val)
-        dummy_signal_class.signalFactory.on_next('Spam', 1)
-        assert dummy_slot_class.check_val == 1
-        assert dummy_slot_class.func_call_count == 1
+        dummy_subject_factory.on_next('TestSubject', 4)
 
-    def test_class_signal_factory_connect_emit(self):
-        """ Test emitting signals from signal factory """
-        dummy_signal_class = DummySignalClass()
-        dummy_slot_class = DummySlotClass()
-        dummy_signal_class.signalFactory.register('Spam')
-        dummy_signal_class.signalFactory.subscribe('Spam',
-                                                   dummy_slot_class.set_val)
-        dummy_signal_class.signalFactory.on_next('Spam', 1)
-        assert dummy_slot_class.check_val == 1
-        assert dummy_slot_class.func_call_count == 1
+        assert dummy_observable_class.check_val == 4
+        assert dummy_observable_class.func_call_count == 1
+        assert dummy_observable_class.check_val_2 == 4
+        assert dummy_observable_class.func_call_count_2 == 2
 
-    def test_class_signal_factory_connect_emit_filter(self):
-        """ Test emitting signals from signal factory """
-        dummy_signal_class = DummySignalClass()
-        dummy_slot_class = DummySlotClass()
-        dummy_signal_class.signalFactory.subscribe(
-            subject_name='Spam',
-            on_next=dummy_slot_class.set_val,
-            op_filter=lambda value: value % 2 == 0)
-        dummy_signal_class.signalFactory.subscribe(
-            subject_name='Spam', on_next=dummy_slot_class.set_val_2)
-
-        dummy_signal_class.signalFactory.on_next('Spam', 1)
-        assert dummy_slot_class.check_val is None
-        assert dummy_slot_class.func_call_count == 0
-        assert dummy_slot_class.check_val_2 == 1
-        assert dummy_slot_class.func_call_count_2 == 1
-
-        dummy_signal_class.signalFactory.on_next('Spam', 4)
-
-        assert dummy_slot_class.check_val == 4
-        assert dummy_slot_class.func_call_count == 1
-        assert dummy_slot_class.check_val_2 == 4
-        assert dummy_slot_class.func_call_count_2 == 2
-
-    def test_class_signal_factory_deregister(self):
+    def test_subject_factory_unregister(self):
         """ Test unregistering from SubjectFactory """
-        dummy_signal_class = DummySignalClass()
-        dummy_signal_class.signalFactory.register('Spam')
-        dummy_signal_class.signalFactory.unregister('Spam')
-        assert 'Spam' not in dummy_signal_class.signalFactory._factory
+        dummy_subject_factory = SubjectFactory()
+        dummy_subject_factory.register('TestSubject')
+        dummy_subject_factory.unregister('TestSubject')
+        assert 'TestSubject' not in dummy_subject_factory._factory
 
-    def test_class_signal_factory_deregister_invalid_channel(self):
-        """ Test unregistering invalid channel from SubjectFactory """
-        dummy_signal_class = DummySignalClass()
+    def test_subject_factory_unregister_non_existing_subject(self):
+        """ Test unregistering non existing subject from SubjectFactory """
+        dummy_subject_factory = SubjectFactory()
         try:
-            dummy_signal_class.signalFactory.unregister('Spam')
+            dummy_subject_factory.unregister('TestSubject')
         except KeyError:
             pytest.fail(
-                "Deregistering invalid channel should not raise KeyError")
+                "Unregistering non existing subject should not raise KeyError")
