@@ -109,6 +109,20 @@ def test_main_tk_register_action():
 
     assert 'already exists in menu' in str(excinfo.value)
 
+    # Test register_action is not called with wrong data type
+    try:
+        context.rx.on_next('register_menu_action', 'Wrong')
+    except:
+        pytest.fail("Wrong data type should not raise")
+
+    # Test register_action is not called with incomplete data
+    try:
+        context.rx.on_next('register_menu_action', 'Wrong')
+    except:
+        context.rx.on_next('register_menu_action', {
+            'menu_title': 'test_menu'
+        })
+
     widget.close()
     widget._app.destroy()
 
