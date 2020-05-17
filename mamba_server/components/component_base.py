@@ -21,3 +21,6 @@ class ComponentBase:
 
         self._configuration = dict(
             list(file_config.items()) + list(local_config.items()))
+
+    def initialize(self):
+        """ Entry point for component initialization """
