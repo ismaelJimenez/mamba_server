@@ -3,13 +3,13 @@ import json
 import time
 import yaml
 
-from mamba_server.context import Context
+from mamba_server.context_mamba import Context
 from mamba_server.utils.misc import get_component, get_components
 from mamba_server.components.gui.load_screen.interface import \
     LoadScreenInterface
 from mamba_server.components.gui.main_window.interface import \
     MainWindowInterface
-from mamba_server.components.gui.plugins.interface import GuiPluginInterface
+from mamba_server.components.interface import ComponentInterface
 
 
 def execute(launch_file, mamba_dir, project_dir):
@@ -51,7 +51,7 @@ def execute(launch_file, mamba_dir, project_dir):
         # Instantiate GUI Plugins, if any
         if 'gui_plugins' in launch_config:
             gui_plugins = get_components(launch_config['gui_plugins'],
-                                         component_folders, GuiPluginInterface,
+                                         component_folders, ComponentInterface,
                                          context)
 
             context.set('gui_plugins', gui_plugins)

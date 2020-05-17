@@ -6,11 +6,11 @@ import pkgutil
 import tkinter as tk
 from tkinter import messagebox
 
-from mamba_server.components.gui.plugins.interface import GuiPluginInterface
+from mamba_server.components.interface import ComponentInterface
 from mamba_server.exceptions import ComponentConfigException
 
 
-class GuiPlugin(GuiPluginInterface):
+class GuiPlugin(ComponentInterface):
     """ Plugin to show About message implemented in TkInter """
     def __init__(self, context):
         super(GuiPlugin, self).__init__(os.path.dirname(__file__), context)

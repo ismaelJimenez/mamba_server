@@ -2,11 +2,11 @@
 
 import os
 
-from mamba_server.components.gui.plugins.interface import GuiPluginInterface
+from mamba_server.components.interface import ComponentInterface
 from mamba_server.exceptions import ComponentConfigException
 
 
-class GuiPlugin(GuiPluginInterface):
+class GuiPlugin(ComponentInterface):
     """ Plugin to close Main Window """
     def __init__(self, context):
         super(GuiPlugin, self).__init__(os.path.dirname(__file__), context)
