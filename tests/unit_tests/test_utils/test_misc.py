@@ -7,7 +7,7 @@ from shutil import rmtree
 from mamba_server.context_mamba import Context
 from mamba_server.utils import misc
 from mamba_server.commands import MambaCommand
-from mamba_server.components.gui.plugins.interface import GuiPluginInterface
+from mamba_server.components.interface import ComponentInterface
 from mamba_server.components.gui.load_screen.interface import LoadScreenInterface
 
 from mamba_server.exceptions import LaunchFileException
@@ -62,12 +62,12 @@ class TestClass:
 
     def test_get_classes_from_module_commands_class_gui_plugin(self):
         assert misc.get_classes_from_module('mamba_server.commands',
-                                            GuiPluginInterface) == {}
+                                            ComponentInterface) == {}
 
     def test_get_classes_from_module_components_class_gui_plugin_recursive(
             self):
         classes_dict = misc.get_classes_from_module(
-            'mamba_server.components.gui', GuiPluginInterface)
+            'mamba_server.components.gui.plugins', ComponentInterface)
         assert len(classes_dict) == 3
         assert 'about_qt' in classes_dict
         assert 'about_tk' in classes_dict
@@ -77,31 +77,31 @@ class TestClass:
             self):
         classes_dict = misc.get_classes_from_module(
             'mamba_server.components.gui.plugins.about.about_qt',
-            GuiPluginInterface)
+            ComponentInterface)
         assert len(classes_dict) == 1
         assert 'about_qt' in classes_dict
 
     def test_get_classes_from_module_components_local(self):
         # Test component load
         classes_dict = misc.get_classes_from_module('components',
-                                                    GuiPluginInterface)
+                                                    ComponentInterface)
         assert len(classes_dict) == 1
         assert 'plugin_1' in classes_dict
 
     def test_get_component_local(self):
         components_dict = misc.get_component(
             'plugin_1', ['mamba_server.components', 'components'],
-            GuiPluginInterface, Context())
+            ComponentInterface, Context())
         assert components_dict is not None
 
         components_dict = misc.get_component('plugin_1', ['components.plugin'],
-                                             GuiPluginInterface, Context())
+                                             ComponentInterface, Context())
         assert components_dict is not None
 
     def test_get_component_valid_id_and_type(self):
         components_dict = misc.get_component(
             'about_qt', ['mamba_server.components.gui.plugins'],
-            GuiPluginInterface, Context())
+            ComponentInterface, Context())
         assert components_dict is not None
 
     def test_get_component_valid_id_wrong_type(self):
@@ -120,7 +120,7 @@ class TestClass:
         with pytest.raises(LaunchFileException) as excinfo:
             misc.get_component(
                 'quit', ['mamba_server.components.gui.plugins', 'components'],
-                GuiPluginInterface, Context())
+                ComponentInterface, Context())
 
         assert 'is duplicated' in str(excinfo.value)
         rmtree(join(self.proj_path, 'components', 'plugin', 'quit'))
@@ -128,21 +128,21 @@ class TestClass:
     def test_get_components_local(self):
         components_dict = misc.get_components(
             ['about_qt', 'quit'], ['mamba_server.components.gui.plugins'],
-            GuiPluginInterface, Context())
+            ComponentInterface, Context())
         assert len(components_dict) == 2
         assert 'about_qt' in components_dict
         assert 'quit' in components_dict
 
         components_dict = misc.get_components(
             ['plugin_1'], ['components', 'mamba_server.components'],
-            GuiPluginInterface, Context())
+            ComponentInterface, Context())
         assert len(components_dict) == 1
         assert 'plugin_1' in components_dict
 
         components_dict = misc.get_components(
             ['about_qt', 'quit', 'plugin_1'],
             ['mamba_server.components.gui.plugins', 'components'],
-            GuiPluginInterface, Context())
+            ComponentInterface, Context())
         assert len(components_dict) == 3
         assert 'about_qt' in components_dict
         assert 'quit' in components_dict
@@ -157,7 +157,7 @@ class TestClass:
             misc.get_components(
                 ['quit'],
                 ['mamba_server.components.gui.plugins', 'components'],
-                GuiPluginInterface, Context())
+                ComponentInterface, Context())
 
         assert 'is duplicated' in str(excinfo.value)
         rmtree(join(self.proj_path, 'components', 'plugin', 'quit'))
@@ -165,7 +165,7 @@ class TestClass:
     def test_get_components_valid_id_and_type(self):
         components_dict = misc.get_components(
             ['about_qt', 'quit'], ['mamba_server.components.gui.plugins'],
-            GuiPluginInterface, Context())
+            ComponentInterface, Context())
         assert len(components_dict) == 2
         assert 'about_qt' in components_dict
         assert 'quit' in components_dict
@@ -174,7 +174,7 @@ class TestClass:
         with pytest.raises(LaunchFileException) as excinfo:
             misc.get_components(['about_qt', 'about_tk_fail'],
                                 ['mamba_server.components.gui.plugins'],
-                                GuiPluginInterface, Context())
+                                ComponentInterface, Context())
 
         assert 'not a valid component identifier' in str(excinfo.value)
 

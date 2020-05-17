@@ -1,4 +1,4 @@
-name: Custom_Action
-menu: Custom_Menu
-status_tip: Example status tip
-shortcut: ''
+name: Custom_Action # Name of the action
+menu: Custom_Menu # High level Menu name shown in the menu bar
+status_tip: Example status tip # Message shown in the status bar (Optional)
+shortcut: '' # Menu shortcut (Optional)

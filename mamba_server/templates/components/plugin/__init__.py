@@ -2,15 +2,15 @@
 
 import os
 
-from mamba_server.components.gui.plugins.interface import GuiPluginInterface
+from mamba_server.components.interface import ComponentInterface
 
 
-class GuiPlugin(GuiPluginInterface):
+class GuiPlugin(ComponentInterface):
     """ Custom Plugin """
     def __init__(self, context=None):
         super(GuiPlugin, self).__init__(os.path.dirname(__file__), context)
 
-    def execute(self):
+    def run(self):
         """
         Entry point for running custom plugin
         """
