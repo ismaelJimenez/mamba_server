@@ -30,7 +30,7 @@ def test_about_gui_plugin_w_menu_window():
     assert main_window._app.isVisible()
 
     # Execute Quit Widget
-    widget.execute()
+    widget.run()
 
     # Test window is hidden per default
     assert not main_window._app.isVisible()
@@ -59,28 +59,19 @@ def test_about_gui_plugin_run_rx_mamba():
     context.rx.subscribe('quit', dummy_test_class.test_function)
 
     # Check it is not activated by another menu
-    context.rx.on_next('run_plugin', {
-        'menu': 'File_Wrong',
-        'action': 'Quit'
-    })
+    context.rx.on_next('run_plugin', {'menu': 'File_Wrong', 'action': 'Quit'})
 
     assert dummy_test_class.times_called == 0
     assert dummy_test_class.last_value is None
 
     # Check it is not activated by another action
-    context.rx.on_next('run_plugin', {
-        'menu': 'File',
-        'action': 'Quit_wrong'
-    })
+    context.rx.on_next('run_plugin', {'menu': 'File', 'action': 'Quit_wrong'})
 
     assert dummy_test_class.times_called == 0
     assert dummy_test_class.last_value is None
 
     # Check activation emits 'quit'
-    context.rx.on_next('run_plugin', {
-        'menu': 'File',
-        'action': 'Quit'
-    })
+    context.rx.on_next('run_plugin', {'menu': 'File', 'action': 'Quit'})
 
     assert dummy_test_class.times_called == 1
     assert dummy_test_class.last_value is None
@@ -98,28 +89,19 @@ def test_about_gui_plugin_run_rx_py():
     context.rx.subscribe('quit', dummy_test_class.test_function)
 
     # Check it is not activated by another menu
-    context.rx.on_next('run_plugin', {
-        'menu': 'File_Wrong',
-        'action': 'Quit'
-    })
+    context.rx.on_next('run_plugin', {'menu': 'File_Wrong', 'action': 'Quit'})
 
     assert dummy_test_class.times_called == 0
     assert dummy_test_class.last_value is None
 
     # Check it is not activated by another action
-    context.rx.on_next('run_plugin', {
-        'menu': 'File',
-        'action': 'Quit_wrong'
-    })
+    context.rx.on_next('run_plugin', {'menu': 'File', 'action': 'Quit_wrong'})
 
     assert dummy_test_class.times_called == 0
     assert dummy_test_class.last_value is None
 
     # Check activation emits 'quit'
-    context.rx.on_next('run_plugin', {
-        'menu': 'File',
-        'action': 'Quit'
-    })
+    context.rx.on_next('run_plugin', {'menu': 'File', 'action': 'Quit'})
 
     assert dummy_test_class.times_called == 1
     assert dummy_test_class.last_value is None
