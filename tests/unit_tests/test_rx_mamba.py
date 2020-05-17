@@ -134,20 +134,6 @@ class TestClassSignal:
         # Expected function to be called once
         assert self.func_call_count == 1
 
-    def test_signal_emit_to_deleted_function(self):
-        """ Test emitting signal to deleted method """
-        def local_method(test, value):
-            test.checkVal = value
-            test.func_call_count += 1
-
-        signal = Subject()
-        signal.subscribe(local_method)
-        del local_method
-        signal.on_next(self, 'Method')
-        assert self.check_val is None
-        # Expected function not to be called
-        assert self.func_call_count == 0
-
     def test_signal_emit_to_partial(self):
         """ Test emitting signals to partial """
         signal = Subject()

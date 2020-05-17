@@ -22,24 +22,7 @@ class Subject:
             value (any): The callable on_next to register.
         """
         for slot in self._slots:
-            if isinstance(slot, partial):
-                slot()
-            elif isinstance(slot, weakref.WeakKeyDictionary):
-                # For class methods, get the class object and call the
-                # method accordingly.
-                for obj, method in slot.items():
-                    method(obj, *args, **kwargs)
-            elif isinstance(slot, weakref.ref):
-                # If it's a weakref, call the ref to get the instance and
-                # then call the func
-                # Don't wrap in try/except so we don't risk masking exceptions
-                # from the actual func call
-                if slot() is not None:
-                    slot()(*args, **kwargs)
-            else:
-                # Else call it in a standard way. Should be just lambdas
-                # at this point
-                slot(*args, **kwargs)
+            slot(*args, **kwargs)
 
     def subscribe(self, on_next, filter=None):
         """
@@ -54,24 +37,8 @@ class Subject:
                 f"object failed"
             )
 
-        if isinstance(on_next, partial) or '<' in on_next.__name__:
-            # If it's a partial or a lambda. The '<' check is the only py2
-            # and py3 compatible way I could find
-            if on_next not in self._slots:
-                self._slots.append(on_next)
-        elif inspect.ismethod(on_next):
-            # Check if it's an instance method and store it with the instance
-            # as the key
-            slot_self = on_next.__self__
-            slot_dict = weakref.WeakKeyDictionary()
-            slot_dict[slot_self] = on_next.__func__
-            if slot_dict not in self._slots:
-                self._slots.append(slot_dict)
-        else:
-            # If it's just a function then just store it as a weakref.
-            new_slot_ref = weakref.ref(on_next)
-            if new_slot_ref not in self._slots:
-                self._slots.append(new_slot_ref)
+        if on_next not in self._slots:
+            self._slots.append(on_next)
 
     def disconnect(self, slot):
         """
@@ -80,27 +47,10 @@ class Subject:
         if not callable(slot):
             return
 
-        if inspect.ismethod(slot):
-            # If it's a method, then find it by its instance
-            slot_self = slot.__self__
-            for current_slot in self._slots:
-                if isinstance(current_slot, weakref.WeakKeyDictionary) and (
-                        slot_self in current_slot) and (current_slot[slot_self]
-                                                        is slot.__func__):
-                    self._slots.remove(current_slot)
-                    break
-        elif isinstance(slot, partial) or '<' in slot.__name__:
-            # If it's a partial or lambda, try to remove directly
-            try:
-                self._slots.remove(slot)
-            except ValueError:
-                pass
-        else:
-            # It's probably a function, so try to remove by weakref
-            try:
-                self._slots.remove(weakref.ref(slot))
-            except ValueError:
-                pass
+        try:
+            self._slots.remove(slot)
+        except ValueError:
+            pass
 
     def clear(self):
         """Clears the signal of all connected slots"""
