@@ -119,9 +119,7 @@ def test_main_tk_register_action():
     try:
         context.rx.on_next('register_menu_action', 'Wrong')
     except:
-        context.rx.on_next('register_menu_action', {
-            'menu_title': 'test_menu'
-        })
+        context.rx.on_next('register_menu_action', {'menu_title': 'test_menu'})
 
     widget.close()
     widget._app.destroy()

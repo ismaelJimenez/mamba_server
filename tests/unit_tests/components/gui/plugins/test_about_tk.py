@@ -19,7 +19,6 @@ def test_about_gui_plugin_w_empty_context():
     assert widget._configuration == {
         'menu': 'Help',
         'name': 'About',
-        'shortcut': None,
         'status_tip': "Show the application's About box",
         'message_box_title': 'About Mamba Server'
     }
@@ -42,7 +41,6 @@ def test_about_gui_plugin_w_menu_window():
     assert widget._configuration == {
         'menu': 'Help',
         'name': 'About',
-        'shortcut': None,
         'status_tip': "Show the application's About box",
         'message_box_title': 'About Mamba Server'
     }

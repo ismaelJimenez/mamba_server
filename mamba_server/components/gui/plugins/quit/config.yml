@@ -1,4 +1,4 @@
-name: Quit
-menu: File
-status_tip: Close Mamba Server
-shortcut: Ctrl+Q
+name: Quit  # Name of the action
+menu: File  # High level Menu name shown in the menu bar
+status_tip: Close Mamba Server # Message shown in the status bar (Optional)
+shortcut: Ctrl+Q # Menu shortcut (Optional)

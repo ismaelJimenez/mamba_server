@@ -46,10 +46,12 @@ class GuiPlugin(GuiPluginInterface):
                 self._configuration['menu'],
                 'action_name':
                 self._configuration['name'],
-                'shortcut': (None, self._configuration['shortcut']
-                             )['shortcut' in self._configuration],
-                'status_tip': (None, self._configuration['status_tip']
-                               )['status_tip' in self._configuration]
+                'shortcut':
+                self._configuration['shortcut']
+                if 'shortcut' in self._configuration else None,
+                'status_tip':
+                self._configuration['status_tip']
+                if 'status_tip' in self._configuration else None
             })
 
     def run(self, rx_value=None):
