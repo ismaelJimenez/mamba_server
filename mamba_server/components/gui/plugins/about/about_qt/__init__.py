@@ -8,6 +8,8 @@ from PySide2.QtWidgets import QMessageBox, QWidget, QApplication
 from mamba_server.components.interface import ComponentInterface
 from mamba_server.exceptions import ComponentConfigException
 
+from mamba_server.components.gui.main_window.observer_types.register_action import RegisterAction
+
 
 class GuiPlugin(ComponentInterface):
     """ Plugin to show About message implemented in Qt5 """
@@ -45,24 +47,19 @@ class GuiPlugin(ComponentInterface):
                 "Missing required elements in component configuration")
 
         self._context.rx.on_next(
-            'register_menu_action', {
-                'menu_title':
-                self._configuration['menu'],
-                'action_name':
-                self._configuration['name'],
-                'shortcut':
-                self._configuration['shortcut']
-                if 'shortcut' in self._configuration else None,
-                'status_tip':
-                self._configuration['status_tip']
-                if 'status_tip' in self._configuration else None
-            })
+            'register_action',
+            RegisterAction(menu_title=self._configuration['menu'],
+                           action_name=self._configuration['name'],
+                           shortcut=self._configuration['shortcut']
+                           if 'shortcut' in self._configuration else None,
+                           status_tip=self._configuration['status_tip']
+                           if 'status_tip' in self._configuration else None))
 
-    def run(self, rx_value=None):
+    def run(self, rx_value):
         """ Entry point for running the plugin
 
             Args:
-                rx_value (None): The value published by the subject.
+                rx_value (Empty): The value published by the subject.
         """
         QMessageBox.about(QWidget(), self._configuration['message_box_title'],
                           self._box_message)

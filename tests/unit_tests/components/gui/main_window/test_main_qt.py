@@ -4,6 +4,8 @@ from mamba_server.components.gui.main_window.main_qt import MainWindow
 from mamba_server.context_mamba import Context
 from mamba_server.exceptions import ComponentConfigException
 
+from mamba_server.components.gui.main_window.observer_types.register_action import RegisterAction
+
 
 def test_main_qt_wo_context():
     with pytest.raises(TypeError) as excinfo:
@@ -89,32 +91,24 @@ def test_main_qt_register_action():
     assert not widget._is_action_in_menu('test_menu', 'test_action')
 
     # Add new menu
-    context.rx.on_next('register_menu_action', {
-        'menu_title': 'test_menu',
-        'action_name': 'test_action'
-    })
+    context.rx.on_next(
+        'register_action',
+        RegisterAction(menu_title='test_menu', action_name='test_action'))
     assert widget._is_action_in_menu('test_menu', 'test_action')
 
     # Attempt to register the same action twice in same menu is not allowed
     with pytest.raises(ComponentConfigException) as excinfo:
-        context.rx.on_next('register_menu_action', {
-            'menu_title': 'test_menu',
-            'action_name': 'test_action'
-        })
+        context.rx.on_next(
+            'register_action',
+            RegisterAction(menu_title='test_menu', action_name='test_action'))
 
     assert 'already exists in menu' in str(excinfo.value)
 
     # Test register_action is not called with wrong data type
     try:
-        context.rx.on_next('register_menu_action', 'Wrong')
+        context.rx.on_next('register_action', 'Wrong')
     except:
         pytest.fail("Wrong data type should not raise")
-
-    # Test register_action is not called with incomplete data
-    try:
-        context.rx.on_next('register_menu_action', 'Wrong')
-    except:
-        context.rx.on_next('register_menu_action', {'menu_title': 'test_menu'})
 
     widget.close()
     widget._qt_app.quit()

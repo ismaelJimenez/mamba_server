@@ -7,6 +7,10 @@ from mamba_server.components.gui.main_window.interface import \
     MainWindowInterface
 from mamba_server.exceptions import ComponentConfigException
 
+from mamba_server.components.observer_types.empty import Empty
+from mamba_server.components.gui.main_window.observer_types.register_action\
+    import RegisterAction
+
 
 class MainWindow(MainWindowInterface):
     """ Main window implemented with TkInter """
@@ -22,47 +26,42 @@ class MainWindow(MainWindowInterface):
         self._menus = {}
         self._menu_actions = []
 
-        self._context.rx.subscribe('quit', self.close)
+        self._context.rx.subscribe(subject_name='quit',
+                                   on_next=self.close,
+                                   op_filter=lambda rx: isinstance(rx, Empty))
 
         self._context.rx.subscribe(
-            subject_name='register_menu_action',
+            subject_name='register_action',
             on_next=self.register_action,
-            op_filter=lambda rx: isinstance(rx, dict) and all(
-                key in rx for key in ['menu_title', 'action_name']))
+            op_filter=lambda rx: isinstance(rx, RegisterAction))
 
     def register_action(self, rx_value):
-        """ Entry point for running the plugin
+        """ Entry point for running the plugin.
 
-            The expected rx_value is a dictionary composed by:
-                - menu_title (str): The menu name.
-                - action_name (str): The action name.
-                - shortcut (str, optional): Keys shorcut to execute action.
-                                            Not used.
-                - status_tip (str, optional): Action status tip to show.
-                                              Not used.
+            Note: The expected rx_value is of type RegisterAction.
 
             Args:
-                rx_value (dict): The value published by the subject.
+                rx_value (RegisterAction): The value published by
+                                           the subject.
         """
-        if not self._exists_menu(rx_value['menu_title']):
-            menu = self._add_menu(rx_value['menu_title'])
+        if not self._exists_menu(rx_value.menu_title):
+            menu = self._add_menu(rx_value.menu_title)
         else:
-            menu = self._get_menu(rx_value['menu_title'])
+            menu = self._get_menu(rx_value.menu_title)
 
-        if self._is_action_in_menu(rx_value['menu_title'],
-                                   rx_value['action_name']):
+        if self._is_action_in_menu(rx_value.menu_title, rx_value.action_name):
             raise ComponentConfigException(
-                f"Another action '{rx_value['menu_title']}' already exists"
-                f" in menu '{rx_value['action_name']}'")
+                f"Another action '{rx_value.menu_title}' already exists"
+                f" in menu '{rx_value.action_name}'")
 
-        menu.add_command(label=rx_value['action_name'],
+        menu.add_command(label=rx_value.action_name,
                          command=lambda: self._context.rx.on_next(
                              'run_plugin', {
-                                 'menu': rx_value['menu_title'],
-                                 'action': rx_value['action_name']
+                                 'menu': rx_value.menu_title,
+                                 'action': rx_value.action_name
                              }))
         self._menu_actions.append(
-            f'{rx_value["menu_title"]}_{rx_value["action_name"]}')
+            f'{rx_value.menu_title}_{rx_value.action_name}')
 
     def show(self):
         """

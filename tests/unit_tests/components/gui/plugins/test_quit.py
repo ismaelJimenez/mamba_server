@@ -3,6 +3,9 @@ from mamba_server.context_rx import Context as Context_Rx
 from mamba_server.components.gui.plugins.quit import GuiPlugin
 from mamba_server.components.gui.main_window.main_qt import MainWindow
 
+from mamba_server.components.observer_types.empty import Empty
+from mamba_server.components.gui.main_window.observer_types.register_action import RegisterAction
+
 
 def test_about_gui_plugin_w_menu_window():
     context = Context_Mamba()
@@ -30,7 +33,7 @@ def test_about_gui_plugin_w_menu_window():
     assert main_window._app.isVisible()
 
     # Execute Quit Widget
-    widget.run()
+    widget.run(Empty())
 
     # Test window is hidden per default
     assert not main_window._app.isVisible()
@@ -74,7 +77,7 @@ def test_about_gui_plugin_run_rx_mamba():
     context.rx.on_next('run_plugin', {'menu': 'File', 'action': 'Quit'})
 
     assert dummy_test_class.times_called == 1
-    assert dummy_test_class.last_value is None
+    assert isinstance(dummy_test_class.last_value, Empty)
 
 
 def test_about_gui_plugin_run_rx_py():
@@ -104,4 +107,4 @@ def test_about_gui_plugin_run_rx_py():
     context.rx.on_next('run_plugin', {'menu': 'File', 'action': 'Quit'})
 
     assert dummy_test_class.times_called == 1
-    assert dummy_test_class.last_value is None
+    assert isinstance(dummy_test_class.last_value, Empty)
