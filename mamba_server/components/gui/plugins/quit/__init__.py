@@ -20,8 +20,6 @@ class GuiPlugin(ComponentInterface):
         # Initialize observables
         self._register_observables()
 
-        self.initialize()  # TBR
-
     def _register_observables(self):
         self._context.rx.subscribe(
             subject_name='run_plugin',

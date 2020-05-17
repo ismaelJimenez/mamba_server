@@ -14,6 +14,7 @@ def test_about_gui_plugin_wo_context():
 
 def test_about_gui_plugin_w_empty_context():
     widget = GuiPlugin(Context())
+    widget.initialize()
 
     # Test default configuration
     assert widget._configuration == {
@@ -36,6 +37,7 @@ def test_about_gui_plugin_w_menu_window():
 
     context.set('main_window', main_window)
     widget = GuiPlugin(context)
+    widget.initialize()
 
     # Test default configuration
     assert widget._configuration == {

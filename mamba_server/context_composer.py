@@ -53,6 +53,9 @@ def execute(launch_file, mamba_dir, project_dir):
                                          component_folders, ComponentInterface,
                                          context)
 
+            for key, plugin in gui_plugins.items():
+                plugin.initialize()
+
             context.set('gui_plugins', gui_plugins)
 
         if ('load_screen' in launch_config) and (min_load_screen_time

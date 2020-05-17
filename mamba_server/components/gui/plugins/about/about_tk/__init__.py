@@ -27,8 +27,6 @@ class GuiPlugin(ComponentInterface):
         self._version = None
         self._box_message = None
 
-        self.initialize()  # TBR
-
     def _register_observables(self):
         self._context.rx.subscribe(
             subject_name='run_plugin',
