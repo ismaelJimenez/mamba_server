@@ -45,6 +45,15 @@ class TestClassSubjectFactoryClass:
         assert dummy_observable_class.check_val == 1
         assert dummy_observable_class.func_call_count == 1
 
+    def test_subject_factory_subscribe_non_callable(self):
+        """ Test subscribing non-callable object to subjects """
+        dummy_subject_factory = SubjectFactory()
+        with pytest.raises(ValueError) as excinfo:
+            dummy_subject_factory.subscribe('TestSubject', 'string')
+
+        assert "Subscription of non-callable 'str' is not possible" in str(
+            excinfo.value)
+
     def test_subject_factory_subscribe_on_next(self):
         """ Test notification to all subscribed observers """
         dummy_subject_factory = SubjectFactory()

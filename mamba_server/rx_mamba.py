@@ -33,8 +33,8 @@ class Subject:
         """
         if not callable(on_next):
             raise ValueError(
-                f"Connection to non-callable '{on_next.__class__.__name__}' "
-                f"object failed")
+                f"Subscription of non-callable '{on_next.__class__.__name__}' "
+                f"is not possible")
 
         if not any(subscription['on_next'] == on_next
                    for subscription in self._subscriptions):
@@ -43,12 +43,12 @@ class Subject:
                 'op_filter': op_filter
             })
 
-    def disconnect(self, on_next):
+    def unsubscribe(self, on_next):
         """
-        Disconnects an action from the observable sequence.
+        Unsubscribes an action from the observable sequence.
 
         Args:
-            on_next (callable): Action to disconnect from the
+            on_next (callable): Action to unsubscribe from the
                                 observable sequence.
         """
         if not callable(on_next):
@@ -103,18 +103,18 @@ class SubjectFactory:
         if subject_name in self._factory:
             self._factory[subject_name].on_next(value)
 
-    def subscribe(self, observable_name, on_next, op_filter=None):
+    def subscribe(self, subject_name, on_next, op_filter=None):
         """
         Adds a new observer to a given observable by name. If observable
         doesnt exists yet, it gets created.
 
         Args:
-            observable_name (str): The subject name to connect to.
+            subject_name (str): The subject name to connect to.
             on_next (callable): Action to invoke.
             op_filter (callable): Filters the elements of an observable
                                   sequence based on a predicate.
         """
-        if observable_name not in self._factory:
-            self.register(observable_name)
+        if subject_name not in self._factory:
+            self.register(subject_name)
 
-        self._factory[observable_name].subscribe(on_next, op_filter=op_filter)
+        self._factory[subject_name].subscribe(on_next, op_filter=op_filter)

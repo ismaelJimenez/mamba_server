@@ -51,6 +51,11 @@ class SubjectFactory:
             op_filter (callable): Filters the elements of an observable
                                   sequence based on a predicate.
         """
+        if not callable(on_next):
+            raise ValueError(
+                f"Subscription of non-callable '{on_next.__class__.__name__}' "
+                f"is not possible")
+
         if subject_name not in self._factory:
             self.register(subject_name)
 
