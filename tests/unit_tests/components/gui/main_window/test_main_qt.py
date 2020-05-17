@@ -27,7 +27,7 @@ def test_main_qt_w_context():
     # Test window is hidden per default
     assert widget._app.isHidden()
 
-    widget.close()
+    widget._close()
     widget._qt_app.quit()
 
 
@@ -38,10 +38,10 @@ def test_main_qt_show():
     assert not widget._app.isVisible()
 
     # Test window show
-    widget.show()
+    widget._show()
     assert widget._app.isVisible()
 
-    widget.close()
+    widget._close()
     widget._qt_app.quit()
 
 
@@ -52,18 +52,18 @@ def test_main_qt_hide():
     assert not widget._app.isVisible()
 
     # Test window show
-    widget.show()
+    widget._show()
     assert widget._app.isVisible()
 
     # Test window hide
-    widget.hide()
+    widget._hide()
     assert not widget._app.isVisible()
 
     # Test window hide does not destroy window
-    widget.show()
+    widget._show()
     assert widget._app.isVisible()
 
-    widget.close()
+    widget._close()
     widget._qt_app.quit()
 
 
@@ -71,11 +71,11 @@ def test_main_qt_close():
     widget = MainWindow(Context())
 
     # Test window show
-    widget.show()
+    widget._show()
     assert widget._app.isVisible()
 
     # Test window close
-    widget.close()
+    widget._close()
     assert not widget._app.isVisible()
 
     widget._qt_app.quit()
@@ -110,7 +110,7 @@ def test_main_qt_register_action():
     except:
         pytest.fail("Wrong data type should not raise")
 
-    widget.close()
+    widget._close()
     widget._qt_app.quit()
 
 
@@ -118,17 +118,17 @@ def test_main_qt_event_loop_after():
     widget = MainWindow(Context())
 
     # Test window show
-    widget.show()
+    widget._show()
     assert widget._app.isVisible()
 
     # Close window after 100 milliseconds
-    widget.after(100, widget.close)
-    widget.start_event_loop()
+    widget._after(100, widget._close)
+    widget._start_event_loop()
 
     # Test window is hidden per default
     assert not widget._app.isVisible()
 
-    widget.close()
+    widget._close()
     widget._qt_app.quit()
 
 
@@ -141,7 +141,7 @@ def test_internal_main_qt_add_menu():
     widget._add_menu('test_menu')
     assert widget._exists_menu('test_menu')
 
-    widget.close()
+    widget._close()
     widget._qt_app.quit()
 
 
@@ -154,5 +154,5 @@ def test_internal_main_qt_get_menu():
     widget._add_menu('test_menu')
     assert widget._get_menu('test_menu') is not None
 
-    widget.close()
+    widget._close()
     widget._qt_app.quit()

@@ -20,30 +20,32 @@ class MainWindow(ComponentBase):
         super(MainWindow, self).__init__(os.path.dirname(__file__), context)
 
         self._app = tk.Tk()
-        self._app.protocol("WM_DELETE_WINDOW", self.close)
+        self._app.protocol("WM_DELETE_WINDOW", self._close)
         self._app.title(self._configuration['title'])
-        self.hide()
+        self._hide()
         self._menu_bar = tk.Menu(self._app)
         self._app.config(menu=self._menu_bar)
         self._menus = {}
         self._menu_actions = []
 
         self._context.rx.subscribe(subject_name='quit',
-                                   on_next=self.close,
+                                   on_next=self._close,
                                    op_filter=lambda rx: isinstance(rx, Empty))
 
         self._context.rx.subscribe(
             subject_name='app_status',
-            on_next=self.run,
+            on_next=self._run,
             op_filter=lambda rx: isinstance(rx, AppStatus
                                             ) and rx == AppStatus.Running)
 
         self._context.rx.subscribe(
             subject_name='register_action',
-            on_next=self.register_action,
+            on_next=self._register_action,
             op_filter=lambda rx: isinstance(rx, RegisterAction))
 
-    def register_action(self, rx_value):
+    # Internal functions
+
+    def _register_action(self, rx_value):
         """ Entry point for running the plugin.
 
             Note: The expected rx_value is of type RegisterAction.
@@ -70,30 +72,30 @@ class MainWindow(ComponentBase):
         self._menu_actions.append(
             f'{rx_value.menu_title}_{rx_value.action_name}')
 
-    def run(self, rx_value):
+    def _run(self, rx_value):
         """ Entry point for running the window
 
             Args:
                 rx_value (AppStatus): The value published by the subject.
         """
-        self.show()
-        self.start_event_loop()
+        self._show()
+        self._start_event_loop()
 
-    def show(self):
+    def _show(self):
         """
         Entry point for showing main screen
         """
         self._app.update()
         self._app.deiconify()
 
-    def hide(self):
+    def _hide(self):
         """
         Entry point for hiding main screen
         """
         self._app.withdraw()
         self._app.update()
 
-    def close(self, rx_value=None):
+    def _close(self, rx_value=None):
         """
         Entry point for closing main screen
         """
@@ -104,7 +106,7 @@ class MainWindow(ComponentBase):
 
         self._app.quit()
 
-    def start_event_loop(self):
+    def _start_event_loop(self):
         """
         Enters the main event loop and waits until close() is called.
 
@@ -117,7 +119,7 @@ class MainWindow(ComponentBase):
         """
         self._app.mainloop()
 
-    def after(self, time_msec, action):
+    def _after(self, time_msec, action):
         """ Make the application perform an action after a time delay.
 
         Args:
@@ -125,8 +127,6 @@ class MainWindow(ComponentBase):
             action (function): The action to execute after time_msec delay.
         """
         self._app.after(int(time_msec), action)
-
-    # Internal functions
 
     def _exists_menu(self, search_menu):
         """Checks if Menu is already in Main Window Menu bar.

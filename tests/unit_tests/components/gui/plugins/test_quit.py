@@ -30,7 +30,7 @@ def test_about_gui_plugin_w_menu_window():
     assert main_window._exists_menu('File')
 
     # Test execute closes Main Window
-    main_window.show()
+    main_window._show()
     assert main_window._app.isVisible()
 
     # Execute Quit Widget

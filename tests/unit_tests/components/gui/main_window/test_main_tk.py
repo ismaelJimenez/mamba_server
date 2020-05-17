@@ -27,7 +27,7 @@ def test_main_tk_w_context():
     # Test window is hidden per default
     assert widget._app.winfo_ismapped() == 0
 
-    widget.close()
+    widget._close()
     widget._app.destroy()
 
 
@@ -38,10 +38,10 @@ def test_main_tk_show():
     assert widget._app.winfo_ismapped() == 0
 
     # Test window show
-    widget.show()
+    widget._show()
     assert widget._app.winfo_ismapped() == 1
 
-    widget.close()
+    widget._close()
     widget._app.destroy()
 
 
@@ -52,18 +52,18 @@ def test_main_tk_hide():
     assert widget._app.winfo_ismapped() == 0
 
     # Test window show
-    widget.show()
+    widget._show()
     assert widget._app.winfo_ismapped() == 1
 
     # Test window hide
-    widget.hide()
+    widget._hide()
     assert widget._app.winfo_ismapped() == 0
 
     # Test window hide does not destroy window
-    widget.show()
+    widget._show()
     assert widget._app.winfo_ismapped() == 1
 
-    widget.close()
+    widget._close()
     widget._app.destroy()
 
 
@@ -71,11 +71,11 @@ def test_main_tk_close():
     widget = MainWindow(Context())
 
     # Test window show
-    widget.show()
+    widget._show()
     assert widget._app.winfo_ismapped() == 1
 
     # Test window close
-    widget.close()
+    widget._close()
 
     # Commented out because tk quit() does not generate an exception,
     # only destroy() does.
@@ -115,7 +115,7 @@ def test_main_tk_register_action():
     except:
         pytest.fail("Wrong data type should not raise")
 
-    widget.close()
+    widget._close()
     widget._app.destroy()
 
 
@@ -123,12 +123,12 @@ def test_main_tk_event_loop_after():
     widget = MainWindow(Context())
 
     # Close window after 100 milliseconds
-    widget.after(100, widget.close)
-    widget.start_event_loop()
+    widget._after(100, widget._close)
+    widget._start_event_loop()
 
     assert widget._app.winfo_ismapped() == 0
 
-    widget.close()
+    widget._close()
     widget._app.destroy()
 
 
@@ -141,7 +141,7 @@ def test_internal_main_tk_add_menu():
     widget._add_menu('test_menu')
     assert widget._exists_menu('test_menu')
 
-    widget.close()
+    widget._close()
     widget._app.destroy()
 
 
@@ -154,5 +154,5 @@ def test_internal_main_tk_get_menu():
     widget._add_menu('test_menu')
     assert widget._get_menu('test_menu') is not None
 
-    widget.close()
+    widget._close()
     widget._app.destroy()
