@@ -7,7 +7,6 @@ from rx import operators as op
 class SubjectFactory:
     """ The Subject Factory object lets you handle subjects by a string name
     """
-
     def __init__(self):
         super(SubjectFactory, self).__init__()
         self._factory = {}

@@ -8,7 +8,7 @@ class Subject:
     """
     def __init__(self):
         super(Subject, self).__init__()
-        self._slots = []
+        self._subscriptions = []
 
     def on_next(self, value=None):
         """
@@ -17,8 +17,8 @@ class Subject:
         Args:
             value (any): The value to send to all subscribed observers.
         """
-        for slot in self._slots:
-            slot(value)
+        for subscription in self._subscriptions:
+            subscription['on_next'](value)
 
     def subscribe(self, on_next, op_filter=None):
         """
@@ -34,8 +34,12 @@ class Subject:
                 f"Connection to non-callable '{on_next.__class__.__name__}' "
                 f"object failed")
 
-        if on_next not in self._slots:
-            self._slots.append(on_next)
+        if not any(subscription['on_next'] == on_next
+                   for subscription in self._subscriptions):
+            self._subscriptions.append({
+                'on_next': on_next,
+                'op_filter': op_filter
+            })
 
     def disconnect(self, on_next):
         """
@@ -49,19 +53,21 @@ class Subject:
             return
 
         try:
-            self._slots.remove(on_next)
+            for i, o in enumerate(self._subscriptions):
+                if o['on_next'] == on_next:
+                    del self._subscriptions[i]
+                    break
         except ValueError:
             pass
 
     def dispose(self):
         """ Unsubscribe all observers and release resources """
-        self._slots = []
+        self._subscriptions = []
 
 
 class SubjectFactory:
     """ The Subject Factory object lets you handle subjects by a string name
     """
-
     def __init__(self):
         super(SubjectFactory, self).__init__()
         self._factory = {}
@@ -109,4 +115,4 @@ class SubjectFactory:
         if observable_name not in self._factory:
             self.register(observable_name)
 
-        self._factory[observable_name].subscribe(on_next, filter=filter)
+        self._factory[observable_name].subscribe(on_next, op_filter=op_filter)

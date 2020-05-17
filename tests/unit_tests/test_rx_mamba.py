@@ -41,7 +41,7 @@ class TestClassSignal:
         signal = Subject()
         signal.subscribe(dummy_test_func)
         # Expected single connected on_next
-        assert len(signal._slots) == 1
+        assert len(signal._subscriptions) == 1
 
     def test_signal_function_connect_duplicate(self):
         """ Test connecting signals to duplicate standalone functions """
@@ -49,14 +49,14 @@ class TestClassSignal:
         signal.subscribe(dummy_test_func)
         signal.subscribe(dummy_test_func)
         # Expected single connected on_next
-        assert len(signal._slots) == 1
+        assert len(signal._subscriptions) == 1
 
     def test_signal_partial_connect(self):
         """ Tests connecting signals to partials """
         signal = Subject()
         signal.subscribe(partial(dummy_test_func, self, 'Partial'))
         # Expected single connected on_next
-        assert len(signal._slots) == 1
+        assert len(signal._subscriptions) == 1
 
     def test_signal_partial_connect_duplicate(self):
         """ Tests connecting signals to duplicate partials """
@@ -65,14 +65,14 @@ class TestClassSignal:
         signal.subscribe(func)
         signal.subscribe(func)
         # Expected single connected on_next
-        assert len(signal._slots) == 1
+        assert len(signal._subscriptions) == 1
 
     def test_signal_lambda_connect(self):
         """ Tests connecting signals to lambdas """
         signal = Subject()
         signal.subscribe(lambda value: dummy_test_func(self, value))
         # Expected single connected on_next
-        assert len(signal._slots) == 1
+        assert len(signal._subscriptions) == 1
 
     def test_signal_lambda_connect_duplicate(self):
         """ Tests connecting signals to duplicate lambdas """
@@ -81,7 +81,7 @@ class TestClassSignal:
         signal.subscribe(func)
         signal.subscribe(func)
         # Expected single connected on_next
-        assert len(signal._slots) == 1
+        assert len(signal._subscriptions) == 1
 
     def test_signal_method_connect(self):
         """ Test connecting signals to methods on class instances """
@@ -89,7 +89,7 @@ class TestClassSignal:
         dummy_class = DummySlotClass()
         signal.subscribe(dummy_class.set_val)
         # Expected single connected slots
-        assert len(signal._slots) == 1
+        assert len(signal._subscriptions) == 1
 
     def test_signal_method_connect_duplicate(self):
         """ Test connecting signals to duplicate methods on class instances """
@@ -98,7 +98,7 @@ class TestClassSignal:
         signal.subscribe(dummy_class.set_val)
         signal.subscribe(dummy_class.set_val)
         # Expected single connected slots
-        assert len(signal._slots) == 1
+        assert len(signal._subscriptions) == 1
 
     def test_signal_method_connect_different_instances(self):
         """ Test connecting the same method from different instances """
@@ -108,7 +108,7 @@ class TestClassSignal:
         signal.subscribe(dummy_class_1.set_val)
         signal.subscribe(dummy_class_2.set_val)
         # Expected two connected slots
-        assert len(signal._slots) == 2
+        assert len(signal._subscriptions) == 2
 
     def test_signal_connect_non_callable(self):
         """ Test connecting non-callable object """
@@ -180,7 +180,7 @@ class TestClassSignal:
         signal = Subject()
         signal.subscribe(dummy_test_func)
         signal.disconnect(dummy_test_func)
-        assert len(signal._slots) == 0
+        assert len(signal._subscriptions) == 0
 
     def test_signal_function_disconnect_unconnected(self):
         """ Test disconnecting unconnected function """
@@ -214,7 +214,7 @@ class TestClassSignal:
         func = lambda value: dummy_test_func(self, value)
         signal.subscribe(func)
         signal.disconnect(func)
-        assert len(signal._slots) == 0
+        assert len(signal._subscriptions) == 0
 
     def test_signal_lambda_disconnect_unconnected(self):
         """ Test disconnecting unconnected lambda function """
@@ -237,7 +237,7 @@ class TestClassSignal:
         signal.disconnect(dummy_test_func)
         signal.on_next(self)
         # Expected 1 connected after disconnect
-        assert len(signal._slots) == 1
+        assert len(signal._subscriptions) == 1
         # Expected function to be called once
         assert self.check_val == 2345
         # Expected function to not be called after disconnecting
@@ -265,9 +265,9 @@ class TestClassSignal:
         func = lambda value: self.setVal(value)
         signal.subscribe(func)
         signal.subscribe(dummy_test_func)
-        assert len(signal._slots) == 2
+        assert len(signal._subscriptions) == 2
         signal.dispose()
-        assert len(signal._slots) == 0
+        assert len(signal._subscriptions) == 0
 
     def test_class_signal_clear_slots(self):
         """ Test clearing all slots """
@@ -307,9 +307,9 @@ class TestClassSignalFactoryClass:
         dummy_signal_class = DummySignalClass()
         dummy_slot_class = DummySlotClass()
         dummy_signal_class.signalFactory.register('Spam')
-        dummy_signal_class.signalFactory['Spam'].subscribe(
-            dummy_slot_class.set_val)
-        dummy_signal_class.signalFactory['Spam'].on_next(1)
+        dummy_signal_class.signalFactory.subscribe('Spam',
+                                                   dummy_slot_class.set_val)
+        dummy_signal_class.signalFactory.on_next('Spam', 1)
         assert dummy_slot_class.check_val == 1
         assert dummy_slot_class.func_call_count == 1
 
@@ -318,7 +318,7 @@ class TestClassSignalFactoryClass:
         dummy_signal_class = DummySignalClass()
         dummy_signal_class.signalFactory.register('Spam')
         dummy_signal_class.signalFactory.unregister('Spam')
-        assert 'Spam' not in dummy_signal_class.signalFactory
+        assert 'Spam' not in dummy_signal_class.signalFactory._factory
 
     def test_class_signal_factory_deregister_invalid_channel(self):
         """ Test unregistering invalid channel from SubjectFactory """
