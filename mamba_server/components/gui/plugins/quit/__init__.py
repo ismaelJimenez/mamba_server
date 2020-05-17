@@ -8,6 +8,8 @@ from mamba_server.exceptions import ComponentConfigException
 from mamba_server.components.observer_types.empty import Empty
 from mamba_server.components.gui.main_window.observer_types.register_action\
     import RegisterAction
+from mamba_server.components.gui.main_window.observer_types.run_action\
+    import RunAction
 
 
 class GuiPlugin(ComponentInterface):
@@ -24,8 +26,9 @@ class GuiPlugin(ComponentInterface):
         self._context.rx.subscribe(
             subject_name='run_plugin',
             on_next=self.run,
-            op_filter=lambda rx_dict: rx_dict['menu'] == self._configuration[
-                'menu'] and rx_dict['action'] == self._configuration['name'])
+            op_filter=lambda rx: isinstance(
+                rx, RunAction) and rx.menu_title == self._configuration[
+                    'menu'] and rx.action_name == self._configuration['name'])
 
     def initialize(self):
         if not all(key in self._configuration for key in ['menu', 'name']):
@@ -45,6 +48,6 @@ class GuiPlugin(ComponentInterface):
         """ Entry point for running the plugin
 
             Args:
-                rx_value (Empty): The value published by the subject.
+                rx_value (RunAction): The value published by the subject.
         """
         self._context.rx.on_next('quit', Empty())

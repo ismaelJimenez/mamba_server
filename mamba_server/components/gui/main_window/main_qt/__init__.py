@@ -13,6 +13,8 @@ from mamba_server.exceptions import ComponentConfigException
 from mamba_server.components.observer_types.empty import Empty
 from mamba_server.components.gui.main_window.observer_types.register_action\
     import RegisterAction
+from mamba_server.components.gui.main_window.observer_types.run_action\
+    import RunAction
 
 
 class MainWindow(MainWindowInterface):
@@ -64,10 +66,9 @@ class MainWindow(MainWindowInterface):
                          shortcut=rx_value.shortcut,
                          statusTip=rx_value.status_tip,
                          triggered=lambda: self._context.rx.on_next(
-                             'run_plugin', {
-                                 'menu': rx_value.menu_title,
-                                 'action': rx_value.action_name
-                             }))
+                             'run_plugin',
+                             RunAction(menu_title=rx_value.menu_title,
+                                       action_name=rx_value.action_name)))
 
         self._action_widgets.append(widget)
         menu.addAction(action)

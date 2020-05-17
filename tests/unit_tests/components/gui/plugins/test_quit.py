@@ -4,7 +4,7 @@ from mamba_server.components.gui.plugins.quit import GuiPlugin
 from mamba_server.components.gui.main_window.main_qt import MainWindow
 
 from mamba_server.components.observer_types.empty import Empty
-from mamba_server.components.gui.main_window.observer_types.register_action import RegisterAction
+from mamba_server.components.gui.main_window.observer_types.run_action import RunAction
 
 
 def test_about_gui_plugin_w_menu_window():
@@ -62,19 +62,22 @@ def test_about_gui_plugin_run_rx_mamba():
     context.rx.subscribe('quit', dummy_test_class.test_function)
 
     # Check it is not activated by another menu
-    context.rx.on_next('run_plugin', {'menu': 'File_Wrong', 'action': 'Quit'})
+    context.rx.on_next('run_plugin',
+                       RunAction(menu_title='File_Wrong', action_name='Quit'))
 
     assert dummy_test_class.times_called == 0
     assert dummy_test_class.last_value is None
 
     # Check it is not activated by another action
-    context.rx.on_next('run_plugin', {'menu': 'File', 'action': 'Quit_wrong'})
+    context.rx.on_next('run_plugin',
+                       RunAction(menu_title='File', action_name='Quit_Wrong'))
 
     assert dummy_test_class.times_called == 0
     assert dummy_test_class.last_value is None
 
     # Check activation emits 'quit'
-    context.rx.on_next('run_plugin', {'menu': 'File', 'action': 'Quit'})
+    context.rx.on_next('run_plugin',
+                       RunAction(menu_title='File', action_name='Quit'))
 
     assert dummy_test_class.times_called == 1
     assert isinstance(dummy_test_class.last_value, Empty)
@@ -92,19 +95,22 @@ def test_about_gui_plugin_run_rx_py():
     context.rx.subscribe('quit', dummy_test_class.test_function)
 
     # Check it is not activated by another menu
-    context.rx.on_next('run_plugin', {'menu': 'File_Wrong', 'action': 'Quit'})
+    context.rx.on_next('run_plugin',
+                       RunAction(menu_title='File_Wrong', action_name='Quit'))
 
     assert dummy_test_class.times_called == 0
     assert dummy_test_class.last_value is None
 
     # Check it is not activated by another action
-    context.rx.on_next('run_plugin', {'menu': 'File', 'action': 'Quit_wrong'})
+    context.rx.on_next('run_plugin',
+                       RunAction(menu_title='File', action_name='Quit_Wrong'))
 
     assert dummy_test_class.times_called == 0
     assert dummy_test_class.last_value is None
 
     # Check activation emits 'quit'
-    context.rx.on_next('run_plugin', {'menu': 'File', 'action': 'Quit'})
+    context.rx.on_next('run_plugin',
+                       RunAction(menu_title='File', action_name='Quit'))
 
     assert dummy_test_class.times_called == 1
     assert isinstance(dummy_test_class.last_value, Empty)

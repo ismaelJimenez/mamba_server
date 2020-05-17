@@ -1,5 +1,4 @@
 """ Compose context from launch file """
-import json
 import time
 import yaml
 
