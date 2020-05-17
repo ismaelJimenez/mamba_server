@@ -24,9 +24,9 @@ class DummySlotClass:
         self.func_call_count_2 += 1
 
 
-def dummy_test_func(test, value):
+def dummy_test_func(test):
     """A test standalone function for signals to attach onto"""
-    test.check_val = value
+    test.check_val = 12345
     test.func_call_count += 1
 
 
@@ -129,28 +129,16 @@ class TestClassSignal:
         """ Test emitting signal to standalone function """
         signal = Subject()
         signal.subscribe(dummy_test_func)
-        signal.on_next(self, 'Method')
-        assert self.check_val == 'Method'
-        # Expected function to be called once
-        assert self.func_call_count == 1
-
-    def test_signal_emit_to_partial(self):
-        """ Test emitting signals to partial """
-        signal = Subject()
-        partial_func = partial(dummy_test_func, self, 'Partial')
-        signal.subscribe(partial_func)
-        signal.on_next()
-        assert self.check_val == 'Partial'
-        # Expected function to be called once
+        signal.on_next(self)
+        assert self.check_val == 12345
         assert self.func_call_count == 1
 
     def test_signal_emit_to_lambda(self):
         """ Test emitting signal to lambda """
         signal = Subject()
-        signal.subscribe(lambda value: dummy_test_func(self, value))
-        signal.on_next('Lambda')
-        assert self.check_val == 'Lambda'
-        # Expected function to be called once
+        signal.subscribe(lambda _: dummy_test_func(self))
+        signal.on_next()
+        assert self.check_val == 12345
         assert self.func_call_count == 1
 
     def test_signal_emit_to_instance_method(self):
@@ -168,10 +156,10 @@ class TestClassSignal:
         signal = Subject()
         dummy_class = DummySlotClass()
         signal.subscribe(dummy_class.set_val)
-        signal.subscribe(lambda value: dummy_test_func(self, value))
+        signal.subscribe(lambda _: dummy_test_func(self))
         del dummy_class
-        signal.on_next(1)
-        assert self.check_val == 1
+        signal.on_next()
+        assert self.check_val == 12345
         # Expected function to be called once
         assert self.func_call_count == 1
 
@@ -239,19 +227,19 @@ class TestClassSignal:
 
     def test_signal_method_disconnect(self):
         """Test disconnecting method"""
-        def local_method(test, value):
-            test.check_val = value
+        def local_method(test):
+            test.check_val = 2345
             test.func_call_count += 1
 
         signal = Subject()
         signal.subscribe(dummy_test_func)
         signal.subscribe(local_method)
         signal.disconnect(dummy_test_func)
-        signal.on_next(self, 1)
+        signal.on_next(self)
         # Expected 1 connected after disconnect
         assert len(signal._slots) == 1
         # Expected function to be called once
-        assert self.check_val == 1
+        assert self.check_val == 2345
         # Expected function to not be called after disconnecting
         assert self.func_call_count == 1
 

@@ -1,9 +1,5 @@
 """ The Mamba implementation of a Reactive Interface """
 
-import inspect
-import weakref
-from functools import partial
-
 
 class Subject:
     """
@@ -14,7 +10,7 @@ class Subject:
         super(Subject, self).__init__()
         self._slots = []
 
-    def on_next(self, *args, **kwargs):
+    def on_next(self, value=None):
         """
         Notifies all subscribed observers with the value.
 
@@ -22,7 +18,7 @@ class Subject:
             value (any): The callable on_next to register.
         """
         for slot in self._slots:
-            slot(*args, **kwargs)
+            slot(value)
 
     def subscribe(self, on_next, filter=None):
         """
