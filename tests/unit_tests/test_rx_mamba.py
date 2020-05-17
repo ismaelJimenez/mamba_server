@@ -163,17 +163,18 @@ class TestClassSignal:
         # Expected function to be called once
         assert self.func_call_count == 1
 
-    # def test_signal_emit_to_method_filter(self):
-    #     """ Test connecting signals to methods on class instances """
-    #     signal = Subject()
-    #     dummy_slot_class = DummySlotClass()
-    #     signal.subscribe(dummy_slot_class.set_val, filter=lambda value: value%2 == 0)
-    #     signal.subscribe(dummy_slot_class.set_val_2)
-    #     signal.on_next(1)
-    #     assert dummy_slot_class.check_val is None
-    #     assert dummy_slot_class.func_call_count == 0
-    #     assert dummy_slot_class.check_val_2 == 1
-    #     assert dummy_slot_class.func_call_count_2 == 1
+    def test_signal_emit_to_method_filter(self):
+        """ Test connecting signals to methods on class instances """
+        signal = Subject()
+        dummy_slot_class = DummySlotClass()
+        signal.subscribe(dummy_slot_class.set_val,
+                         op_filter=lambda value: value % 2 == 0)
+        signal.subscribe(dummy_slot_class.set_val_2)
+        signal.on_next(1)
+        assert dummy_slot_class.check_val is None
+        assert dummy_slot_class.func_call_count == 0
+        assert dummy_slot_class.check_val_2 == 1
+        assert dummy_slot_class.func_call_count_2 == 1
 
     def test_signal_function_disconnect(self):
         """ Test disconnecting function """

@@ -18,7 +18,9 @@ class Subject:
             value (any): The value to send to all subscribed observers.
         """
         for subscription in self._subscriptions:
-            subscription['on_next'](value)
+            if subscription['op_filter'] is None or subscription['op_filter'](
+                    value):
+                subscription['on_next'](value)
 
     def subscribe(self, on_next, op_filter=None):
         """
