@@ -6,10 +6,10 @@ import yaml
 COMPONENT_CONFIG_FILE = "config.yml"
 
 
-class ComponentInterface:
+class ComponentBase:
     """ The Generic component interface """
     def __init__(self, config_folder, context, local_config=None):
-        super(ComponentInterface, self).__init__()
+        super(ComponentBase, self).__init__()
 
         # Retrieve component configuration
         self._context = context

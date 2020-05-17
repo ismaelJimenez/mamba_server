@@ -3,10 +3,10 @@
 import os
 
 from mamba_server.components.gui.load_screen.interface import \
-    LoadScreenInterface
+    LoadScreenBase
 
 
-class LoadScreen(LoadScreenInterface):
+class LoadScreen(LoadScreenBase):
     """ Custom Load screen """
     def __init__(self, context=None):
         super(LoadScreen, self).__init__(os.path.dirname(__file__), context)

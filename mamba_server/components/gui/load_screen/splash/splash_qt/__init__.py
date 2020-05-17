@@ -9,10 +9,10 @@ from PySide2.QtCore import QTimer
 from mamba_server.utils.misc import path_from_string
 from mamba_server.exceptions import ComponentConfigException
 from mamba_server.components.gui.load_screen.interface import \
-    LoadScreenInterface
+    LoadScreenBase
 
 
-class LoadScreen(LoadScreenInterface):
+class LoadScreen(LoadScreenBase):
     """ Splash screen implemented with Qt5 """
     def __init__(self, context):
         super(LoadScreen, self).__init__(os.path.dirname(__file__), context)

@@ -2,10 +2,10 @@
 
 import os
 
-from mamba_server.components.interface import ComponentInterface
+from mamba_server.components.component_base import ComponentBase
 
 
-class GuiPlugin(ComponentInterface):
+class GuiPlugin(ComponentBase):
     """ Custom Plugin """
     def __init__(self, context=None):
         super(GuiPlugin, self).__init__(os.path.dirname(__file__), context)

@@ -1,12 +1,11 @@
-""" Plugin to show About message implemented in TkInter """
+""" Plugin to show About message implemented in Qt5 """
 
 import os
 import pkgutil
 
-import tkinter as tk
-from tkinter import messagebox
+from PySide2.QtWidgets import QMessageBox, QWidget, QApplication
 
-from mamba_server.components.interface import ComponentInterface
+from mamba_server.components.component_base import ComponentBase
 from mamba_server.exceptions import ComponentConfigException
 
 from mamba_server.components.gui.main_window.observer_types.register_action\
@@ -15,8 +14,8 @@ from mamba_server.components.gui.main_window.observer_types.run_action\
     import RunAction
 
 
-class GuiPlugin(ComponentInterface):
-    """ Plugin to show About message implemented in TkInter """
+class GuiPlugin(ComponentBase):
+    """ Plugin to show About message implemented in Qt5 """
     def __init__(self, context):
         super(GuiPlugin, self).__init__(os.path.dirname(__file__), context)
 
@@ -26,6 +25,7 @@ class GuiPlugin(ComponentInterface):
         # Initialize custom variables
         self._version = None
         self._box_message = None
+        self._app = None
 
     def _register_observables(self):
         self._context.rx.subscribe(
@@ -36,6 +36,10 @@ class GuiPlugin(ComponentInterface):
                     'menu'] and rx.action_name == self._configuration['name'])
 
     def initialize(self):
+        self._app = QApplication(
+            []) if QApplication.instance() is None else QApplication.instance(
+            )
+
         self._version = pkgutil.get_data('mamba_server',
                                          'VERSION').decode('ascii').strip()
         self._box_message = f"Mamba Server v{self._version}"
@@ -59,9 +63,5 @@ class GuiPlugin(ComponentInterface):
             Args:
                 rx_value (RunAction): The value published by the subject.
         """
-        app = tk.Tk()
-        app.overrideredirect(1)
-        app.withdraw()
-
-        messagebox.showinfo(self._configuration['message_box_title'],
-                            self._box_message)
+        QMessageBox.about(QWidget(), self._configuration['message_box_title'],
+                          self._box_message)

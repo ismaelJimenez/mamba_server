@@ -2,13 +2,13 @@
 
 import os
 
-from mamba_server.components.interface import ComponentInterface
+from mamba_server.components.component_base import ComponentBase
 
 
-class LoadScreenInterface(ComponentInterface):
+class LoadScreenBase(ComponentBase):
     """ The LoadScreen components enable showing an screen during load."""
     def __init__(self, folder, context):
-        super(LoadScreenInterface, self).__init__(folder, context)
+        super(LoadScreenBase, self).__init__(folder, context)
 
     def show(self):
         """

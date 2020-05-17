@@ -5,10 +5,10 @@ import yaml
 from mamba_server.context_mamba import Context
 from mamba_server.utils.misc import get_component, get_components
 from mamba_server.components.gui.load_screen.interface import \
-    LoadScreenInterface
+    LoadScreenBase
 from mamba_server.components.gui.main_window.interface import \
-    MainWindowInterface
-from mamba_server.components.interface import ComponentInterface
+    MainWindowBase
+from mamba_server.components.component_base import ComponentBase
 
 
 def execute(launch_file, mamba_dir, project_dir):
@@ -29,7 +29,7 @@ def execute(launch_file, mamba_dir, project_dir):
         if 'load_screen' in launch_config:
             load_screen = get_component(
                 launch_config['load_screen']['component'], component_folders,
-                LoadScreenInterface, context)
+                LoadScreenBase, context)
             load_screen.show()
 
             min_load_screen_time = None
@@ -42,7 +42,7 @@ def execute(launch_file, mamba_dir, project_dir):
         # Start Main Window Component, if any
         if 'app' in launch_config:
             main_window = get_component(launch_config['app']['component'],
-                                        component_folders, MainWindowInterface,
+                                        component_folders, MainWindowBase,
                                         context)
 
             context.set('main_window', main_window)
@@ -50,7 +50,7 @@ def execute(launch_file, mamba_dir, project_dir):
         # Instantiate GUI Plugins, if any
         if 'gui_plugins' in launch_config:
             gui_plugins = get_components(launch_config['gui_plugins'],
-                                         component_folders, ComponentInterface,
+                                         component_folders, ComponentBase,
                                          context)
 
             for key, plugin in gui_plugins.items():

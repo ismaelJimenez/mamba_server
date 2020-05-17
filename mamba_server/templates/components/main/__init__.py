@@ -3,10 +3,10 @@
 import os
 
 from mamba_server.components.gui.main_window.interface import \
-    MainWindowInterface
+    MainWindowBase
 
 
-class MainWindow(MainWindowInterface):
+class MainWindow(MainWindowBase):
     """ Custom Main window """
     def __init__(self, context=None):
         super(MainWindow, self).__init__(os.path.dirname(__file__), context)

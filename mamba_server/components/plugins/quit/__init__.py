@@ -1,31 +1,24 @@
-""" Plugin to show About message implemented in Qt5 """
+""" Plugin to close Mamba Application """
 
 import os
-import pkgutil
 
-from PySide2.QtWidgets import QMessageBox, QWidget, QApplication
-
-from mamba_server.components.interface import ComponentInterface
+from mamba_server.components.component_base import ComponentBase
 from mamba_server.exceptions import ComponentConfigException
 
+from mamba_server.components.observer_types.empty import Empty
 from mamba_server.components.gui.main_window.observer_types.register_action\
     import RegisterAction
 from mamba_server.components.gui.main_window.observer_types.run_action\
     import RunAction
 
 
-class GuiPlugin(ComponentInterface):
-    """ Plugin to show About message implemented in Qt5 """
+class GuiPlugin(ComponentBase):
+    """ Plugin to close Main Window """
     def __init__(self, context):
         super(GuiPlugin, self).__init__(os.path.dirname(__file__), context)
 
         # Initialize observables
         self._register_observables()
-
-        # Initialize custom variables
-        self._version = None
-        self._box_message = None
-        self._app = None
 
     def _register_observables(self):
         self._context.rx.subscribe(
@@ -36,14 +29,6 @@ class GuiPlugin(ComponentInterface):
                     'menu'] and rx.action_name == self._configuration['name'])
 
     def initialize(self):
-        self._app = QApplication(
-            []) if QApplication.instance() is None else QApplication.instance(
-            )
-
-        self._version = pkgutil.get_data('mamba_server',
-                                         'VERSION').decode('ascii').strip()
-        self._box_message = f"Mamba Server v{self._version}"
-
         if not all(key in self._configuration for key in ['menu', 'name']):
             raise ComponentConfigException(
                 "Missing required elements in component configuration")
@@ -63,5 +48,4 @@ class GuiPlugin(ComponentInterface):
             Args:
                 rx_value (RunAction): The value published by the subject.
         """
-        QMessageBox.about(QWidget(), self._configuration['message_box_title'],
-                          self._box_message)
+        self._context.rx.on_next('quit', Empty())

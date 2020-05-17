@@ -1,6 +1,6 @@
 from mamba_server.context_mamba import Context as Context_Mamba
 from mamba_server.context_rx import Context as Context_Rx
-from mamba_server.components.gui.plugins.quit import GuiPlugin
+from mamba_server.components.plugins.quit import GuiPlugin
 from mamba_server.components.gui.main_window.main_qt import MainWindow
 
 from mamba_server.components.observer_types.empty import Empty

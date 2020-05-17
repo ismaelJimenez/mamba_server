@@ -4,7 +4,7 @@ import os
 import tkinter as tk
 
 from mamba_server.components.gui.main_window.interface import \
-    MainWindowInterface
+    MainWindowBase
 from mamba_server.exceptions import ComponentConfigException
 
 from mamba_server.components.observer_types.empty import Empty
@@ -14,7 +14,7 @@ from mamba_server.components.gui.main_window.observer_types.run_action\
     import RunAction
 
 
-class MainWindow(MainWindowInterface):
+class MainWindow(MainWindowBase):
     """ Main window implemented with TkInter """
     def __init__(self, context):
         super(MainWindow, self).__init__(os.path.dirname(__file__), context)
