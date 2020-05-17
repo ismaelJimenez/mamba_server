@@ -1,4 +1,4 @@
-from mamba_server.context import Context
+from mamba_server.context_mamba import Context
 
 
 def test_context():

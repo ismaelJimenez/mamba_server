@@ -2,7 +2,7 @@ import pytest
 import tkinter as tk
 
 from mamba_server.components.gui.main_window.main_tk import MainWindow
-from mamba_server.context import Context
+from mamba_server.context_mamba import Context
 from mamba_server.exceptions import ComponentConfigException
 
 

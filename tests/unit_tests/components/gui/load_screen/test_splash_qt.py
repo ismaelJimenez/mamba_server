@@ -3,7 +3,7 @@ import pytest
 
 from mamba_server.components.gui.load_screen.splash.splash_qt import LoadScreen
 from mamba_server.exceptions import ComponentConfigException
-from mamba_server.context import Context
+from mamba_server.context_mamba import Context
 
 
 class TestClass:
