@@ -6,8 +6,6 @@ from mamba_server.context_mamba import Context
 from mamba_server.utils.misc import get_component, get_components
 from mamba_server.components.gui.load_screen.interface import \
     LoadScreenBase
-from mamba_server.components.gui.main_window.interface import \
-    MainWindowBase
 from mamba_server.components.component_base import ComponentBase
 
 
@@ -42,7 +40,7 @@ def execute(launch_file, mamba_dir, project_dir):
         # Start Main Window Component, if any
         if 'app' in launch_config:
             main_window = get_component(launch_config['app']['component'],
-                                        component_folders, MainWindowBase,
+                                        component_folders, ComponentBase,
                                         context)
 
             context.set('main_window', main_window)
