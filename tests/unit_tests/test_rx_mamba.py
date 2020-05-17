@@ -3,7 +3,7 @@
 import pytest
 from functools import partial
 
-from mamba_server.rx_mamba import Subject, SignalFactory
+from mamba_server.rx_mamba import Subject, SubjectFactory
 
 
 class DummySlotClass:
@@ -259,14 +259,14 @@ class TestClassSignal:
         except:
             pytest.fail("Disconnecting invalid object should not raise")
 
-    def test_signal_clear_slots(self):
+    def test_signal_dispose(self):
         """ Test clearing all slots """
         signal = Subject()
         func = lambda value: self.setVal(value)
         signal.subscribe(func)
         signal.subscribe(dummy_test_func)
         assert len(signal._slots) == 2
-        signal.clear()
+        signal.dispose()
         assert len(signal._slots) == 0
 
     def test_class_signal_clear_slots(self):
@@ -277,12 +277,12 @@ class DummySignalClass(object):
     """A dummy class to check for instance handling of signals"""
     def __init__(self):
         self.signal = Subject()
-        self.signalFactory = SignalFactory()
+        self.signalFactory = SubjectFactory()
 
 
 class TestClassSignalFactoryClass:
     def test_class_signal_factory_class_connect(self):
-        """ Test SignalFactory indirect signal connection """
+        """ Test SubjectFactory indirect signal connection """
         dummy_signal_class = DummySignalClass()
         dummy_slot_class = DummySlotClass()
         dummy_signal_class.signalFactory.register('Spam')
@@ -293,7 +293,7 @@ class TestClassSignalFactoryClass:
         assert dummy_slot_class.func_call_count == 1
 
     def test_class_signal_factory_connect_invalid_channel(self):
-        """ Test SignalFactory connecting to invalid channel """
+        """ Test SubjectFactory connecting to invalid channel """
         dummy_signal_class = DummySignalClass()
         dummy_slot_class = DummySlotClass()
         dummy_signal_class.signalFactory.subscribe('Spam',
@@ -314,17 +314,17 @@ class TestClassSignalFactoryClass:
         assert dummy_slot_class.func_call_count == 1
 
     def test_class_signal_factory_deregister(self):
-        """ Test unregistering from SignalFactory """
+        """ Test unregistering from SubjectFactory """
         dummy_signal_class = DummySignalClass()
         dummy_signal_class.signalFactory.register('Spam')
-        dummy_signal_class.signalFactory.deregister('Spam')
+        dummy_signal_class.signalFactory.unregister('Spam')
         assert 'Spam' not in dummy_signal_class.signalFactory
 
     def test_class_signal_factory_deregister_invalid_channel(self):
-        """ Test unregistering invalid channel from SignalFactory """
+        """ Test unregistering invalid channel from SubjectFactory """
         dummy_signal_class = DummySignalClass()
         try:
-            dummy_signal_class.signalFactory.deregister('Spam')
+            dummy_signal_class.signalFactory.unregister('Spam')
         except KeyError:
             pytest.fail(
                 "Deregistering invalid channel should not raise KeyError")

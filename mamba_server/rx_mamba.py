@@ -1,4 +1,4 @@
-""" The Mamba implementation of a Reactive Interface """
+""" The Mamba implementation of a Minimal Reactive Interface """
 
 
 class Subject:
@@ -15,91 +15,98 @@ class Subject:
         Notifies all subscribed observers with the value.
 
         Args:
-            value (any): The callable on_next to register.
+            value (any): The value to send to all subscribed observers.
         """
         for slot in self._slots:
             slot(value)
 
-    def subscribe(self, on_next, filter=None):
+    def subscribe(self, on_next, op_filter=None):
         """
-        Adds a new observer to the observable.
+        Subscribe an observer to the observable sequence.
 
         Args:
-            on_next (callable): The callable on_next to register.
+            on_next (callable): Action to invoke.
+            op_filter (callable): Filters the elements of an observable
+                                  sequence based on a predicate.
         """
         if not callable(on_next):
             raise ValueError(
                 f"Connection to non-callable '{on_next.__class__.__name__}' "
-                f"object failed"
-            )
+                f"object failed")
 
         if on_next not in self._slots:
             self._slots.append(on_next)
 
-    def disconnect(self, slot):
+    def disconnect(self, on_next):
         """
-        Disconnects the on_next from the signal
+        Disconnects an action from the observable sequence.
+
+        Args:
+            on_next (callable): Action to disconnect from the
+                                observable sequence.
         """
-        if not callable(slot):
+        if not callable(on_next):
             return
 
         try:
-            self._slots.remove(slot)
+            self._slots.remove(on_next)
         except ValueError:
             pass
 
-    def clear(self):
-        """Clears the signal of all connected slots"""
+    def dispose(self):
+        """ Unsubscribe all observers and release resources """
         self._slots = []
 
 
-class SignalFactory(dict):
+class SubjectFactory:
+    """ The Subject Factory object lets you handle subjects by a string name
     """
-    The Subject Factory object lets you handle signals by a string based name
-    instead of by objects.
-    """
-    def register(self, name, *slots):
-        """
-        Registers a given signal
-        :param name: the signal to register
-        """
-        # setdefault initializes the object even if it exists. This is
-        # more efficient
-        if name not in self:
-            self[name] = Subject()
 
-        for slot in slots:
-            self[name].subscribe(slot)
+    def __init__(self):
+        super(SubjectFactory, self).__init__()
+        self._factory = {}
 
-    def deregister(self, name):
-        """
-        Removes a given signal
-        :param name: the signal to deregister
-        """
-        self.pop(name, None)
+    def register(self, name):
+        """ Registers a given subject by name
 
-    def on_next(self, observable_name, value=None):
+        Args:
+            name (str): Subject name to register.
+        """
+        if name not in self._factory:
+            self._factory[name] = Subject()
+
+    def unregister(self, name):
+        """ Unregister a given a given subject by name
+
+        Args:
+            name (str): Subject name to remove from the register.
+        """
+        self._factory.pop(name, None)
+
+    def on_next(self, subject_name, value=None):
         """
         Notifies all subscribed observers of the given observable
         with the value.
 
         Args:
-            observable_name (str): The observable name.
-            value (any): The callable on_next to register.
+            subject_name (str): The subject name.
+            value (any): The value to send to all subscribed observers.
         """
-        if observable_name in self:
-            self[observable_name].on_next(value)
+        if subject_name in self._factory:
+            self._factory[subject_name].on_next(value)
 
-    def subscribe(self, observable_name, on_next, filter=None):
+    def subscribe(self, observable_name, on_next, op_filter=None):
         """
-        Adds a new observer to a given observable. If observable doesnt exists
-        yet, it gets created.
+        Adds a new observer to a given observable by name. If observable
+        doesnt exists yet, it gets created.
 
         Args:
-            observable_name (str): The signal name to connect to.
-            on_next (callable): The callable on_next to register.
+            observable_name (str): The subject name to connect to.
+            on_next (callable): Action to invoke.
+            op_filter (callable): Filters the elements of an observable
+                                  sequence based on a predicate.
         """
-        if observable_name not in self:
+        if observable_name not in self._factory:
             self.register(observable_name)
 
-        self[observable_name].subscribe(on_next, filter=filter)
+        self._factory[observable_name].subscribe(on_next, filter=filter)
