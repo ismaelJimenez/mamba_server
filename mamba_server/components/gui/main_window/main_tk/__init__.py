@@ -7,6 +7,7 @@ from mamba_server.components.component_base import ComponentBase
 from mamba_server.exceptions import ComponentConfigException
 
 from mamba_server.components.observer_types.empty import Empty
+from mamba_server.components.observer_types.app_status import AppStatus
 from mamba_server.components.gui.main_window.observer_types.register_action\
     import RegisterAction
 from mamba_server.components.gui.main_window.observer_types.run_action\
@@ -30,6 +31,12 @@ class MainWindow(ComponentBase):
         self._context.rx.subscribe(subject_name='quit',
                                    on_next=self.close,
                                    op_filter=lambda rx: isinstance(rx, Empty))
+
+        self._context.rx.subscribe(
+            subject_name='app_status',
+            on_next=self.run,
+            op_filter=lambda rx: isinstance(rx, AppStatus
+                                            ) and rx == AppStatus.Running)
 
         self._context.rx.subscribe(
             subject_name='register_action',
@@ -62,6 +69,15 @@ class MainWindow(ComponentBase):
                                        action_name=rx_value.action_name)))
         self._menu_actions.append(
             f'{rx_value.menu_title}_{rx_value.action_name}')
+
+    def run(self, rx_value):
+        """ Entry point for running the window
+
+            Args:
+                rx_value (AppStatus): The value published by the subject.
+        """
+        self.show()
+        self.start_event_loop()
 
     def show(self):
         """

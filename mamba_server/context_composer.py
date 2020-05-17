@@ -8,6 +8,8 @@ from mamba_server.components.gui.load_screen.interface import \
     LoadScreenBase
 from mamba_server.components.component_base import ComponentBase
 
+from mamba_server.components.observer_types.app_status import AppStatus
+
 
 def execute(launch_file, mamba_dir, project_dir):
     """ Compose context from launch file """
@@ -38,19 +40,13 @@ def execute(launch_file, mamba_dir, project_dir):
                 start_time = time.time()
 
         # Start Main Window Component, if any
-        if 'app' in launch_config:
-            main_window = get_component(launch_config['app']['component'],
-                                        component_folders, ComponentBase,
-                                        context)
+        if 'services' in launch_config:
+            services = get_components(launch_config['services'],
+                                      component_folders, ComponentBase,
+                                      context)
 
-        # Instantiate GUI Plugins, if any
-        if 'gui_plugins' in launch_config:
-            gui_plugins = get_components(launch_config['gui_plugins'],
-                                         component_folders, ComponentBase,
-                                         context)
-
-            for key, plugin in gui_plugins.items():
-                plugin.initialize()
+            for key, service in services.items():
+                service.initialize()
 
         if ('load_screen' in launch_config) and (min_load_screen_time
                                                  is not None):
@@ -59,9 +55,5 @@ def execute(launch_file, mamba_dir, project_dir):
                 load_screen.close)
             load_screen.start_event_loop()
 
-        # Start Main Window Component, if any
-        if 'app' in launch_config:
-            main_window.show()
-
-            # Start the event loop.
-            main_window.start_event_loop()
+        # Start Main Component, if any
+        context.rx.on_next('app_status', AppStatus.Running)

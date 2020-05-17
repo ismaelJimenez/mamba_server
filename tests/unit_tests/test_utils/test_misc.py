@@ -76,8 +76,7 @@ class TestClass:
     def test_get_classes_from_module_components_class_gui_plugin_subfolder(
             self):
         classes_dict = misc.get_classes_from_module(
-            'mamba_server.components.plugins.about.about_qt',
-            ComponentBase)
+            'mamba_server.components.plugins.about.about_qt', ComponentBase)
         assert len(classes_dict) == 1
         assert 'about_qt' in classes_dict
 
@@ -100,14 +99,13 @@ class TestClass:
 
     def test_get_component_valid_id_and_type(self):
         components_dict = misc.get_component(
-            'about_qt', ['mamba_server.components.plugins'],
-            ComponentBase, Context())
+            'about_qt', ['mamba_server.components.plugins'], ComponentBase,
+            Context())
         assert components_dict is not None
 
     def test_get_component_valid_id_wrong_type(self):
         with pytest.raises(LaunchFileException) as excinfo:
-            misc.get_component('about_qt',
-                               ['mamba_server.components.plugins'],
+            misc.get_component('about_qt', ['mamba_server.components.plugins'],
                                LoadScreenBase, Context())
 
         assert 'not a valid component identifier' in str(excinfo.value)
@@ -141,8 +139,8 @@ class TestClass:
 
         components_dict = misc.get_components(
             ['about_qt', 'quit', 'plugin_1'],
-            ['mamba_server.components.plugins', 'components'],
-            ComponentBase, Context())
+            ['mamba_server.components.plugins', 'components'], ComponentBase,
+            Context())
         assert len(components_dict) == 3
         assert 'about_qt' in components_dict
         assert 'quit' in components_dict
@@ -155,8 +153,7 @@ class TestClass:
 
         with pytest.raises(LaunchFileException) as excinfo:
             misc.get_components(
-                ['quit'],
-                ['mamba_server.components.plugins', 'components'],
+                ['quit'], ['mamba_server.components.plugins', 'components'],
                 ComponentBase, Context())
 
         assert 'is duplicated' in str(excinfo.value)

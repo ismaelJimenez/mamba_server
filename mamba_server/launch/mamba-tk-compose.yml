@@ -2,8 +2,7 @@ version: '0.1'
 load_screen:
   component: splash_tk
   min_seconds: 5
-app:
-  component: main_tk
-gui_plugins:
+services:
+  - main_tk
   - quit
   - about_tk
