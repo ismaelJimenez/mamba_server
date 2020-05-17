@@ -27,47 +27,53 @@ class MainWindow(MainWindowInterface):
         self._action_widgets = []  # Storage of actions
 
         self._context.rx.subscribe('quit', self.close)
+        self._context.rx.subscribe(
+            subject_name='register_menu_action',
+            on_next=self.register_action,
+            op_filter=lambda rx: isinstance(rx, dict) and all(
+                key in rx for key in ['menu_title', 'action_name']))
 
-    def register_action(self,
-                        menu_title,
-                        action_name,
-                        component_action,
-                        shortcut='',
-                        status_tip=''):
-        """Register a new action inside a given menu.
+    def register_action(self, rx_value):
+        """ Entry point for running the plugin
 
-        Args:
-            menu_title (str): The menu name.
-            action_name (str): The action name.
-            component_action (function): The action to execute.
-            shortcut (str): Keys shorcut to execute action, if available.
-            status_tip (str): Action status tip to show, if available.
+            The expected rx_value is a dictionary composed by:
+                - menu_title (str): The menu name.
+                - action_name (str): The action name.
+                - shortcut (str, optional): Keys shorcut to execute action.
+                - status_tip (str, optional): Action status tip to show.
+
+            Args:
+                rx_value (dict): The value published by the subject.
         """
-        if not self._exists_menu(menu_title):
-            menu = self._add_menu(menu_title)
+        if not self._exists_menu(rx_value['menu_title']):
+            menu = self._add_menu(rx_value['menu_title'])
         else:
-            menu = self._get_menu(menu_title)
+            menu = self._get_menu(rx_value['menu_title'])
 
-        if self._is_action_in_menu(menu_title, action_name):
+        if self._is_action_in_menu(rx_value['menu_title'],
+                                   rx_value['action_name']):
             raise ComponentConfigException(
-                f"Another action '{menu_title}' already exists"
-                f" in menu '{action_name}'")
+                f"Another action '{rx_value['menu_title']}' already exists"
+                f" in menu '{rx_value['action_name']}'")
 
         widget = QWidget()
         action = QAction(
-            action_name,
+            rx_value['action_name'],
             widget,
-            shortcut=shortcut,
-            statusTip=status_tip,
-            triggered=lambda: self._context.rx.on_next('run_plugin', {
-                'menu': menu_title,
-                'action': action_name
-            }))
+            shortcut=rx_value['shortcut'] if 'shortcut' in rx_value else None,
+            statusTip=rx_value['status_tip']
+            if 'status_tip' in rx_value else None,
+            triggered=lambda: self._context.rx.on_next(
+                'run_plugin', {
+                    'menu': rx_value['menu_title'],
+                    'action': rx_value['action_name']
+                }))
 
         self._action_widgets.append(widget)
         menu.addAction(action)
 
-        self._menu_actions.append('{}_{}'.format(menu_title, action_name))
+        self._menu_actions.append(
+            f'{rx_value["menu_title"]}_{rx_value["action_name"]}')
 
     def show(self):
         """
@@ -81,7 +87,7 @@ class MainWindow(MainWindowInterface):
         """
         self._app.hide()
 
-    def close(self, rx_on_next_value=None):
+    def close(self, rx_value=None):
         """
         Entry point for closing main screen
         """

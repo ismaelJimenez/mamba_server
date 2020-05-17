@@ -11,17 +11,6 @@ class MainWindowInterface(ComponentInterface):
         super(MainWindowInterface, self).__init__(os.path.dirname(__file__),
                                                   folder, context)
 
-    def register_action(self,
-                        menu_title,
-                        action_name,
-                        component_action,
-                        shortcut='',
-                        status_tip=''):
-        """
-        Entry point for registering a new action inside a given menu.
-        """
-        raise NotImplementedError
-
     def show(self):
         """
         Entry point for showing main screen
@@ -31,12 +20,6 @@ class MainWindowInterface(ComponentInterface):
     def hide(self):
         """
         Entry point for hiding main screen
-        """
-        raise NotImplementedError
-
-    def close(self):
-        """
-        Entry point for closing main screen
         """
         raise NotImplementedError
 

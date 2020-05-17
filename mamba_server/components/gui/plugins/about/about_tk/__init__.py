@@ -7,6 +7,7 @@ import tkinter as tk
 from tkinter import messagebox
 
 from mamba_server.components.gui.plugins.interface import GuiPluginInterface
+from mamba_server.exceptions import ComponentConfigException
 
 
 class GuiPlugin(GuiPluginInterface):
@@ -35,7 +36,28 @@ class GuiPlugin(GuiPluginInterface):
                                          'VERSION').decode('ascii').strip()
         self._box_message = f"Mamba Server v{self._version}"
 
-    def run(self, rx_on_next_value=None):
+        if not all(key in self._configuration for key in ['menu', 'name']):
+            raise ComponentConfigException(
+                "Missing required elements in component configuration")
+
+        self._context.rx.on_next(
+            'register_menu_action', {
+                'menu_title':
+                self._configuration['menu'],
+                'action_name':
+                self._configuration['name'],
+                'shortcut': (None, self._configuration['shortcut']
+                             )['shortcut' in self._configuration],
+                'status_tip': (None, self._configuration['status_tip']
+                               )['status_tip' in self._configuration]
+            })
+
+    def run(self, rx_value=None):
+        """ Entry point for running the plugin
+
+            Args:
+                rx_value (None): The value published by the subject.
+        """
         app = tk.Tk()
         app.overrideredirect(1)
         app.withdraw()

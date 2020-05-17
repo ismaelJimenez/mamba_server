@@ -88,17 +88,24 @@ def test_main_tk_register_action():
     def dummy_func():
         pass
 
-    widget = MainWindow(Context())
+    context = Context()
+    widget = MainWindow(context)
 
     assert not widget._is_action_in_menu('test_menu', 'test_action')
 
     # Add new menu
-    widget.register_action('test_menu', 'test_action', dummy_func)
+    context.rx.on_next('register_menu_action', {
+        'menu_title': 'test_menu',
+        'action_name': 'test_action'
+    })
     assert widget._is_action_in_menu('test_menu', 'test_action')
 
     # Attempt to register the same action twice in same menu is not allowed
     with pytest.raises(ComponentConfigException) as excinfo:
-        widget.register_action('test_menu', 'test_action', dummy_func)
+        context.rx.on_next('register_menu_action', {
+            'menu_title': 'test_menu',
+            'action_name': 'test_action'
+        })
 
     assert 'already exists in menu' in str(excinfo.value)
 

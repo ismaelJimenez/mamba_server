@@ -6,6 +6,7 @@ import pkgutil
 from PySide2.QtWidgets import QMessageBox, QWidget, QApplication
 
 from mamba_server.components.gui.plugins.interface import GuiPluginInterface
+from mamba_server.exceptions import ComponentConfigException
 
 
 class GuiPlugin(GuiPluginInterface):
@@ -39,6 +40,29 @@ class GuiPlugin(GuiPluginInterface):
                                          'VERSION').decode('ascii').strip()
         self._box_message = f"Mamba Server v{self._version}"
 
-    def run(self, rx_on_next_value=None):
+        if not all(key in self._configuration for key in ['menu', 'name']):
+            raise ComponentConfigException(
+                "Missing required elements in component configuration")
+
+        self._context.rx.on_next(
+            'register_menu_action', {
+                'menu_title':
+                self._configuration['menu'],
+                'action_name':
+                self._configuration['name'],
+                'shortcut':
+                self._configuration['shortcut']
+                if 'shortcut' in self._configuration else None,
+                'status_tip':
+                self._configuration['status_tip']
+                if 'status_tip' in self._configuration else None
+            })
+
+    def run(self, rx_value=None):
+        """ Entry point for running the plugin
+
+            Args:
+                rx_value (None): The value published by the subject.
+        """
         QMessageBox.about(QWidget(), self._configuration['message_box_title'],
                           self._box_message)
