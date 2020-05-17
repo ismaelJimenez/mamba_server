@@ -1,9 +1,9 @@
-""" Signal tests. Based on PySignal tests """
+""" Subject tests. Based on PySignal tests """
 
 import pytest
 from functools import partial
 
-from mamba_server.rx_mamba import Signal, SignalFactory
+from mamba_server.rx_mamba import Subject, SignalFactory
 
 
 class DummySlotClass:
@@ -38,14 +38,14 @@ class TestClassSignal:
 
     def test_signal_function_connect(self):
         """ Test connecting signals to standalone functions """
-        signal = Signal()
+        signal = Subject()
         signal.subscribe(dummy_test_func)
         # Expected single connected on_next
         assert len(signal._slots) == 1
 
     def test_signal_function_connect_duplicate(self):
         """ Test connecting signals to duplicate standalone functions """
-        signal = Signal()
+        signal = Subject()
         signal.subscribe(dummy_test_func)
         signal.subscribe(dummy_test_func)
         # Expected single connected on_next
@@ -53,14 +53,14 @@ class TestClassSignal:
 
     def test_signal_partial_connect(self):
         """ Tests connecting signals to partials """
-        signal = Signal()
+        signal = Subject()
         signal.subscribe(partial(dummy_test_func, self, 'Partial'))
         # Expected single connected on_next
         assert len(signal._slots) == 1
 
     def test_signal_partial_connect_duplicate(self):
         """ Tests connecting signals to duplicate partials """
-        signal = Signal()
+        signal = Subject()
         func = partial(dummy_test_func, self, 'Partial')
         signal.subscribe(func)
         signal.subscribe(func)
@@ -69,14 +69,14 @@ class TestClassSignal:
 
     def test_signal_lambda_connect(self):
         """ Tests connecting signals to lambdas """
-        signal = Signal()
+        signal = Subject()
         signal.subscribe(lambda value: dummy_test_func(self, value))
         # Expected single connected on_next
         assert len(signal._slots) == 1
 
     def test_signal_lambda_connect_duplicate(self):
         """ Tests connecting signals to duplicate lambdas """
-        signal = Signal()
+        signal = Subject()
         func = lambda value: dummy_test_func(self, value)
         signal.subscribe(func)
         signal.subscribe(func)
@@ -85,7 +85,7 @@ class TestClassSignal:
 
     def test_signal_method_connect(self):
         """ Test connecting signals to methods on class instances """
-        signal = Signal()
+        signal = Subject()
         dummy_class = DummySlotClass()
         signal.subscribe(dummy_class.set_val)
         # Expected single connected slots
@@ -93,7 +93,7 @@ class TestClassSignal:
 
     def test_signal_method_connect_duplicate(self):
         """ Test connecting signals to duplicate methods on class instances """
-        signal = Signal()
+        signal = Subject()
         dummy_class = DummySlotClass()
         signal.subscribe(dummy_class.set_val)
         signal.subscribe(dummy_class.set_val)
@@ -102,7 +102,7 @@ class TestClassSignal:
 
     def test_signal_method_connect_different_instances(self):
         """ Test connecting the same method from different instances """
-        signal = Signal()
+        signal = Subject()
         dummy_class_1 = DummySlotClass()
         dummy_class_2 = DummySlotClass()
         signal.subscribe(dummy_class_1.set_val)
@@ -112,7 +112,7 @@ class TestClassSignal:
 
     def test_signal_connect_non_callable(self):
         """ Test connecting non-callable object """
-        signal = Signal()
+        signal = Subject()
         with pytest.raises(ValueError) as excinfo:
             signal.subscribe('string')
 
@@ -127,7 +127,7 @@ class TestClassSignal:
 
     def test_signal_emit_to_function(self):
         """ Test emitting signal to standalone function """
-        signal = Signal()
+        signal = Subject()
         signal.subscribe(dummy_test_func)
         signal.on_next(self, 'Method')
         assert self.check_val == 'Method'
@@ -140,7 +140,7 @@ class TestClassSignal:
             test.checkVal = value
             test.func_call_count += 1
 
-        signal = Signal()
+        signal = Subject()
         signal.subscribe(local_method)
         del local_method
         signal.on_next(self, 'Method')
@@ -150,7 +150,7 @@ class TestClassSignal:
 
     def test_signal_emit_to_partial(self):
         """ Test emitting signals to partial """
-        signal = Signal()
+        signal = Subject()
         partial_func = partial(dummy_test_func, self, 'Partial')
         signal.subscribe(partial_func)
         signal.on_next()
@@ -160,7 +160,7 @@ class TestClassSignal:
 
     def test_signal_emit_to_lambda(self):
         """ Test emitting signal to lambda """
-        signal = Signal()
+        signal = Subject()
         signal.subscribe(lambda value: dummy_test_func(self, value))
         signal.on_next('Lambda')
         assert self.check_val == 'Lambda'
@@ -169,7 +169,7 @@ class TestClassSignal:
 
     def test_signal_emit_to_instance_method(self):
         """ Test emitting signal to instance method """
-        signal = Signal()
+        signal = Subject()
         dummy_class = DummySlotClass()
         signal.subscribe(dummy_class.set_val)
         signal.on_next('ClassMethod')
@@ -179,7 +179,7 @@ class TestClassSignal:
 
     def test_signal_emit_to_method_on_deleted_instance(self):
         """ Test emitting signal to deleted instance method """
-        signal = Signal()
+        signal = Subject()
         dummy_class = DummySlotClass()
         signal.subscribe(dummy_class.set_val)
         signal.subscribe(lambda value: dummy_test_func(self, value))
@@ -189,16 +189,28 @@ class TestClassSignal:
         # Expected function to be called once
         assert self.func_call_count == 1
 
+    # def test_signal_emit_to_method_filter(self):
+    #     """ Test connecting signals to methods on class instances """
+    #     signal = Subject()
+    #     dummy_slot_class = DummySlotClass()
+    #     signal.subscribe(dummy_slot_class.set_val, filter=lambda value: value%2 == 0)
+    #     signal.subscribe(dummy_slot_class.set_val_2)
+    #     signal.on_next(1)
+    #     assert dummy_slot_class.check_val is None
+    #     assert dummy_slot_class.func_call_count == 0
+    #     assert dummy_slot_class.check_val_2 == 1
+    #     assert dummy_slot_class.func_call_count_2 == 1
+
     def test_signal_function_disconnect(self):
         """ Test disconnecting function """
-        signal = Signal()
+        signal = Subject()
         signal.subscribe(dummy_test_func)
         signal.disconnect(dummy_test_func)
         assert len(signal._slots) == 0
 
     def test_signal_function_disconnect_unconnected(self):
         """ Test disconnecting unconnected function """
-        signal = Signal()
+        signal = Subject()
         try:
             signal.disconnect(dummy_test_func)
         except:
@@ -206,7 +218,7 @@ class TestClassSignal:
 
     def test_signal_partial_disconnect(self):
         """ Test disconnecting partial function """
-        signal = Signal()
+        signal = Subject()
         part = partial(dummy_test_func, self, 'Partial')
         signal.subscribe(part)
         signal.disconnect(part)
@@ -215,7 +227,7 @@ class TestClassSignal:
 
     def test_signal_partial_disconnect_unconnected(self):
         """ Test disconnecting unconnected partial function """
-        signal = Signal()
+        signal = Subject()
         part = partial(dummy_test_func, self, 'Partial')
         try:
             signal.disconnect(part)
@@ -224,7 +236,7 @@ class TestClassSignal:
 
     def test_signal_lambda_disconnect(self):
         """ Test disconnecting lambda function """
-        signal = Signal()
+        signal = Subject()
         func = lambda value: dummy_test_func(self, value)
         signal.subscribe(func)
         signal.disconnect(func)
@@ -232,7 +244,7 @@ class TestClassSignal:
 
     def test_signal_lambda_disconnect_unconnected(self):
         """ Test disconnecting unconnected lambda function """
-        signal = Signal()
+        signal = Subject()
         func = lambda value: dummy_test_func(self, value)
         try:
             signal.disconnect(func)
@@ -245,7 +257,7 @@ class TestClassSignal:
             test.check_val = value
             test.func_call_count += 1
 
-        signal = Signal()
+        signal = Subject()
         signal.subscribe(dummy_test_func)
         signal.subscribe(local_method)
         signal.disconnect(dummy_test_func)
@@ -259,7 +271,7 @@ class TestClassSignal:
 
     def test_signal_method_disconnect_unconnected(self):
         """ Test disconnecting unconnected method """
-        signal = Signal()
+        signal = Subject()
         try:
             signal.disconnect(dummy_test_func)
         except:
@@ -267,7 +279,7 @@ class TestClassSignal:
 
     def test_signal_disconnect_non_callable(self):
         """ Test disconnecting non-callable object """
-        signal = Signal()
+        signal = Subject()
         try:
             signal.disconnect('string')
         except:
@@ -275,7 +287,7 @@ class TestClassSignal:
 
     def test_signal_clear_slots(self):
         """ Test clearing all slots """
-        signal = Signal()
+        signal = Subject()
         func = lambda value: self.setVal(value)
         signal.subscribe(func)
         signal.subscribe(dummy_test_func)
@@ -290,7 +302,7 @@ class TestClassSignal:
 class DummySignalClass(object):
     """A dummy class to check for instance handling of signals"""
     def __init__(self):
-        self.signal = Signal()
+        self.signal = Subject()
         self.signalFactory = SignalFactory()
 
 

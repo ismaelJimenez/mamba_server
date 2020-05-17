@@ -5,13 +5,13 @@ import weakref
 from functools import partial
 
 
-class Signal:
+class Subject:
     """
-    The Signal is the core object that handles connection and emission .
+    Represents an object that is both an observable sequence as well as an
+    observer. Each notification is broadcasted to all subscribed observers.
     """
     def __init__(self):
-        super(Signal, self).__init__()
-        self._block = False
+        super(Subject, self).__init__()
         self._slots = []
 
     def on_next(self, *args, **kwargs):
@@ -21,13 +21,7 @@ class Signal:
         Args:
             value (any): The callable on_next to register.
         """
-        if self._block:
-            return
-
         for slot in self._slots:
-            if not slot:
-                continue
-
             if isinstance(slot, partial):
                 slot()
             elif isinstance(slot, weakref.WeakKeyDictionary):
@@ -47,7 +41,7 @@ class Signal:
                 # at this point
                 slot(*args, **kwargs)
 
-    def subscribe(self, on_next):
+    def subscribe(self, on_next, filter=None):
         """
         Adds a new observer to the observable.
 
@@ -56,8 +50,9 @@ class Signal:
         """
         if not callable(on_next):
             raise ValueError(
-                "Connection to non-callable '{}' object failed".format(
-                    on_next.__class__.__name__))
+                f"Connection to non-callable '{on_next.__class__.__name__}' "
+                f"object failed"
+            )
 
         if isinstance(on_next, partial) or '<' in on_next.__name__:
             # If it's a partial or a lambda. The '<' check is the only py2
@@ -114,7 +109,7 @@ class Signal:
 
 class SignalFactory(dict):
     """
-    The Signal Factory object lets you handle signals by a string based name
+    The Subject Factory object lets you handle signals by a string based name
     instead of by objects.
     """
     def register(self, name, *slots):
@@ -125,7 +120,7 @@ class SignalFactory(dict):
         # setdefault initializes the object even if it exists. This is
         # more efficient
         if name not in self:
-            self[name] = Signal()
+            self[name] = Subject()
 
         for slot in slots:
             self[name].subscribe(slot)
@@ -149,7 +144,7 @@ class SignalFactory(dict):
         if observable_name in self:
             self[observable_name].on_next(value)
 
-    def subscribe(self, observable_name, on_next):
+    def subscribe(self, observable_name, on_next, filter=None):
         """
         Adds a new observer to a given observable. If observable doesnt exists
         yet, it gets created.
@@ -161,4 +156,4 @@ class SignalFactory(dict):
         if observable_name not in self:
             self.register(observable_name)
 
-        self[observable_name].subscribe(on_next)
+        self[observable_name].subscribe(on_next, filter=filter)
