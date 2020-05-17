@@ -59,7 +59,7 @@ def _pop_command_name(argv):
 
 
 def _print_header():
-    print("Mamba {}\n".format(mamba_server.__version__))
+    print(f"Mamba {mamba_server.__version__}\n")
 
 
 def _print_commands():

@@ -53,23 +53,22 @@ class Command(MambaCommand):
         module = _sanitize_module_name(component_name)
 
         if component_type not in COMPONENT_TYPES:
-            print("error: '{}' is not a valid component type".format(
-                component_type))
+            print(f"error: '{component_type}' is not a valid component type")
             return 1
 
         component_dir = join(project_dir, 'components', component_type, module)
 
         if exists(component_dir):
-            print('error: component {} already exists in {}'.format(
-                module, abspath(component_dir)))
+            print(f'error: component {module} already exists in '
+                  f'{abspath(component_dir)}')
             return 1
 
         templates_dir = _templates_dir(mamba_dir, component_type)
         copytree(templates_dir, abspath(component_dir))
 
-        print("Component '{}', using template '{}', "
-              "created in:".format(module, component_type))
-        print("    {}\n".format(abspath(component_dir)))
+        print(f"Component '{module}', using template '{component_type}', "
+              f"created in:")
+        print(f"    {abspath(component_dir)}\n")
         print(
             "To use the component, please add it to the project launch file.")
 
@@ -83,7 +82,7 @@ def _templates_dir(mamba_dir, component_type):
 def _list_component_types():
     print("Available component types:")
     for component_type_key, component_type_value in COMPONENT_TYPES.items():
-        print("  {}: {}".format(component_type_key, component_type_value))
+        print(f"  {component_type_key}: {component_type_value}")
 
 
 def _sanitize_module_name(module_name):

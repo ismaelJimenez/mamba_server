@@ -9,8 +9,7 @@ def test_about_gui_plugin_wo_context():
     with pytest.raises(TypeError) as excinfo:
         GuiPlugin()
 
-    assert "missing 1 required positional argument" in str(
-        excinfo.value)
+    assert "missing 1 required positional argument" in str(excinfo.value)
 
 
 def test_about_gui_plugin_w_empty_context():
@@ -25,7 +24,7 @@ def test_about_gui_plugin_w_empty_context():
         'message_box_title': 'About Mamba Server'
     }
 
-    assert widget._box_message == "Mamba Server v{}"
+    assert "Mamba Server v" in widget._box_message
     assert widget._version != ""
 
 
@@ -48,7 +47,7 @@ def test_about_gui_plugin_w_menu_window():
         'message_box_title': 'About Mamba Server'
     }
 
-    assert widget._box_message == "Mamba Server v{}"
+    assert "Mamba Server v" in widget._box_message
     assert widget._version != ""
 
     # Test menu is in menu bar

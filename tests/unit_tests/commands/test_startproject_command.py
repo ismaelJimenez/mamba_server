@@ -60,10 +60,8 @@ class TestClass:
         assert 'Project names must begin with a letter' in output
 
     def test_start_help(self):
-        assert cmd_exec(self, 'mamba_server.cmdline', 'start',
-                        '-h') == 0
-        output = cmd_exec_output(self, 'mamba_server.cmdline', 'start',
-                                 '-h')
+        assert cmd_exec(self, 'mamba_server.cmdline', 'start', '-h') == 0
+        output = cmd_exec_output(self, 'mamba_server.cmdline', 'start', '-h')
         assert 'usage' in output
         assert 'mamba start <project_name>' in output
         assert 'positional arguments' in output

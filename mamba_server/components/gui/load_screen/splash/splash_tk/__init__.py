@@ -19,8 +19,10 @@ class LoadScreen(LoadScreenInterface):
                 self._context.get('mamba_dir'),
                 path_from_string(self._configuration['image']))
         except AttributeError:
-            raise ComponentConfigException("Image file '{}' not found".format(
-                path_from_string(self._configuration['image'])))
+            raise ComponentConfigException(
+                f"Image file "
+                f"'{path_from_string(self._configuration['image'])}' "
+                f"not found")
 
         self._app = tk.Tk()
         self._app.overrideredirect(True)

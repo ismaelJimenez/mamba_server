@@ -60,13 +60,13 @@ class Command(MambaCommand):
 
 def _find_launch_file(launch_file_name, mamba_dir, project_dir):
     launch_file = join(mamba_dir, LAUNCH_FILES_DIR,
-                       '{}-compose.yml'.format(launch_file_name))
+                       f'{launch_file_name}-compose.yml')
     if exists(launch_file):
         return launch_file
 
     if project_dir is not None:
         launch_file = join(project_dir, LAUNCH_FILES_DIR,
-                           '{}-compose.yml'.format(launch_file_name))
+                           f'{launch_file_name}-compose.yml')
         if exists(launch_file):
             return launch_file
 
@@ -84,7 +84,7 @@ def _list_launch_files(mamba_dir, project_dir):
             if file_name == DEFAULT_LAUNCH_FILE:
                 file_name += ' [DEFAULT]'
 
-            print("    - {}".format(file_name))
+            print(f"    - {file_name}")
 
     if project_dir is not None:
         print("  Local:")
@@ -94,4 +94,4 @@ def _list_launch_files(mamba_dir, project_dir):
                 if file_name == DEFAULT_LAUNCH_FILE:
                     file_name += ' [DEFAULT]'
 
-                print("    - {}".format(file_name))
+                print(f"    - {file_name}")

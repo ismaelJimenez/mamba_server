@@ -32,9 +32,9 @@ try:
         number=NUMBER_OF_LOOPS) / NUMBER_OF_LOOPS
 
     mamba_rx_time = timeit.timeit(
-        "signal.emit(pow(2, 3))",
+        "subject.on_next(pow(2, 3))",
         setup=
-        'from mamba_server.signal import Signal; signal = Signal(); signal.connect(lambda i: None)',
+        'from mamba_server.rx_mamba import Subject; subject = Subject(); subject.subscribe(lambda i: None)',
         number=NUMBER_OF_LOOPS) / NUMBER_OF_LOOPS
 
 finally:
@@ -58,4 +58,7 @@ finally:
     )
     print(
         f'Mamba Rx is {int((mamba_rx_time - pow_time) / (dict_time - pow_time))} times slower as a dictionary'
+    )
+    print(
+        f'Mamba Rx is {round(((rx_time - pow_time) / (mamba_rx_time - pow_time)), 2)} times faster than RxPy'
     )

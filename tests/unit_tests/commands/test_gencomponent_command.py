@@ -52,8 +52,7 @@ class TestClass:
             join(self.proj_path, 'components', 'main', 'main_1',
                  '__init__.py'))
         assert exists(
-            join(self.proj_path, 'components', 'main', 'main_1',
-                 'config.yml'))
+            join(self.proj_path, 'components', 'main', 'main_1', 'config.yml'))
 
         assert cmd_exec(self, 'mamba_server.cmdline', 'generate',
                         'load_screen', 'load_screen_1') == 0
@@ -172,8 +171,7 @@ class TestClass:
         assert 'component_name' in output
 
     def test_generate_help(self):
-        assert cmd_exec(self, 'mamba_server.cmdline', 'generate',
-                        '-h') == 0
+        assert cmd_exec(self, 'mamba_server.cmdline', 'generate', '-h') == 0
         output = cmd_exec_output(self, 'mamba_server.cmdline', 'generate',
                                  '-h')
         assert 'usage' in output

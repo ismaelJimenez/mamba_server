@@ -49,16 +49,20 @@ class MainWindow(MainWindowInterface):
             menu = self._get_menu(menu_title)
 
         if self._is_action_in_menu(menu_title, action_name):
-            raise ComponentConfigException("Another action '{}' already exists"
-                                           " in menu '{}'".format(
-                                               menu_title, action_name))
+            raise ComponentConfigException(
+                f"Another action '{menu_title}' already exists"
+                f" in menu '{action_name}'")
 
         widget = QWidget()
-        action = QAction(action_name,
-                         widget,
-                         shortcut=shortcut,
-                         statusTip=status_tip,
-                         triggered=component_action)
+        action = QAction(
+            action_name,
+            widget,
+            shortcut=shortcut,
+            statusTip=status_tip,
+            triggered=lambda: self._context.rx.on_next('run_plugin', {
+                'menu': menu_title,
+                'action': action_name
+            }))
 
         self._action_widgets.append(widget)
         menu.addAction(action)
@@ -155,4 +159,4 @@ class MainWindow(MainWindowInterface):
         Returns:
             bool: True if it action is already in menu, otherwise false.
         """
-        return '{}_{}'.format(search_menu, search_action) in self._menu_actions
+        return f'{search_menu}_{search_action}' in self._menu_actions

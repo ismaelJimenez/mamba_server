@@ -10,8 +10,7 @@ def test_main_tk_wo_context():
     with pytest.raises(TypeError) as excinfo:
         MainWindow()
 
-    assert "missing 1 required positional argument" in str(
-        excinfo.value)
+    assert "missing 1 required positional argument" in str(excinfo.value)
 
 
 def test_main_tk_w_context():

@@ -32,8 +32,7 @@ class TestClass:
         with pytest.raises(TypeError) as excinfo:
             LoadScreen()
 
-        assert "missing 1 required positional argument" in str(
-            excinfo.value)
+        assert "missing 1 required positional argument" in str(excinfo.value)
 
     def test_splash_tk_w_context(self):
         # Test default configuration

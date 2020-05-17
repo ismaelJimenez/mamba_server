@@ -62,8 +62,7 @@ class Command(MambaCommand):
         project_dir = join(getcwd(), project_name)
 
         if exists(join(project_dir, 'mamba.cfg')):
-            print('Error: mamba.cfg already exists in {}'.format(
-                abspath(project_dir)))
+            print(f'Error: mamba.cfg already exists in {abspath(project_dir)}')
             return 1
 
         if not Command._is_valid_name(project_name):
@@ -72,11 +71,11 @@ class Command(MambaCommand):
         templates_dir = _templates_dir(mamba_dir)
         Command._copytree(templates_dir, abspath(project_dir))
 
-        print("New Mamba project '{}', using template directory '{}', "
-              "created in:".format(project_name, templates_dir))
-        print("    {}\n".format(abspath(project_dir)))
+        print(f"New Mamba project '{project_name}', using template directory "
+              f"'{templates_dir}', created in:")
+        print(f"    {abspath(project_dir)}\n")
         print("You can launch your default project with:")
-        print("    cd {}".format(project_dir))
+        print(f"    cd {project_dir}")
         print("    mamba serve -r default")
 
         return 0

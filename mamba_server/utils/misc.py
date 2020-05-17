@@ -70,7 +70,7 @@ def get_component(used_component, modules, component_type, context):
 
         if len(intersection) > 0:
             raise LaunchFileException(
-                "Component identifier '{}' is duplicated".format(intersection))
+                f"Component identifier '{intersection}' is duplicated")
 
         all_components_by_type.update(components_in_module)
 
@@ -78,7 +78,7 @@ def get_component(used_component, modules, component_type, context):
         return all_components_by_type[used_component](context)
 
     raise LaunchFileException(
-        "'{}' is not a valid component identifier".format(used_component))
+        f"'{used_component}' is not a valid component identifier")
 
 
 def get_components(used_components, modules, component_type, context):
@@ -111,7 +111,7 @@ def get_components(used_components, modules, component_type, context):
 
         if len(intersection) > 0:
             raise LaunchFileException(
-                "Component identifier '{}' is duplicated".format(intersection))
+                f"Component identifier '{intersection}' is duplicated")
 
         all_components_by_type.update(components_in_module)
 
@@ -123,8 +123,7 @@ def get_components(used_components, modules, component_type, context):
                 used_component](context)
         else:
             raise LaunchFileException(
-                "'{}' is not a valid component identifier".format(
-                    used_component))
+                f"'{used_component}' is not a valid component identifier")
 
     return dict_used_components
 

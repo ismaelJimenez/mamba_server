@@ -45,12 +45,17 @@ class MainWindow(MainWindowInterface):
             menu = self._get_menu(menu_title)
 
         if self._is_action_in_menu(menu_title, action_name):
-            raise ComponentConfigException("Another action '{}' already exists"
-                                           " in menu '{}'".format(
-                                               menu_title, action_name))
+            raise ComponentConfigException(
+                f"Another action '{menu_title}' already exists"
+                f" in menu '{action_name}'")
 
-        menu.add_command(label=action_name, command=component_action)
-        self._menu_actions.append('{}_{}'.format(menu_title, action_name))
+        menu.add_command(
+            label=action_name,
+            command=lambda: self._context.rx.on_next('run_plugin', {
+                'menu': menu_title,
+                'action': action_name
+            }))
+        self._menu_actions.append(f'{menu_title}_{action_name}')
 
     def show(self):
         """
@@ -151,4 +156,4 @@ class MainWindow(MainWindowInterface):
         Returns:
             bool: True if it action is already in menu, otherwise false.
         """
-        return '{}_{}'.format(search_menu, search_action) in self._menu_actions
+        return f'{search_menu}_{search_action}' in self._menu_actions

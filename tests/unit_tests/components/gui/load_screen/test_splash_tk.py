@@ -94,5 +94,4 @@ def test_splash_tk_wo_context():
     with pytest.raises(TypeError) as excinfo:
         LoadScreen()
 
-    assert "missing 1 required positional argument" in str(
-        excinfo.value)
+    assert "missing 1 required positional argument" in str(excinfo.value)
