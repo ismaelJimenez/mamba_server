@@ -33,8 +33,12 @@ class Command(MambaCommand):
                             dest="list",
                             action="store_true",
                             help="List available component types")
-        parser.add_argument("component_type", help="Component type template")
-        parser.add_argument("component_name", help="New component name")
+        parser.add_argument("component_type",
+                            nargs='?',
+                            help="Component type template")
+        parser.add_argument("component_name",
+                            nargs='?',
+                            help="New component name")
 
     @staticmethod
     def run(args, mamba_dir, project_dir):
@@ -46,6 +50,14 @@ class Command(MambaCommand):
         if args.list:
             _list_component_types()
             return 0
+
+        if not args.component_type:
+            print("error: 'mamba generate' component_type missing")
+            return 1
+
+        if not args.component_name:
+            print("error: 'mamba generate' component_name missing")
+            return 1
 
         component_type = args.component_type
         component_name = args.component_name

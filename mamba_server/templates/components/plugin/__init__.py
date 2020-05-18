@@ -27,7 +27,7 @@ class GuiPlugin(ComponentBase):
             on_next=self.run,
             op_filter=lambda rx: isinstance(
                 rx, RunAction) and rx.menu_title == self._configuration[
-                                     'menu'] and rx.action_name == self._configuration['name'])
+                    'menu'] and rx.action_name == self._configuration['name'])
 
         # TODO: Other required observers
 
