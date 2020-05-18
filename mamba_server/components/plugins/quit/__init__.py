@@ -18,10 +18,10 @@ class GuiPlugin(ComponentBase):
         super(GuiPlugin, self).__init__(os.path.dirname(__file__), context,
                                         local_config)
 
-        # Initialize observables
-        self._register_observables()
+        # Initialize observers
+        self._register_observers()
 
-    def _register_observables(self):
+    def _register_observers(self):
         self._context.rx.subscribe(
             subject_name='run_plugin',
             on_next=self.run,

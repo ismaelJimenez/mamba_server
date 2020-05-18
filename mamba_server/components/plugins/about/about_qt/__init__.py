@@ -20,15 +20,16 @@ class GuiPlugin(ComponentBase):
         super(GuiPlugin, self).__init__(os.path.dirname(__file__), context,
                                         local_config)
 
-        # Initialize observables
-        self._register_observables()
+        # Initialize observers
+        self._register_observers()
 
         # Initialize custom variables
         self._version = None
         self._box_message = None
         self._app = None
 
-    def _register_observables(self):
+    def _register_observers(self):
+        """ Entry point for registering component observers """
         self._context.rx.subscribe(
             subject_name='run_plugin',
             on_next=self.run,

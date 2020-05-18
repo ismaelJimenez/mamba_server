@@ -100,9 +100,10 @@ class TestClass:
         rmtree(join(self.proj_path, 'components', 'plugin', 'quit'))
 
     def test_get_components_local(self):
-        components_dict = misc.get_components(
-            {'about_qt': None, 'quit': None}, ['mamba_server.components.plugins'],
-            ComponentBase, Context())
+        components_dict = misc.get_components({
+            'about_qt': None,
+            'quit': None
+        }, ['mamba_server.components.plugins'], ComponentBase, Context())
         assert len(components_dict) == 2
         assert 'about_qt' in components_dict
         assert 'quit' in components_dict
@@ -114,9 +115,12 @@ class TestClass:
         assert 'plugin_1' in components_dict
 
         components_dict = misc.get_components(
-            {'about_qt': None, 'quit': None, 'plugin_1': None},
-            ['mamba_server.components.plugins', 'components'], ComponentBase,
-            Context())
+            {
+                'about_qt': None,
+                'quit': None,
+                'plugin_1': None
+            }, ['mamba_server.components.plugins', 'components'],
+            ComponentBase, Context())
         assert len(components_dict) == 3
         assert 'about_qt' in components_dict
         assert 'quit' in components_dict
@@ -136,18 +140,20 @@ class TestClass:
         rmtree(join(self.proj_path, 'components', 'plugin', 'quit'))
 
     def test_get_components_valid_id_and_type(self):
-        components_dict = misc.get_components(
-            {'about_qt': None, 'quit': None}, ['mamba_server.components.plugins'],
-            ComponentBase, Context())
+        components_dict = misc.get_components({
+            'about_qt': None,
+            'quit': None
+        }, ['mamba_server.components.plugins'], ComponentBase, Context())
         assert len(components_dict) == 2
         assert 'about_qt' in components_dict
         assert 'quit' in components_dict
 
     def test_get_components_invalid_id(self):
         with pytest.raises(LaunchFileException) as excinfo:
-            misc.get_components({'about_qt': None, 'about_tk_fail': None},
-                                ['mamba_server.components.plugins'],
-                                ComponentBase, Context())
+            misc.get_components({
+                'about_qt': None,
+                'about_tk_fail': None
+            }, ['mamba_server.components.plugins'], ComponentBase, Context())
 
         assert 'not a valid component identifier' in str(excinfo.value)
 

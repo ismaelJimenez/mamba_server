@@ -76,7 +76,7 @@ class Command(MambaCommand):
         print(f"    {abspath(project_dir)}\n")
         print("You can launch your default project with:")
         print(f"    cd {project_dir}")
-        print("    mamba serve -r default")
+        print("    mamba serve -r project")
 
         return 0
 
