@@ -5,12 +5,12 @@ import pkgutil
 
 from PySide2.QtWidgets import QMessageBox, QWidget, QApplication
 
-from mamba_server.components.component_base import ComponentBase
+from mamba_server.components import ComponentBase
 from mamba_server.exceptions import ComponentConfigException
 
-from mamba_server.components.gui.main_window.observable_types.register_action\
+from mamba_server.components.main.observable_types.register_action \
     import RegisterAction
-from mamba_server.components.gui.main_window.observable_types.run_action\
+from mamba_server.components.main.observable_types.run_action \
     import RunAction
 
 

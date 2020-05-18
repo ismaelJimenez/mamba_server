@@ -2,7 +2,7 @@
 
 import os
 
-from mamba_server.components.component_base import ComponentBase
+from mamba_server.components import ComponentBase
 
 
 class GuiPlugin(ComponentBase):

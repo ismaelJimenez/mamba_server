@@ -54,18 +54,6 @@ class TestClass:
         assert exists(
             join(self.proj_path, 'components', 'main', 'main_1', 'config.yml'))
 
-        assert cmd_exec(self, 'mamba_server.cmdline', 'generate',
-                        'load_screen', 'load_screen_1') == 0
-        assert exists(join(self.proj_path, 'components', 'load_screen'))
-        assert exists(
-            join(self.proj_path, 'components', 'load_screen', 'load_screen_1'))
-        assert exists(
-            join(self.proj_path, 'components', 'load_screen', 'load_screen_1',
-                 '__init__.py'))
-        assert exists(
-            join(self.proj_path, 'components', 'load_screen', 'load_screen_1',
-                 'config.yml'))
-
     def test_generate_valid_project_folder_duplicated_name(self):
         assert cmd_exec(self, 'mamba_server.cmdline', 'start',
                         self.project_name) == 0
@@ -86,24 +74,6 @@ class TestClass:
 
         output = cmd_exec_output(self, 'mamba_server.cmdline', 'generate',
                                  'plugin', 'plugin_2')
-        assert 'error' in output
-        assert 'already exists' in output
-
-        assert cmd_exec(self, 'mamba_server.cmdline', 'generate',
-                        'load_screen', 'load_screen_1') == 0
-
-        output = cmd_exec_output(self, 'mamba_server.cmdline', 'generate',
-                                 'load_screen', 'load_screen_2')
-        assert 'Component' in output
-        assert 'load_screen_2' in output
-        assert 'created in' in output
-
-        assert cmd_exec(self, 'mamba_server.cmdline', 'generate',
-                        'load_screen', 'load_screen_1') == 1
-
-        output = cmd_exec_output(self, 'mamba_server.cmdline', 'generate',
-                                 'load_screen', 'load_screen_2')
-
         assert 'error' in output
         assert 'already exists' in output
 
@@ -136,14 +106,6 @@ class TestClass:
 
         output = cmd_exec_output(self, 'mamba_server.cmdline', 'generate',
                                  'plugin', 'plugin_1')
-        assert 'error' in output
-        assert 'can only be used inside a Mamba Project' in output
-
-        assert cmd_exec(self, 'mamba_server.cmdline', 'generate',
-                        'load_screen', 'load_screen_1') == 1
-
-        output = cmd_exec_output(self, 'mamba_server.cmdline', 'generate',
-                                 'load_screen', 'load_screen_1')
         assert 'error' in output
         assert 'can only be used inside a Mamba Project' in output
 

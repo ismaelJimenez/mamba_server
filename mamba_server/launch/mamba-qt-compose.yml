@@ -1,7 +1,4 @@
 version: '0.1'
-load_screen:
-  component: splash_qt
-  min_seconds: 5
 services:
   - main_qt
   - quit

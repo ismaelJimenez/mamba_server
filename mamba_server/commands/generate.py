@@ -11,8 +11,7 @@ TEMPLATES_DIR = "templates"
 
 COMPONENT_TYPES = {
     'main': "Application main graphical component.",
-    'plugin': "Application plugin component.",
-    'load_screen': "Load screen component.",
+    'plugin': "Application plugin component."
 }
 
 

@@ -40,47 +40,6 @@ def get_classes_from_module(module, search_class):
     return classes_dict
 
 
-def get_component(used_component, modules, component_type, context):
-    """Returns an instantiated component with context.
-
-    Args:
-        used_component (str): The identifier of the component.
-        modules (list<str>): The folders where to look for the component.
-        component_type (class): The class type of the component.
-        context (Context): The application context to instantiate
-                           the component with.
-
-    Returns:
-        The instantiated component.
-
-    Raises:
-        LaunchFileException: If no component with the given id is found.
-
-    """
-
-    all_components_by_type = {}
-
-    for module in modules:
-        components_in_module = get_classes_from_module(module, component_type)
-
-        all_components_set = set(all_components_by_type)
-        new_components_set = set(components_in_module)
-
-        intersection = all_components_set.intersection(new_components_set)
-
-        if len(intersection) > 0:
-            raise LaunchFileException(
-                f"Component identifier '{intersection}' is duplicated")
-
-        all_components_by_type.update(components_in_module)
-
-    if used_component in all_components_by_type:
-        return all_components_by_type[used_component](context)
-
-    raise LaunchFileException(
-        f"'{used_component}' is not a valid component identifier")
-
-
 def get_components(used_components, modules, component_type, context):
     """Returns a dictionary of instantiated components with context.
 

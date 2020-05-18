@@ -7,8 +7,7 @@ from shutil import rmtree
 from mamba_server.context_mamba import Context
 from mamba_server.utils import misc
 from mamba_server.commands import MambaCommand
-from mamba_server.components.component_base import ComponentBase
-from mamba_server.components.gui.load_screen.interface import LoadScreenBase
+from mamba_server.components import ComponentBase
 
 from mamba_server.exceptions import LaunchFileException
 from mamba_server.utils.test import get_testenv, cmd_exec
@@ -87,36 +86,13 @@ class TestClass:
         assert len(classes_dict) == 1
         assert 'plugin_1' in classes_dict
 
-    def test_get_component_local(self):
-        components_dict = misc.get_component(
-            'plugin_1', ['mamba_server.components', 'components'],
-            ComponentBase, Context())
-        assert components_dict is not None
-
-        components_dict = misc.get_component('plugin_1', ['components.plugin'],
-                                             ComponentBase, Context())
-        assert components_dict is not None
-
-    def test_get_component_valid_id_and_type(self):
-        components_dict = misc.get_component(
-            'about_qt', ['mamba_server.components.plugins'], ComponentBase,
-            Context())
-        assert components_dict is not None
-
-    def test_get_component_valid_id_wrong_type(self):
-        with pytest.raises(LaunchFileException) as excinfo:
-            misc.get_component('about_qt', ['mamba_server.components.plugins'],
-                               LoadScreenBase, Context())
-
-        assert 'not a valid component identifier' in str(excinfo.value)
-
     def test_get_components_duplicated_component(self):
         assert cmd_exec(self, 'mamba_server.cmdline', 'generate', 'plugin',
                         'quit') == 0
         assert exists(join(self.proj_path, 'components', 'plugin', 'quit'))
 
         with pytest.raises(LaunchFileException) as excinfo:
-            misc.get_component(
+            misc.get_components(
                 'quit', ['mamba_server.components.plugins', 'components'],
                 ComponentBase, Context())
 

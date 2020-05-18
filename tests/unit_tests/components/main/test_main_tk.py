@@ -1,11 +1,11 @@
 import pytest
 import os
 
-from mamba_server.components.gui.main_window.main_tk import MainWindow
+from mamba_server.components.main.main_tk import MainWindow
 from mamba_server.context_mamba import Context
 from mamba_server.exceptions import ComponentConfigException
 
-from mamba_server.components.gui.main_window.observable_types.register_action import RegisterAction
+from mamba_server.components.main.observable_types.register_action import RegisterAction
 from mamba_server.components.observable_types.app_status import AppStatus
 from mamba_server.components.observable_types.empty import Empty
 
@@ -24,7 +24,7 @@ class TestClass:
         self.context = Context()
         self.context.set(
             'mamba_dir',
-            os.path.join(os.path.dirname(__file__), '..', '..', '..', '..',
+            os.path.join(os.path.dirname(__file__), '..', '..', '..',
                          '..', 'mamba_server'))
 
     def teardown_method(self):
