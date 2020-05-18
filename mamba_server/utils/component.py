@@ -2,7 +2,10 @@
 
 
 def merge_dicts(dict_1, dict_2):
-    """ Merge dictionary dict_2 into dict_1. In case of conflict dict_1 has precedence """
+    """
+    Merge dictionary dict_2 into dict_1. In case of conflict dict_1
+    has precedence
+    """
     result = dict_1
     for key in dict_2:
         if key in dict_1:

@@ -1,7 +1,4 @@
 version: '0.1'
-load_screen:
-  component: splash_tk
-  min_seconds: 5
 services:
   - main_tk
   - quit

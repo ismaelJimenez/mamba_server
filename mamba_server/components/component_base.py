@@ -3,6 +3,8 @@
 import os
 import yaml
 
+from mamba_server.utils.component import merge_dicts
+
 COMPONENT_CONFIG_FILE = "config.yml"
 
 
@@ -19,8 +21,7 @@ class ComponentBase:
 
         local_config = local_config or {}
 
-        self._configuration = dict(
-            list(file_config.items()) + list(local_config.items()))
+        self._configuration = merge_dicts(local_config, file_config)
 
     def initialize(self):
         """ Entry point for component initialization """

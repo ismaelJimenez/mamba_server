@@ -3,8 +3,8 @@ from mamba_server.context_rx import Context as Context_Rx
 from mamba_server.components.plugins.quit import GuiPlugin
 from mamba_server.components.gui.main_window.main_qt import MainWindow
 
-from mamba_server.components.observer_types.empty import Empty
-from mamba_server.components.gui.main_window.observer_types.run_action import RunAction
+from mamba_server.components.observable_types.empty import Empty
+from mamba_server.components.gui.main_window.observable_types.run_action import RunAction
 
 
 def test_about_gui_plugin_w_menu_window():

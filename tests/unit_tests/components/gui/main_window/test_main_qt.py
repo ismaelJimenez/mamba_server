@@ -4,7 +4,7 @@ from mamba_server.components.gui.main_window.main_qt import MainWindow
 from mamba_server.context_mamba import Context
 from mamba_server.exceptions import ComponentConfigException
 
-from mamba_server.components.gui.main_window.observer_types.register_action import RegisterAction
+from mamba_server.components.gui.main_window.observable_types.register_action import RegisterAction
 
 
 def test_main_qt_wo_context():

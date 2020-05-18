@@ -5,10 +5,10 @@ import os
 from mamba_server.components.component_base import ComponentBase
 from mamba_server.exceptions import ComponentConfigException
 
-from mamba_server.components.observer_types.empty import Empty
-from mamba_server.components.gui.main_window.observer_types.register_action\
+from mamba_server.components.observable_types.empty import Empty
+from mamba_server.components.gui.main_window.observable_types.register_action\
     import RegisterAction
-from mamba_server.components.gui.main_window.observer_types.run_action\
+from mamba_server.components.gui.main_window.observable_types.run_action\
     import RunAction
 
 

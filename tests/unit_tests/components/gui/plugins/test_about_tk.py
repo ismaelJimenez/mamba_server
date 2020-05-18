@@ -1,4 +1,5 @@
 import pytest
+import os
 
 from mamba_server.context_mamba import Context
 from mamba_server.components.plugins.about.about_tk import GuiPlugin
@@ -30,7 +31,12 @@ def test_about_gui_plugin_w_empty_context():
 
 def test_about_gui_plugin_w_menu_window():
     context = Context()
+    context.set(
+        'mamba_dir',
+        os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', '..',
+                     'mamba_server'))
     main_window = MainWindow(context)
+    main_window.initialize()
 
     # Test help is not in menu bar
     assert not main_window._exists_menu('Help')
