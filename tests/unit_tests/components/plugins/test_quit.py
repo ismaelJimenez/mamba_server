@@ -33,8 +33,8 @@ class TestClass:
         self.context = Context()
         self.context.set(
             'mamba_dir',
-            os.path.join(os.path.dirname(__file__), '..', '..', '..',
-                         '..', 'mamba_server'))
+            os.path.join(os.path.dirname(__file__), '..', '..', '..', '..',
+                         'mamba_server'))
 
     def teardown_method(self):
         """ teardown_method called for every method """
@@ -84,22 +84,24 @@ class TestClass:
         self.context.rx.subscribe('quit', dummy_test_class.test_function)
 
         # Check it is not activated by another menu
-        self.context.rx.on_next('run_plugin',
-                           RunAction(menu_title='File_Wrong', action_name='Quit'))
+        self.context.rx.on_next(
+            'run_plugin', RunAction(menu_title='File_Wrong',
+                                    action_name='Quit'))
 
         assert dummy_test_class.times_called == 0
         assert dummy_test_class.last_value is None
 
         # Check it is not activated by another action
-        self.context.rx.on_next('run_plugin',
-                           RunAction(menu_title='File', action_name='Quit_Wrong'))
+        self.context.rx.on_next(
+            'run_plugin', RunAction(menu_title='File',
+                                    action_name='Quit_Wrong'))
 
         assert dummy_test_class.times_called == 0
         assert dummy_test_class.last_value is None
 
         # Check activation emits 'quit'
-        self.context.rx.on_next('run_plugin',
-                           RunAction(menu_title='File', action_name='Quit'))
+        self.context.rx.on_next(
+            'run_plugin', RunAction(menu_title='File', action_name='Quit'))
 
         assert dummy_test_class.times_called == 1
         assert isinstance(dummy_test_class.last_value, Empty)
@@ -116,22 +118,24 @@ class TestClass:
         self.context.rx.subscribe('quit', dummy_test_class.test_function)
 
         # Check it is not activated by another menu
-        self.context.rx.on_next('run_plugin',
-                           RunAction(menu_title='File_Wrong', action_name='Quit'))
+        self.context.rx.on_next(
+            'run_plugin', RunAction(menu_title='File_Wrong',
+                                    action_name='Quit'))
 
         assert dummy_test_class.times_called == 0
         assert dummy_test_class.last_value is None
 
         # Check it is not activated by another action
-        self.context.rx.on_next('run_plugin',
-                           RunAction(menu_title='File', action_name='Quit_Wrong'))
+        self.context.rx.on_next(
+            'run_plugin', RunAction(menu_title='File',
+                                    action_name='Quit_Wrong'))
 
         assert dummy_test_class.times_called == 0
         assert dummy_test_class.last_value is None
 
         # Check activation emits 'quit'
-        self.context.rx.on_next('run_plugin',
-                           RunAction(menu_title='File', action_name='Quit'))
+        self.context.rx.on_next(
+            'run_plugin', RunAction(menu_title='File', action_name='Quit'))
 
         assert dummy_test_class.times_called == 1
         assert isinstance(dummy_test_class.last_value, Empty)

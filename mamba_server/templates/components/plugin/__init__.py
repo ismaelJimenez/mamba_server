@@ -7,7 +7,7 @@ from mamba_server.components import ComponentBase
 
 class GuiPlugin(ComponentBase):
     """ Custom Plugin """
-    def __init__(self, context=None):
+    def __init__(self, context=None, local_config=None):
         super(GuiPlugin, self).__init__(os.path.dirname(__file__), context)
 
     def run(self):

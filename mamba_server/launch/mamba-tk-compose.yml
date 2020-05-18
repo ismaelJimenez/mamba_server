@@ -1,5 +1,6 @@
 version: '0.1'
 services:
-  - main_tk
-  - quit
-  - about_tk
+  main_tk:
+    title: Mi App
+  quit:
+  about_tk:

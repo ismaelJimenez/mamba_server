@@ -16,8 +16,9 @@ from mamba_server.components.main.observable_types.run_action \
 
 class GuiPlugin(ComponentBase):
     """ Plugin to show About message implemented in Qt5 """
-    def __init__(self, context):
-        super(GuiPlugin, self).__init__(os.path.dirname(__file__), context)
+    def __init__(self, context, local_config=None):
+        super(GuiPlugin, self).__init__(os.path.dirname(__file__), context,
+                                        local_config)
 
         # Initialize observables
         self._register_observables()

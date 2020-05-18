@@ -76,10 +76,10 @@ def get_components(used_components, modules, component_type, context):
 
     dict_used_components = {}
 
-    for used_component in used_components:
+    for used_component, args in used_components.items():
         if used_component in all_components_by_type:
             dict_used_components[used_component] = all_components_by_type[
-                used_component](context)
+                used_component](context, args)
         else:
             raise LaunchFileException(
                 f"'{used_component}' is not a valid component identifier")

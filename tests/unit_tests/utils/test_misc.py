@@ -101,20 +101,20 @@ class TestClass:
 
     def test_get_components_local(self):
         components_dict = misc.get_components(
-            ['about_qt', 'quit'], ['mamba_server.components.plugins'],
+            {'about_qt': None, 'quit': None}, ['mamba_server.components.plugins'],
             ComponentBase, Context())
         assert len(components_dict) == 2
         assert 'about_qt' in components_dict
         assert 'quit' in components_dict
 
         components_dict = misc.get_components(
-            ['plugin_1'], ['components', 'mamba_server.components'],
+            {'plugin_1': None}, ['components', 'mamba_server.components'],
             ComponentBase, Context())
         assert len(components_dict) == 1
         assert 'plugin_1' in components_dict
 
         components_dict = misc.get_components(
-            ['about_qt', 'quit', 'plugin_1'],
+            {'about_qt': None, 'quit': None, 'plugin_1': None},
             ['mamba_server.components.plugins', 'components'], ComponentBase,
             Context())
         assert len(components_dict) == 3
@@ -137,7 +137,7 @@ class TestClass:
 
     def test_get_components_valid_id_and_type(self):
         components_dict = misc.get_components(
-            ['about_qt', 'quit'], ['mamba_server.components.plugins'],
+            {'about_qt': None, 'quit': None}, ['mamba_server.components.plugins'],
             ComponentBase, Context())
         assert len(components_dict) == 2
         assert 'about_qt' in components_dict
@@ -145,7 +145,7 @@ class TestClass:
 
     def test_get_components_invalid_id(self):
         with pytest.raises(LaunchFileException) as excinfo:
-            misc.get_components(['about_qt', 'about_tk_fail'],
+            misc.get_components({'about_qt': None, 'about_tk_fail': None},
                                 ['mamba_server.components.plugins'],
                                 ComponentBase, Context())
 
