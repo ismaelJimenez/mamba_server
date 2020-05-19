@@ -75,7 +75,7 @@ class TestClassSubjectFactoryClass:
         dummy_subject_factory = SubjectFactory()
         dummy_observable_class = DummyObservableClass()
         subj_1 = dummy_subject_factory['TestSubject'].subscribe(
-                dummy_observable_class.set_val)
+            dummy_observable_class.set_val)
 
         subj_2 = dummy_subject_factory['TestSubject'].subscribe(
             dummy_observable_class.set_val_2)
@@ -88,4 +88,3 @@ class TestClassSubjectFactoryClass:
         assert dummy_observable_class.func_call_count == 0
         assert dummy_observable_class.check_val_2 == 1
         assert dummy_observable_class.func_call_count_2 == 1
-

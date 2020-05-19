@@ -85,16 +85,14 @@ class TestClass:
 
         # Check it is not activated by another menu
         self.context.rx['run_plugin'].on_next(
-            RunAction(menu_title='File_Wrong',
-                                    action_name='Quit'))
+            RunAction(menu_title='File_Wrong', action_name='Quit'))
 
         assert dummy_test_class.times_called == 0
         assert dummy_test_class.last_value is None
 
         # Check it is not activated by another action
         self.context.rx['run_plugin'].on_next(
-            RunAction(menu_title='File',
-                                    action_name='Quit_Wrong'))
+            RunAction(menu_title='File', action_name='Quit_Wrong'))
 
         assert dummy_test_class.times_called == 0
         assert dummy_test_class.last_value is None
@@ -119,16 +117,14 @@ class TestClass:
 
         # Check it is not activated by another menu
         self.context.rx['run_plugin'].on_next(
-            RunAction(menu_title='File_Wrong',
-                                    action_name='Quit'))
+            RunAction(menu_title='File_Wrong', action_name='Quit'))
 
         assert dummy_test_class.times_called == 0
         assert dummy_test_class.last_value is None
 
         # Check it is not activated by another action
         self.context.rx['run_plugin'].on_next(
-            RunAction(menu_title='File',
-                                    action_name='Quit_Wrong'))
+            RunAction(menu_title='File', action_name='Quit_Wrong'))
 
         assert dummy_test_class.times_called == 0
         assert dummy_test_class.last_value is None
