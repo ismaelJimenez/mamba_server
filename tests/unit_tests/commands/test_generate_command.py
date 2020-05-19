@@ -118,11 +118,16 @@ class TestClass:
         assert 'can only be used inside a Mamba Project' in output
 
     def test_generate_incomplete_arguments(self):
+        assert cmd_exec(self, 'mamba_server.cmdline', 'start',
+                        self.project_name) == 0
+
+        self.cwd = join(self.temp_path, self.project_name)
+
         assert cmd_exec(self, 'mamba_server.cmdline', 'generate') == 2
 
         output = cmd_exec_output(self, 'mamba_server.cmdline', 'generate')
         assert 'error' in output
-        assert 'component_type, component_name' in output
+        assert 'component_type' in output
 
         assert cmd_exec(self, 'mamba_server.cmdline', 'generate',
                         'plugin') == 2
@@ -144,3 +149,12 @@ class TestClass:
         assert 'optional arguments' in output
         assert '--help' in output
         assert '--list' in output
+
+    def test_generate_list(self):
+        assert cmd_exec(self, 'mamba_server.cmdline', 'generate', '-l') == 0
+        output = cmd_exec_output(self, 'mamba_server.cmdline', 'generate',
+                                 '-l')
+
+        assert 'Available component types' in output
+        assert 'main' in output
+        assert 'plugin' in output

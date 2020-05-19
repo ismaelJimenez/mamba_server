@@ -42,22 +42,22 @@ class Command(MambaCommand):
 
     @staticmethod
     def run(args, mamba_dir, project_dir):
+        if args.list:
+            _list_component_types()
+            return 0
+
         if project_dir is None:
             print("error: 'mamba generate' can only be used inside a "
                   "Mamba Project")
             return 1
 
-        if args.list:
-            _list_component_types()
-            return 0
-
         if not args.component_type:
             print("error: 'mamba generate' component_type missing")
-            return 1
+            return 2
 
         if not args.component_name:
             print("error: 'mamba generate' component_name missing")
-            return 1
+            return 2
 
         component_type = args.component_type
         component_name = args.component_name
