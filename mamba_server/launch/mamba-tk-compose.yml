@@ -1,9 +1,16 @@
 version: '0.1'
 services:
+  # Main window
   main_tk:
     title: Mi App
-    load_screen:
+
+  # Main window plugins
   quit:
   about_tk:
+
+  # Networking
   socket_server:
   hvs_socket_tmtc:
+
+  # Central controller
+  hvs_controller:

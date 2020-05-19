@@ -1,8 +1,16 @@
 version: '0.1'
 services:
+  # Main window
   main_qt:
     title: Mi App
+
+  # Main window plugins
   quit:
   about_qt:
+
+  # Networking
   socket_server:
   hvs_socket_tmtc:
+
+  # Central controller
+  hvs_controller:

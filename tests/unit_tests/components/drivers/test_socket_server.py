@@ -57,10 +57,7 @@ class TestClass:
         component.initialize()
 
         # Test default configuration
-        assert component._configuration == {
-            'host': '0.0.0.0',
-            'port': 8080
-        }
+        assert component._configuration == {'host': '0.0.0.0', 'port': 8080}
 
         assert component._server is not None
         assert component._server_thread is not None
@@ -130,7 +127,8 @@ class TestClass:
 
         # Send TM
         self.context.rx['raw_tm'].on_next("Hello World 2\r\nHello World 3\r\n")
-        assert str(sock.recv(1024), 'ascii') == 'Hello World 2\r\nHello World 3\r\n'
+        assert str(sock.recv(1024),
+                   'ascii') == 'Hello World 2\r\nHello World 3\r\n'
 
         # Close open threads
         component._close()
