@@ -2,7 +2,7 @@
 
 import pytest
 
-from mamba_server.rx_py import SubjectFactory
+from mamba_server.rx_py import SubjectFactoryRxPy as SubjectFactory
 
 
 class DummyObservableClass:
