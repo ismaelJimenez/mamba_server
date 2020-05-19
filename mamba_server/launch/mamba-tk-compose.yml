@@ -2,5 +2,8 @@ version: '0.1'
 services:
   main_tk:
     title: Mi App
+    load_screen:
   quit:
   about_tk:
+  socket_server:
+  hvs_socket_tmtc:

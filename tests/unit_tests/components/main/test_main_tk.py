@@ -184,7 +184,7 @@ class TestClass:
         assert component._app is None
 
     def test_quit_observer_on_main(self):
-        """ Test component creation behaviour with default context """
+        """ Test component quit observer """
         component = MainWindow(self.context,
                                local_config={'load_screen': {
                                    'time': None

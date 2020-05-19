@@ -152,7 +152,7 @@ class TestClass:
         """ Test component creation behaviour with default context """
         component = MainWindow(self.context,
                                local_config={'load_screen': {
-                                   'time': None
+                                   'time': 0
                                }})
         component.initialize()
 
@@ -166,7 +166,7 @@ class TestClass:
         assert component._load_app is None
 
     def test_quit_observer_on_load(self):
-        """ Test component creation behaviour with default context """
+        """ Test component quit observer """
         component = MainWindow(self.context,
                                local_config={'load_screen': {
                                    'time': 10

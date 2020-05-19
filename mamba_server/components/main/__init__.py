@@ -181,13 +181,12 @@ class MainBase(ComponentBase):
                                                f"'{image}' "
                                                f"not found")
 
-            if 'time' in self._configuration[
-                    'load_screen'] and not self._configuration['load_screen'][
-                        'time'] is None and not isinstance(
-                            self._configuration['load_screen']['time'],
-                            int) and not isinstance(
-                                self._configuration['load_screen']['time'],
-                                float):
+            if ('time' in self._configuration['load_screen']) and (
+                    self._configuration['load_screen']['time'] is not None
+            ) and (not isinstance(self._configuration['load_screen']['time'],
+                                  int)
+                   and not isinstance(
+                       self._configuration['load_screen']['time'], float)):
                 raise ComponentConfigException(
                     "Load Screen time is not a valid number")
 

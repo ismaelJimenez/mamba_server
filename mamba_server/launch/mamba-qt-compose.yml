@@ -4,3 +4,5 @@ services:
     title: Mi App
   quit:
   about_qt:
+  socket_server:
+  hvs_socket_tmtc:

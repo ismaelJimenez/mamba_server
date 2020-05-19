@@ -40,7 +40,7 @@ class TestClass:
         """ teardown_method called for every method """
         del self.context
 
-    def test_about_gui_plugin_w_menu_window(self):
+    def test_component_w_menu_window(self):
         main_window = MainWindow(self.context)
         main_window.initialize()
 
@@ -48,11 +48,11 @@ class TestClass:
         assert not main_window._exists_menu('File')
 
         self.context.set('main_window', main_window)
-        widget = Plugin(self.context)
-        widget.initialize()
+        component = Plugin(self.context)
+        component.initialize()
 
         # Test default configuration
-        assert widget._configuration == {
+        assert component._configuration == {
             'menu': 'File',
             'name': 'Quit',
             'shortcut': 'Ctrl+Q',
@@ -67,18 +67,18 @@ class TestClass:
         assert main_window._app.isVisible()
 
         # Execute Quit Widget
-        widget.run(Empty())
+        component.run(Empty())
 
         # Test window is hidden per default
         assert not main_window._app.isVisible()
 
-    def test_about_gui_plugin_run_rx_mamba(self):
+    def test_component_run_rx_mamba(self):
         dummy_test_class = DummyTestClass()
         main_window = MainWindow(self.context)
         main_window.initialize()
 
         self.context.set('main_window', main_window)
-        widget = Plugin(self.context)
+        component = Plugin(self.context)
 
         # Subscribe to the 'quit' that shall be published
         self.context.rx['quit'].subscribe(dummy_test_class.test_function)
@@ -104,13 +104,13 @@ class TestClass:
         assert dummy_test_class.times_called == 1
         assert isinstance(dummy_test_class.last_value, Empty)
 
-    def test_about_gui_plugin_run_rx_py(self):
+    def test_component_run_rx_py(self):
         dummy_test_class = DummyTestClass()
         main_window = MainWindow(self.context)
         main_window.initialize()
 
         self.context.set('main_window', main_window)
-        widget = Plugin(self.context)
+        component = Plugin(self.context)
 
         # Subscribe to the 'quit' that shall be published
         self.context.rx['quit'].subscribe(dummy_test_class.test_function)

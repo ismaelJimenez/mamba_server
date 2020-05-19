@@ -27,28 +27,28 @@ class TestClass:
         """ teardown_method called for every method """
         del self.context
 
-    def test_about_gui_plugin_wo_context(self):
+    def test_component_wo_context(self):
         with pytest.raises(TypeError) as excinfo:
             Plugin()
 
         assert "missing 1 required positional argument" in str(excinfo.value)
 
-    def test_about_gui_plugin_w_empty_context(self):
-        widget = Plugin(Context())
-        widget.initialize()
+    def test_component_w_empty_context(self):
+        component = Plugin(Context())
+        component.initialize()
 
         # Test default configuration
-        assert widget._configuration == {
+        assert component._configuration == {
             'menu': 'Help',
             'name': 'About',
             'status_tip': "Show the application's About box",
             'message_box_title': 'About Mamba Server'
         }
 
-        assert "Mamba Server v" in widget._box_message
-        assert widget._version != ""
+        assert "Mamba Server v" in component._box_message
+        assert component._version != ""
 
-    def test_about_gui_plugin_w_menu_window(self):
+    def test_component_w_menu_window(self):
         main_window = MainWindow(self.context)
         main_window.initialize()
 
@@ -56,19 +56,19 @@ class TestClass:
         assert not main_window._exists_menu('Help')
 
         self.context.set('main_window', main_window)
-        widget = Plugin(self.context)
-        widget.initialize()
+        component = Plugin(self.context)
+        component.initialize()
 
         # Test default configuration
-        assert widget._configuration == {
+        assert component._configuration == {
             'menu': 'Help',
             'name': 'About',
             'status_tip': "Show the application's About box",
             'message_box_title': 'About Mamba Server'
         }
 
-        assert "Mamba Server v" in widget._box_message
-        assert widget._version != ""
+        assert "Mamba Server v" in component._box_message
+        assert component._version != ""
 
         # Test menu is in menu bar
         assert main_window._exists_menu('Help')

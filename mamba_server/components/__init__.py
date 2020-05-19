@@ -16,8 +16,12 @@ class ComponentBase:
         # Retrieve component configuration
         self._context = context
 
-        with open(os.path.join(config_folder, COMPONENT_CONFIG_FILE)) as file:
-            file_config = yaml.load(file, Loader=yaml.FullLoader)
+        try:
+            with open(os.path.join(config_folder,
+                                   COMPONENT_CONFIG_FILE)) as file:
+                file_config = yaml.load(file, Loader=yaml.FullLoader)
+        except FileNotFoundError:
+            file_config = {}
 
         local_config = local_config or {}
 
