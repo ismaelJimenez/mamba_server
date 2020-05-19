@@ -1,26 +1,43 @@
-from mamba_server.context_mamba import Context
+import pytest
+
+from mamba_server.context import Context
+from mamba_server.exceptions import ComponentConfigException
 
 
-def test_context():
-    context = Context()
+class TestClassSignal:
+    def test_context(self):
+        context = Context()
 
-    # Initial status
-    assert context.get('param_1') is None
+        # Initial status
+        assert context.get('param_1') is None
 
-    # Set new parameter
-    context.set('param_1', 1)
-    assert context.get('param_1') is 1
+        # Set new parameter
+        context.set('param_1', 1)
+        assert context.get('param_1') is 1
 
-    # Update existing parameter
-    context.set('param_1', [0, 1, 2])
-    assert context.get('param_1') == [0, 1, 2]
+        # Update existing parameter
+        context.set('param_1', [0, 1, 2])
+        assert context.get('param_1') == [0, 1, 2]
 
+    def test_context_memory_not_static(self):
+        context_1 = Context()
 
-def test_context_memory_not_static():
-    context_1 = Context()
+        context_1.set('param_1', 1)
+        assert context_1.get('param_1') is 1
 
-    context_1.set('param_1', 1)
-    assert context_1.get('param_1') is 1
+        context_2 = Context()
+        assert context_2.get('param_1') is None
 
-    context_2 = Context()
-    assert context_2.get('param_1') is None
+    def test_context_implementation_selection(self):
+        context = Context('mamba')
+        assert type(context.rx).__name__ == 'SubjectFactory'
+
+        context_rxpy = Context('rxpy')
+        assert type(context_rxpy.rx).__name__ == 'SubjectFactoryRxPy'
+
+        # Invalid context type should raise ComponentConfigException
+        with pytest.raises(ComponentConfigException) as excinfo:
+            Context('other')
+
+        assert "Rx implementation 'other' not valid" in str(
+            excinfo.value)

@@ -4,7 +4,7 @@ import sys
 from tempfile import mkdtemp
 from shutil import rmtree
 
-from mamba_server.context_mamba import Context
+from mamba_server.context import Context
 from mamba_server.utils import misc
 from mamba_server.commands import MambaCommand
 from mamba_server.components import ComponentBase

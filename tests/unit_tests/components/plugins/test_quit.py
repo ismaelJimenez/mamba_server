@@ -1,6 +1,6 @@
 import os
 
-from mamba_server.context_rx import Context
+from mamba_server.context import Context
 from mamba_server.components.plugins.quit import GuiPlugin
 from mamba_server.components.main.main_qt import MainWindow
 

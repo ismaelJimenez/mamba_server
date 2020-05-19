@@ -4,11 +4,11 @@ from rx.subject import Subject
 from rx import operators as op
 
 
-class SubjectFactory:
+class SubjectFactoryRxPy:
     """ The Subject Factory object lets you handle subjects by a string name
     """
     def __init__(self):
-        super(SubjectFactory, self).__init__()
+        super(SubjectFactoryRxPy, self).__init__()
         self._factory = {}
 
     def register(self, name):

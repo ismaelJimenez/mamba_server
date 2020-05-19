@@ -2,7 +2,7 @@ import pytest
 import os
 
 from mamba_server.components.main.main_tk import MainWindow
-from mamba_server.context_mamba import Context
+from mamba_server.context import Context
 from mamba_server.exceptions import ComponentConfigException
 
 from mamba_server.components.main.observable_types.register_action import RegisterAction
