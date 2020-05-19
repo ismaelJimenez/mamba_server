@@ -1,11 +1,8 @@
 import pytest
 import os
-import socket
-import time
 
 from mamba_server.context import Context
 from mamba_server.components.drivers.socket_tmtc.hvs_socket_tmtc import Driver
-from mamba_server.components.observable_types.empty import Empty
 
 
 class DummyTestClass:
