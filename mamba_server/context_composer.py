@@ -21,8 +21,7 @@ def execute(launch_file, mamba_dir, project_dir):
     with open(launch_file) as file:
         launch_config = yaml.load(file, Loader=yaml.FullLoader)
 
-        context = Context(launch_config['rx'] if 'rx' in
-                          launch_config else DEFAULT_RX)
+        context = Context()
         context.set('mamba_dir', mamba_dir)
         context.set('project_dir', project_dir)
 

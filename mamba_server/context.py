@@ -7,16 +7,9 @@ from mamba_server.exceptions import ComponentConfigException
 
 class Context:
     """Application context class"""
-    def __init__(self, implementation='mamba'):
+    def __init__(self):
         self._memory = {}
-        if implementation == 'mamba':
-            self.rx = SubjectFactory()
-        elif implementation == 'rxpy':
-            self.rx = SubjectFactoryRxPy()
-        else:
-            raise ComponentConfigException(f"Rx implementation "
-                                           f"'{implementation}' "
-                                           f"not valid")
+        self.rx = SubjectFactoryRxPy()
 
     def get(self, parameter):
         """Returns the value of a context parameter, or None if it

@@ -28,15 +28,3 @@ class TestClassSignal:
         context_2 = Context()
         assert context_2.get('param_1') is None
 
-    def test_context_implementation_selection(self):
-        context = Context('mamba')
-        assert type(context.rx).__name__ == 'SubjectFactory'
-
-        context_rxpy = Context('rxpy')
-        assert type(context_rxpy.rx).__name__ == 'SubjectFactoryRxPy'
-
-        # Invalid context type should raise ComponentConfigException
-        with pytest.raises(ComponentConfigException) as excinfo:
-            Context('other')
-
-        assert "Rx implementation 'other' not valid" in str(excinfo.value)
