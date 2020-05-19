@@ -1,7 +1,7 @@
 import os
 
 from mamba_server.context import Context
-from mamba_server.components.plugins.quit import GuiPlugin
+from mamba_server.components.plugins.quit import Plugin
 from mamba_server.components.main.main_qt import MainWindow
 
 from mamba_server.components.observable_types.empty import Empty
@@ -48,7 +48,7 @@ class TestClass:
         assert not main_window._exists_menu('File')
 
         self.context.set('main_window', main_window)
-        widget = GuiPlugin(self.context)
+        widget = Plugin(self.context)
         widget.initialize()
 
         # Test default configuration
@@ -78,7 +78,7 @@ class TestClass:
         main_window.initialize()
 
         self.context.set('main_window', main_window)
-        widget = GuiPlugin(self.context)
+        widget = Plugin(self.context)
 
         # Subscribe to the 'quit' that shall be published
         self.context.rx.subscribe('quit', dummy_test_class.test_function)
@@ -112,7 +112,7 @@ class TestClass:
         main_window.initialize()
 
         self.context.set('main_window', main_window)
-        widget = GuiPlugin(self.context)
+        widget = Plugin(self.context)
 
         # Subscribe to the 'quit' that shall be published
         self.context.rx.subscribe('quit', dummy_test_class.test_function)

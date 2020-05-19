@@ -2,7 +2,7 @@ import pytest
 import os
 
 from mamba_server.context import Context
-from mamba_server.components.plugins.about.about_qt import GuiPlugin
+from mamba_server.components.plugins.about.about_qt import Plugin
 from mamba_server.components.main.main_qt import MainWindow
 
 
@@ -29,12 +29,12 @@ class TestClass:
 
     def test_about_gui_plugin_wo_context(self):
         with pytest.raises(TypeError) as excinfo:
-            GuiPlugin()
+            Plugin()
 
         assert "missing 1 required positional argument" in str(excinfo.value)
 
     def test_about_gui_plugin_w_empty_context(self):
-        widget = GuiPlugin(Context())
+        widget = Plugin(Context())
         widget.initialize()
 
         # Test default configuration
@@ -56,7 +56,7 @@ class TestClass:
         assert not main_window._exists_menu('&Help')
 
         self.context.set('main_window', main_window)
-        widget = GuiPlugin(self.context)
+        widget = Plugin(self.context)
         widget.initialize()
 
         # Test default configuration
