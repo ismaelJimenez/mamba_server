@@ -35,6 +35,6 @@ def execute(launch_file, mamba_dir, project_dir):
                 service.initialize()
 
         # Start Main Component
-        context.rx.on_next('app_status', AppStatus.Running)
+        context.rx['app_status'].on_next(AppStatus.Running)
 
         sys.exit(0)

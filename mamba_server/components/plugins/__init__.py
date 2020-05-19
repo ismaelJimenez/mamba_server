@@ -1,5 +1,7 @@
 """ Plugin base """
 
+from rx import operators as op
+
 from mamba_server.components import ComponentBase
 from mamba_server.exceptions import ComponentConfigException
 
@@ -18,20 +20,18 @@ class PluginBase(ComponentBase):
         self._register_observers()
 
     def _register_observers(self):
-        self._context.rx.subscribe(
-            subject_name='run_plugin',
-            on_next=self.run,
-            op_filter=lambda rx: isinstance(
-                rx, RunAction) and rx.menu_title == self._configuration[
-                    'menu'] and rx.action_name == self._configuration['name'])
+        self._context.rx['run_plugin'].pipe(
+            op.filter(lambda value: isinstance(value, RunAction) and value.
+                      menu_title == self._configuration['menu'] and value.
+                      action_name == self._configuration['name'])).subscribe(
+                          on_next=self.run)
 
     def initialize(self):
         if not all(key in self._configuration for key in ['menu', 'name']):
             raise ComponentConfigException(
                 "Missing required elements in component configuration")
 
-        self._context.rx.on_next(
-            'register_action',
+        self._context.rx['register_action'].on_next(
             RegisterAction(menu_title=self._configuration['menu'],
                            action_name=self._configuration['name'],
                            shortcut=self._configuration['shortcut']

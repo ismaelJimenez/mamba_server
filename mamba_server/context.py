@@ -1,15 +1,13 @@
 """Application context that is shared between components"""
 
-from mamba_server.rx_mamba import SubjectFactory
-from mamba_server.rx_py import SubjectFactoryRxPy
-from mamba_server.exceptions import ComponentConfigException
+from mamba_server.subject_factory import SubjectFactory
 
 
 class Context:
     """Application context class"""
     def __init__(self):
         self._memory = {}
-        self.rx = SubjectFactoryRxPy()
+        self.rx = SubjectFactory()
 
     def get(self, parameter):
         """Returns the value of a context parameter, or None if it

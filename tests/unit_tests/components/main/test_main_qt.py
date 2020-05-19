@@ -160,7 +160,7 @@ class TestClass:
         assert component._load_app.isVisible()
 
         component._after(1000, component._close)
-        self.context.rx.on_next('app_status', AppStatus.Running)
+        self.context.rx['app_status'].on_next(AppStatus.Running)
 
         # Test load screen has been closed
         assert component._load_app is None
@@ -176,8 +176,8 @@ class TestClass:
         # Test quit while on load window
         assert component._load_app.isVisible()
         component._after(1000,
-                         lambda: self.context.rx.on_next('quit', Empty()))
-        self.context.rx.on_next('app_status', AppStatus.Running)
+                         lambda: self.context.rx['quit'].on_next(Empty()))
+        self.context.rx['app_status'].on_next(AppStatus.Running)
 
         # Test load screen has been closed
         assert not component._load_app.isVisible()
@@ -194,8 +194,8 @@ class TestClass:
         # Test quit while on main window
         assert component._load_app.isVisible()
         component._after(1000,
-                         lambda: self.context.rx.on_next('quit', Empty()))
-        self.context.rx.on_next('app_status', AppStatus.Running)
+                         lambda: self.context.rx['quit'].on_next(Empty()))
+        self.context.rx['app_status'].on_next(AppStatus.Running)
 
         # Test load screen has been closed
         assert not component._app.isVisible()
@@ -209,35 +209,30 @@ class TestClass:
         component.initialize()
 
         component._after(
-            1000, lambda: self.context.rx.on_next(
-                'register_action',
+            1000, lambda: self.context.rx['register_action'].on_next(
                 RegisterAction(menu_title='Test Menu 1',
                                action_name='Test Action 1',
                                shortcut='Crl+T',
                                status_tip='Custom status')))
 
         component._after(
-            1000, lambda: self.context.rx.on_next(
-                'register_action',
+            1000, lambda: self.context.rx['register_action'].on_next(
                 RegisterAction(menu_title='Test Menu 2',
                                action_name='Test Action 2')))
 
         component._after(
-            1000, lambda: self.context.rx.on_next(
-                'register_action',
+            1000, lambda: self.context.rx['register_action'].on_next(
                 RegisterAction(menu_title='Test Menu 3',
                                action_name='Test Action 1')))
 
         component._after(
-            1000, lambda: self.context.rx.on_next(
-                'register_action',
+            1000, lambda: self.context.rx['register_action'].on_next(
                 RegisterAction(menu_title='Test Menu 1',
                                action_name='Test Action 2')))
 
         component._after(1500,
-                         lambda: self.context.rx.on_next('quit', Empty()))
-
-        self.context.rx.on_next('app_status', AppStatus.Running)
+                         lambda: self.context.rx['quit'].on_next(Empty()))
+        self.context.rx['app_status'].on_next(AppStatus.Running)
 
         assert component._is_action_in_menu('Test Menu 1', 'Test Action 1')
         assert component._is_action_in_menu('Test Menu 2', 'Test Action 2')
@@ -255,25 +250,21 @@ class TestClass:
         # Test register while on load window
         assert component._load_app.isVisible()
 
-        self.context.rx.on_next(
-            'register_action',
+        self.context.rx['register_action'].on_next(
             RegisterAction(menu_title='Test Menu 1',
                            action_name='Test Action 1',
                            shortcut='Crl+T',
                            status_tip='Custom status'))
 
-        self.context.rx.on_next(
-            'register_action',
+        self.context.rx['register_action'].on_next(
             RegisterAction(menu_title='Test Menu 2',
                            action_name='Test Action 2'))
 
-        self.context.rx.on_next(
-            'register_action',
+        self.context.rx['register_action'].on_next(
             RegisterAction(menu_title='Test Menu 3',
                            action_name='Test Action 1'))
 
-        self.context.rx.on_next(
-            'register_action',
+        self.context.rx['register_action'].on_next(
             RegisterAction(menu_title='Test Menu 1',
                            action_name='Test Action 2'))
 
@@ -283,8 +274,7 @@ class TestClass:
         assert component._is_action_in_menu('Test Menu 1', 'Test Action 2')
 
         with pytest.raises(ComponentConfigException) as excinfo:
-            self.context.rx.on_next(
-                'register_action',
+            self.context.rx['register_action'].on_next(
                 RegisterAction(menu_title='Test Menu 1',
                                action_name='Test Action 1'))
 

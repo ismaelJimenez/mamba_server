@@ -3,6 +3,8 @@
 import os
 import time
 
+from rx import operators as op
+
 from mamba_server.components import ComponentBase
 from mamba_server.exceptions import ComponentConfigException
 from mamba_server.utils.misc import path_from_string
@@ -132,24 +134,21 @@ class MainBase(ComponentBase):
         """ Entry point for registering component observers """
 
         # Quit is sent to command App finalization
-        self._context.rx.subscribe(subject_name='quit',
-                                   on_next=self._close,
-                                   op_filter=lambda rx: isinstance(rx, Empty))
+        self._context.rx['quit'].pipe(
+            op.filter(lambda value: isinstance(value, Empty))).subscribe(
+                on_next=self._close)
 
         # App_status.Running is sent by the context composer after services
         # initialization
-        self._context.rx.subscribe(
-            subject_name='app_status',
-            on_next=self._run,
-            op_filter=lambda rx: isinstance(rx, AppStatus
-                                            ) and rx == AppStatus.Running)
+        self._context.rx['app_status'].pipe(
+            op.filter(lambda value: isinstance(value, AppStatus) and value ==
+                      AppStatus.Running)).subscribe(on_next=self._run)
 
         # Register_action is sent by the plugins to register a new menu
         # bar action
-        self._context.rx.subscribe(
-            subject_name='register_action',
-            on_next=self._register_action,
-            op_filter=lambda rx: isinstance(rx, RegisterAction))
+        self._context.rx['register_action'].pipe(
+            op.filter(lambda value: isinstance(value, RegisterAction))
+        ).subscribe(on_next=self._register_action)
 
     def _splash_show(self):
         """ Entry point for showing load splash screen """

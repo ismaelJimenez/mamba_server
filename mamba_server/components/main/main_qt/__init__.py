@@ -63,14 +63,14 @@ class MainWindow(MainBase):
         """
         # Register callback when command is selected from the menu
         widget = QWidget()
-        action = QAction(rx_value.action_name,
-                         widget,
-                         shortcut=rx_value.shortcut,
-                         statusTip=rx_value.status_tip,
-                         triggered=lambda: self._context.rx.on_next(
-                             'run_plugin',
-                             RunAction(menu_title=rx_value.menu_title,
-                                       action_name=rx_value.action_name)))
+        action = QAction(
+            rx_value.action_name,
+            widget,
+            shortcut=rx_value.shortcut,
+            statusTip=rx_value.status_tip,
+            triggered=lambda: self._context.rx['run_plugin'].on_next(
+                RunAction(menu_title=rx_value.menu_title,
+                          action_name=rx_value.action_name)))
 
         self._action_widgets.append(widget)
         menu.addAction(action)

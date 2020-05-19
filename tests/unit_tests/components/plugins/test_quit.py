@@ -81,27 +81,27 @@ class TestClass:
         widget = Plugin(self.context)
 
         # Subscribe to the 'quit' that shall be published
-        self.context.rx.subscribe('quit', dummy_test_class.test_function)
+        self.context.rx['quit'].subscribe(dummy_test_class.test_function)
 
         # Check it is not activated by another menu
-        self.context.rx.on_next(
-            'run_plugin', RunAction(menu_title='File_Wrong',
+        self.context.rx['run_plugin'].on_next(
+            RunAction(menu_title='File_Wrong',
                                     action_name='Quit'))
 
         assert dummy_test_class.times_called == 0
         assert dummy_test_class.last_value is None
 
         # Check it is not activated by another action
-        self.context.rx.on_next(
-            'run_plugin', RunAction(menu_title='File',
+        self.context.rx['run_plugin'].on_next(
+            RunAction(menu_title='File',
                                     action_name='Quit_Wrong'))
 
         assert dummy_test_class.times_called == 0
         assert dummy_test_class.last_value is None
 
         # Check activation emits 'quit'
-        self.context.rx.on_next(
-            'run_plugin', RunAction(menu_title='File', action_name='Quit'))
+        self.context.rx['run_plugin'].on_next(
+            RunAction(menu_title='File', action_name='Quit'))
 
         assert dummy_test_class.times_called == 1
         assert isinstance(dummy_test_class.last_value, Empty)
@@ -115,27 +115,27 @@ class TestClass:
         widget = Plugin(self.context)
 
         # Subscribe to the 'quit' that shall be published
-        self.context.rx.subscribe('quit', dummy_test_class.test_function)
+        self.context.rx['quit'].subscribe(dummy_test_class.test_function)
 
         # Check it is not activated by another menu
-        self.context.rx.on_next(
-            'run_plugin', RunAction(menu_title='File_Wrong',
+        self.context.rx['run_plugin'].on_next(
+            RunAction(menu_title='File_Wrong',
                                     action_name='Quit'))
 
         assert dummy_test_class.times_called == 0
         assert dummy_test_class.last_value is None
 
         # Check it is not activated by another action
-        self.context.rx.on_next(
-            'run_plugin', RunAction(menu_title='File',
+        self.context.rx['run_plugin'].on_next(
+            RunAction(menu_title='File',
                                     action_name='Quit_Wrong'))
 
         assert dummy_test_class.times_called == 0
         assert dummy_test_class.last_value is None
 
         # Check activation emits 'quit'
-        self.context.rx.on_next(
-            'run_plugin', RunAction(menu_title='File', action_name='Quit'))
+        self.context.rx['run_plugin'].on_next(
+            RunAction(menu_title='File', action_name='Quit'))
 
         assert dummy_test_class.times_called == 1
         assert isinstance(dummy_test_class.last_value, Empty)

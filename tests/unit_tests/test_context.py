@@ -27,4 +27,3 @@ class TestClassSignal:
 
         context_2 = Context()
         assert context_2.get('param_1') is None
-

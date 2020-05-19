@@ -21,4 +21,4 @@ class Plugin(PluginBase):
             Args:
                 rx_value (RunAction): The value published by the subject.
         """
-        self._context.rx.on_next('quit', Empty())
+        self._context.rx['quit'].on_next(Empty())

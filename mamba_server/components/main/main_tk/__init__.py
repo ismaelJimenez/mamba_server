@@ -67,11 +67,11 @@ class MainWindow(MainBase):
                 menu: The given menu.
                 rx_value (RegisterAction): The value published by the subject.
         """
-        menu.add_command(label=rx_value.action_name,
-                         command=lambda: self._context.rx.on_next(
-                             'run_plugin',
-                             RunAction(menu_title=rx_value.menu_title,
-                                       action_name=rx_value.action_name)))
+        menu.add_command(
+            label=rx_value.action_name,
+            command=lambda: self._context.rx['run_plugin'].on_next(
+                RunAction(menu_title=rx_value.menu_title,
+                          action_name=rx_value.action_name)))
 
     def _close_load_screen(self):
         """ Entry point for closing the load screen """
