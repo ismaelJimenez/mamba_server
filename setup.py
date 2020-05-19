@@ -67,6 +67,7 @@ setup(
     python_requires='>=3.6',
     install_requires=[
         'PySide2>=5.14',
+        'Rx>=3.1.0',
     ],
     extras_require=extras_require,
 )
