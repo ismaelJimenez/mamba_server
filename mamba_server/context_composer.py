@@ -10,6 +10,7 @@ from mamba_server.components.observable_types.app_status import AppStatus
 
 DEFAULT_RX = 'mamba'
 
+
 def execute(launch_file, mamba_dir, project_dir):
     """ Compose context from launch file """
     component_folders = ['mamba_server.components']
@@ -20,8 +21,8 @@ def execute(launch_file, mamba_dir, project_dir):
     with open(launch_file) as file:
         launch_config = yaml.load(file, Loader=yaml.FullLoader)
 
-        rx = launch_config['rx'] if 'rx' in launch_config else DEFAULT_RX
-        context = Context(rx)
+        context = Context(launch_config['rx'] if 'rx' in
+                          launch_config else DEFAULT_RX)
         context.set('mamba_dir', mamba_dir)
         context.set('project_dir', project_dir)
 

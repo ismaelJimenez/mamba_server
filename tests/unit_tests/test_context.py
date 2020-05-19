@@ -39,5 +39,4 @@ class TestClassSignal:
         with pytest.raises(ComponentConfigException) as excinfo:
             Context('other')
 
-        assert "Rx implementation 'other' not valid" in str(
-            excinfo.value)
+        assert "Rx implementation 'other' not valid" in str(excinfo.value)
