@@ -1,9 +1,8 @@
 import os
-import time
 
 from rx import operators as op
 
-from mamba_server.components.observable_types import RawTelemetry, RawTelecommand, Telecommand, Telemetry, LogLevel, Log
+from mamba_server.components.observable_types import Log
 from mamba_server.components import ComponentBase
 
 
@@ -26,7 +25,7 @@ class Logger(ComponentBase):
             socket server.
 
             Args:
-                raw_tc (RawTelecommand): The raw telecommand coming from
+                raw_tc (Log): The raw telecommand coming from
                                          the socket.
         """
         print(f'[{log.level}] [{log.source}] {log.message}')
