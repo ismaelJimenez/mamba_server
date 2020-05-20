@@ -6,8 +6,7 @@ import pkgutil
 from PySide2.QtWidgets import QMessageBox, QWidget, QApplication
 
 from mamba_server.components.plugins import PluginBase
-from mamba_server.components.main.observable_types.run_action \
-    import RunAction
+from mamba_server.components.main.observable_types import RunAction
 
 
 class Plugin(PluginBase):
@@ -33,7 +32,7 @@ class Plugin(PluginBase):
                                          'VERSION').decode('ascii').strip()
         self._box_message = f"Mamba Server v{self._version}"
 
-    def run(self, rx_value):
+    def run(self, rx_value: RunAction):
         """ Entry point for running the plugin
 
             Args:

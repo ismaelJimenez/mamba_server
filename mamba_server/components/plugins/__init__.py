@@ -5,10 +5,8 @@ from rx import operators as op
 from mamba_server.components import ComponentBase
 from mamba_server.exceptions import ComponentConfigException
 
-from mamba_server.components.main.observable_types.register_action \
-    import RegisterAction
-from mamba_server.components.main.observable_types.run_action \
-    import RunAction
+from mamba_server.components.main.observable_types import RegisterAction,\
+    RunAction
 
 
 class PluginBase(ComponentBase):
@@ -39,7 +37,7 @@ class PluginBase(ComponentBase):
                            status_tip=self._configuration['status_tip']
                            if 'status_tip' in self._configuration else None))
 
-    def run(self, rx_value):
+    def run(self, rx_value: RunAction):
         """ Entry point for running the plugin
 
             Args:

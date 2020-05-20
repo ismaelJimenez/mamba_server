@@ -4,11 +4,9 @@ import os
 import tkinter as tk
 
 from mamba_server.components.main import MainBase
-from mamba_server.components.observable_types.empty import Empty
-from mamba_server.components.main.observable_types.register_action \
-    import RegisterAction
-from mamba_server.components.main.observable_types.run_action \
-    import RunAction
+from mamba_server.components.observable_types import Empty
+from mamba_server.components.main.observable_types import RegisterAction, \
+    RunAction
 
 
 class MainWindow(MainBase):
@@ -60,7 +58,7 @@ class MainWindow(MainBase):
         self._load_app.update()
         self._load_app.deiconify()
 
-    def _menu_add_action(self, menu, rx_value):
+    def _menu_add_action(self, menu: tk.Menu, rx_value: RegisterAction):
         """ Entry point for adding an action to a given menu
 
             Args:
@@ -88,7 +86,7 @@ class MainWindow(MainBase):
         self._app.withdraw()
         self._app.update()
 
-    def _close(self, rx_value=None):
+    def _close(self, rx_value: Empty):
         """ Entry point for closing application
 
             Args:
@@ -121,16 +119,16 @@ class MainWindow(MainBase):
         """
         self._app.mainloop()
 
-    def _after(self, time_msec, action):
+    def _after(self, time_msec: int, action: callable):
         """ Make the application perform an action after a time delay.
 
         Args:
             time_msec (int): The time in milliseconds to delay he action.
-            action (function): The action to execute after time_msec delay.
+            action (callable): The action to execute after time_msec delay.
         """
         self._app.after(int(time_msec), action)
 
-    def _add_menu(self, menu_name):
+    def _add_menu(self, menu_name: str) -> tk.Menu:
         """Add a new top level menu in main window menu bar.
 
         Args:

@@ -8,12 +8,9 @@ from rx import operators as op
 from mamba_server.components import ComponentBase
 from mamba_server.exceptions import ComponentConfigException
 from mamba_server.utils.misc import path_from_string
-from mamba_server.components.observable_types.empty import Empty
-from mamba_server.components.observable_types.app_status import AppStatus
-from mamba_server.components.main.observable_types.register_action \
-    import RegisterAction
-from mamba_server.components.main.observable_types.run_action \
-    import RunAction
+from mamba_server.components.observable_types import Empty, AppStatus
+from mamba_server.components.main.observable_types import RegisterAction, \
+    RunAction
 
 
 class MainBase(ComponentBase):
@@ -71,7 +68,7 @@ class MainBase(ComponentBase):
         """ Entry point for hiding main screen """
         raise NotImplementedError
 
-    def _close(self, rx_value=None):
+    def _close(self, rx_value: Empty):
         """ Entry point for closing application
 
             Args:
@@ -92,7 +89,7 @@ class MainBase(ComponentBase):
         """
         raise NotImplementedError
 
-    def _after(self, time_msec, action):
+    def _after(self, time_msec: int, action: callable):
         """ Make the application perform an action after a time delay.
 
         Args:
@@ -101,7 +98,7 @@ class MainBase(ComponentBase):
         """
         raise NotImplementedError
 
-    def _add_menu(self, menu_name):
+    def _add_menu(self, menu_name: str):
         """Add a new top level menu in main window menu bar.
 
         Args:
@@ -192,7 +189,7 @@ class MainBase(ComponentBase):
 
             self._create_splash_window()
 
-    def _register_action(self, rx_value):
+    def _register_action(self, rx_value: RegisterAction):
         """ Entry point for registering a new menu bar action.
 
             Args:
@@ -216,7 +213,7 @@ class MainBase(ComponentBase):
         self._menu_actions.append(
             f'{rx_value.menu_title}_{rx_value.action_name}')
 
-    def _run(self, rx_value):
+    def _run(self, rx_value: AppStatus):
         """ Entry point for running the window
 
             Args:
@@ -245,7 +242,7 @@ class MainBase(ComponentBase):
         # Show main window
         self._show()
 
-    def _exists_menu(self, search_menu):
+    def _exists_menu(self, search_menu: str) -> bool:
         """Checks if Menu is already in Main Window Menu bar.
 
         Args:
@@ -256,7 +253,7 @@ class MainBase(ComponentBase):
         """
         return search_menu in self._menus
 
-    def _get_menu(self, search_menu):
+    def _get_menu(self, search_menu: str):
         """Returns Menu is already in Main Window Menu bar.
 
         Args:
@@ -271,7 +268,7 @@ class MainBase(ComponentBase):
 
         return None
 
-    def _is_action_in_menu(self, search_menu, search_action):
+    def _is_action_in_menu(self, search_menu: str, search_action: str) -> bool:
         """Checks if action is already in Menu.
 
         Args:

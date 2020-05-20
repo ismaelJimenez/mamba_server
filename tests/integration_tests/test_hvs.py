@@ -183,7 +183,8 @@ class TestClass:
                           'description': 'description test 1'
                       }))
 
-        assert str(sock.recv(1024), 'ascii') == '> OK test;1;description test 1\r\n'
+        assert str(sock.recv(1024),
+                   'ascii') == '> OK test;1;description test 1\r\n'
 
         # Send single TM - 3. Tm_Meta
         self.context.rx['tm'].on_next(
@@ -194,30 +195,31 @@ class TestClass:
                           'description': 'description test 1'
                       }))
 
-        assert str(sock.recv(1024), 'ascii') == '> OK test;String;String;description test 1;7;4\r\n'
+        assert str(
+            sock.recv(1024),
+            'ascii') == '> OK test;String;String;description test 1;7;4\r\n'
 
         # Send single TM - 4. Tc
-        self.context.rx['tm'].on_next(
-            Telemetry(tm_id='test',
-                      tm_type='tc'))
+        self.context.rx['tm'].on_next(Telemetry(tm_id='test', tm_type='tc'))
 
         assert str(sock.recv(1024), 'ascii') == '> OK test\r\n'
 
         # Send single TM - 5. Tm
         self.context.rx['tm'].on_next(
-            Telemetry(tm_id='test',
-                      tm_type='tm',
-                      value=1))
+            Telemetry(tm_id='test', tm_type='tm', value=1))
 
         data = str(sock.recv(1024), 'ascii')
         assert '> OK ' in data
         assert ';1;1;0;1\r\n' in data
 
         # Send multiple TM
-        self.context.rx['tm'].on_next(Telemetry(tm_id='test_3', tm_type='helo'))
-        self.context.rx['tm'].on_next(Telemetry(tm_id='test_4', tm_type='helo'))
+        self.context.rx['tm'].on_next(Telemetry(tm_id='test_3',
+                                                tm_type='helo'))
+        self.context.rx['tm'].on_next(Telemetry(tm_id='test_4',
+                                                tm_type='helo'))
 
-        assert str(sock.recv(1024), 'ascii') == '> OK helo test_3\r\n> OK helo test_4\r\n'
+        assert str(sock.recv(1024),
+                   'ascii') == '> OK helo test_3\r\n> OK helo test_4\r\n'
 
         # Close open threads
         server._close()

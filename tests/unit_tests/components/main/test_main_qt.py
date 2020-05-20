@@ -64,7 +64,7 @@ class TestClass:
         assert component._load_app.isVisible()
 
         # Force close of any opened windows
-        component._close()
+        component._close(Empty())
         component._qt_app.quit()
 
     def test_w_default_context_component_initialization(self):
@@ -98,7 +98,7 @@ class TestClass:
         assert component._menu_actions == []
 
         # Force close of any opened windows
-        component._close()
+        component._close(Empty())
         component._qt_app.quit()
 
     def test_w_custom_context(self):
@@ -123,7 +123,7 @@ class TestClass:
         }
 
         # Force close of any opened windows
-        component._close()
+        component._close(Empty())
         component._qt_app.quit()
 
     def test_w_wrong_custom_context(self):
@@ -159,7 +159,7 @@ class TestClass:
         # Test load window is shown
         assert component._load_app.isVisible()
 
-        component._after(1000, component._close)
+        component._after(1000, lambda: component._close(Empty()))
         self.context.rx['app_status'].on_next(AppStatus.Running)
 
         # Test load screen has been closed
@@ -282,7 +282,7 @@ class TestClass:
                "'Test Action 1" in str(excinfo.value)
 
         # Force close of any opened windows
-        component._close()
+        component._close(Empty())
         component._qt_app.quit()
 
     def test_internal_show(self):
@@ -297,7 +297,7 @@ class TestClass:
         assert component._app.isVisible()
 
         # Force close of any opened windows
-        component._close()
+        component._close(Empty())
         component._qt_app.quit()
 
     def test_main_tk_hide(self):
@@ -320,7 +320,7 @@ class TestClass:
         assert component._app.isVisible()
 
         # Force close of any opened windows
-        component._close()
+        component._close(Empty())
         component._qt_app.quit()
 
     def test_internal_event_loop_after(self):
@@ -328,7 +328,7 @@ class TestClass:
         component.initialize()
 
         # Close window after 100 milliseconds
-        component._after(100, component._close)
+        component._after(100, lambda: component._close(Empty()))
         component._start_event_loop()
 
         assert not component._app.isVisible()
@@ -344,7 +344,7 @@ class TestClass:
         assert component._exists_menu('test_menu')
 
         # Force close of any opened windows
-        component._close()
+        component._close(Empty())
         component._qt_app.quit()
 
     def test_internal_get_menu(self):
@@ -358,165 +358,5 @@ class TestClass:
         assert component._get_menu('test_menu') is not None
 
         # Force close of any opened windows
-        component._close()
+        component._close(Empty())
         component._qt_app.quit()
-
-
-# import pytest
-#
-# from mamba_server.components.main import MainWindow
-# from mamba_server.context_mamba import Context
-# from mamba_server.exceptions import ComponentConfigException
-#
-# from mamba_server.components.main.observable_types.register_action import RegisterAction
-#
-#
-# def test_main_qt_wo_context():
-#     with pytest.raises(TypeError) as excinfo:
-#         MainWindow()
-#
-#     assert "missing 1 required positional argument" in str(excinfo.value)
-#
-#
-# def test_main_qt_w_context():
-#     widget = MainWindow(Context())
-#
-#     # Test default configuration
-#     assert widget._configuration == {'title': 'Mamba Server'}
-#
-#     assert widget._menus == {}
-#     assert widget._menu_actions == []
-#     assert widget._action_widgets == []
-#
-#     # Test window is hidden per default
-#     assert widget._app.isHidden()
-#
-#     widget._close()
-#     widget._qt_app.quit()
-#
-#
-# def test_main_qt_show():
-#     widget = MainWindow(Context())
-#
-#     # Test window is hidden per default
-#     assert not widget._app.isVisible()
-#
-#     # Test window show
-#     widget._show()
-#     assert widget._app.isVisible()
-#
-#     widget._close()
-#     widget._qt_app.quit()
-#
-#
-# def test_main_qt_hide():
-#     widget = MainWindow(Context())
-#
-#     # Test window is hidden per default
-#     assert not widget._app.isVisible()
-#
-#     # Test window show
-#     widget._show()
-#     assert widget._app.isVisible()
-#
-#     # Test window hide
-#     widget._hide()
-#     assert not widget._app.isVisible()
-#
-#     # Test window hide does not destroy window
-#     widget._show()
-#     assert widget._app.isVisible()
-#
-#     widget._close()
-#     widget._qt_app.quit()
-#
-#
-# def test_main_qt_close():
-#     widget = MainWindow(Context())
-#
-#     # Test window show
-#     widget._show()
-#     assert widget._app.isVisible()
-#
-#     # Test window close
-#     widget._close()
-#     assert not widget._app.isVisible()
-#
-#     widget._qt_app.quit()
-#
-#
-# def test_main_qt_register_action():
-#     def dummy_func():
-#         pass
-#
-#     context = Context()
-#     widget = MainWindow(context)
-#
-#     assert not widget._is_action_in_menu('test_menu', 'test_action')
-#
-#     # Add new menu
-#     context.rx.on_next(
-#         'register_action',
-#         RegisterAction(menu_title='test_menu', action_name='test_action'))
-#     assert widget._is_action_in_menu('test_menu', 'test_action')
-#
-#     # Attempt to register the same action twice in same menu is not allowed
-#     with pytest.raises(ComponentConfigException) as excinfo:
-#         context.rx.on_next(
-#             'register_action',
-#             RegisterAction(menu_title='test_menu', action_name='test_action'))
-#
-#     assert 'already exists in menu' in str(excinfo.value)
-#
-#     # Test register_action is not called with wrong data type
-#     try:
-#         context.rx.on_next('register_action', 'Wrong')
-#     except:
-#         pytest.fail("Wrong data type should not raise")
-#
-#     widget._close()
-#     widget._qt_app.quit()
-#
-#
-# def test_main_qt_event_loop_after():
-#     widget = MainWindow(Context())
-#
-#     # Test window show
-#     widget._show()
-#     assert widget._app.isVisible()
-#
-#     # Close window after 100 milliseconds
-#     widget._after(100, widget._close)
-#     widget._start_event_loop()
-#
-#     # Test window is hidden per default
-#     assert not widget._app.isVisible()
-#
-#     widget._close()
-#     widget._qt_app.quit()
-#
-#
-# def test_internal_main_qt_add_menu():
-#     widget = MainWindow(Context())
-#
-#     assert not widget._exists_menu('test_menu')
-#
-#     # Add new menu
-#     widget._add_menu('test_menu')
-#     assert widget._exists_menu('test_menu')
-#
-#     widget._close()
-#     widget._qt_app.quit()
-#
-#
-# def test_internal_main_qt_get_menu():
-#     widget = MainWindow(Context())
-#
-#     assert widget._get_menu('test_menu') is None
-#
-#     # Add new menu
-#     widget._add_menu('test_menu')
-#     assert widget._get_menu('test_menu') is not None
-#
-#     widget._close()
-#     widget._qt_app.quit()

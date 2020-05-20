@@ -8,9 +8,16 @@ services:
   quit:
   about_qt:
 
+  # Utilities
+  logger:
+
   # Networking
   socket_server:
   hvs_socket_tmtc:
 
   # Central controller
   hvs_controller:
+
+  # IO Controllers
+  shutdown:
+  smb:

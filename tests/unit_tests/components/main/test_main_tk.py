@@ -159,7 +159,7 @@ class TestClass:
         # Test load window is shown
         assert component._load_app.winfo_ismapped() == 1
 
-        component._after(1000, component._close)
+        component._after(1000, lambda: component._close(Empty()))
         self.context.rx['app_status'].on_next(AppStatus.Running)
 
         # Test load screen has been closed
@@ -330,7 +330,7 @@ class TestClass:
         component.initialize()
 
         # Close window after 100 milliseconds
-        component._after(100, component._close)
+        component._after(100, lambda: component._close(Empty()))
         component._start_event_loop()
 
         assert component._app is None

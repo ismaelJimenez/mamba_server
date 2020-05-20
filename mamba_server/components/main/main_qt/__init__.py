@@ -8,11 +8,9 @@ from PySide2.QtCore import QTimer
 from PySide2.QtGui import QPixmap, QGuiApplication
 
 from mamba_server.components.main import MainBase
-from mamba_server.components.observable_types.empty import Empty
-from mamba_server.components.main.observable_types.register_action \
-    import RegisterAction
-from mamba_server.components.main.observable_types.run_action \
-    import RunAction
+from mamba_server.components.observable_types import Empty
+from mamba_server.components.main.observable_types import RegisterAction, \
+    RunAction
 
 
 class MainWindow(MainBase):
@@ -54,7 +52,7 @@ class MainWindow(MainBase):
 
         self._load_app.show()
 
-    def _menu_add_action(self, menu, rx_value):
+    def _menu_add_action(self, menu: QMenu, rx_value: RegisterAction):
         """ Entry point for adding an action to a given menu
 
             Args:
@@ -88,7 +86,7 @@ class MainWindow(MainBase):
         """ Entry point for hiding main screen """
         self._app.hide()
 
-    def _close(self, rx_value=None):
+    def _close(self, rx_value: Empty):
         """ Entry point for closing application
 
             Args:
@@ -113,7 +111,7 @@ class MainWindow(MainBase):
         """
         self._qt_app.exec_()
 
-    def _after(self, time_msec, action):
+    def _after(self, time_msec: int, action: callable):
         """ Make the application perform an action after a time delay.
 
         Args:
@@ -122,7 +120,7 @@ class MainWindow(MainBase):
         """
         QTimer.singleShot(int(time_msec), action)
 
-    def _add_menu(self, menu_name):
+    def _add_menu(self, menu_name: str) -> QMenu:
         """Add a new top level menu in main window menu bar.
 
         Args:
