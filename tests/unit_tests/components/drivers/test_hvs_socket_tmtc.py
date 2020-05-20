@@ -3,6 +3,8 @@ import os
 
 from mamba_server.context import Context
 from mamba_server.components.drivers.socket_tmtc.hvs_socket_tmtc import Driver
+from mamba_server.components.observable_types import RawTelemetry, \
+    RawTelecommand, Telemetry, Telecommand
 
 
 class DummyTestClass:
@@ -48,7 +50,7 @@ class TestClass:
         component.initialize()
 
         # Test default configuration
-        assert component._configuration == {}
+        assert component._configuration == {'name': 'hvs_socket_tmtc'}
 
     def test_component_observer_raw_tc_helo(self):
         """ Test component external interface """
@@ -59,19 +61,98 @@ class TestClass:
         # Subscribe to the 'tc' that shall be published
         self.context.rx['tc'].subscribe(dummy_test_class.test_function)
 
-        # Send single raw TC
-        self.context.rx['raw_tc'].on_next("helo test\r\n")
+        # Send single raw TC - 1. Helo
+        self.context.rx['raw_tc'].on_next(RawTelecommand("helo test\r\n"))
 
         assert dummy_test_class.times_called == 1
-        assert dummy_test_class.last_value == ['helo', 'test']
+        assert isinstance(dummy_test_class.last_value, Telecommand)
+        assert dummy_test_class.last_value.id == 'test'
+        assert dummy_test_class.last_value.type == 'helo'
+        assert dummy_test_class.last_value.args == []
 
-        # Send multiple raw TC
-        self.context.rx['raw_tc'].on_next("helo test_2\r\nhelo test_3\r\n")
+        # Send single raw TC - 2. Tc_Meta
+        self.context.rx['raw_tc'].on_next(RawTelecommand("tc_meta test\r\n"))
+
+        assert dummy_test_class.times_called == 2
+        assert isinstance(dummy_test_class.last_value, Telecommand)
+        assert dummy_test_class.last_value.id == 'test'
+        assert dummy_test_class.last_value.type == 'tc_meta'
+        assert dummy_test_class.last_value.args == []
+
+        # Send single raw TC - 3. Tm_Meta
+        self.context.rx['raw_tc'].on_next(RawTelecommand("tm_meta test\r\n"))
 
         assert dummy_test_class.times_called == 3
-        assert dummy_test_class.last_value == ['helo', 'test_3']
+        assert isinstance(dummy_test_class.last_value, Telecommand)
+        assert dummy_test_class.last_value.id == 'test'
+        assert dummy_test_class.last_value.type == 'tm_meta'
+        assert dummy_test_class.last_value.args == []
 
-    def test_component_observer_tm_ack(self):
+        # Send single raw TC - 4. Tc
+        self.context.rx['raw_tc'].on_next(
+            RawTelecommand('tc test "arg_1"\r\n'))
+
+        assert dummy_test_class.times_called == 4
+        assert isinstance(dummy_test_class.last_value, Telecommand)
+        assert dummy_test_class.last_value.id == 'test'
+        assert dummy_test_class.last_value.type == 'tc'
+        assert dummy_test_class.last_value.args == ['arg_1']
+
+        self.context.rx['raw_tc'].on_next(
+            RawTelecommand('tc test "arg_1" "arg_2"\r\n'))
+
+        assert dummy_test_class.times_called == 5
+        assert isinstance(dummy_test_class.last_value, Telecommand)
+        assert dummy_test_class.last_value.id == 'test'
+        assert dummy_test_class.last_value.type == 'tc'
+        assert dummy_test_class.last_value.args == ['arg_1', 'arg_2']
+
+        self.context.rx['raw_tc'].on_next(
+            RawTelecommand('tc test 2.3 arg_2\r\n'))
+
+        assert dummy_test_class.times_called == 6
+        assert isinstance(dummy_test_class.last_value, Telecommand)
+        assert dummy_test_class.last_value.id == 'test'
+        assert dummy_test_class.last_value.type == 'tc'
+        assert dummy_test_class.last_value.args == ['2.3', 'arg_2']
+
+        # Send single raw TC - 5. Tm
+        self.context.rx['raw_tc'].on_next(RawTelecommand('tm test \r\n'))
+
+        assert dummy_test_class.times_called == 7
+        assert isinstance(dummy_test_class.last_value, Telecommand)
+        assert dummy_test_class.last_value.id == 'test'
+        assert dummy_test_class.last_value.type == 'tm'
+        assert dummy_test_class.last_value.args == []
+
+        self.context.rx['raw_tc'].on_next(RawTelecommand('tm test_2\r\n'))
+
+        assert dummy_test_class.times_called == 8
+        assert isinstance(dummy_test_class.last_value, Telecommand)
+        assert dummy_test_class.last_value.id == 'test_2'
+        assert dummy_test_class.last_value.type == 'tm'
+        assert dummy_test_class.last_value.args == []
+
+        # Send multiple raw TC
+        self.context.rx['raw_tc'].on_next(
+            RawTelecommand("helo test_2\r\nhelo test_3\r\n"))
+
+        assert dummy_test_class.times_called == 10
+        assert isinstance(dummy_test_class.last_value, Telecommand)
+        assert dummy_test_class.last_value.id == 'test_3'
+        assert dummy_test_class.last_value.type == 'helo'
+        assert dummy_test_class.last_value.args == []
+
+        # Send unexisting TC type
+        self.context.rx['raw_tc'].on_next(RawTelecommand("wrong test\r\n"))
+
+        assert dummy_test_class.times_called == 11
+        assert isinstance(dummy_test_class.last_value, Telecommand)
+        assert dummy_test_class.last_value.id == 'test'
+        assert dummy_test_class.last_value.type == 'wrong'
+        assert dummy_test_class.last_value.args == []
+
+    def test_component_observer_tm(self):
         """ Test component external interface """
         dummy_test_class = DummyTestClass()
         component = Driver(self.context)
@@ -80,15 +161,63 @@ class TestClass:
         # Subscribe to the 'tc' that shall be published
         self.context.rx['raw_tm'].subscribe(dummy_test_class.test_function)
 
-        # Send single TM
-        self.context.rx['tm'].on_next(['ACK', 'helo', 'test_1'])
+        # Send single TM - 1. Helo
+        self.context.rx['tm'].on_next(Telemetry(tm_id='test', tm_type='helo'))
 
         assert dummy_test_class.times_called == 1
-        assert dummy_test_class.last_value == '> OK helo test_1\r\n'
+        assert isinstance(dummy_test_class.last_value, RawTelemetry)
+        assert dummy_test_class.last_value.raw == '> OK helo test\r\n'
 
-        # Send multiple TM
-        self.context.rx['tm'].on_next(['ACK', 'helo', 'test_2'])
-        self.context.rx['tm'].on_next(['ACK', 'helo', 'test_3'])
+        # Send single TM - 2. Tc_Meta
+        self.context.rx['tm'].on_next(
+            Telemetry(tm_id='test',
+                      tm_type='tc_meta',
+                      value={
+                          'num_params': 1,
+                          'description': 'description test 1'
+                      }))
+
+        assert dummy_test_class.times_called == 2
+        assert isinstance(dummy_test_class.last_value, RawTelemetry)
+        assert dummy_test_class.last_value.raw == '> OK test;1;description test 1\r\n'
+
+        # Send single TM - 3. Tm_Meta
+        self.context.rx['tm'].on_next(
+            Telemetry(tm_id='test',
+                      tm_type='tm_meta',
+                      value={
+                          'return_type': 'String',
+                          'description': 'description test 1'
+                      }))
 
         assert dummy_test_class.times_called == 3
-        assert dummy_test_class.last_value == '> OK helo test_3\r\n'
+        assert isinstance(dummy_test_class.last_value, RawTelemetry)
+        assert dummy_test_class.last_value.raw == '> OK test;String;String;description test 1;7;4\r\n'
+
+        # Send single TM - 4. Tc
+        self.context.rx['tm'].on_next(
+            Telemetry(tm_id='test',
+                      tm_type='tc'))
+
+        assert dummy_test_class.times_called == 4
+        assert isinstance(dummy_test_class.last_value, RawTelemetry)
+        assert dummy_test_class.last_value.raw == '> OK test\r\n'
+
+        # Send single TM - 4. Tm
+        self.context.rx['tm'].on_next(
+            Telemetry(tm_id='test',
+                      tm_type='tm',
+                      value=1))
+
+        assert dummy_test_class.times_called == 5
+        assert isinstance(dummy_test_class.last_value, RawTelemetry)
+        assert '> OK test;' in dummy_test_class.last_value.raw
+        assert ';1;1;0;1\r\n' in dummy_test_class.last_value.raw
+
+        # Send multiple TM
+        self.context.rx['tm'].on_next(Telemetry(tm_id='test_3', tm_type='helo'))
+        self.context.rx['tm'].on_next(Telemetry(tm_id='test_4', tm_type='helo'))
+
+        assert dummy_test_class.times_called == 7
+        assert isinstance(dummy_test_class.last_value, RawTelemetry)
+        assert dummy_test_class.last_value.raw == '> OK helo test_4\r\n'
