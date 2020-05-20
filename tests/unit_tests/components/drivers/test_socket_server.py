@@ -5,7 +5,7 @@ import time
 
 from mamba_server.context import Context
 from mamba_server.components.drivers.socket_server import Driver
-from mamba_server.components.observable_types.empty import Empty
+from mamba_server.components.observable_types import Empty, RawTelemetry, RawTelecommand
 
 
 class DummyTestClass:
@@ -57,7 +57,11 @@ class TestClass:
         component.initialize()
 
         # Test default configuration
-        assert component._configuration == {'host': '0.0.0.0', 'port': 8080}
+        assert component._configuration == {
+            'host': '0.0.0.0',
+            'name': 'socket_server',
+            'port': 8080
+        }
 
         assert component._server is not None
         assert component._server_thread is not None
@@ -92,19 +96,22 @@ class TestClass:
         time.sleep(.1)
 
         assert dummy_test_class.times_called == 1
-        assert dummy_test_class.last_value == "Hello World 1\r\n"
+        assert isinstance(dummy_test_class.last_value, RawTelecommand)
+        assert dummy_test_class.last_value.raw == "Hello World 1\r\n"
 
         client_tc('127.0.0.1', 8080, "Hello World 2\r\n")
         time.sleep(.1)
 
         assert dummy_test_class.times_called == 2
-        assert dummy_test_class.last_value == "Hello World 2\r\n"
+        assert isinstance(dummy_test_class.last_value, RawTelecommand)
+        assert dummy_test_class.last_value.raw == "Hello World 2\r\n"
 
         client_tc('127.0.0.1', 8080, "Hello World 3\r\nHello World 4\r\n")
         time.sleep(.1)
 
         assert dummy_test_class.times_called == 3
-        assert dummy_test_class.last_value == "Hello World 3\r\nHello World 4\r\n"
+        assert isinstance(dummy_test_class.last_value, RawTelecommand)
+        assert dummy_test_class.last_value.raw == "Hello World 3\r\nHello World 4\r\n"
 
         # Close open threads
         component._close()
@@ -122,11 +129,12 @@ class TestClass:
         time.sleep(.1)
 
         # Send TM
-        self.context.rx['raw_tm'].on_next("Hello World 1\r\n")
+        self.context.rx['raw_tm'].on_next(RawTelemetry("Hello World 1\r\n"))
         assert str(sock.recv(1024), 'ascii') == 'Hello World 1\r\n'
 
         # Send TM
-        self.context.rx['raw_tm'].on_next("Hello World 2\r\nHello World 3\r\n")
+        self.context.rx['raw_tm'].on_next(
+            RawTelemetry("Hello World 2\r\nHello World 3\r\n"))
         assert str(sock.recv(1024),
                    'ascii') == 'Hello World 2\r\nHello World 3\r\n'
 

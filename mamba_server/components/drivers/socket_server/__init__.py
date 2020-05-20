@@ -1,3 +1,5 @@
+""" Component for handling socket TMTC """
+
 import os
 import threading
 import socketserver
@@ -5,7 +7,8 @@ import socketserver
 from rx import operators as op
 
 from mamba_server.components import ComponentBase
-from mamba_server.components.observable_types.empty import Empty
+from mamba_server.components.observable_types import RawTelecommand, \
+    RawTelemetry, Empty
 from mamba_server.exceptions import ComponentConfigException
 
 
@@ -20,8 +23,8 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
     def handle(self):
         # Register observer for raw_tm
         observer = self.server.raw_tm.pipe(
-            op.filter(lambda value: isinstance(value, str))).subscribe(
-                on_next=self.send_tm)
+            op.filter(lambda value: isinstance(value, RawTelemetry))
+        ).subscribe(on_next=self.send_tm)
 
         # Send incoming data to raw_tc
         while True:
@@ -29,13 +32,18 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
             data = str(self.request.recv(1024), 'utf-8')
             if not data:
                 break
-            self.server.raw_tc.on_next(data)
+            self.server.log_dev(fr' -> Received socket TC: {data}')
+            self.server.raw_tc.on_next(RawTelecommand(data))
 
         # Dispose observer when connection is closed
         observer.dispose()
 
-    def send_tm(self, rx_value):
-        self.request.sendall(rx_value.encode('utf-8'))
+        self.server.log_info('Remote socket connection has been closed')
+
+    def send_tm(self, raw_tm: RawTelemetry):
+        """ Send raw telemetry over the socket connection """
+        self.server.log_dev(fr' <- Published socket TM: {raw_tm.raw}')
+        self.request.sendall(raw_tm.raw.encode('utf-8'))
 
 
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
@@ -73,6 +81,8 @@ class Driver(ComponentBase):
             ThreadedTCPRequestHandler)
         self._server.raw_tc = self._context.rx['raw_tc']
         self._server.raw_tm = self._context.rx['raw_tm']
+        self._server.log_dev = self._log_dev
+        self._server.log_info = self._log_info
 
         # Start a thread with the server -- that thread will then start one
         # more thread for each request
