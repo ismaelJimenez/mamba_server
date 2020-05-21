@@ -68,6 +68,9 @@ setup(
     install_requires=[
         'PySide2>=5.14',
         'Rx>=3.1.0',
+        'PyVISA>=1.10.1',
+        'PyVISA-sim>=0.3',
+        'PyVISA-py>=0.4.0'
     ],
     extras_require=extras_require,
 )

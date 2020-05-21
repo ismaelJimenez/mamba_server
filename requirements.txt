@@ -1,4 +1,7 @@
 pytest
+pyvisa
+pyvisa-py
+pyvisa-sim
 rx
 pyyaml
 pycodestyle
