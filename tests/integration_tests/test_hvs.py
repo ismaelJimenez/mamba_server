@@ -212,6 +212,12 @@ class TestClass:
         assert '> OK ' in data
         assert ';1;1;0;1\r\n' in data
 
+        # Send single TM - 6. Error
+        self.context.rx['tm'].on_next(
+            Telemetry(tm_id='test', tm_type='error', value='error msg'))
+
+        assert str(sock.recv(1024), 'ascii') == '> ERROR test error msg\r\n'
+
         # Send multiple TM
         self.context.rx['tm'].on_next(Telemetry(tm_id='test_3',
                                                 tm_type='helo'))

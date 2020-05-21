@@ -201,7 +201,7 @@ class TestClass:
         assert isinstance(dummy_test_class.last_value, RawTelemetry)
         assert dummy_test_class.last_value.raw == '> OK test\r\n'
 
-        # Send single TM - 4. Tm
+        # Send single TM - 5. Tm
         self.context.rx['tm'].on_next(
             Telemetry(tm_id='test', tm_type='tm', value=1))
 
@@ -210,12 +210,20 @@ class TestClass:
         assert '> OK test;' in dummy_test_class.last_value.raw
         assert ';1;1;0;1\r\n' in dummy_test_class.last_value.raw
 
+        # Send single TM - 6. Error
+        self.context.rx['tm'].on_next(
+            Telemetry(tm_id='test', tm_type='error', value='error msg'))
+
+        assert dummy_test_class.times_called == 6
+        assert isinstance(dummy_test_class.last_value, RawTelemetry)
+        assert dummy_test_class.last_value.raw == '> ERROR test error msg\r\n'
+
         # Send multiple TM
         self.context.rx['tm'].on_next(Telemetry(tm_id='test_3',
                                                 tm_type='helo'))
         self.context.rx['tm'].on_next(Telemetry(tm_id='test_4',
                                                 tm_type='helo'))
 
-        assert dummy_test_class.times_called == 7
+        assert dummy_test_class.times_called == 8
         assert isinstance(dummy_test_class.last_value, RawTelemetry)
         assert dummy_test_class.last_value.raw == '> OK helo test_4\r\n'
