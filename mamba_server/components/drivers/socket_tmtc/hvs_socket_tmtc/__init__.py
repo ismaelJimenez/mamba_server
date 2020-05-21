@@ -28,7 +28,7 @@ class Driver(ComponentBase):
         # Register to the telemetries provided by the central controller
         self._context.rx['tm'].pipe(
             op.filter(lambda value: isinstance(value, Telemetry))).subscribe(
-                on_next=self._received_tm, on_error=self._received_tm_error)
+                on_next=self._received_tm)
 
     def _received_raw_tc(self, raw_tc: RawTelecommand):
         """ Entry point for processing a new raw telecommand coming from the
@@ -68,20 +68,11 @@ class Driver(ComponentBase):
             raw_tm = f"> OK {telemetry.id};{telemetry.value['return_type']};" \
                      f"{telemetry.value['return_type']};" \
                      f"{telemetry.value['description']};7;4\r\n"
+        elif telemetry.type == 'error':
+            raw_tm = f"> ERROR {telemetry.type} {telemetry.id} {telemetry.value}\r\n"
         else:  # helo and Unrecognized type
             raw_tm = f"> OK {telemetry.type} {telemetry.id}\r\n"
 
         self._log_dev('Published Raw TM')
         self._context.rx['raw_tm'].on_next(RawTelemetry(raw_tm))
 
-    def _received_tm_error(self, error_msg: str):
-        """ Entry point for processing a telemetry error reception.
-
-            Args:
-                error_msg (str): The value published by the subject.
-        """
-        self._log_error('Received TM Error')
-        raw_tm = f"> ERROR {error_msg}\r\n"
-
-        self._log_dev('Published Raw TM')
-        self._context.rx['raw_tm'].on_next(RawTelemetry(raw_tm))
