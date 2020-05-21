@@ -1,0 +1,58 @@
+# As per R&S®SMB100B User Manual. Version 05 (FW: 4.70.006.xx) - 12/02/2020
+spec: "1.0"
+devices:
+  device 1:
+
+    eom:
+      TCPIP INSTR:
+        q: "\r\n"
+        r: "\n"
+
+    dialogues:
+      - q: "*IDN?"
+        r: "Rohde&Schwarz,SMB100B,11400.1000K02/0,4.00.033"
+
+    properties:
+      output_power_enabled:
+        default: '0'
+        getter:
+          q: "OUTP?"
+          r: "0"
+        setter:
+          q: "OUTP {:}"
+
+      frequency_mode:
+        default: 'CW'
+        getter:
+          q: "FREQuency:MODE?"
+          r: "{:}"
+        setter:
+          q: "FREQuency:MODE {:}"
+
+      frequency:
+        default: '100000000'
+        getter:
+          q: "FREQuency:CW?"
+          r: "{:}"
+        setter:
+          q: "FREQuency:CW {:}"
+
+      power:
+        default: '-30'
+        getter:
+          q: "POWer?"
+          r: "{:}"
+        setter:
+          q: "POWer {:}"
+
+      clock_reference:
+        default: 'INT'
+        getter:
+          q: "SOURce:ROSCillator:SOURce?"
+          r: "{:}"
+        setter:
+          q: "SOURce:ROSCillator:SOURce {:}"
+
+resources:
+  TCPIP0::1.2.3.4::INSTR:
+    device: device 1
