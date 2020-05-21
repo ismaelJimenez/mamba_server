@@ -69,10 +69,9 @@ class Driver(ComponentBase):
                      f"{telemetry.value['return_type']};" \
                      f"{telemetry.value['description']};7;4\r\n"
         elif telemetry.type == 'error':
-            raw_tm = f"> ERROR {telemetry.type} {telemetry.id} {telemetry.value}\r\n"
+            raw_tm = f"> ERROR {telemetry.id} {telemetry.value}\r\n"
         else:  # helo and Unrecognized type
             raw_tm = f"> OK {telemetry.type} {telemetry.id}\r\n"
 
         self._log_dev('Published Raw TM')
         self._context.rx['raw_tm'].on_next(RawTelemetry(raw_tm))
-
