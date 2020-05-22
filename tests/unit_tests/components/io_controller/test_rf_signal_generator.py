@@ -499,10 +499,7 @@ class TestClass:
         os.chdir(temp_file_folder)
 
         component = RfSignalGenerator(
-            self.context,
-            local_config={
-                'visa-sim': temp_file_name
-            })
+            self.context, local_config={'visa-sim': temp_file_name})
         component.initialize()
 
         temp_file.close()
@@ -511,8 +508,7 @@ class TestClass:
         """ Test component creation behaviour with default context """
         os.chdir('/tmp')
 
-        component = RfSignalGenerator(
-            self.context)
+        component = RfSignalGenerator(self.context)
         component.initialize()
 
     def test_w_custom_context(self):
@@ -841,8 +837,7 @@ class TestClass:
             RfSignalGenerator(self.context, local_config={
                 'topics': 'wrong'
             }).initialize()
-        assert "Topics configuration: wrong format" in str(
-            excinfo.value)
+        assert "Topics configuration: wrong format" in str(excinfo.value)
 
         # In case no new topics are given, use the default ones
         component = RfSignalGenerator(self.context,
@@ -859,11 +854,223 @@ class TestClass:
                               }).initialize()
         assert "Visa-sim file has not been found" in str(excinfo.value)
 
+        # In case properties do not have a getter, setter or default
+        component = RfSignalGenerator(
+            self.context, local_config={'parameters': {
+                'new_param': {}
+            }})
+        component.initialize()
+
+        assert component._shared_memory == {
+            'connected': False,
+            'new_param': None,
+            'query_raw_result': ''
+        }
+
+    def test_io_signature_publication(self):
+        """ Test component io_signature observable """
+        dummy_test_class = DummyTestClass()
+
+        # Subscribe to the topic that shall be published
+        self.context.rx['io_service_signature'].pipe(
+            op.filter(lambda value: isinstance(value, dict))).subscribe(
+                dummy_test_class.test_function)
+
+        component = RfSignalGenerator(self.context)
+        component.initialize()
+
+        time.sleep(.1)
+
+        assert dummy_test_class.times_called == 1
+        assert dummy_test_class.last_value == {
+            'SMB_CLOCK_SRC': {
+                'description': 'Sets the source of the reference frequency',
+                'signature': ['String']
+            },
+            'SMB_CONNECT': {
+                'description': 'Establish Connection with SMB',
+                'signature': []
+            },
+            'SMB_CW_FREQ': {
+                'description': 'Sets the frequency of the RF output signal',
+                'signature': ['Int']
+            },
+            'SMB_DISCONNECT': {
+                'description': 'Close connection with SMB',
+                'signature': []
+            },
+            'SMB_FREQ_MODE': {
+                'description': 'Set the frequency mode for generating the '
+                'RF output signal',
+                'signature': ['String']
+            },
+            'SMB_OUT_POWER': {
+                'description': 'Set the RF output signal',
+                'signature': ['String']
+            },
+            'SMB_POWER_LEVEL': {
+                'description': 'Sets the RF level applied to the device '
+                'under tests',
+                'signature': ['Float']
+            },
+            'SMB_QUERY_CLOCK_SRC': {
+                'description': 'Query the source of the reference '
+                'frequency',
+                'signature': []
+            },
+            'SMB_QUERY_CONNECTED': {
+                'description': 'Query the connection status to the '
+                'instrument',
+                'signature': []
+            },
+            'SMB_QUERY_CW_FREQ': {
+                'description': 'Query the frequency of the RF output '
+                'signal',
+                'signature': []
+            },
+            'SMB_QUERY_FREQ_MODE': {
+                'description': 'Query the frequency mode for '
+                'generating the RF output signal',
+                'signature': []
+            },
+            'SMB_QUERY_IDN': {
+                'description': 'Query the instrument identification',
+                'signature': []
+            },
+            'SMB_QUERY_OUT_POWER': {
+                'description': 'Query the RF output signal',
+                'signature': []
+            },
+            'SMB_QUERY_POWER_LEVEL': {
+                'description': 'Query the RF level applied to the '
+                'device under tests',
+                'signature': []
+            },
+            'SMB_RAW': {
+                'description': 'Send a raw command to the instrument',
+                'signature': ['String']
+            },
+            'SMB_RST': {
+                'description': 'Clear the output buffer',
+                'signature': []
+            },
+            'SMB_TC_QUERY_RAW': {
+                'description': 'Perform raw query to the instrument',
+                'signature': ['String']
+            },
+            'SMB_TM_QUERY_RAW': {
+                'description': 'Retrieve the value of the last raw query',
+                'signature': []
+            }
+        }
+
+        component = RfSignalGenerator(
+            self.context,
+            local_config={
+                'topics': {
+                    'CUSTOM_TOPIC': {
+                        'command': 'SOURce:ROSCillator:SOURce {:}',
+                        'description': 'Sets the source of the reference '
+                        'frequency',
+                        'signature': ['String']
+                    }
+                }
+            })
+        component.initialize()
+
+        time.sleep(.1)
+
+        assert dummy_test_class.times_called == 2
+        assert dummy_test_class.last_value == {
+            'CUSTOM_TOPIC': {
+                'description': 'Sets the source of the reference frequency',
+                'signature': ['String']
+            },
+            'SMB_CLOCK_SRC': {
+                'description': 'Sets the source of the reference frequency',
+                'signature': ['String']
+            },
+            'SMB_CONNECT': {
+                'description': 'Establish Connection with SMB',
+                'signature': []
+            },
+            'SMB_CW_FREQ': {
+                'description': 'Sets the frequency of the RF output signal',
+                'signature': ['Int']
+            },
+            'SMB_DISCONNECT': {
+                'description': 'Close connection with SMB',
+                'signature': []
+            },
+            'SMB_FREQ_MODE': {
+                'description': 'Set the frequency mode for generating the '
+                'RF output signal',
+                'signature': ['String']
+            },
+            'SMB_OUT_POWER': {
+                'description': 'Set the RF output signal',
+                'signature': ['String']
+            },
+            'SMB_POWER_LEVEL': {
+                'description': 'Sets the RF level applied to the device '
+                'under tests',
+                'signature': ['Float']
+            },
+            'SMB_QUERY_CLOCK_SRC': {
+                'description': 'Query the source of the reference '
+                'frequency',
+                'signature': []
+            },
+            'SMB_QUERY_CONNECTED': {
+                'description': 'Query the connection status to the '
+                'instrument',
+                'signature': []
+            },
+            'SMB_QUERY_CW_FREQ': {
+                'description': 'Query the frequency of the RF output '
+                'signal',
+                'signature': []
+            },
+            'SMB_QUERY_FREQ_MODE': {
+                'description': 'Query the frequency mode for '
+                'generating the RF output signal',
+                'signature': []
+            },
+            'SMB_QUERY_IDN': {
+                'description': 'Query the instrument identification',
+                'signature': []
+            },
+            'SMB_QUERY_OUT_POWER': {
+                'description': 'Query the RF output signal',
+                'signature': []
+            },
+            'SMB_QUERY_POWER_LEVEL': {
+                'description': 'Query the RF level applied to the '
+                'device under tests',
+                'signature': []
+            },
+            'SMB_RAW': {
+                'description': 'Send a raw command to the instrument',
+                'signature': ['String']
+            },
+            'SMB_RST': {
+                'description': 'Clear the output buffer',
+                'signature': []
+            },
+            'SMB_TC_QUERY_RAW': {
+                'description': 'Perform raw query to the instrument',
+                'signature': ['String']
+            },
+            'SMB_TM_QUERY_RAW': {
+                'description': 'Retrieve the value of the last raw query',
+                'signature': []
+            }
+        }
+
     def test_io_service_request_observer(self):
         """ Test component io_service_request observer """
         component = RfSignalGenerator(self.context)
         component.initialize()
-
         dummy_test_class = DummyTestClass()
 
         # Subscribe to the topic that shall be published
@@ -1012,8 +1219,9 @@ class TestClass:
                 dummy_test_class.test_function)
 
         # Test simulated normal connection to the instrument
-        component = RfSignalGenerator(self.context,
-                                      local_config={'resource-name': 'TCPIP0::4.3.2.1::INSTR'})
+        component = RfSignalGenerator(
+            self.context,
+            local_config={'resource-name': 'TCPIP0::4.3.2.1::INSTR'})
         component.initialize()
 
         assert component._inst is None
