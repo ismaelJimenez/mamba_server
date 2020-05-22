@@ -98,19 +98,20 @@ class VisaControllerBase(ComponentBase):
         }
 
         # Compose shared memory data dictionaries
-        for key, service_data in self._configuration['parameters'].items():
-            # Initialize shared memory with given value, if any
-            self._shared_memory[key] = service_data.get('default')
+        if 'parameters' in self._configuration:
+            for key, service_data in self._configuration['parameters'].items():
+                # Initialize shared memory with given value, if any
+                self._shared_memory[key] = service_data.get('default')
 
-            # Compose dict assigning each getter with his memory slot
-            if 'getter' in service_data:
-                for getter, value in service_data['getter'].items():
-                    self._shared_memory_getter[getter] = key
+                # Compose dict assigning each getter with his memory slot
+                if 'getter' in service_data:
+                    for getter, value in service_data['getter'].items():
+                        self._shared_memory_getter[getter] = key
 
-            # Compose dict assigning each setter with his memory slot
-            if 'setter' in service_data:
-                for setter, value in service_data['setter'].items():
-                    self._shared_memory_setter[setter] = key
+                # Compose dict assigning each setter with his memory slot
+                if 'setter' in service_data:
+                    for setter, value in service_data['setter'].items():
+                        self._shared_memory_setter[setter] = key
 
         # Publish services signature
         self._context.rx['io_service_signature'].on_next(services_sig)
@@ -140,7 +141,9 @@ class VisaControllerBase(ComponentBase):
             if self._inst is not None:
                 self._inst.timeout = 3000  # Default timeout
 
-                self._shared_memory[self._shared_memory_setter[result.id]] = 1
+                if result.id in self._shared_memory_setter:
+                    self._shared_memory[self._shared_memory_setter[
+                        result.id]] = 1
 
                 self._log_dev("Established connection to SMB")
 
@@ -153,7 +156,8 @@ class VisaControllerBase(ComponentBase):
     def _visa_disconnect(self, result: Telemetry):
         if self._inst is not None:
             self._inst.close()
-            self._shared_memory[self._shared_memory_setter[result.id]] = 0
+            if result.id in self._shared_memory_setter:
+                self._shared_memory[self._shared_memory_setter[result.id]] = 0
             self._log_dev("Closed connection to SMB")
 
     def _service_preprocessing(self, service_request: IoServiceRequest):
@@ -189,6 +193,11 @@ class VisaControllerBase(ComponentBase):
         elif self._service_signatures[
                 service_request.id]['return_type'] is not None:
             try:
+                if (len(self._service_signatures[service_request.id]
+                        ['signature'])
+                        == 1) and (len(service_request.args) > 1):
+                    service_request.args = [' '.join(service_request.args)]
+
                 value = self._inst.query(
                     self._service_signatures[service_request.id]
                     ['command'].format(*service_request.args)).replace(
@@ -204,6 +213,11 @@ class VisaControllerBase(ComponentBase):
                 result.value = 'Not possible to communicate to the instrument'
         else:
             try:
+                if (len(self._service_signatures[service_request.id]
+                        ['signature'])
+                        == 1) and (len(service_request.args) > 1):
+                    service_request.args = [' '.join(service_request.args)]
+
                 self._inst.write(self._service_signatures[service_request.id]
                                  ['command'].format(*service_request.args))
             except OSError:

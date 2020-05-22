@@ -193,7 +193,7 @@ class TestClass:
         assert component._shared_memory_getter == {}
         assert component._shared_memory_setter == {}
         assert component._service_signatures == {}
-        assert component._custom_process == ['SMB_RAW']
+        assert component._custom_process == []
         assert component._inst is None
         assert component._simulation_file is None
 
@@ -485,7 +485,7 @@ class TestClass:
                 'signature': []
             }
         }
-        assert component._custom_process == ['SMB_RAW']
+        assert component._custom_process == []
         assert component._inst is None
         assert 'rs_smb100b.yaml' in component._simulation_file
 
@@ -825,7 +825,7 @@ class TestClass:
                 'signature': []
             }
         }
-        assert component._custom_process == ['SMB_RAW']
+        assert component._custom_process == []
         assert component._inst is None
         assert component._simulation_file is None
 

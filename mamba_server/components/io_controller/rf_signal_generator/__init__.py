@@ -14,10 +14,8 @@ class RfSignalGenerator(VisaControllerBase):
 
         # Initialize custom variables
         self._custom_process = [
-            'SMB_RAW'
         ]  # All the services that require custom processing
 
     def _service_preprocessing(self, service_request: IoServiceRequest):
         """ Entry point for running a component service """
-        if service_request.id == 'SMB_RAW':
-            service_request.args = [' '.join(service_request.args)]
+        pass
