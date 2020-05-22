@@ -149,9 +149,7 @@ class VisaControllerBase(ComponentBase):
 
         except pyvisa.errors.VisaIOError:
             result.type = 'error'
-            result.value = "Connection to SMB failed: Insufficient location " \
-                           "information or the requested device or resource " \
-                           "is not present in the system"
+            result.value = "Instrument is unreachable"
 
     def _visa_disconnect(self, result: Telemetry):
         if self._inst is not None:
