@@ -123,35 +123,28 @@ class VisaControllerBase(ComponentBase):
                           on_next=self._run_command)
 
     def _visa_connect(self, result: Telemetry):
-        try:
-            if self._configuration.get('visa-sim'):
-                self._inst = pyvisa.ResourceManager(
-                    f"{self._simulation_file}@sim").open_resource(
-                        self._configuration['resource-name'],
-                        read_termination='\n')
-            else:
-                try:
-                    self._inst = pyvisa.ResourceManager().open_resource(
-                        self._configuration['resource-name'],
-                        read_termination='\n')
-                except (OSError, pyvisa.errors.VisaIOError):
-                    result.type = 'error'
-                    result.value = 'Instrument is unreachable'
+        if self._configuration.get('visa-sim'):
+            self._inst = pyvisa.ResourceManager(
+                f"{self._simulation_file}@sim").open_resource(
+                    self._configuration['resource-name'],
+                    read_termination='\n')
+        else:
+            try:
+                self._inst = pyvisa.ResourceManager().open_resource(
+                    self._configuration['resource-name'],
+                    read_termination='\n')
+            except (OSError, pyvisa.errors.VisaIOError):
+                result.type = 'error'
+                result.value = 'Instrument is unreachable'
 
-            if self._inst is not None:
-                self._inst.timeout = 3000  # Default timeout
+        if self._inst is not None:
+            self._inst.timeout = 3000  # Default timeout
 
-                if result.id in self._shared_memory_setter:
-                    self._shared_memory[self._shared_memory_setter[
-                        result.id]] = 1
+            if result.id in self._shared_memory_setter:
+                self._shared_memory[self._shared_memory_setter[
+                    result.id]] = 1
 
-                self._log_dev("Established connection to SMB")
-
-        except pyvisa.errors.VisaIOError:
-            result.type = 'error'
-            result.value = "Connection to SMB failed: Insufficient location " \
-                           "information or the requested device or resource " \
-                           "is not present in the system"
+            self._log_dev("Established connection to SMB")
 
     def _visa_disconnect(self, result: Telemetry):
         if self._inst is not None:
