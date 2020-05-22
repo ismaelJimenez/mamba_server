@@ -20,4 +20,4 @@ services:
 
   # IO Controllers
   shutdown:
-  smb:
+  rf_signal_generator:

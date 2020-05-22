@@ -1,12 +1,14 @@
 name: smb100b
-visa-sim: simulator/signal_generator/rs_smb100b.yaml
+visa-sim: simulator/rf_signal_generator/rs_smb100b.yaml
 resource-name: TCPIP0::1.2.3.4::INSTR
 
 topics:
   SMB_CONNECT:
+    key: '@connect'
     description: Establish Connection with SMB
 
   SMB_DISCONNECT:
+    key: '@disconnect'
     description: Close connection with SMB
 
   SMB_RST:
@@ -84,7 +86,19 @@ topics:
     return_type: String
     command: '{:}'
 
+  SMB_QUERY_CONNECTED:
+    description: Query the connection status to the instrument
+    return_type: Bool
+
 parameters:
+  connected:
+    default: false
+    setter:
+      SMB_CONNECT:
+      SMB_DISCONNECT:
+    getter:
+      SMB_QUERY_CONNECTED:
+
   query_raw_result:
     default: ''
     setter:
