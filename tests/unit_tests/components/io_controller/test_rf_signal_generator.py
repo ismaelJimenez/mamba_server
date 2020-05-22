@@ -1,6 +1,7 @@
 import os
 import pytest
 import time
+from tempfile import NamedTemporaryFile
 
 from rx import operators as op
 
@@ -488,6 +489,32 @@ class TestClass:
         assert component._inst is None
         assert 'rs_smb100b.yaml' in component._simulation_file
 
+    def test_visa_sim_local_from_project_folder(self):
+        """ Test component creation behaviour with default context """
+        temp_file = NamedTemporaryFile(delete=False)
+
+        temp_file_folder = temp_file.name.rsplit('/', 1)[0]
+        temp_file_name = temp_file.name.rsplit('/', 1)[1]
+
+        os.chdir(temp_file_folder)
+
+        component = RfSignalGenerator(
+            self.context,
+            local_config={
+                'visa-sim': temp_file_name
+            })
+        component.initialize()
+
+        temp_file.close()
+
+    def test_visa_sim_mamba_from_project_folder(self):
+        """ Test component creation behaviour with default context """
+        os.chdir('/tmp')
+
+        component = RfSignalGenerator(
+            self.context)
+        component.initialize()
+
     def test_w_custom_context(self):
         """ Test component creation behaviour with default context """
         component = RfSignalGenerator(
@@ -814,7 +841,7 @@ class TestClass:
             RfSignalGenerator(self.context, local_config={
                 'topics': 'wrong'
             }).initialize()
-        assert "Topics configuration is not a valid dictionary" in str(
+        assert "Topics configuration: wrong format" in str(
             excinfo.value)
 
         # In case no new topics are given, use the default ones
