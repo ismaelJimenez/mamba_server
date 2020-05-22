@@ -80,7 +80,7 @@ class TestClass:
             }
         }) == {
             1: {
-                'a': 'A'
+                'a': None
             },
             2: {
                 'b': 'B'

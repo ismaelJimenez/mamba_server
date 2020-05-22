@@ -14,7 +14,7 @@ def merge_dicts(dict_1, dict_2):
 
     result = dict_1
     for key in dict_2:
-        if key in dict_1 and not dict_1[key] is None:
+        if key in dict_1:
             if isinstance(dict_1[key], dict) and isinstance(dict_2[key], dict):
                 merge_dicts(dict_1[key], dict_2[key])
         else:
