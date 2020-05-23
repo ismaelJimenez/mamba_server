@@ -17,78 +17,77 @@ topics:
 
   SMB_RAW:
     description: Send a raw command to the instrument
-    signature: [String]
+    signature: [[str], None]
     command: '{:}'
 
   SMB_FREQ_MODE:
     description: Set the frequency mode for generating the RF output signal
-    signature: [String]
+    signature: [[str], None]
     command: 'FREQuency:MODE {:}'
 
   SMB_OUT_POWER:
     description: Set the RF output signal
-    signature: [String]
+    signature: [[str], None]
     command: 'OUTP {:}'
 
   SMB_CW_FREQ:
     description: Sets the frequency of the RF output signal
-    signature: [Int]
+    signature: [[int], None]
     command: 'FREQuency:CW {:}'
 
   SMB_CLOCK_SRC:
     description: Sets the source of the reference frequency
-    signature: [String]
+    signature: [[str], None]
     command: 'SOURce:ROSCillator:SOURce {:}'
 
   SMB_POWER_LEVEL:
     description: Sets the RF level applied to the device under tests
-    signature: [Float]
+    signature: [[float], None]
     command: 'POWer {:}'
 
   SMB_TC_QUERY_RAW:
     description: Perform raw query to the instrument
-    signature: [String]
-    return_type: String
+    signature: [[str], str]
     command: '{:}'
 
   SMB_QUERY_IDN:
     description: Query the instrument identification
-    return_type: String
+    signature: [[], str]
     command: '*IDN?'
 
   SMB_QUERY_OUT_POWER:
     description: Query the RF output signal
-    return_type: Int
+    signature: [[], int]
     command: 'OUTP?'
 
   SMB_QUERY_FREQ_MODE:
     description: Query the frequency mode for generating the RF output signal
-    return_type: String
+    signature: [[], str]
     command: 'FREQuency:MODE?'
 
   SMB_QUERY_CW_FREQ:
     description: Query the frequency of the RF output signal
-    return_type: Int
+    signature: [[], int]
     command: 'FREQuency:CW?'
 
   SMB_QUERY_CLOCK_SRC:
     description: Query the source of the reference frequency
-    return_type: String
+    signature: [[], str]
     command: 'SOURce:ROSCillator:SOURce?'
 
   SMB_QUERY_POWER_LEVEL:
     description: Query the RF level applied to the device under tests
-    return_type: Float
+    signature: [[], float]
     command: 'POWer?'
 
   SMB_TM_QUERY_RAW:
     description: Retrieve the value of the last raw query
-    return_type: String
+    signature: [[], str]
     command: '{:}'
 
   SMB_QUERY_CONNECTED:
     description: Query the connection status to the instrument
-    return_type: Bool
+    signature: [[], bool]
 
 parameters:
   connected:

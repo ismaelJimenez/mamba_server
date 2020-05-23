@@ -84,7 +84,7 @@ class TestClass:
                     'command': 'SOURce:ROSCillator:SOURce {:}',
                     'description': 'Sets the source of the reference '
                     'frequency',
-                    'signature': ['String']
+                    'signature': [['str'], 'None']
                 },
                 'SMB_CONNECT': {
                     'description': 'Establish Connection with SMB',
@@ -94,7 +94,7 @@ class TestClass:
                     'command': 'FREQuency:CW {:}',
                     'description': 'Sets the frequency of the RF '
                     'output signal',
-                    'signature': ['Int']
+                    'signature': [['int'], 'None']
                 },
                 'SMB_DISCONNECT': {
                     'description': 'Close connection with SMB',
@@ -104,35 +104,35 @@ class TestClass:
                     'command': 'FREQuency:MODE {:}',
                     'description': 'Set the frequency mode for '
                     'generating the RF output signal',
-                    'signature': ['String']
+                    'signature': [['str'], 'None']
                 },
                 'SMB_OUT_POWER': {
                     'command': 'OUTP {:}',
                     'description': 'Set the RF output signal',
-                    'signature': ['String']
+                    'signature': [['str'], 'None']
                 },
                 'SMB_POWER_LEVEL': {
                     'command': 'POWer {:}',
                     'description': 'Sets the RF level applied to '
                     'the device under tests',
-                    'signature': ['Float']
+                    'signature': [['float'], 'None']
                 },
                 'SMB_QUERY_CLOCK_SRC': {
                     'command': 'SOURce:ROSCillator:SOURce?',
                     'description': 'Query the source of the '
                     'reference frequency',
-                    'return_type': 'String'
+                    'signature': [[], 'str']
                 },
                 'SMB_QUERY_CONNECTED': {
                     'description': 'Query the connection '
                     'status to the instrument',
-                    'return_type': 'Bool'
+                    'signature': [[], 'bool']
                 },
                 'SMB_QUERY_CW_FREQ': {
                     'command': 'FREQuency:CW?',
                     'description': 'Query the frequency of the '
                     'RF output signal',
-                    'return_type': 'Int'
+                    'signature': [[], 'int']
                 },
                 'SMB_QUERY_FREQ_MODE': {
                     'command':
@@ -141,31 +141,30 @@ class TestClass:
                     'Query the frequency mode '
                     'for generating the RF '
                     'output signal',
-                    'return_type':
-                    'String'
+                    'signature': [[], 'str']
                 },
                 'SMB_QUERY_IDN': {
                     'command': '*IDN?',
                     'description': 'Query the instrument '
                     'identification',
-                    'return_type': 'String'
+                    'signature': [[], 'str']
                 },
                 'SMB_QUERY_OUT_POWER': {
                     'command': 'OUTP?',
                     'description': 'Query the RF output signal',
-                    'return_type': 'Int'
+                    'signature': [[], 'int']
                 },
                 'SMB_QUERY_POWER_LEVEL': {
                     'command': 'POWer?',
                     'description': 'Query the RF level '
                     'applied to the device '
                     'under tests',
-                    'return_type': 'Float'
+                    'signature': [[], 'float']
                 },
                 'SMB_RAW': {
                     'command': '{:}',
                     'description': 'Send a raw command to the instrument',
-                    'signature': ['String']
+                    'signature': [['str'], 'None']
                 },
                 'SMB_RST': {
                     'command': '*CLS',
@@ -175,14 +174,13 @@ class TestClass:
                     'command': '{:}',
                     'description': 'Perform raw query to the '
                     'instrument',
-                    'return_type': 'String',
-                    'signature': ['String']
+                    'signature': [['str'], 'str']
                 },
                 'SMB_TM_QUERY_RAW': {
                     'command': '{:}',
                     'description': 'Retrieve the value of the '
                     'last raw query',
-                    'return_type': 'String'
+                    'signature': [[], 'str']
                 }
             },
             'visa-sim': 'simulator/rf_signal_generator/rs_smb100b.yaml'
@@ -192,7 +190,7 @@ class TestClass:
         assert component._shared_memory == {}
         assert component._shared_memory_getter == {}
         assert component._shared_memory_setter == {}
-        assert component._service_signatures == {}
+        assert component._service_info == {}
         assert component._custom_process == []
         assert component._inst is None
         assert component._simulation_file is None
@@ -232,7 +230,7 @@ class TestClass:
                     'command': 'SOURce:ROSCillator:SOURce {:}',
                     'description': 'Sets the source of the reference '
                     'frequency',
-                    'signature': ['String']
+                    'signature': [['str'], 'None']
                 },
                 'SMB_CONNECT': {
                     'description': 'Establish Connection with SMB',
@@ -242,7 +240,7 @@ class TestClass:
                     'command': 'FREQuency:CW {:}',
                     'description': 'Sets the frequency of the RF '
                     'output signal',
-                    'signature': ['Int']
+                    'signature': [['int'], 'None']
                 },
                 'SMB_DISCONNECT': {
                     'description': 'Close connection with SMB',
@@ -252,35 +250,35 @@ class TestClass:
                     'command': 'FREQuency:MODE {:}',
                     'description': 'Set the frequency mode for '
                     'generating the RF output signal',
-                    'signature': ['String']
+                    'signature': [['str'], 'None']
                 },
                 'SMB_OUT_POWER': {
                     'command': 'OUTP {:}',
                     'description': 'Set the RF output signal',
-                    'signature': ['String']
+                    'signature': [['str'], 'None']
                 },
                 'SMB_POWER_LEVEL': {
                     'command': 'POWer {:}',
                     'description': 'Sets the RF level applied to '
                     'the device under tests',
-                    'signature': ['Float']
+                    'signature': [['float'], 'None']
                 },
                 'SMB_QUERY_CLOCK_SRC': {
                     'command': 'SOURce:ROSCillator:SOURce?',
                     'description': 'Query the source of the '
                     'reference frequency',
-                    'return_type': 'String'
+                    'signature': [[], 'str']
                 },
                 'SMB_QUERY_CONNECTED': {
                     'description': 'Query the connection '
                     'status to the instrument',
-                    'return_type': 'Bool'
+                    'signature': [[], 'bool']
                 },
                 'SMB_QUERY_CW_FREQ': {
                     'command': 'FREQuency:CW?',
                     'description': 'Query the frequency of the '
                     'RF output signal',
-                    'return_type': 'Int'
+                    'signature': [[], 'int']
                 },
                 'SMB_QUERY_FREQ_MODE': {
                     'command':
@@ -289,31 +287,30 @@ class TestClass:
                     'Query the frequency mode '
                     'for generating the RF '
                     'output signal',
-                    'return_type':
-                    'String'
+                    'signature': [[], 'str']
                 },
                 'SMB_QUERY_IDN': {
                     'command': '*IDN?',
                     'description': 'Query the instrument '
                     'identification',
-                    'return_type': 'String'
+                    'signature': [[], 'str']
                 },
                 'SMB_QUERY_OUT_POWER': {
                     'command': 'OUTP?',
                     'description': 'Query the RF output signal',
-                    'return_type': 'Int'
+                    'signature': [[], 'int']
                 },
                 'SMB_QUERY_POWER_LEVEL': {
                     'command': 'POWer?',
                     'description': 'Query the RF level '
                     'applied to the device '
                     'under tests',
-                    'return_type': 'Float'
+                    'signature': [[], 'float']
                 },
                 'SMB_RAW': {
                     'command': '{:}',
                     'description': 'Send a raw command to the instrument',
-                    'signature': ['String']
+                    'signature': [['str'], 'None']
                 },
                 'SMB_RST': {
                     'command': '*CLS',
@@ -323,14 +320,13 @@ class TestClass:
                     'command': '{:}',
                     'description': 'Perform raw query to the '
                     'instrument',
-                    'return_type': 'String',
-                    'signature': ['String']
+                    'signature': [['str'], 'str']
                 },
                 'SMB_TM_QUERY_RAW': {
                     'command': '{:}',
                     'description': 'Retrieve the value of the '
                     'last raw query',
-                    'return_type': 'String'
+                    'signature': [[], 'str']
                 }
             },
             'visa-sim': 'simulator/rf_signal_generator/rs_smb100b.yaml'
@@ -350,139 +346,121 @@ class TestClass:
             'SMB_DISCONNECT': 'connected',
             'SMB_TC_QUERY_RAW': 'query_raw_result'
         }
-        assert component._service_signatures == {
+        assert component._service_info == {
             'SMB_CLOCK_SRC': {
                 'command': 'SOURce:ROSCillator:SOURce {:}',
                 'description': 'Sets the source of the reference frequency',
                 'key': None,
-                'return_type': None,
-                'signature': ['String']
+                'signature': [['str'], 'None']
             },
             'SMB_CONNECT': {
                 'command': None,
                 'description': 'Establish Connection with SMB',
                 'key': '@connect',
-                'return_type': None,
-                'signature': []
+                'signature': [[], None]
             },
             'SMB_CW_FREQ': {
                 'command': 'FREQuency:CW {:}',
                 'description': 'Sets the frequency of the RF output signal',
                 'key': None,
-                'return_type': None,
-                'signature': ['Int']
+                'signature': [['int'], 'None']
             },
             'SMB_DISCONNECT': {
                 'command': None,
                 'description': 'Close connection with SMB',
                 'key': '@disconnect',
-                'return_type': None,
-                'signature': []
+                'signature': [[], None]
             },
             'SMB_FREQ_MODE': {
                 'command': 'FREQuency:MODE {:}',
                 'description': 'Set the frequency mode for generating the '
                 'RF output signal',
                 'key': None,
-                'return_type': None,
-                'signature': ['String']
+                'signature': [['str'], 'None']
             },
             'SMB_OUT_POWER': {
                 'command': 'OUTP {:}',
                 'description': 'Set the RF output signal',
                 'key': None,
-                'return_type': None,
-                'signature': ['String']
+                'signature': [['str'], 'None']
             },
             'SMB_POWER_LEVEL': {
                 'command': 'POWer {:}',
                 'description': 'Sets the RF level applied to the device '
                 'under tests',
                 'key': None,
-                'return_type': None,
-                'signature': ['Float']
+                'signature': [['float'], 'None']
             },
             'SMB_QUERY_CLOCK_SRC': {
                 'command': 'SOURce:ROSCillator:SOURce?',
                 'description': 'Query the source of the reference '
                 'frequency',
                 'key': None,
-                'return_type': 'String',
-                'signature': []
+                'signature': [[], 'str']
             },
             'SMB_QUERY_CONNECTED': {
                 'command': None,
                 'description': 'Query the connection status to the '
                 'instrument',
                 'key': None,
-                'return_type': 'Bool',
-                'signature': []
+                'signature': [[], 'bool']
             },
             'SMB_QUERY_CW_FREQ': {
                 'command': 'FREQuency:CW?',
                 'description': 'Query the frequency of the RF output '
                 'signal',
                 'key': None,
-                'return_type': 'Int',
-                'signature': []
+                'signature': [[], 'int']
             },
             'SMB_QUERY_FREQ_MODE': {
                 'command': 'FREQuency:MODE?',
                 'description': 'Query the frequency mode for '
                 'generating the RF output signal',
                 'key': None,
-                'return_type': 'String',
-                'signature': []
+                'signature': [[], 'str']
             },
             'SMB_QUERY_IDN': {
                 'command': '*IDN?',
                 'description': 'Query the instrument identification',
                 'key': None,
-                'return_type': 'String',
-                'signature': []
+                'signature': [[], 'str']
             },
             'SMB_QUERY_OUT_POWER': {
                 'command': 'OUTP?',
                 'description': 'Query the RF output signal',
                 'key': None,
-                'return_type': 'Int',
-                'signature': []
+                'signature': [[], 'int']
             },
             'SMB_QUERY_POWER_LEVEL': {
                 'command': 'POWer?',
                 'description': 'Query the RF level applied to the '
                 'device under tests',
                 'key': None,
-                'return_type': 'Float',
-                'signature': []
+                'signature': [[], 'float']
             },
             'SMB_RAW': {
                 'command': '{:}',
                 'description': 'Send a raw command to the instrument',
                 'key': None,
-                'return_type': None,
-                'signature': ['String']
+                'signature': [['str'], 'None']
             },
             'SMB_RST': {
                 'command': '*CLS',
                 'description': 'Clear the output buffer',
                 'key': None,
-                'return_type': None,
-                'signature': []
+                'signature': [[], None]
             },
             'SMB_TC_QUERY_RAW': {
                 'command': '{:}',
                 'description': 'Perform raw query to the instrument',
                 'key': None,
-                'return_type': 'String',
-                'signature': ['String']
+                'signature': [['str'], 'str']
             },
             'SMB_TM_QUERY_RAW': {
                 'command': '{:}',
                 'description': 'Retrieve the value of the last raw query',
                 'key': None,
-                'return_type': 'String',
-                'signature': []
+                'signature': [[], 'str']
             }
         }
         assert component._custom_process == []
@@ -523,7 +501,7 @@ class TestClass:
                         'command': 'SOURce:ROSCillator:SOURce {:}',
                         'description': 'Sets the source of the reference '
                         'frequency',
-                        'signature': ['String']
+                        'signature': [['str'], None]
                     }
                 }
             })
@@ -559,13 +537,13 @@ class TestClass:
                     'command': 'SOURce:ROSCillator:SOURce {:}',
                     'description': 'Sets the source of the reference '
                     'frequency',
-                    'signature': ['String']
+                    'signature': [['str'], None]
                 },
                 'SMB_CLOCK_SRC': {
                     'command': 'SOURce:ROSCillator:SOURce {:}',
                     'description': 'Sets the source of the reference '
                     'frequency',
-                    'signature': ['String']
+                    'signature': [['str'], 'None']
                 },
                 'SMB_CONNECT': {
                     'description': 'Establish Connection with SMB',
@@ -575,7 +553,7 @@ class TestClass:
                     'command': 'FREQuency:CW {:}',
                     'description': 'Sets the frequency of the RF '
                     'output signal',
-                    'signature': ['Int']
+                    'signature': [['int'], 'None']
                 },
                 'SMB_DISCONNECT': {
                     'description': 'Close connection with SMB',
@@ -585,35 +563,35 @@ class TestClass:
                     'command': 'FREQuency:MODE {:}',
                     'description': 'Set the frequency mode for '
                     'generating the RF output signal',
-                    'signature': ['String']
+                    'signature': [['str'], 'None']
                 },
                 'SMB_OUT_POWER': {
                     'command': 'OUTP {:}',
                     'description': 'Set the RF output signal',
-                    'signature': ['String']
+                    'signature': [['str'], 'None']
                 },
                 'SMB_POWER_LEVEL': {
                     'command': 'POWer {:}',
                     'description': 'Sets the RF level applied to '
                     'the device under tests',
-                    'signature': ['Float']
+                    'signature': [['float'], 'None']
                 },
                 'SMB_QUERY_CLOCK_SRC': {
                     'command': 'SOURce:ROSCillator:SOURce?',
                     'description': 'Query the source of the '
                     'reference frequency',
-                    'return_type': 'String'
+                    'signature': [[], 'str']
                 },
                 'SMB_QUERY_CONNECTED': {
                     'description': 'Query the connection '
                     'status to the instrument',
-                    'return_type': 'Bool'
+                    'signature': [[], 'bool']
                 },
                 'SMB_QUERY_CW_FREQ': {
                     'command': 'FREQuency:CW?',
                     'description': 'Query the frequency of the '
                     'RF output signal',
-                    'return_type': 'Int'
+                    'signature': [[], 'int']
                 },
                 'SMB_QUERY_FREQ_MODE': {
                     'command':
@@ -622,31 +600,30 @@ class TestClass:
                     'Query the frequency mode '
                     'for generating the RF '
                     'output signal',
-                    'return_type':
-                    'String'
+                    'signature': [[], 'str']
                 },
                 'SMB_QUERY_IDN': {
                     'command': '*IDN?',
                     'description': 'Query the instrument '
                     'identification',
-                    'return_type': 'String'
+                    'signature': [[], 'str']
                 },
                 'SMB_QUERY_OUT_POWER': {
                     'command': 'OUTP?',
                     'description': 'Query the RF output signal',
-                    'return_type': 'Int'
+                    'signature': [[], 'int']
                 },
                 'SMB_QUERY_POWER_LEVEL': {
                     'command': 'POWer?',
                     'description': 'Query the RF level '
                     'applied to the device '
                     'under tests',
-                    'return_type': 'Float'
+                    'signature': [[], 'float']
                 },
                 'SMB_RAW': {
                     'command': '{:}',
                     'description': 'Send a raw command to the instrument',
-                    'signature': ['String']
+                    'signature': [['str'], 'None']
                 },
                 'SMB_RST': {
                     'command': '*CLS',
@@ -656,14 +633,13 @@ class TestClass:
                     'command': '{:}',
                     'description': 'Perform raw query to the '
                     'instrument',
-                    'return_type': 'String',
-                    'signature': ['String']
+                    'signature': [['str'], 'str']
                 },
                 'SMB_TM_QUERY_RAW': {
                     'command': '{:}',
                     'description': 'Retrieve the value of the '
                     'last raw query',
-                    'return_type': 'String'
+                    'signature': [[], 'str']
                 }
             },
             'visa-sim': None
@@ -683,146 +659,127 @@ class TestClass:
             'SMB_DISCONNECT': 'connected',
             'SMB_TC_QUERY_RAW': 'query_raw_result'
         }
-        assert component._service_signatures == {
+        assert component._service_info == {
             'CUSTOM_TOPIC': {
                 'command': 'SOURce:ROSCillator:SOURce {:}',
                 'description': 'Sets the source of the reference frequency',
                 'key': None,
-                'return_type': None,
-                'signature': ['String']
+                'signature': [['str'], None]
             },
             'SMB_CLOCK_SRC': {
                 'command': 'SOURce:ROSCillator:SOURce {:}',
                 'description': 'Sets the source of the reference frequency',
                 'key': None,
-                'return_type': None,
-                'signature': ['String']
+                'signature': [['str'], 'None']
             },
             'SMB_CONNECT': {
                 'command': None,
                 'description': 'Establish Connection with SMB',
                 'key': '@connect',
-                'return_type': None,
-                'signature': []
+                'signature': [[], None]
             },
             'SMB_CW_FREQ': {
                 'command': 'FREQuency:CW {:}',
                 'description': 'Sets the frequency of the RF output signal',
                 'key': None,
-                'return_type': None,
-                'signature': ['Int']
+                'signature': [['int'], 'None']
             },
             'SMB_DISCONNECT': {
                 'command': None,
                 'description': 'Close connection with SMB',
                 'key': '@disconnect',
-                'return_type': None,
-                'signature': []
+                'signature': [[], None]
             },
             'SMB_FREQ_MODE': {
                 'command': 'FREQuency:MODE {:}',
                 'description': 'Set the frequency mode for generating the '
                 'RF output signal',
                 'key': None,
-                'return_type': None,
-                'signature': ['String']
+                'signature': [['str'], 'None']
             },
             'SMB_OUT_POWER': {
                 'command': 'OUTP {:}',
                 'description': 'Set the RF output signal',
                 'key': None,
-                'return_type': None,
-                'signature': ['String']
+                'signature': [['str'], 'None']
             },
             'SMB_POWER_LEVEL': {
                 'command': 'POWer {:}',
                 'description': 'Sets the RF level applied to the device '
                 'under tests',
                 'key': None,
-                'return_type': None,
-                'signature': ['Float']
+                'signature': [['float'], 'None']
             },
             'SMB_QUERY_CLOCK_SRC': {
                 'command': 'SOURce:ROSCillator:SOURce?',
                 'description': 'Query the source of the reference '
                 'frequency',
                 'key': None,
-                'return_type': 'String',
-                'signature': []
+                'signature': [[], 'str']
             },
             'SMB_QUERY_CONNECTED': {
                 'command': None,
                 'description': 'Query the connection status to the '
                 'instrument',
                 'key': None,
-                'return_type': 'Bool',
-                'signature': []
+                'signature': [[], 'bool']
             },
             'SMB_QUERY_CW_FREQ': {
                 'command': 'FREQuency:CW?',
                 'description': 'Query the frequency of the RF output '
                 'signal',
                 'key': None,
-                'return_type': 'Int',
-                'signature': []
+                'signature': [[], 'int']
             },
             'SMB_QUERY_FREQ_MODE': {
                 'command': 'FREQuency:MODE?',
                 'description': 'Query the frequency mode for '
                 'generating the RF output signal',
                 'key': None,
-                'return_type': 'String',
-                'signature': []
+                'signature': [[], 'str']
             },
             'SMB_QUERY_IDN': {
                 'command': '*IDN?',
                 'description': 'Query the instrument identification',
                 'key': None,
-                'return_type': 'String',
-                'signature': []
+                'signature': [[], 'str']
             },
             'SMB_QUERY_OUT_POWER': {
                 'command': 'OUTP?',
                 'description': 'Query the RF output signal',
                 'key': None,
-                'return_type': 'Int',
-                'signature': []
+                'signature': [[], 'int']
             },
             'SMB_QUERY_POWER_LEVEL': {
                 'command': 'POWer?',
                 'description': 'Query the RF level applied to the '
                 'device under tests',
                 'key': None,
-                'return_type': 'Float',
-                'signature': []
+                'signature': [[], 'float']
             },
             'SMB_RAW': {
                 'command': '{:}',
                 'description': 'Send a raw command to the instrument',
                 'key': None,
-                'return_type': None,
-                'signature': ['String']
+                'signature': [['str'], 'None']
             },
             'SMB_RST': {
                 'command': '*CLS',
                 'description': 'Clear the output buffer',
                 'key': None,
-                'return_type': None,
-                'signature': []
+                'signature': [[], None]
             },
             'SMB_TC_QUERY_RAW': {
                 'command': '{:}',
                 'description': 'Perform raw query to the instrument',
                 'key': None,
-                'return_type': 'String',
-                'signature': ['String']
+                'signature': [['str'], 'str']
             },
             'SMB_TM_QUERY_RAW': {
                 'command': '{:}',
                 'description': 'Retrieve the value of the last raw query',
                 'key': None,
-                'return_type': 'String',
-                'signature': []
+                'signature': [[], 'str']
             }
         }
         assert component._custom_process == []
@@ -885,82 +842,82 @@ class TestClass:
         assert dummy_test_class.last_value == {
             'SMB_CLOCK_SRC': {
                 'description': 'Sets the source of the reference frequency',
-                'signature': ['String']
+                'signature': [['str'], 'None']
             },
             'SMB_CONNECT': {
                 'description': 'Establish Connection with SMB',
-                'signature': []
+                'signature': [[], None]
             },
             'SMB_CW_FREQ': {
                 'description': 'Sets the frequency of the RF output signal',
-                'signature': ['Int']
+                'signature': [['int'], 'None']
             },
             'SMB_DISCONNECT': {
                 'description': 'Close connection with SMB',
-                'signature': []
+                'signature': [[], None]
             },
             'SMB_FREQ_MODE': {
                 'description': 'Set the frequency mode for generating the '
                 'RF output signal',
-                'signature': ['String']
+                'signature': [['str'], 'None']
             },
             'SMB_OUT_POWER': {
                 'description': 'Set the RF output signal',
-                'signature': ['String']
+                'signature': [['str'], 'None']
             },
             'SMB_POWER_LEVEL': {
                 'description': 'Sets the RF level applied to the device '
                 'under tests',
-                'signature': ['Float']
+                'signature': [['float'], 'None']
             },
             'SMB_QUERY_CLOCK_SRC': {
                 'description': 'Query the source of the reference '
                 'frequency',
-                'signature': []
+                'signature': [[], 'str']
             },
             'SMB_QUERY_CONNECTED': {
                 'description': 'Query the connection status to the '
                 'instrument',
-                'signature': []
+                'signature': [[], 'bool']
             },
             'SMB_QUERY_CW_FREQ': {
                 'description': 'Query the frequency of the RF output '
                 'signal',
-                'signature': []
+                'signature': [[], 'int']
             },
             'SMB_QUERY_FREQ_MODE': {
                 'description': 'Query the frequency mode for '
                 'generating the RF output signal',
-                'signature': []
+                'signature': [[], 'str']
             },
             'SMB_QUERY_IDN': {
                 'description': 'Query the instrument identification',
-                'signature': []
+                'signature': [[], 'str']
             },
             'SMB_QUERY_OUT_POWER': {
                 'description': 'Query the RF output signal',
-                'signature': []
+                'signature': [[], 'int']
             },
             'SMB_QUERY_POWER_LEVEL': {
                 'description': 'Query the RF level applied to the '
                 'device under tests',
-                'signature': []
+                'signature': [[], 'float']
             },
             'SMB_RAW': {
                 'description': 'Send a raw command to the instrument',
-                'signature': ['String']
+                'signature': [['str'], 'None']
             },
             'SMB_RST': {
                 'description': 'Clear the output buffer',
-                'signature': []
+                'signature': [[], None]
             },
             'SMB_TC_QUERY_RAW': {
                 'description': 'Perform raw query to the instrument',
-                'signature': ['String']
+                'signature': [['str'], 'str']
             },
             'SMB_TM_QUERY_RAW': {
                 'description': 'Retrieve the value of the last raw query',
-                'signature': []
+                'signature': [[], 'str']
             }
         }
 
@@ -972,7 +929,7 @@ class TestClass:
                         'command': 'SOURce:ROSCillator:SOURce {:}',
                         'description': 'Sets the source of the reference '
                         'frequency',
-                        'signature': ['String']
+                        'signature': [['str'], None]
                     }
                 }
             })
@@ -984,86 +941,86 @@ class TestClass:
         assert dummy_test_class.last_value == {
             'CUSTOM_TOPIC': {
                 'description': 'Sets the source of the reference frequency',
-                'signature': ['String']
+                'signature': [['str'], None]
             },
             'SMB_CLOCK_SRC': {
                 'description': 'Sets the source of the reference frequency',
-                'signature': ['String']
+                'signature': [['str'], 'None']
             },
             'SMB_CONNECT': {
                 'description': 'Establish Connection with SMB',
-                'signature': []
+                'signature': [[], None]
             },
             'SMB_CW_FREQ': {
                 'description': 'Sets the frequency of the RF output signal',
-                'signature': ['Int']
+                'signature': [['int'], 'None']
             },
             'SMB_DISCONNECT': {
                 'description': 'Close connection with SMB',
-                'signature': []
+                'signature': [[], None]
             },
             'SMB_FREQ_MODE': {
                 'description': 'Set the frequency mode for generating the '
                 'RF output signal',
-                'signature': ['String']
+                'signature': [['str'], 'None']
             },
             'SMB_OUT_POWER': {
                 'description': 'Set the RF output signal',
-                'signature': ['String']
+                'signature': [['str'], 'None']
             },
             'SMB_POWER_LEVEL': {
                 'description': 'Sets the RF level applied to the device '
                 'under tests',
-                'signature': ['Float']
+                'signature': [['float'], 'None']
             },
             'SMB_QUERY_CLOCK_SRC': {
                 'description': 'Query the source of the reference '
                 'frequency',
-                'signature': []
+                'signature': [[], 'str']
             },
             'SMB_QUERY_CONNECTED': {
                 'description': 'Query the connection status to the '
                 'instrument',
-                'signature': []
+                'signature': [[], 'bool']
             },
             'SMB_QUERY_CW_FREQ': {
                 'description': 'Query the frequency of the RF output '
                 'signal',
-                'signature': []
+                'signature': [[], 'int']
             },
             'SMB_QUERY_FREQ_MODE': {
                 'description': 'Query the frequency mode for '
                 'generating the RF output signal',
-                'signature': []
+                'signature': [[], 'str']
             },
             'SMB_QUERY_IDN': {
                 'description': 'Query the instrument identification',
-                'signature': []
+                'signature': [[], 'str']
             },
             'SMB_QUERY_OUT_POWER': {
                 'description': 'Query the RF output signal',
-                'signature': []
+                'signature': [[], 'int']
             },
             'SMB_QUERY_POWER_LEVEL': {
                 'description': 'Query the RF level applied to the '
                 'device under tests',
-                'signature': []
+                'signature': [[], 'float']
             },
             'SMB_RAW': {
                 'description': 'Send a raw command to the instrument',
-                'signature': ['String']
+                'signature': [['str'], 'None']
             },
             'SMB_RST': {
                 'description': 'Clear the output buffer',
-                'signature': []
+                'signature': [[], None]
             },
             'SMB_TC_QUERY_RAW': {
                 'description': 'Perform raw query to the instrument',
-                'signature': ['String']
+                'signature': [['str'], 'str']
             },
             'SMB_TM_QUERY_RAW': {
                 'description': 'Retrieve the value of the last raw query',
-                'signature': []
+                'signature': [[], 'str']
             }
         }
 
@@ -1261,6 +1218,62 @@ class TestClass:
         assert dummy_test_class.last_value.id == 'SMB_DISCONNECT'
         assert dummy_test_class.last_value.type == 'tc'
         assert dummy_test_class.last_value.value is None
+
+    def test_service_invalid_signature(self):
+        with pytest.raises(ComponentConfigException) as excinfo:
+            RfSignalGenerator(self.context,
+                              local_config={
+                                  'topics': {
+                                      'CUSTOM_TOPIC': {
+                                          'command':
+                                          'SOURce:ROSCillator:SOURce {:}',
+                                          'description':
+                                          'Sets the source of the reference '
+                                          'frequency',
+                                          'signature': ['String']
+                                      }
+                                  }
+                              }).initialize()
+
+        assert 'Signature of service "CUSTOM_TOPIC" is invalid. Format shall' \
+               ' be [[arg_1, arg_2, ...], return_type]' in str(excinfo.value)
+
+        with pytest.raises(ComponentConfigException) as excinfo:
+            RfSignalGenerator(self.context,
+                              local_config={
+                                  'topics': {
+                                      'CUSTOM_TOPIC': {
+                                          'command':
+                                          'SOURce:ROSCillator:SOURce {:}',
+                                          'description':
+                                          'Sets the source of the reference '
+                                          'frequency',
+                                          'signature': ['String', str]
+                                      }
+                                  }
+                              }).initialize()
+
+        assert 'Signature of service "CUSTOM_TOPIC" is invalid. Format shall' \
+               ' be [[arg_1, arg_2, ...], return_type]' in str(excinfo.value)
+
+        with pytest.raises(ComponentConfigException) as excinfo:
+            RfSignalGenerator(self.context,
+                              local_config={
+                                  'topics': {
+                                      'CUSTOM_TOPIC': {
+                                          'command':
+                                          'SOURce:ROSCillator:SOURce {:}',
+                                          'description':
+                                          'Sets the source of the reference '
+                                          'frequency',
+                                          'signature':
+                                          'String'
+                                      }
+                                  }
+                              }).initialize()
+
+        assert 'Signature of service "CUSTOM_TOPIC" is invalid. Format shall' \
+               ' be [[arg_1, arg_2, ...], return_type]' in str(excinfo.value)
 
     def test_connection_cases_normal_fail(self):
         dummy_test_class = DummyTestClass()

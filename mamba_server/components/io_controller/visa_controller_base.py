@@ -25,7 +25,7 @@ class VisaControllerBase(ComponentBase):
         self._shared_memory = {}
         self._shared_memory_getter = {}
         self._shared_memory_setter = {}
-        self._service_signatures = {}
+        self._service_info = {}
         self._inst = None
         self._simulation_file = None
 
@@ -79,14 +79,20 @@ class VisaControllerBase(ComponentBase):
             # Create new service signature dictionary
             service_dict = {
                 'description': service_data.get('description') or '',
-                'signature': service_data.get('signature') or [],
+                'signature': service_data.get('signature') or [[], None],
                 'command': service_data.get('command'),
-                'return_type': service_data.get('return_type'),
                 'key': service_data.get('key'),
             }
 
+            if not isinstance(service_dict['signature'], list) or len(
+                    service_dict['signature']) != 2 or not isinstance(
+                        service_dict['signature'][0], list):
+                raise ComponentConfigException(
+                    f'Signature of service "{key}" is invalid. Format shall be [[arg_1, arg_2, ...], return_type]'
+                )
+
             # Add new service to the component services dictionary
-            self._service_signatures[key] = service_dict
+            self._service_info[key] = service_dict
 
         # Compose services signature to be published
         services_sig = {
@@ -94,7 +100,7 @@ class VisaControllerBase(ComponentBase):
                 'description': value['description'],
                 'signature': value['signature']
             }
-            for key, value in self._service_signatures.items()
+            for key, value in self._service_info.items()
         }
 
         # Compose shared memory data dictionaries
@@ -119,7 +125,7 @@ class VisaControllerBase(ComponentBase):
         # Subscribe to the services request
         self._context.rx['io_service_request'].pipe(
             op.filter(lambda value: isinstance(value, IoServiceRequest) and
-                      (value.id in self._service_signatures))).subscribe(
+                      (value.id in self._service_info))).subscribe(
                           on_next=self._run_command)
 
     def _visa_connect(self, result: Telemetry):
@@ -141,8 +147,7 @@ class VisaControllerBase(ComponentBase):
             self._inst.timeout = 3000  # Default timeout
 
             if result.id in self._shared_memory_setter:
-                self._shared_memory[self._shared_memory_setter[
-                    result.id]] = 1
+                self._shared_memory[self._shared_memory_setter[result.id]] = 1
 
             self._log_dev("Established connection to SMB")
 
@@ -153,48 +158,47 @@ class VisaControllerBase(ComponentBase):
                 self._shared_memory[self._shared_memory_setter[result.id]] = 0
             self._log_dev("Closed connection to SMB")
 
-    def _service_preprocessing(self, service_request: IoServiceRequest):
+    def _service_preprocessing(self, service_request: IoServiceRequest,
+                               result: Telemetry):
         raise NotImplementedError
 
     def _run_command(self, service_request: IoServiceRequest):
         self._log_dev(f"Received service request: {service_request.id}")
 
-        if service_request.id in self._custom_process:
-            self._service_preprocessing(service_request)
-
         result = Telemetry(tm_id=service_request.id,
                            tm_type=service_request.type)
 
-        if self._service_signatures[service_request.id].get(
-                'key') == '@connect':
+        if service_request.id in self._custom_process:
+            self._service_preprocessing(service_request, result)
+
+        if self._service_info[service_request.id].get('key') == '@connect':
             self._visa_connect(result)
-        elif self._service_signatures[service_request.id].get(
+        elif self._service_info[service_request.id].get(
                 'key') == '@disconnect':
             self._visa_disconnect(result)
         elif service_request.id in self._shared_memory_getter:
             result.value = self._shared_memory[self._shared_memory_getter[
                 service_request.id]]
-        elif self._service_signatures[service_request.id].get(
-                'command') is None:
-            result.type = 'error'
-            result.value = f'Command implementation for {service_request.id}' \
-                           f' is missing in component'
+        elif self._service_info[service_request.id].get('command') is None:
+            if service_request.id not in self._custom_process:
+                result.type = 'error'
+                result.value = f'Command implementation for {service_request.id}' \
+                               f' is missing in component'
         elif self._inst is None:
             result.type = 'error'
             result.value = 'Not possible to perform command before ' \
                            'connection is established'
-        elif self._service_signatures[
-                service_request.id]['return_type'] is not None:
+        elif self._service_info[service_request.id]['signature'][
+                1] is not None and self._service_info[
+                    service_request.id]['signature'][1] != 'None':
             try:
-                if (len(self._service_signatures[service_request.id]
-                        ['signature'])
+                if (len(self._service_info[service_request.id]['signature'][0])
                         == 1) and (len(service_request.args) > 1):
                     service_request.args = [' '.join(service_request.args)]
 
                 value = self._inst.query(
-                    self._service_signatures[service_request.id]
-                    ['command'].format(*service_request.args)).replace(
-                        ' ', '_')
+                    self._service_info[service_request.id]['command'].format(
+                        *service_request.args)).replace(' ', '_')
 
                 if service_request.id in self._shared_memory_setter:
                     self._shared_memory[self._shared_memory_setter[
@@ -206,12 +210,11 @@ class VisaControllerBase(ComponentBase):
                 result.value = 'Not possible to communicate to the instrument'
         else:
             try:
-                if (len(self._service_signatures[service_request.id]
-                        ['signature'])
+                if (len(self._service_info[service_request.id]['signature'][0])
                         == 1) and (len(service_request.args) > 1):
                     service_request.args = [' '.join(service_request.args)]
 
-                self._inst.write(self._service_signatures[service_request.id]
+                self._inst.write(self._service_info[service_request.id]
                                  ['command'].format(*service_request.args))
             except OSError:
                 result.type = 'error'

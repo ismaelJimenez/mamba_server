@@ -2,7 +2,7 @@
 
 import os
 
-from mamba_server.components.observable_types import IoServiceRequest
+from mamba_server.components.observable_types import IoServiceRequest, Telemetry
 from mamba_server.components.io_controller import VisaControllerBase
 
 
@@ -16,6 +16,7 @@ class RfSignalGenerator(VisaControllerBase):
         self._custom_process = [
         ]  # All the services that require custom processing
 
-    def _service_preprocessing(self, service_request: IoServiceRequest):
+    def _service_preprocessing(self, service_request: IoServiceRequest,
+                               result: Telemetry):
         """ Entry point for running a component service """
         pass

@@ -13,38 +13,37 @@ topics:
 
   DIGITIZER_RAW:
     description: Send a raw command to the instrument
-    signature: [String]
+    signature: [[str], None]
     command: '{:}'
 
   DIGITIZER_CLOCK_SRC:
     description: Sets the source of the reference frequency
-    signature: [String]
+    signature: [[str], None]
     command: ':TIMebase:REFClock {:}'
 
   DIGITIZER_TC_QUERY_RAW:
     description: Perform raw query to the instrument
-    signature: [String]
-    return_type: String
+    signature: [[str], str]
     command: '{:}'
 
   DIGITIZER_QUERY_IDN:
     description: Query the instrument identification
-    return_type: String
+    signature: [[], str]
     command: '*IDN?'
 
   DIGITIZER_QUERY_CLOCK_SRC:
     description: Query the source of the reference frequency
-    return_type: String
+    signature: [[], str]
     command: ':TIMebase:REFClock?'
 
   DIGITIZER_TM_QUERY_RAW:
     description: Retrieve the value of the last raw query
-    return_type: String
+    signature: [[], str]
     command: '{:}'
 
   DIGITIZER_QUERY_CONNECTED:
     description: Query the connection status to the instrument
-    return_type: Bool
+    signature: [[], bool]
 
 parameters:
   connected:
