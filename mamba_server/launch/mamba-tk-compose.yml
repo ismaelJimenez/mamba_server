@@ -21,3 +21,4 @@ services:
   # IO Controllers
   shutdown:
   rf_signal_generator:
+  digitizer:

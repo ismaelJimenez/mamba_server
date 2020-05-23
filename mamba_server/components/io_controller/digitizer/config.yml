@@ -1,0 +1,63 @@
+name: m8131a
+visa-sim: simulator/digitizer/ks_m8131a.yaml
+resource-name: TCPIP0::1.2.3.4::INSTR
+
+topics:
+  DIGITIZER_CONNECT:
+    key: '@connect'
+    description: Establish Connection with Digitizer
+
+  DIGITIZER_DISCONNECT:
+    key: '@disconnect'
+    description: Close connection with Digitizer
+
+  DIGITIZER_RAW:
+    description: Send a raw command to the instrument
+    signature: [String]
+    command: '{:}'
+
+  DIGITIZER_CLOCK_SRC:
+    description: Sets the source of the reference frequency
+    signature: [String]
+    command: ':TIMebase:REFClock {:}'
+
+  DIGITIZER_TC_QUERY_RAW:
+    description: Perform raw query to the instrument
+    signature: [String]
+    return_type: String
+    command: '{:}'
+
+  DIGITIZER_QUERY_IDN:
+    description: Query the instrument identification
+    return_type: String
+    command: '*IDN?'
+
+  DIGITIZER_QUERY_CLOCK_SRC:
+    description: Query the source of the reference frequency
+    return_type: String
+    command: ':TIMebase:REFClock?'
+
+  DIGITIZER_TM_QUERY_RAW:
+    description: Retrieve the value of the last raw query
+    return_type: String
+    command: '{:}'
+
+  DIGITIZER_QUERY_CONNECTED:
+    description: Query the connection status to the instrument
+    return_type: Bool
+
+parameters:
+  connected:
+    default: false
+    setter:
+      DIGITIZER_CONNECT:
+      DIGITIZER_DISCONNECT:
+    getter:
+      DIGITIZER_QUERY_CONNECTED:
+
+  query_raw_result:
+    default: ''
+    setter:
+      DIGITIZER_TC_QUERY_RAW:
+    getter:
+      DIGITIZER_TM_QUERY_RAW:
