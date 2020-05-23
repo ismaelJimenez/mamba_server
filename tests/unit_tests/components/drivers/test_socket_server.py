@@ -123,20 +123,20 @@ class TestClass:
         component.initialize()
 
         # Establish socket connection
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect(('127.0.0.1', 8080))
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            sock.connect(('127.0.0.1', 8080))
 
-        time.sleep(.1)
+            time.sleep(.1)
 
-        # Send TM
-        self.context.rx['raw_tm'].on_next(RawTelemetry("Hello World 1\r\n"))
-        assert str(sock.recv(1024), 'ascii') == 'Hello World 1\r\n'
+            # Send TM
+            self.context.rx['raw_tm'].on_next(RawTelemetry("Hello World 1\r\n"))
+            assert str(sock.recv(1024), 'ascii') == 'Hello World 1\r\n'
 
-        # Send TM
-        self.context.rx['raw_tm'].on_next(
-            RawTelemetry("Hello World 2\r\nHello World 3\r\n"))
-        assert str(sock.recv(1024),
-                   'ascii') == 'Hello World 2\r\nHello World 3\r\n'
+            # Send TM
+            self.context.rx['raw_tm'].on_next(
+                RawTelemetry("Hello World 2\r\nHello World 3\r\n"))
+            assert str(sock.recv(1024),
+                       'ascii') == 'Hello World 2\r\nHello World 3\r\n'
 
         # Close open threads
         component._close()

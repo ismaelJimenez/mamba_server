@@ -51,7 +51,7 @@ class Driver(ComponentBase):
     def _generate_io_service_request(self, telecommand: Telecommand):
         self._io_result_subs = self._context.rx['io_result'].pipe(
             op.filter(lambda value: isinstance(value, Telemetry))).subscribe(
-                on_next=lambda _: self._process_io_result(telecommand, _))
+                on_next=lambda _: self._process_io_result(_))
 
         self._context.rx['io_service_request'].on_next(
             IoServiceRequest(id=telecommand.id,
@@ -78,11 +78,11 @@ class Driver(ComponentBase):
         else:
             self._generate_error_tm(telecommand, 'Not recognized command type')
 
-    def _process_io_result(self, telecommand, rx_result):
+    def _process_io_result(self, rx_result):
         self._io_result_subs.dispose()
         self._context.rx['tm'].on_next(
-            Telemetry(tm_id=telecommand.id,
-                      tm_type=telecommand.type,
+            Telemetry(tm_id=rx_result.id,
+                      tm_type=rx_result.type,
                       value=rx_result.value))
 
     def _io_service_signature(self, signatures):
