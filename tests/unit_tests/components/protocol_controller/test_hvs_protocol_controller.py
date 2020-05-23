@@ -105,8 +105,10 @@ class TestClass:
                 'description': 'custom command 2',
                 'signature': [[], 'str']
             },
-            'TEST_TC_3': {'description': 'custom command 3',
-                          'signature': [['str'], 'str']}
+            'TEST_TC_3': {
+                'description': 'custom command 3',
+                'signature': [['str'], 'str']
+            }
         }
 
         # 3 - Test with repeated service key
@@ -118,7 +120,8 @@ class TestClass:
                 }
             })
 
-        assert "Received conflicting service key: TEST_TC_3" in str(excinfo.value)
+        assert "Received conflicting service key: TEST_TC_3" in str(
+            excinfo.value)
 
         # 4 - Test with wrong signature
         with pytest.raises(ComponentConfigException) as excinfo:
@@ -177,7 +180,10 @@ class TestClass:
         assert isinstance(dummy_test_class.last_value_tm, Telemetry)
         assert dummy_test_class.last_value_tm.id == 'TEST_TC_3'
         assert dummy_test_class.last_value_tm.type == 'tc_meta'
-        assert dummy_test_class.last_value_tm.value == {'description': 'custom command 3', 'signature': [['int'], 'str']}
+        assert dummy_test_class.last_value_tm.value == {
+            'description': 'custom command 3',
+            'signature': [['int'], 'str']
+        }
 
         # Send single raw TC - 3. Tm_Meta
         self.context.rx['tc'].on_next(
@@ -187,7 +193,10 @@ class TestClass:
         assert isinstance(dummy_test_class.last_value_tm, Telemetry)
         assert dummy_test_class.last_value_tm.id == 'TEST_TC_3'
         assert dummy_test_class.last_value_tm.type == 'tm_meta'
-        assert dummy_test_class.last_value_tm.value == {'description': 'custom command 3', 'signature': [['int'], 'str']}
+        assert dummy_test_class.last_value_tm.value == {
+            'description': 'custom command 3',
+            'signature': [['int'], 'str']
+        }
 
         # Send single raw TC - 4. Tc
         self.context.rx['tc'].on_next(
