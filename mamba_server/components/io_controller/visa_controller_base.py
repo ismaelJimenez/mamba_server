@@ -88,7 +88,8 @@ class VisaControllerBase(ComponentBase):
                     service_dict['signature']) != 2 or not isinstance(
                         service_dict['signature'][0], list):
                 raise ComponentConfigException(
-                    f'Signature of service "{key}" is invalid. Format shall be [[arg_1, arg_2, ...], return_type]'
+                    f'Signature of service "{key}" is invalid. Format shall'
+                    f' be [[arg_1, arg_2, ...], return_type]'
                 )
 
             # Add new service to the component services dictionary
@@ -182,8 +183,8 @@ class VisaControllerBase(ComponentBase):
         elif self._service_info[service_request.id].get('command') is None:
             if service_request.id not in self._custom_process:
                 result.type = 'error'
-                result.value = f'Command implementation for {service_request.id}' \
-                               f' is missing in component'
+                result.value = f'Command implementation for ' \
+                               f'{service_request.id} is missing in component'
         elif self._inst is None:
             result.type = 'error'
             result.value = 'Not possible to perform command before ' \

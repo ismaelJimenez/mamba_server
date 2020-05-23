@@ -2,7 +2,8 @@
 
 import os
 
-from mamba_server.components.observable_types import IoServiceRequest, Telemetry
+from mamba_server.components.observable_types import IoServiceRequest,\
+    Telemetry
 from mamba_server.components.io_controller import VisaControllerBase
 
 
@@ -19,4 +20,3 @@ class Digitizer(VisaControllerBase):
     def _service_preprocessing(self, service_request: IoServiceRequest,
                                result: Telemetry):
         """ Entry point for running a component service """
-        pass
