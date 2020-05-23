@@ -62,11 +62,11 @@ class Driver(ComponentBase):
             raw_tm = f"> OK {telemetry.id};{time.time()};{telemetry.value};" \
                      f"{telemetry.value};0;1\r\n"
         elif telemetry.type == 'tc_meta':
-            raw_tm = f"> OK {telemetry.id};{telemetry.value['num_params']};" \
+            raw_tm = f"> OK {telemetry.id};{len(telemetry.value['signature'][0])};" \
                      f"{telemetry.value['description']}\r\n"
         elif telemetry.type == 'tm_meta':
-            raw_tm = f"> OK {telemetry.id};{telemetry.value['return_type']};" \
-                     f"{telemetry.value['return_type']};" \
+            raw_tm = f"> OK {telemetry.id};{telemetry.value['signature'][1]};" \
+                     f"{telemetry.value['signature'][1]};" \
                      f"{telemetry.value['description']};7;4\r\n"
         elif telemetry.type == 'error':
             raw_tm = f"> ERROR {telemetry.id} {telemetry.value}\r\n"
