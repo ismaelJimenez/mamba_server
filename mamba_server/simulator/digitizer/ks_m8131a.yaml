@@ -1,0 +1,37 @@
+# As per Keysight M8131A 16/32 GSa/s Digitizer User’s Guide.
+spec: "1.0"
+devices:
+  device 1:
+
+    eom:
+      TCPIP INSTR:
+        q: "\r\n"
+        r: "\n"
+
+    dialogues:
+      - q: "*IDN?"
+        r: "Keysight Technologies, M8131A, SN XXXX"
+
+    properties:
+        clock_reference:
+          default: 'INT'
+          getter:
+            q: ":TIMebase:REFClock?"
+            r: "{:}"
+          setter:
+            q: ":TIMebase:REFClock {:}"
+        memc_cond:
+          default: 0
+          getter:
+            q: "STAT:OPER:MEMC:COND?"
+            r: "{:}"
+        t_stamp:
+          default: 123456
+          getter:
+            q: ":DIAG:SYNC:TSTamp:VALue? CHAN1"
+            r: "{:}"
+
+resources:
+  TCPIP0::1.2.3.4::INSTR:
+    device: device 1
+
