@@ -11,70 +11,93 @@
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
-import logging
-import os.path
+
+import os
 import re
-import subprocess
+import sys
+import guzzle_sphinx_theme
+from configparser import ConfigParser
 
-
-logger = logging.getLogger('rtd-samples')
-
-
-def get_git_branch():
-    """Get the git branch this repository is currently on"""
-    path_to_here = os.path.abspath(os.path.dirname(__file__))
-
-    # Invoke git to get the current branch which we use to get the theme
-    try:
-        p = subprocess.Popen(['git', 'branch'], stdout=subprocess.PIPE, cwd=path_to_here)
-
-        # This will contain something like "* (HEAD detached at origin/MYBRANCH)"
-        # or something like "* MYBRANCH"
-        branch_output = p.communicate()[0]
-
-        # This is if git is in a normal branch state
-        match = re.search(r'\* (?P<branch_name>[^\(\)\n ]+)', branch_output)
-        if match:
-            return match.groupdict()['branch_name']
-
-        # git is in a detached HEAD state
-        match = re.search(r'\(HEAD detached at origin/(?P<branch_name>[^\)]+)\)', branch_output)
-        if match:
-            return match.groupdict()['branch_name']
-    except Exception:
-        logger.exception(u'Could not get the branch')
-
-    # Couldn't figure out the branch probably due to an error
-    return None
+root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, root)
 
 
 # -- Project information -----------------------------------------------------
 
-project = u'Read the Docs Sphinx Theme Examples'
-copyright = u'2018, Read the Docs, Inc & contributors'
-author = u'Read the Docs, Inc & contributors'
+# General project metadata is stored in project.cfg
+with open(os.path.join(root, 'project.cfg')) as project_file:
+    config = ConfigParser()
+    config.read_file(project_file)
+    project_meta = dict(config.items('project'))
 
-# The short X.Y version
-version = u''
+project = project_meta['project']
+author = project_meta['author']
+copyright = project_meta['copyright']
+description = project_meta['description']
+url = project_meta['url']
+title = project + ' Documentation'
+
 # The full version, including alpha/beta/rc tags
-release = u''
+release = project_meta['version']
+# The short X.Y.Z version
+version = re.sub('[^0-9.].*$', '', release)
 
 
 # -- General configuration ---------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
 #
-# needs_sphinx = '1.0'
+needs_sphinx = '2.0'
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.napoleon',
+    'sphinx_autodoc_typehints',
+    'guzzle_sphinx_theme',
+    'sphinxcontrib_dooble',
 ]
+
+# Include a separate entry for special methods, like __init__, where provided.
+autodoc_default_options = {
+    'member-order': 'bysource',
+    'special-members': True,
+    'exclude-members': '__dict__,__weakref__'
+}
+
+
+# Hack to get crosslinks working where things are available (and referred to) by
+# several paths. E.g. we export rx.Observable but that's not its fully qualified
+# name, and this causes the automatically generated links to fail for the
+# argument / return types of functions (e.g. as defined in rx/__init__.py).
+#
+# It looks as though the intention of sphinx_autodoc_typehints is to include
+# support for something like this in a future version:
+#
+# https://github.com/agronholm/sphinx-autodoc-typehints/issues/38
+
+import sphinx_autodoc_typehints
+
+qualname_overrides = {
+    'rx.core.observable.observable.Observable': 'rx.Observable'
+}
+
+_format_annotation = sphinx_autodoc_typehints.format_annotation
+
+
+def format_annotation(annotation, fully_qualified=False):
+    if isinstance(annotation, type):
+        full_name = f'{annotation.__module__}.{annotation.__qualname__}'
+        override = qualname_overrides.get(full_name)
+        if override is not None:
+            return f':py:class:`~{override}`'
+    return _format_annotation(annotation, fully_qualified)
+
+sphinx_autodoc_typehints.format_annotation = format_annotation
+
+# End hack.
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -82,7 +105,6 @@ templates_path = ['_templates']
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
-# source_suffix = ['.rst', '.md']
 source_suffix = '.rst'
 
 # The master toctree document.
@@ -93,12 +115,12 @@ master_doc = 'index'
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = "en"
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path .
-exclude_patterns = [u'_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
@@ -106,43 +128,23 @@ pygments_style = 'sphinx'
 
 # -- Options for HTML output -------------------------------------------------
 
-# Maps git branches to Sphinx themes
-default_html_theme = 'sphinx_rtd_theme'
-branch_to_theme_mapping = {
-    # 3rd party themes
-    'master': default_html_theme,
-
-    # Sphinx built-in themes
-    'alabaster': 'alabaster',
-    'classic': 'classic',
-    'sphinxdoc': 'sphinxdoc',
-    'scrolls': 'scrolls',
-    'agogo': 'agogo',
-    'traditional': 'traditional',
-    'nature': 'nature',
-    'haiku': 'haiku',
-    'pyramid': 'pyramid',
-    'bizstyle': 'bizstyle',
-}
-current_branch = get_git_branch()
-
-if current_branch:
-    sphinx_html_theme = branch_to_theme_mapping.get(current_branch, default_html_theme)
-    print(u'Got theme {} from branch {}'.format(sphinx_html_theme, current_branch))
-else:
-    sphinx_html_theme = default_html_theme
-    print(u'Error getting current branch - using default theme')
-
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = sphinx_html_theme
+html_translator_class = 'guzzle_sphinx_theme.HTMLTranslator'
+html_theme_path = guzzle_sphinx_theme.html_theme_path()
+html_theme = 'guzzle_sphinx_theme'
+html_title = title
+html_short_title = project + ' ' + version
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
 # html_theme_options = {}
+html_theme_options = {
+    'projectlink': url
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -157,13 +159,16 @@ html_static_path = ['_static']
 # default: ``['localtoc.html', 'relations.html', 'sourcelink.html',
 # 'searchbox.html']``.
 #
-# html_sidebars = {}
+
+html_sidebars = {
+    '**': ['logo-text.html', 'globaltoc.html', 'searchbox.html']
+}
 
 
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'RTDSphinxThemeSampledoc'
+htmlhelp_basename = project + 'doc'
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -190,8 +195,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'RTDSphinxThemeSample.tex', project,
-     u'Read the Docs, Inc \\& contributors', 'manual'),
+    (master_doc, project + '.tex', title, author, 'manual')
 ]
 
 
@@ -200,8 +204,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'rtdsphinxthemesample', project,
-     [author], 1)
+    (master_doc, project.lower(), title, [author], 1)
 ]
 
 
@@ -211,7 +214,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'RTDSphinxThemeSample', project,
-     author, 'RTDSphinxThemeSample', 'One line description of project.',
-     'Miscellaneous'),
+    (master_doc, project, title, author, project, description, 'Miscellaneous')
 ]
+
+
+# -- Extension configuration -------------------------------------------------
