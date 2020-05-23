@@ -89,8 +89,7 @@ class VisaControllerBase(ComponentBase):
                         service_dict['signature'][0], list):
                 raise ComponentConfigException(
                     f'Signature of service "{key}" is invalid. Format shall'
-                    f' be [[arg_1, arg_2, ...], return_type]'
-                )
+                    f' be [[arg_1, arg_2, ...], return_type]')
 
             # Add new service to the component services dictionary
             self._service_info[key] = service_dict

@@ -173,26 +173,26 @@ class TestClass:
             Telemetry(tm_id='test',
                       tm_type='tc_meta',
                       value={
-                          'num_params': 1,
+                          'signature': [['str', 'int'], 'str'],
                           'description': 'description test 1'
                       }))
 
         assert dummy_test_class.times_called == 2
         assert isinstance(dummy_test_class.last_value, RawTelemetry)
-        assert dummy_test_class.last_value.raw == '> OK test;1;description test 1\r\n'
+        assert dummy_test_class.last_value.raw == '> OK test;2;description test 1\r\n'
 
         # Send single TM - 3. Tm_Meta
         self.context.rx['tm'].on_next(
             Telemetry(tm_id='test',
                       tm_type='tm_meta',
                       value={
-                          'return_type': 'String',
+                          'signature': [['str', 'int'], 'str'],
                           'description': 'description test 1'
                       }))
 
         assert dummy_test_class.times_called == 3
         assert isinstance(dummy_test_class.last_value, RawTelemetry)
-        assert dummy_test_class.last_value.raw == '> OK test;String;String;description test 1;7;4\r\n'
+        assert dummy_test_class.last_value.raw == '> OK test;str;str;description test 1;7;4\r\n'
 
         # Send single TM - 4. Tc
         self.context.rx['tm'].on_next(Telemetry(tm_id='test', tm_type='tc'))

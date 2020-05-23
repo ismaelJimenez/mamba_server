@@ -5,8 +5,9 @@ import time
 
 from mamba_server.context import Context
 from mamba_server.components.drivers.socket_tmtc.hvs_socket_tmtc import Driver as HvsSocketTmtc
+from mamba_server.components.protocol_controller.hvs_protocol_controller import Driver as HvsProtocolCtrl
 from mamba_server.components.drivers.socket_server import Driver as SocketServer
-from mamba_server.components.observable_types import Telemetry, Telecommand
+from mamba_server.components.observable_types import Telemetry, Telecommand, IoServiceRequest
 
 
 def client_tc(ip, port, message):
@@ -158,7 +159,7 @@ class TestClass:
         # Close open threads
         server._close()
 
-    def test_component_observer_tm(self):
+    def test_component_tm_hvs_tmtc_socket(self):
         """ Test component external interface """
         server = SocketServer(self.context)
         controller = HvsSocketTmtc(self.context)
@@ -179,25 +180,25 @@ class TestClass:
             Telemetry(tm_id='test',
                       tm_type='tc_meta',
                       value={
-                          'num_params': 1,
+                          'signature': [['str', 'int'], 'str'],
                           'description': 'description test 1'
                       }))
 
         assert str(sock.recv(1024),
-                   'ascii') == '> OK test;1;description test 1\r\n'
+                   'ascii') == '> OK test;2;description test 1\r\n'
 
         # Send single TM - 3. Tm_Meta
         self.context.rx['tm'].on_next(
             Telemetry(tm_id='test',
                       tm_type='tm_meta',
                       value={
-                          'return_type': 'String',
+                          'signature': [['str', 'int'], 'str'],
                           'description': 'description test 1'
                       }))
 
         assert str(
             sock.recv(1024),
-            'ascii') == '> OK test;String;String;description test 1;7;4\r\n'
+            'ascii') == '> OK test;str;str;description test 1;7;4\r\n'
 
         # Send single TM - 4. Tc
         self.context.rx['tm'].on_next(Telemetry(tm_id='test', tm_type='tc'))
@@ -226,6 +227,141 @@ class TestClass:
 
         assert str(sock.recv(1024),
                    'ascii') == '> OK helo test_3\r\n> OK helo test_4\r\n'
+
+        # Close open threads
+        server._close()
+
+    def test_component_tc_socket_hvs_tmtc_hvs_protocol(self):
+        """ Test component external interface """
+        dummy_test_class = DummyTestClass()
+        server = SocketServer(self.context)
+        controller = HvsSocketTmtc(self.context)
+        protocol = HvsProtocolCtrl(self.context)
+        server.initialize()
+        controller.initialize()
+        protocol.initialize()
+
+        # Initialize service signatures
+        self.context.rx['io_service_signature'].on_next({
+            'TEST_TC_1': {
+                'description': "custom command 1",
+                'signature': [['str', 'int'], 'None']
+            },
+            'TEST_TC_2': {
+                'description': "custom command 2",
+                'signature': [[], 'str']
+            },
+            'TEST_TC_3': {
+                'description': "custom command 3",
+                'signature': [['int'], 'str']
+            }
+        })
+
+        # Subscribe to the 'tc' that shall be published
+        self.context.rx['io_service_request'].subscribe(
+            dummy_test_class.test_function)
+
+        # Send single raw TC - 1. Tc
+        client_tc('127.0.0.1', 8080, 'tc TEST_TC_3 3\r\n')
+        time.sleep(0.1)
+
+        assert dummy_test_class.times_called == 1
+        assert isinstance(dummy_test_class.last_value, IoServiceRequest)
+        assert dummy_test_class.last_value.id == 'TEST_TC_3'
+        assert dummy_test_class.last_value.type == 'tc'
+        assert dummy_test_class.last_value.args == ['3']
+
+        client_tc('127.0.0.1', 8080, 'tc TEST_TC_3 3 "test_arg"\r\n')
+        time.sleep(0.1)
+
+        assert dummy_test_class.times_called == 2
+        assert isinstance(dummy_test_class.last_value, IoServiceRequest)
+        assert dummy_test_class.last_value.id == 'TEST_TC_3'
+        assert dummy_test_class.last_value.type == 'tc'
+        assert dummy_test_class.last_value.args == ['3', 'test_arg']
+
+        # Send single raw TC - 2. Tm
+        client_tc('127.0.0.1', 8080, 'tm TEST_TC_3\r\n')
+        time.sleep(0.1)
+
+        assert dummy_test_class.times_called == 3
+        assert isinstance(dummy_test_class.last_value, IoServiceRequest)
+        assert dummy_test_class.last_value.id == 'TEST_TC_3'
+        assert dummy_test_class.last_value.type == 'tm'
+        assert dummy_test_class.last_value.args == []
+
+        client_tc('127.0.0.1', 8080, 'tm TEST_TC_3 1\r\n')
+        time.sleep(0.1)
+
+        assert dummy_test_class.times_called == 4
+        assert isinstance(dummy_test_class.last_value, IoServiceRequest)
+        assert dummy_test_class.last_value.id == 'TEST_TC_3'
+        assert dummy_test_class.last_value.type == 'tm'
+        assert dummy_test_class.last_value.args == ['1']
+
+        # Close open threads
+        server._close()
+
+    def test_component_tm_socket_hvs_tmtc_hvs_protocol(self):
+        """ Test component external interface """
+        dummy_test_class = DummyTestClass()
+        server = SocketServer(self.context)
+        controller = HvsSocketTmtc(self.context)
+        protocol = HvsProtocolCtrl(self.context)
+        server.initialize()
+        controller.initialize()
+        protocol.initialize()
+
+        # Initialize service signatures
+        self.context.rx['io_service_signature'].on_next({
+            'TEST_TC_1': {
+                'description': "custom command 1",
+                'signature': [['str', 'int'], 'None']
+            },
+            'TEST_TC_2': {
+                'description': "custom command 2",
+                'signature': [[], 'str']
+            },
+            'TEST_TC_3': {
+                'description': "custom command 3",
+                'signature': [['int', 'str'], 'str']
+            }
+        })
+
+        # Establish socket connection
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect(('127.0.0.1', 8080))
+        time.sleep(.1)
+
+        # Send single TC - 1. Helo
+        client_tc('127.0.0.1', 8080, 'helo test_program\r\n')
+        time.sleep(0.1)
+
+        assert str(sock.recv(1024), 'ascii') == '> OK helo test_program\r\n'
+
+        # Send single raw TC - 2. Tc_Meta
+        client_tc('127.0.0.1', 8080, 'tc_meta TEST_TC_3\r\n')
+        time.sleep(0.1)
+
+        assert str(sock.recv(1024), 'ascii') == '> OK TEST_TC_3;2;custom command 3\r\n'
+
+        # Send single raw TC - 3. Tm_Meta
+        client_tc('127.0.0.1', 8080, 'tm_meta TEST_TC_3\r\n')
+        time.sleep(0.1)
+
+        assert str(sock.recv(1024), 'ascii') == '> OK TEST_TC_3;str;str;custom command 3;7;4\r\n'
+
+        # Send unexisting TC type
+        client_tc('127.0.0.1', 8080, 'wrong TEST_TC_3\r\n')
+        time.sleep(0.1)
+
+        assert str(sock.recv(1024), 'ascii') == '> ERROR TEST_TC_3 Not recognized command type\r\n'
+
+        # Send unexisting TC id
+        client_tc('127.0.0.1', 8080, 'tc_meta TEST_TC_WRONG\r\n')
+        time.sleep(0.1)
+
+        assert str(sock.recv(1024), 'ascii') == '> ERROR TEST_TC_WRONG Not recognized command\r\n'
 
         # Close open threads
         server._close()

@@ -16,7 +16,7 @@ services:
   hvs_socket_tmtc:
 
   # Central controller
-  hvs_controller:
+  hvs_protocol_controller:
 
   # IO Controllers
   shutdown:
