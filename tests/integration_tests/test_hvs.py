@@ -173,7 +173,8 @@ class TestClass:
             time.sleep(.1)
 
             # Send single TM - 1. Helo
-            self.context.rx['tm'].on_next(Telemetry(tm_id='test', tm_type='helo'))
+            self.context.rx['tm'].on_next(
+                Telemetry(tm_id='test', tm_type='helo'))
             assert str(sock.recv(1024), 'ascii') == '> OK helo test\r\n'
 
             # Send single TM - 2. Tc_Meta
@@ -197,11 +198,13 @@ class TestClass:
                               'description': 'description test 1'
                           }))
 
-            assert str(sock.recv(1024),
-                       'ascii') == '> OK test;str;str;description test 1;7;4\r\n'
+            assert str(
+                sock.recv(1024),
+                'ascii') == '> OK test;str;str;description test 1;7;4\r\n'
 
             # Send single TM - 4. Tc
-            self.context.rx['tm'].on_next(Telemetry(tm_id='test', tm_type='tc'))
+            self.context.rx['tm'].on_next(Telemetry(tm_id='test',
+                                                    tm_type='tc'))
 
             assert str(sock.recv(1024), 'ascii') == '> OK test\r\n'
 
@@ -217,13 +220,14 @@ class TestClass:
             self.context.rx['tm'].on_next(
                 Telemetry(tm_id='test', tm_type='error', value='error msg'))
 
-            assert str(sock.recv(1024), 'ascii') == '> ERROR test error msg\r\n'
+            assert str(sock.recv(1024),
+                       'ascii') == '> ERROR test error msg\r\n'
 
             # Send multiple TM
-            self.context.rx['tm'].on_next(Telemetry(tm_id='test_3',
-                                                    tm_type='helo'))
-            self.context.rx['tm'].on_next(Telemetry(tm_id='test_4',
-                                                    tm_type='helo'))
+            self.context.rx['tm'].on_next(
+                Telemetry(tm_id='test_3', tm_type='helo'))
+            self.context.rx['tm'].on_next(
+                Telemetry(tm_id='test_4', tm_type='helo'))
 
             assert str(sock.recv(1024),
                        'ascii') == '> OK helo test_3\r\n> OK helo test_4\r\n'
@@ -337,7 +341,8 @@ class TestClass:
             client_tc('127.0.0.1', 8080, 'helo test_program\r\n')
             time.sleep(0.1)
 
-            assert str(sock.recv(1024), 'ascii') == '> OK helo test_program\r\n'
+            assert str(sock.recv(1024),
+                       'ascii') == '> OK helo test_program\r\n'
 
             # Send single raw TC - 2. Tc_Meta
             client_tc('127.0.0.1', 8080, 'tc_meta TEST_TC_3\r\n')
@@ -393,7 +398,8 @@ class TestClass:
             client_tc('127.0.0.1', 8080, 'helo test_program\r\n')
             time.sleep(0.1)
 
-            assert str(sock.recv(1024), 'ascii') == '> OK helo test_program\r\n'
+            assert str(sock.recv(1024),
+                       'ascii') == '> OK helo test_program\r\n'
 
             # Send single raw TC - 2. Tc_Meta
             client_tc('127.0.0.1', 8080, 'tc_meta SMB_FREQ_MODE\r\n')
@@ -408,8 +414,8 @@ class TestClass:
             time.sleep(0.1)
 
             assert str(
-                sock.recv(1024),
-                'ascii') == '> OK SMB_TC_QUERY_RAW;str;str;Perform raw query to the instrument;7;4\r\n'
+                sock.recv(1024), 'ascii'
+            ) == '> OK SMB_TC_QUERY_RAW;str;str;Perform raw query to the instrument;7;4\r\n'
 
             # Send single raw TC - 4. Tc
 
@@ -430,9 +436,7 @@ class TestClass:
             client_tc('127.0.0.1', 8080, 'tc SMB_RAW "OUTP" 1\r\n')
             time.sleep(0.1)
 
-            assert str(
-                sock.recv(1024),
-                'ascii') == '> OK SMB_RAW\r\n'
+            assert str(sock.recv(1024), 'ascii') == '> OK SMB_RAW\r\n'
 
             # Send single raw TC - 5. Tm
             client_tc('127.0.0.1', 8080, 'tm SMB_QUERY_OUT_POWER\r\n')
@@ -461,4 +465,3 @@ class TestClass:
 
         # Close open threads
         server._close()
-

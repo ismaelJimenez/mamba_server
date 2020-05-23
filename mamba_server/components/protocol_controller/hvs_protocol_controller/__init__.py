@@ -21,6 +21,8 @@ class Driver(ComponentBase):
         self._io_result_subs = None
 
     def _register_observers(self):
+        """ Entry point for registering component observers """
+
         # Register to the tc provided by the socket protocol translator service
         self._context.rx['tc'].pipe(
             op.filter(lambda value: isinstance(value, Telecommand))).subscribe(
@@ -32,6 +34,12 @@ class Driver(ComponentBase):
                 on_next=self._io_service_signature)
 
     def _generate_tm(self, telecommand: Telecommand):
+        """ Entry point for generating response telemetry
+
+            Args:
+                telecommand: The service request received.
+        """
+
         result = Telemetry(tm_id=telecommand.id, tm_type=telecommand.type)
 
         if 'meta' in telecommand.type:
@@ -45,10 +53,24 @@ class Driver(ComponentBase):
         self._context.rx['tm'].on_next(result)
 
     def _generate_error_tm(self, telecommand: Telecommand, message: str):
+        """ Entry point for generating error response telemetry
+
+            Args:
+                telecommand: The service request received.
+                message: The error feedback message.
+        """
+
         self._context.rx['tm'].on_next(
             Telemetry(tm_id=telecommand.id, tm_type='error', value=message))
 
     def _generate_io_service_request(self, telecommand: Telecommand):
+        """ Entry point for generating a IO Service request to fulfill
+            a request
+
+            Args:
+                telecommand: The service request received.
+        """
+
         self._io_result_subs = self._context.rx['io_result'].pipe(
             op.filter(lambda value: isinstance(value, Telemetry))).subscribe(
                 on_next=lambda _: self._process_io_result(_))
@@ -78,14 +100,21 @@ class Driver(ComponentBase):
         else:
             self._generate_error_tm(telecommand, 'Not recognized command type')
 
-    def _process_io_result(self, rx_result):
-        self._io_result_subs.dispose()
-        self._context.rx['tm'].on_next(
-            Telemetry(tm_id=rx_result.id,
-                      tm_type=rx_result.type,
-                      value=rx_result.value))
+    def _process_io_result(self, rx_result: Telemetry):
+        """ Entry point for processing the IO Service results.
 
-    def _io_service_signature(self, signatures):
+            Args:
+                rx_result: The io service response.
+        """
+        self._io_result_subs.dispose()
+        self._context.rx['tm'].on_next(rx_result)
+
+    def _io_service_signature(self, signatures: dict):
+        """ Entry point for processing the service signatures.
+
+            Args:
+                signatures: The io service signatures dictionary.
+        """
         new_signatures = [key for key, value in signatures.items()]
         self._log_info(f"Received signatures: {new_signatures}")
 

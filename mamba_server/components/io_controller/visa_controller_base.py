@@ -182,7 +182,7 @@ class VisaControllerBase(ComponentBase):
         elif self._service_info[service_request.id].get('command') is None:
             if service_request.id not in self._custom_process:
                 result.type = 'error'
-                result.value = f'Command implementation for ' \
+                result.value = 'Command implementation for ' \
                                f'{service_request.id} is missing in component'
         elif self._inst is None:
             result.type = 'error'

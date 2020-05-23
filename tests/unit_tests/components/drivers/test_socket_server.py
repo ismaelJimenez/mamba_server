@@ -129,7 +129,8 @@ class TestClass:
             time.sleep(.1)
 
             # Send TM
-            self.context.rx['raw_tm'].on_next(RawTelemetry("Hello World 1\r\n"))
+            self.context.rx['raw_tm'].on_next(
+                RawTelemetry("Hello World 1\r\n"))
             assert str(sock.recv(1024), 'ascii') == 'Hello World 1\r\n'
 
             # Send TM
