@@ -22,11 +22,9 @@ class RfSignalGenerator(VisaControllerBase):
     def _service_preprocessing(self, service_request: IoServiceRequest,
                                result: Telemetry) -> None:
         """Perform preprocessing of the services listed in _custom_process.
-        
         Note: This step is useful in case a merge of multiple arguments into
         one unique argument is needed. If the 'command' argument is not
         defined for the service, then no further processing will be done.
-        
         Args:
             service_request: The current service request.
             result: The result to be published.
