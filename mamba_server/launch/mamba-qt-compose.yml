@@ -9,6 +9,7 @@ services:
   tc_window_qt:
   tm_window_qt:
   log_window_qt:
+  save_perspective:
   about_qt:
 
   # Utilities

@@ -221,6 +221,28 @@ class Plugin(PluginBase):
 
         window.destroyed.connect(lambda: self.closeEvent(services_table))
 
+        self._context.rx['generate_perspective'].pipe(
+            op.filter(lambda value: isinstance(value, Empty))).subscribe(
+                on_next=lambda _: self._generate_perspective(window, services_table))
+
+    def _generate_perspective(self, window: QMdiSubWindow, services_table):
+        perspective = {
+            'menu_title': self._configuration['menu'],
+            'action_name': self._configuration['name'],
+            'pos_x': window.pos().x(),
+            'pos_y': window.pos().y(),
+            'width': window.size().width(),
+            'height': window.size().height(),
+            'services': []
+        }
+
+        for row in range(0, services_table.rowCount()):
+            perspective['services'].append(services_table.cellWidget(row, 0).text())
+
+        print(perspective)
+
+        self._context.rx['component_perspective'].on_next(perspective)
+
     def _io_service_signature(self, signatures: dict):
         """ Entry point for processing the service signatures.
 
