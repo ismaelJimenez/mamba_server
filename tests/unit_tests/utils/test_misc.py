@@ -67,8 +67,10 @@ class TestClass:
             self):
         classes_dict = misc.get_classes_from_module(
             'mamba_server.components.plugins', ComponentBase)
-        assert len(classes_dict) == 5  # One class is the base
+        assert len(classes_dict) == 7  # One class is the base
         assert 'tm_window_qt' in classes_dict
+        assert 'tc_window_qt' in classes_dict
+        assert 'log_window_qt' in classes_dict
         assert 'about_qt' in classes_dict
         assert 'about_tk' in classes_dict
         assert 'quit' in classes_dict

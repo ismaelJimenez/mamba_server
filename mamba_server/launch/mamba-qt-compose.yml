@@ -8,6 +8,7 @@ services:
   quit:
   tc_window_qt:
   tm_window_qt:
+  log_window_qt:
   about_qt:
 
   # Utilities
