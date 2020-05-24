@@ -1,5 +1,5 @@
 """ VISA controller base """
-from typing import Optional, List, Dict, Any, Union
+from typing import Optional, List, Dict, Union
 import os
 import pyvisa
 
