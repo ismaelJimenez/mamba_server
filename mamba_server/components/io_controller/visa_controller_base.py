@@ -33,9 +33,6 @@ class VisaControllerBase(ComponentBase):
         self._inst = None
         self._simulation_file = None
 
-        # List of service ids that require custom processing
-        self._custom_process: List[str] = []
-
     def _register_observers(self) -> None:
         """ Entry point for registering component observers """
 
@@ -178,7 +175,6 @@ class VisaControllerBase(ComponentBase):
             service_request: The current service request.
             result: The result to be published.
         """
-        raise NotImplementedError
 
     def _run_command(self, service_request: IoServiceRequest) -> None:
         self._log_dev(f"Received service request: {service_request.id}")
@@ -186,8 +182,7 @@ class VisaControllerBase(ComponentBase):
         result = Telemetry(tm_id=service_request.id,
                            tm_type=service_request.type)
 
-        if service_request.id in self._custom_process:
-            self._service_preprocessing(service_request, result)
+        self._service_preprocessing(service_request, result)
 
         if self._service_info[service_request.id].get('key') == '@connect':
             self._visa_connect(result)

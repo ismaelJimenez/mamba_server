@@ -191,7 +191,6 @@ class TestClass:
         assert component._shared_memory_getter == {}
         assert component._shared_memory_setter == {}
         assert component._service_info == {}
-        assert component._custom_process == []
         assert component._inst is None
         assert component._simulation_file is None
 
@@ -463,7 +462,6 @@ class TestClass:
                 'signature': [[], 'str']
             }
         }
-        assert component._custom_process == []
         assert component._inst is None
         assert 'rs_smb100b.yaml' in component._simulation_file
 
@@ -782,7 +780,6 @@ class TestClass:
                 'signature': [[], 'str']
             }
         }
-        assert component._custom_process == []
         assert component._inst is None
         assert component._simulation_file is None
 

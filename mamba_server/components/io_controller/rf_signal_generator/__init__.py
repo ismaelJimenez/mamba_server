@@ -16,9 +16,6 @@ class RfSignalGenerator(VisaControllerBase):
         super(RfSignalGenerator, self).__init__(os.path.dirname(__file__),
                                                 context, local_config)
 
-        # List of service ids that require custom processing
-        self._custom_process: List[str] = []
-
     def _service_preprocessing(self, service_request: IoServiceRequest,
                                result: Telemetry) -> None:
         """Perform preprocessing of the services listed in _custom_process.
