@@ -839,7 +839,8 @@ class TestClass:
         time.sleep(.1)
 
         assert dummy_test_class.times_called == 1
-        assert dummy_test_class.last_value == {
+        assert dummy_test_class.last_value == {'provider': 'smb100b',
+ 'services': {
             'SMB_CLOCK_SRC': {
                 'description': 'Sets the source of the reference frequency',
                 'signature': [['str'], 'None']
@@ -920,6 +921,7 @@ class TestClass:
                 'signature': [[], 'str']
             }
         }
+                                               }
 
         component = RfSignalGenerator(
             self.context,
@@ -938,91 +940,62 @@ class TestClass:
         time.sleep(.1)
 
         assert dummy_test_class.times_called == 2
-        assert dummy_test_class.last_value == {
-            'CUSTOM_TOPIC': {
-                'description': 'Sets the source of the reference frequency',
-                'signature': [['str'], None]
-            },
-            'SMB_CLOCK_SRC': {
-                'description': 'Sets the source of the reference frequency',
-                'signature': [['str'], 'None']
-            },
-            'SMB_CONNECT': {
-                'description': 'Establish Connection with SMB',
-                'signature': [[], None]
-            },
-            'SMB_CW_FREQ': {
-                'description': 'Sets the frequency of the RF output signal',
-                'signature': [['int'], 'None']
-            },
-            'SMB_DISCONNECT': {
-                'description': 'Close connection with SMB',
-                'signature': [[], None]
-            },
-            'SMB_FREQ_MODE': {
-                'description': 'Set the frequency mode for generating the '
-                'RF output signal',
-                'signature': [['str'], 'None']
-            },
-            'SMB_OUT_POWER': {
-                'description': 'Set the RF output signal',
-                'signature': [['str'], 'None']
-            },
-            'SMB_POWER_LEVEL': {
-                'description': 'Sets the RF level applied to the device '
-                'under tests',
-                'signature': [['float'], 'None']
-            },
-            'SMB_QUERY_CLOCK_SRC': {
-                'description': 'Query the source of the reference '
-                'frequency',
-                'signature': [[], 'str']
-            },
-            'SMB_QUERY_CONNECTED': {
-                'description': 'Query the connection status to the '
-                'instrument',
-                'signature': [[], 'bool']
-            },
-            'SMB_QUERY_CW_FREQ': {
-                'description': 'Query the frequency of the RF output '
-                'signal',
-                'signature': [[], 'int']
-            },
-            'SMB_QUERY_FREQ_MODE': {
-                'description': 'Query the frequency mode for '
-                'generating the RF output signal',
-                'signature': [[], 'str']
-            },
-            'SMB_QUERY_IDN': {
-                'description': 'Query the instrument identification',
-                'signature': [[], 'str']
-            },
-            'SMB_QUERY_OUT_POWER': {
-                'description': 'Query the RF output signal',
-                'signature': [[], 'int']
-            },
-            'SMB_QUERY_POWER_LEVEL': {
-                'description': 'Query the RF level applied to the '
-                'device under tests',
-                'signature': [[], 'float']
-            },
-            'SMB_RAW': {
-                'description': 'Send a raw command to the instrument',
-                'signature': [['str'], 'None']
-            },
-            'SMB_RST': {
-                'description': 'Clear the output buffer',
-                'signature': [[], None]
-            },
-            'SMB_TC_QUERY_RAW': {
-                'description': 'Perform raw query to the instrument',
-                'signature': [['str'], 'str']
-            },
-            'SMB_TM_QUERY_RAW': {
-                'description': 'Retrieve the value of the last raw query',
-                'signature': [[], 'str']
-            }
-        }
+        assert dummy_test_class.last_value == {'provider': 'smb100b',
+ 'services': {'CUSTOM_TOPIC': {'description': 'Sets the source of the '
+                                              'reference frequency',
+                               'signature': [['str'], None]},
+              'SMB_CLOCK_SRC': {'description': 'Sets the source of the '
+                                               'reference frequency',
+                                'signature': [['str'], 'None']},
+              'SMB_CONNECT': {'description': 'Establish Connection with SMB',
+                              'signature': [[], None]},
+              'SMB_CW_FREQ': {'description': 'Sets the frequency of the RF '
+                                             'output signal',
+                              'signature': [['int'], 'None']},
+              'SMB_DISCONNECT': {'description': 'Close connection with SMB',
+                                 'signature': [[], None]},
+              'SMB_FREQ_MODE': {'description': 'Set the frequency mode for '
+                                               'generating the RF output '
+                                               'signal',
+                                'signature': [['str'], 'None']},
+              'SMB_OUT_POWER': {'description': 'Set the RF output signal',
+                                'signature': [['str'], 'None']},
+              'SMB_POWER_LEVEL': {'description': 'Sets the RF level applied to '
+                                                 'the device under tests',
+                                  'signature': [['float'], 'None']},
+              'SMB_QUERY_CLOCK_SRC': {'description': 'Query the source of the '
+                                                     'reference frequency',
+                                      'signature': [[], 'str']},
+              'SMB_QUERY_CONNECTED': {'description': 'Query the connection '
+                                                     'status to the instrument',
+                                      'signature': [[], 'bool']},
+              'SMB_QUERY_CW_FREQ': {'description': 'Query the frequency of the '
+                                                   'RF output signal',
+                                    'signature': [[], 'int']},
+              'SMB_QUERY_FREQ_MODE': {'description': 'Query the frequency mode '
+                                                     'for generating the RF '
+                                                     'output signal',
+                                      'signature': [[], 'str']},
+              'SMB_QUERY_IDN': {'description': 'Query the instrument '
+                                               'identification',
+                                'signature': [[], 'str']},
+              'SMB_QUERY_OUT_POWER': {'description': 'Query the RF output '
+                                                     'signal',
+                                      'signature': [[], 'int']},
+              'SMB_QUERY_POWER_LEVEL': {'description': 'Query the RF level '
+                                                       'applied to the device '
+                                                       'under tests',
+                                        'signature': [[], 'float']},
+              'SMB_RAW': {'description': 'Send a raw command to the instrument',
+                          'signature': [['str'], 'None']},
+              'SMB_RST': {'description': 'Clear the output buffer',
+                          'signature': [[], None]},
+              'SMB_TC_QUERY_RAW': {'description': 'Perform raw query to the '
+                                                  'instrument',
+                                   'signature': [['str'], 'str']},
+              'SMB_TM_QUERY_RAW': {'description': 'Retrieve the value of the '
+                                                  'last raw query',
+                                   'signature': [[], 'str']}}}
 
     def test_io_service_request_observer(self):
         """ Test component io_service_request observer """

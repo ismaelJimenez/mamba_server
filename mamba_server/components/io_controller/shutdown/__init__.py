@@ -12,8 +12,10 @@ class Driver(ComponentBase):
 
     def initialize(self):
         self._context.rx['io_service_signature'].on_next({
+            'provider': self._name,
+            'services':{
             'SHUTDOWN': {
-                'signature': [],
+                'signature': [[], None],
                 'description': 'Shutdown Mamba Server'
             }
-        })
+        }})

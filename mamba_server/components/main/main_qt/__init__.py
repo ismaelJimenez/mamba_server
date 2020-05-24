@@ -2,9 +2,11 @@
 
 import os
 
+from rx import operators as op
+
 from PySide2.QtWidgets import QApplication, QMainWindow, QWidget, \
-    QMenu, QAction, QSplashScreen
-from PySide2.QtCore import QTimer
+    QMenu, QAction, QSplashScreen, QMdiArea, QLabel, QComboBox, QHBoxLayout, QMdiSubWindow
+from PySide2.QtCore import QTimer, Qt
 from PySide2.QtGui import QPixmap, QGuiApplication
 
 from mamba_server.components.main import MainBase
@@ -27,12 +29,31 @@ class MainWindow(MainBase):
 
     # Functions to be adapted
 
+    def _register_observers(self):
+        super(MainWindow, self)._register_observers()
+
+        # Generate_window is received to generate a new MDI window
+        self._context.rx['new_window'].pipe(
+            op.filter(lambda value: isinstance(value, Empty))).subscribe(
+                on_next=self._new_window)
+
+    def _new_window(self, rx_value):
+        subWindow1 = QMdiSubWindow()
+        self._app.mdiArea.addSubWindow(subWindow1)
+
+        self._context.rx['new_window_widget'].on_next(subWindow1)
+
     def _create_main_window(self):
         """ Entry point for initializing the main window
             Note: It should be hidden per default.
         """
         self._app = QMainWindow()
         self._app.setWindowTitle(self._configuration['title'])
+
+        self._app.mdiArea = QMdiArea()
+        self._app.mdiArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self._app.mdiArea.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self._app.setCentralWidget(self._app.mdiArea)
 
     def _create_menu_bar(self):
         """ Entry point for creating the top menu bar """
@@ -80,7 +101,7 @@ class MainWindow(MainBase):
 
     def _show(self):
         """ Entry point for showing main screen """
-        self._app.show()
+        self._app.showMaximized()
 
     def _hide(self):
         """ Entry point for hiding main screen """

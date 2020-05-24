@@ -73,7 +73,7 @@ class Driver(ComponentBase):
 
         self._io_result_subs = self._context.rx['io_result'].pipe(
             op.filter(lambda value: isinstance(value, Telemetry))).subscribe(
-                on_next=lambda _: self._process_io_result(_))
+                on_next=self._process_io_result)
 
         self._context.rx['io_service_request'].on_next(
             IoServiceRequest(id=telecommand.id,
@@ -115,7 +115,7 @@ class Driver(ComponentBase):
             Args:
                 signatures: The io service signatures dictionary.
         """
-        new_signatures = [key for key, value in signatures.items()]
+        new_signatures = [key for key, value in signatures['services'].items()]
         self._log_info(f"Received signatures: {new_signatures}")
 
         for new_signature in new_signatures:
@@ -123,7 +123,7 @@ class Driver(ComponentBase):
                 raise ComponentConfigException(
                     f"Received conflicting service key: {new_signature}")
 
-        for key, value in signatures.items():
+        for key, value in signatures['services'].items():
             if not isinstance(value.get('signature'), list) or len(
                     value.get('signature')) != 2 or not isinstance(
                         value.get('signature')[0], list):
@@ -131,4 +131,4 @@ class Driver(ComponentBase):
                     f'Signature of service "{key}" is invalid. Format shall'
                     f' be [[arg_1, arg_2, ...], return_type]')
 
-        self._io_services.update(signatures)
+        self._io_services.update(signatures['services'])

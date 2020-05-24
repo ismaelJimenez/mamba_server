@@ -103,6 +103,11 @@ class VisaControllerBase(ComponentBase):
             for key, value in self._service_info.items()
         }
 
+        io_signatures = {
+            'provider': self._name,
+            'services': services_sig
+        }
+
         # Compose shared memory data dictionaries
         if 'parameters' in self._configuration:
             for key, service_data in self._configuration['parameters'].items():
@@ -120,7 +125,7 @@ class VisaControllerBase(ComponentBase):
                         self._shared_memory_setter[setter] = key
 
         # Publish services signature
-        self._context.rx['io_service_signature'].on_next(services_sig)
+        self._context.rx['io_service_signature'].on_next(io_signatures)
 
         # Subscribe to the services request
         self._context.rx['io_service_request'].pipe(

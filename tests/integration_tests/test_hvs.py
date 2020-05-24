@@ -247,6 +247,8 @@ class TestClass:
 
         # Initialize service signatures
         self.context.rx['io_service_signature'].on_next({
+            'provider': 'test_provider',
+            'services': {
             'TEST_TC_1': {
                 'description': "custom command 1",
                 'signature': [['str', 'int'], 'None']
@@ -259,7 +261,7 @@ class TestClass:
                 'description': "custom command 3",
                 'signature': [['int'], 'str']
             }
-        })
+        }})
 
         # Subscribe to the 'tc' that shall be published
         self.context.rx['io_service_request'].subscribe(
@@ -318,6 +320,8 @@ class TestClass:
 
         # Initialize service signatures
         self.context.rx['io_service_signature'].on_next({
+            'provider': 'test_provider',
+            'services': {
             'TEST_TC_1': {
                 'description': "custom command 1",
                 'signature': [['str', 'int'], 'None']
@@ -330,7 +334,7 @@ class TestClass:
                 'description': "custom command 3",
                 'signature': [['int', 'str'], 'str']
             }
-        })
+        }})
 
         # Establish socket connection
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
