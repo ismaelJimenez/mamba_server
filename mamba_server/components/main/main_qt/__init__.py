@@ -5,7 +5,7 @@ import os
 from rx import operators as op
 
 from PySide2.QtWidgets import QApplication, QMainWindow, QWidget, \
-    QMenu, QAction, QSplashScreen, QMdiArea, QLabel, QComboBox, QHBoxLayout, QMdiSubWindow
+    QMenu, QAction, QSplashScreen, QMdiArea, QMdiSubWindow
 from PySide2.QtCore import QTimer, Qt
 from PySide2.QtGui import QPixmap, QGuiApplication
 

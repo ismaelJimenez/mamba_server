@@ -69,15 +69,16 @@ class TestClass:
         self.context.rx['io_service_signature'].on_next({
             'provider': 'test_provider',
             'services': {
-            'TEST_TC_1': {
-                'description': "custom command 1",
-                'signature': [['str'], 'None']
-            },
-            'TEST_TC_2': {
-                'description': "custom command 2",
-                'signature': [[], 'str']
+                'TEST_TC_1': {
+                    'description': "custom command 1",
+                    'signature': [['str'], 'None']
+                },
+                'TEST_TC_2': {
+                    'description': "custom command 2",
+                    'signature': [[], 'str']
+                }
             }
-        }})
+        })
 
         assert component._io_services == {
             'TEST_TC_1': {
@@ -93,13 +94,13 @@ class TestClass:
         # 2 - Test with second signature message
         self.context.rx['io_service_signature'].on_next({
             'provider': 'test_provider_2',
-        'services':
-        {
-            'TEST_TC_3': {
-                'description': "custom command 3",
-                'signature': [['str'], 'str']
+            'services': {
+                'TEST_TC_3': {
+                    'description': "custom command 3",
+                    'signature': [['str'], 'str']
+                }
             }
-        }})
+        })
 
         assert component._io_services == {
             'TEST_TC_1': {
@@ -118,13 +119,15 @@ class TestClass:
 
         # 3 - Test with repeated service key
         with pytest.raises(ComponentConfigException) as excinfo:
-            self.context.rx['io_service_signature'].on_next({'provider': 'test_provider_3',
-            'services': {
-                'TEST_TC_3': {
-                    'description': "custom command 3-a",
-                    'signature': [['str'], 'str']
+            self.context.rx['io_service_signature'].on_next({
+                'provider': 'test_provider_3',
+                'services': {
+                    'TEST_TC_3': {
+                        'description': "custom command 3-a",
+                        'signature': [['str'], 'str']
+                    }
                 }
-            }})
+            })
 
         assert "Received conflicting service key: TEST_TC_3" in str(
             excinfo.value)
@@ -133,13 +136,12 @@ class TestClass:
         with pytest.raises(ComponentConfigException) as excinfo:
             self.context.rx['io_service_signature'].on_next({
                 'provider': 'test_provider_2',
-                'services':
-                    {
-                'TEST_TC_4': {
-                    'description': "custom command 4",
-                    'signature': 'wrong'
-                }
+                'services': {
+                    'TEST_TC_4': {
+                        'description': "custom command 4",
+                        'signature': 'wrong'
                     }
+                }
             })
 
         assert 'Signature of service "TEST_TC_4" is invalid. Format shall be' \
@@ -154,21 +156,21 @@ class TestClass:
         # Initialize service signatures
         self.context.rx['io_service_signature'].on_next({
             'provider': 'test_provider',
-        'services':
-        {
-            'TEST_TC_1': {
-                'description': "custom command 1",
-                'signature': [['str', 'int'], 'None']
-            },
-            'TEST_TC_2': {
-                'description': "custom command 2",
-                'signature': [[], 'str']
-            },
-            'TEST_TC_3': {
-                'description': "custom command 3",
-                'signature': [['int'], 'str']
+            'services': {
+                'TEST_TC_1': {
+                    'description': "custom command 1",
+                    'signature': [['str', 'int'], 'None']
+                },
+                'TEST_TC_2': {
+                    'description': "custom command 2",
+                    'signature': [[], 'str']
+                },
+                'TEST_TC_3': {
+                    'description': "custom command 3",
+                    'signature': [['int'], 'str']
+                }
             }
-        }})
+        })
 
         # Subscribe to the 'tc' that shall be published
         self.context.rx['io_service_request'].subscribe(

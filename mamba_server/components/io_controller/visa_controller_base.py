@@ -103,10 +103,7 @@ class VisaControllerBase(ComponentBase):
             for key, value in self._service_info.items()
         }
 
-        io_signatures = {
-            'provider': self._name,
-            'services': services_sig
-        }
+        io_signatures = {'provider': self._name, 'services': services_sig}
 
         # Compose shared memory data dictionaries
         if 'parameters' in self._configuration:

@@ -249,19 +249,20 @@ class TestClass:
         self.context.rx['io_service_signature'].on_next({
             'provider': 'test_provider',
             'services': {
-            'TEST_TC_1': {
-                'description': "custom command 1",
-                'signature': [['str', 'int'], 'None']
-            },
-            'TEST_TC_2': {
-                'description': "custom command 2",
-                'signature': [[], 'str']
-            },
-            'TEST_TC_3': {
-                'description': "custom command 3",
-                'signature': [['int'], 'str']
+                'TEST_TC_1': {
+                    'description': "custom command 1",
+                    'signature': [['str', 'int'], 'None']
+                },
+                'TEST_TC_2': {
+                    'description': "custom command 2",
+                    'signature': [[], 'str']
+                },
+                'TEST_TC_3': {
+                    'description': "custom command 3",
+                    'signature': [['int'], 'str']
+                }
             }
-        }})
+        })
 
         # Subscribe to the 'tc' that shall be published
         self.context.rx['io_service_request'].subscribe(
@@ -322,19 +323,20 @@ class TestClass:
         self.context.rx['io_service_signature'].on_next({
             'provider': 'test_provider',
             'services': {
-            'TEST_TC_1': {
-                'description': "custom command 1",
-                'signature': [['str', 'int'], 'None']
-            },
-            'TEST_TC_2': {
-                'description': "custom command 2",
-                'signature': [[], 'str']
-            },
-            'TEST_TC_3': {
-                'description': "custom command 3",
-                'signature': [['int', 'str'], 'str']
+                'TEST_TC_1': {
+                    'description': "custom command 1",
+                    'signature': [['str', 'int'], 'None']
+                },
+                'TEST_TC_2': {
+                    'description': "custom command 2",
+                    'signature': [[], 'str']
+                },
+                'TEST_TC_3': {
+                    'description': "custom command 3",
+                    'signature': [['int', 'str'], 'str']
+                }
             }
-        }})
+        })
 
         # Establish socket connection
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:

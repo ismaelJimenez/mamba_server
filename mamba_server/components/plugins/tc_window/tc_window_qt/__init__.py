@@ -18,6 +18,7 @@ from mamba_server.components.main.observable_types import RunAction
 from mamba_server.components.observable_types import Empty, Telecommand
 from mamba_server.exceptions import ComponentConfigException
 
+
 class CustomTable(QTableWidget):
     def __init__(self, *args, **kwargs):
         QTableWidget.__init__(self, *args, **kwargs)
@@ -60,7 +61,8 @@ class Plugin(PluginBase):
     def generate_service_combobox(self, providerCombo, serviceCombo):
         serviceCombo.clear()
 
-        for service, info in self._io_services[providerCombo.currentText()].items():
+        for service, info in self._io_services[
+                providerCombo.currentText()].items():
             serviceCombo.addItem(service)
 
     def call_service(self, service_id, services_table):
@@ -76,23 +78,24 @@ class Plugin(PluginBase):
                         args.append(param)
 
         self._context.rx['tc'].on_next(
-            Telecommand(tc_id=service_id,
-                        args=args,
-                        tc_type='tc'))
+            Telecommand(tc_id=service_id, args=args, tc_type='tc'))
 
     def add_service(self, providerCombo, serviceCombo, services_table):
         provider = providerCombo.currentText()
         service = serviceCombo.currentText()
 
-        parameters = self._io_services[providerCombo.currentText()][service]['signature'][0]
+        parameters = self._io_services[
+            providerCombo.currentText()][service]['signature'][0]
         num_params = len(parameters)
 
         services_table.insertRow(0)
 
         service_btn = QPushButton(service)
-        service_btn.clicked.connect(lambda: self.call_service(service, services_table))
+        service_btn.clicked.connect(
+            lambda: self.call_service(service, services_table))
 
-        description_item = QTableWidgetItem(self._io_services[providerCombo.currentText()][service]['description'])
+        description_item = QTableWidgetItem(self._io_services[
+            providerCombo.currentText()][service]['description'])
         description_item.setFlags(Qt.ItemIsEnabled)
 
         if num_params > 0:
@@ -150,53 +153,6 @@ class Plugin(PluginBase):
         services_table.setItem(0, 4, param_3)
         services_table.setItem(0, 5, param_4)
 
-
-
-
-        # if (serviceCombo.currentText() == '') or (providerCombo.currentText() == ''):
-        #     return
-        #
-        # for row in range(0, services_table.rowCount()):  # Do not allow 2 services with same name
-        #     if services_table.item(row, 0).text() == serviceCombo.currentText():
-        #         return
-        #
-        # provider = providerCombo.currentText()
-        # service = serviceCombo.currentText()
-        #
-        # services_table.insertRow(0)
-        #
-        # service_item = QTableWidgetItem(service)
-        # service_item.setFlags(Qt.ItemIsEnabled)
-        #
-        # description_item = QTableWidgetItem(self._io_services[providerCombo.currentText()][service]['description'])
-        # description_item.setFlags(Qt.ItemIsEnabled)
-        #
-        # # measured_value = QTableWidgetItem("N/A")
-        # # measured_value.setFlags(Qt.ItemIsEnabled)
-        # # measured_value.setTextAlignment(Qt.AlignCenter)
-        # #
-        # # units = QTableWidgetItem("-")
-        # # units.setFlags(Qt.ItemIsEnabled)
-        # # units.setTextAlignment(Qt.AlignCenter)
-        # #
-        # # stamp = QTableWidgetItem("N/A")
-        # # stamp.setFlags(Qt.ItemIsEnabled)
-        # # stamp.setTextAlignment(Qt.AlignCenter)
-        # #
-        # # font = QFont()
-        # # font.setBold(True)
-        #
-        # services_table.setItem(0, 0, service_item)
-        # services_table.setItem(0, 1, description_item)
-        # # services_table.setItem(0, 2, measured_value)
-        # # services_table.item(0, 2).setBackground(Qt.black)
-        # # services_table.item(0, 2).setForeground(Qt.green)
-        # # services_table.item(0, 2).setFont(font)
-        # # services_table.setItem(0, 3, units)
-        # # services_table.setItem(0, 4, stamp)
-        # # services_table.item(0, 4).setFont(font)
-        # # services_table.item(0, 4).setForeground(Qt.darkGray)
-
     def _new_window(self, window: QMdiSubWindow):
         self._new_window_observer.dispose()
 
@@ -210,7 +166,9 @@ class Plugin(PluginBase):
         for service, value in self._io_services.items():
             providerCombo.addItem(service)
 
-        providerCombo.currentTextChanged.connect(lambda: self.generate_service_combobox(providerCombo, serviceCombo))
+        providerCombo.currentTextChanged.connect(
+            lambda: self.generate_service_combobox(providerCombo, serviceCombo
+                                                   ))
 
         addServiceButton = QPushButton("Add")
         addServiceButton.setAutoDefault(False)
@@ -227,13 +185,18 @@ class Plugin(PluginBase):
         services_table = CustomTable()
         services_table.setColumnCount(6)
 
-        services_table.setHorizontalHeaderLabels(["Service", "Description", "Param#1", "Param#2", "Param#3", "Param#4"])
+        services_table.setHorizontalHeaderLabels([
+            "Service", "Description", "Param#1", "Param#2", "Param#3",
+            "Param#4"
+        ])
 
         services_table.verticalHeader().setSectionsMovable(True)
         services_table.verticalHeader().setDragEnabled(True)
-        services_table.verticalHeader().setDragDropMode(QAbstractItemView.InternalMove)
+        services_table.verticalHeader().setDragDropMode(
+            QAbstractItemView.InternalMove)
 
-        addServiceButton.clicked.connect(lambda: self.add_service(providerCombo, serviceCombo, services_table))
+        addServiceButton.clicked.connect(lambda: self.add_service(
+            providerCombo, serviceCombo, services_table))
 
         mainLayout = QVBoxLayout()
         mainLayout.addLayout(serviceLayout)
@@ -247,12 +210,12 @@ class Plugin(PluginBase):
 
         window.adjustSize()
 
-        services_table.setColumnWidth(0, window.width()*0.3)
-        services_table.setColumnWidth(1, window.width()*0.4)
-        services_table.setColumnWidth(2, window.width()*0.2)
-        services_table.setColumnWidth(3, window.width()*0.2)
-        services_table.setColumnWidth(4, window.width()*0.2)
-        services_table.setColumnWidth(5, window.width()*0.2)
+        services_table.setColumnWidth(0, window.width() * 0.3)
+        services_table.setColumnWidth(1, window.width() * 0.4)
+        services_table.setColumnWidth(2, window.width() * 0.2)
+        services_table.setColumnWidth(3, window.width() * 0.2)
+        services_table.setColumnWidth(4, window.width() * 0.2)
+        services_table.setColumnWidth(5, window.width() * 0.2)
 
         window.show()
 
@@ -264,7 +227,8 @@ class Plugin(PluginBase):
             Args:
                 signatures: The io service signatures dictionary.
         """
-        self._io_services.update({signatures['provider']: signatures['services']})
+        self._io_services.update(
+            {signatures['provider']: signatures['services']})
 
     def initialize(self):
         super(Plugin, self).initialize()
@@ -282,9 +246,7 @@ class Plugin(PluginBase):
         """
         # Generate_window is received to generate a new MDI window
         self._new_window_observer = self._context.rx['new_window_widget'].pipe(
-            op.filter(lambda value: isinstance(value, QMdiSubWindow))).subscribe(
-                on_next=self._new_window)
+            op.filter(lambda value: isinstance(value, QMdiSubWindow))
+        ).subscribe(on_next=self._new_window)
 
         self._context.rx['new_window'].on_next(Empty())
-
-
