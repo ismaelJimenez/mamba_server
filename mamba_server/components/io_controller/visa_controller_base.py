@@ -1,10 +1,11 @@
 """ VISA controller base """
-
+from typing import Optional, List, Dict, Any, Union
 import os
 import pyvisa
 
 from rx import operators as op
 
+from mamba_server.context import Context
 from mamba_server.components import ComponentBase
 from mamba_server.exceptions import ComponentConfigException
 from mamba_server.components.observable_types import IoServiceRequest, \
@@ -14,7 +15,10 @@ from mamba_server.utils.misc import path_from_string
 
 class VisaControllerBase(ComponentBase):
     """ VISA controller base class """
-    def __init__(self, config_folder, context, local_config=None):
+    def __init__(self,
+                 config_folder: str,
+                 context: Context,
+                 local_config: Optional[dict] = None) -> None:
         super(VisaControllerBase, self).__init__(config_folder, context,
                                                  local_config)
 
@@ -22,14 +26,15 @@ class VisaControllerBase(ComponentBase):
         self._register_observers()
 
         # Defined custom variables
-        self._shared_memory = {}
-        self._shared_memory_getter = {}
-        self._shared_memory_setter = {}
-        self._service_info = {}
+        self._shared_memory: Dict[str, Union[str, int, float]] = {}
+        self._shared_memory_getter: Dict[str, str] = {}
+        self._shared_memory_setter: Dict[str, str] = {}
+        self._service_info: Dict[str, dict] = {}
         self._inst = None
         self._simulation_file = None
 
-        self._custom_process = []
+        # List of service ids that require custom processing
+        self._custom_process: List[str] = []
 
     def _register_observers(self) -> None:
         """ Entry point for registering component observers """
@@ -49,7 +54,7 @@ class VisaControllerBase(ComponentBase):
             self._inst.close()
             self._inst = None
 
-    def _visa_sim_file_validation(self):
+    def _visa_sim_file_validation(self) -> None:
         if self._configuration.get('visa-sim') is not None:
             if os.path.exists(self._configuration['visa-sim']):
                 self._simulation_file = self._configuration['visa-sim']
@@ -64,7 +69,7 @@ class VisaControllerBase(ComponentBase):
                 raise ComponentConfigException(
                     'Visa-sim file has not been found')
 
-    def _topics_format_validation(self):
+    def _topics_format_validation(self) -> None:
         if not isinstance(self._configuration.get('topics'), dict):
             raise ComponentConfigException(
                 'Topics configuration: wrong format')
@@ -130,7 +135,7 @@ class VisaControllerBase(ComponentBase):
                       (value.id in self._service_info))).subscribe(
                           on_next=self._run_command)
 
-    def _visa_connect(self, result: Telemetry):
+    def _visa_connect(self, result: Telemetry) -> None:
         if self._configuration.get('visa-sim'):
             self._inst = pyvisa.ResourceManager(
                 f"{self._simulation_file}@sim").open_resource(
@@ -153,7 +158,7 @@ class VisaControllerBase(ComponentBase):
 
             self._log_dev("Established connection to SMB")
 
-    def _visa_disconnect(self, result: Telemetry):
+    def _visa_disconnect(self, result: Telemetry) -> None:
         if self._inst is not None:
             self._inst.close()
             self._inst = None
@@ -162,10 +167,20 @@ class VisaControllerBase(ComponentBase):
             self._log_dev("Closed connection to SMB")
 
     def _service_preprocessing(self, service_request: IoServiceRequest,
-                               result: Telemetry):
+                               result: Telemetry) -> None:
+        """Perform preprocessing of the services listed in _custom_process.
+
+        Note: This step is useful in case a merge of multiple arguments into
+        one unique argument is needed. If the 'command' argument is not
+        defined for the service, then no further processing will be done.
+
+        Args:
+            service_request: The current service request.
+            result: The result to be published.
+        """
         raise NotImplementedError
 
-    def _run_command(self, service_request: IoServiceRequest):
+    def _run_command(self, service_request: IoServiceRequest) -> None:
         self._log_dev(f"Received service request: {service_request.id}")
 
         result = Telemetry(tm_id=service_request.id,

@@ -1,4 +1,5 @@
 pytest
+mypy
 pyvisa
 pyvisa-py
 pyvisa-sim
