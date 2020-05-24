@@ -80,12 +80,8 @@ class Plugin(PluginBase):
         self._context.rx['tc'].on_next(
             Telecommand(tc_id=service_id, args=args, tc_type='tc'))
 
-    def add_service(self, providerCombo, serviceCombo, services_table):
-        provider = providerCombo.currentText()
-        service = serviceCombo.currentText()
-
-        parameters = self._io_services[
-            providerCombo.currentText()][service]['signature'][0]
+    def add_service(self, provider, service, services_table):
+        parameters = self._io_services[provider][service]['signature'][0]
         num_params = len(parameters)
 
         services_table.insertRow(0)
@@ -94,8 +90,7 @@ class Plugin(PluginBase):
         service_btn.clicked.connect(
             lambda: self.call_service(service, services_table))
 
-        description_item = QTableWidgetItem(self._io_services[
-            providerCombo.currentText()][service]['description'])
+        description_item = QTableWidgetItem(self._io_services[provider][service]['description'])
         description_item.setFlags(Qt.ItemIsEnabled)
 
         if num_params > 0:
@@ -153,7 +148,7 @@ class Plugin(PluginBase):
         services_table.setItem(0, 4, param_3)
         services_table.setItem(0, 5, param_4)
 
-    def _new_window(self, window: QMdiSubWindow):
+    def _new_window(self, window: QMdiSubWindow, perspective):
         self._new_window_observer.dispose()
 
         child = QWidget()
@@ -196,7 +191,7 @@ class Plugin(PluginBase):
             QAbstractItemView.InternalMove)
 
         addServiceButton.clicked.connect(lambda: self.add_service(
-            providerCombo, serviceCombo, services_table))
+            providerCombo.currentText(), serviceCombo.currentText(), services_table))
 
         mainLayout = QVBoxLayout()
         mainLayout.addLayout(serviceLayout)
@@ -208,7 +203,18 @@ class Plugin(PluginBase):
         window.setWidget(child)
         window.setAttribute(Qt.WA_DeleteOnClose)
 
-        window.adjustSize()
+        if perspective is not None:
+            window.move(perspective['pos_x'], perspective['pos_y'])
+            window.resize(perspective['width'], perspective['height'])
+
+            for service_id in reversed(perspective['services']):
+                for provider, services in self._io_services.items():
+                    if service_id in services:
+                        self.add_service(
+                            provider, service_id, services_table)
+                        break
+        else:
+            window.adjustSize()
 
         services_table.setColumnWidth(0, window.width() * 0.3)
         services_table.setColumnWidth(1, window.width() * 0.4)
@@ -219,8 +225,6 @@ class Plugin(PluginBase):
 
         window.show()
 
-        window.destroyed.connect(lambda: self.closeEvent(services_table))
-
         self._context.rx['generate_perspective'].pipe(
             op.filter(lambda value: isinstance(value, Empty))).subscribe(
                 on_next=lambda _: self._generate_perspective(window, services_table))
@@ -229,15 +233,17 @@ class Plugin(PluginBase):
         perspective = {
             'menu_title': self._configuration['menu'],
             'action_name': self._configuration['name'],
-            'pos_x': window.pos().x(),
-            'pos_y': window.pos().y(),
-            'width': window.size().width(),
-            'height': window.size().height(),
-            'services': []
+            'data': {
+                'pos_x': window.pos().x(),
+                'pos_y': window.pos().y(),
+                'width': window.size().width(),
+                'height': window.size().height(),
+                'services': []
+            }
         }
 
         for row in range(0, services_table.rowCount()):
-            perspective['services'].append(services_table.cellWidget(row, 0).text())
+            perspective['data']['services'].append(services_table.cellWidget(row, 0).text())
 
         print(perspective)
 
@@ -269,6 +275,6 @@ class Plugin(PluginBase):
         # Generate_window is received to generate a new MDI window
         self._new_window_observer = self._context.rx['new_window_widget'].pipe(
             op.filter(lambda value: isinstance(value, QMdiSubWindow))
-        ).subscribe(on_next=self._new_window)
+        ).subscribe(on_next=lambda _: self._new_window(_, rx_value.perspective))
 
         self._context.rx['new_window'].on_next(Empty())

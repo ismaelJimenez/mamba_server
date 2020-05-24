@@ -114,19 +114,15 @@ class Plugin(PluginBase):
                     1] is not None and info['signature'][1] != 'None':
                 serviceCombo.addItem(service)
 
-    def add_service(self, providerCombo, serviceCombo, services_table):
-        if (serviceCombo.currentText() == '') or (providerCombo.currentText()
-                                                  == ''):
+    def add_service(self, provider, service, services_table):
+        if (service == '') or (provider == ''):
             return
 
         for row in range(0, services_table.rowCount()
                          ):  # Do not allow 2 services with same name
             if services_table.item(row,
-                                   0).text() == serviceCombo.currentText():
+                                   0).text() == service:
                 return
-
-        provider = providerCombo.currentText()
-        service = serviceCombo.currentText()
 
         services_table.insertRow(0)
 
@@ -134,7 +130,7 @@ class Plugin(PluginBase):
         service_item.setFlags(Qt.ItemIsEnabled)
 
         description_item = QTableWidgetItem(self._io_services[
-            providerCombo.currentText()][service]['description'])
+            provider][service]['description'])
         description_item.setFlags(Qt.ItemIsEnabled)
 
         measured_value = QTableWidgetItem("N/A")
@@ -169,7 +165,7 @@ class Plugin(PluginBase):
         else:
             self._observed_services[service] += 1
 
-    def _new_window(self, window: QMdiSubWindow):
+    def _new_window(self, window: QMdiSubWindow, perspective):
         self._new_window_observer.dispose()
 
         child = QWidget()
@@ -211,7 +207,7 @@ class Plugin(PluginBase):
             QAbstractItemView.InternalMove)
 
         addServiceButton.clicked.connect(lambda: self.add_service(
-            providerCombo, serviceCombo, services_table))
+            providerCombo.currentText(), serviceCombo.currentText(), services_table))
 
         mainLayout = QVBoxLayout()
         mainLayout.addLayout(serviceLayout)
@@ -223,7 +219,18 @@ class Plugin(PluginBase):
         window.setWidget(child)
         window.setAttribute(Qt.WA_DeleteOnClose)
 
-        window.adjustSize()
+        if perspective is not None:
+            window.move(perspective['pos_x'], perspective['pos_y'])
+            window.resize(perspective['width'], perspective['height'])
+
+            for service_id in reversed(perspective['services']):
+                for provider, services in self._io_services.items():
+                    if service_id in services:
+                        self.add_service(
+                            provider, service_id, services_table)
+                        break
+        else:
+            window.adjustSize()
 
         services_table.setColumnWidth(0, window.width() * 0.2)
         services_table.setColumnWidth(1, window.width() * 0.2)
@@ -234,6 +241,30 @@ class Plugin(PluginBase):
         window.show()
 
         window.destroyed.connect(lambda: self.closeEvent(services_table))
+
+        self._context.rx['generate_perspective'].pipe(
+            op.filter(lambda value: isinstance(value, Empty))).subscribe(
+                on_next=lambda _: self._generate_perspective(window, services_table))
+
+    def _generate_perspective(self, window: QMdiSubWindow, services_table):
+        perspective = {
+            'menu_title': self._configuration['menu'],
+            'action_name': self._configuration['name'],
+            'data': {
+                'pos_x': window.pos().x(),
+                'pos_y': window.pos().y(),
+                'width': window.size().width(),
+                'height': window.size().height(),
+                'services': []
+            }
+        }
+
+        for row in range(0, services_table.rowCount()):
+            perspective['data']['services'].append(services_table.item(row, 0).text())
+
+        print(perspective)
+
+        self._context.rx['component_perspective'].on_next(perspective)
 
     def closeEvent(self, services_table):
         for row in range(0, services_table.rowCount()):
@@ -278,6 +309,6 @@ class Plugin(PluginBase):
         # Generate_window is received to generate a new MDI window
         self._new_window_observer = self._context.rx['new_window_widget'].pipe(
             op.filter(lambda value: isinstance(value, QMdiSubWindow))
-        ).subscribe(on_next=self._new_window)
+        ).subscribe(on_next=lambda _: self._new_window(_, rx_value.perspective))
 
         self._context.rx['new_window'].on_next(Empty())

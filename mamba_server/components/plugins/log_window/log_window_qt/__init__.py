@@ -35,9 +35,6 @@ class Plugin(PluginBase):
                 raw_tc (Log): The raw telecommand coming from
                                          the socket.
         """
-        print(log.level)
-        print(debugCheckBox.checkState())
-        print(infoCheckBox.checkState())
         if (log.level == LogLevel.Dev and
             (debugCheckBox.checkState() == Qt.Unchecked)) or \
                 (log.level == LogLevel.Info
@@ -57,7 +54,7 @@ class Plugin(PluginBase):
 
         print(f'WINDOW: [{log.level}] [{log.source}] {log.message}')
 
-    def _new_window(self, window: QMdiSubWindow):
+    def _new_window(self, window: QMdiSubWindow, perspective):
         self._new_window_observer.dispose()
 
         child = QWidget()
@@ -100,7 +97,23 @@ class Plugin(PluginBase):
         window.setWidget(child)
         window.setAttribute(Qt.WA_DeleteOnClose)
 
-        window.adjustSize()
+        if perspective is not None:
+            window.move(perspective['pos_x'], perspective['pos_y'])
+            window.resize(perspective['width'], perspective['height'])
+
+            if perspective['exclude_debug']:
+                debugCheckBox.setChecked(True)
+
+            if perspective['exclude_info']:
+                infoCheckBox.setChecked(True)
+
+            if perspective['exclude_error']:
+                errorCheckBox.setChecked(True)
+
+            if perspective['exclude_critical']:
+                criticalCheckBox.setChecked(True)
+        else:
+            window.adjustSize()
 
         window.show()
 
@@ -112,6 +125,29 @@ class Plugin(PluginBase):
                     criticalCheckBox))
 
         window.destroyed.connect(lambda: self.closeEvent(log_observer))
+
+        self._context.rx['generate_perspective'].pipe(
+            op.filter(lambda value: isinstance(value, Empty))).subscribe(
+                on_next=lambda _: self._generate_perspective(window, debugCheckBox, infoCheckBox, errorCheckBox, criticalCheckBox))
+
+    def _generate_perspective(self, window: QMdiSubWindow, debugCheckBox, infoCheckBox, errorCheckBox, criticalCheckBox):
+        perspective = {
+            'menu_title': self._configuration['menu'],
+            'action_name': self._configuration['name'],
+            'data': {
+                'pos_x': window.pos().x(),
+                'pos_y': window.pos().y(),
+                'width': window.size().width(),
+                'height': window.size().height(),
+                'exclude_debug': debugCheckBox.checkState() == Qt.Checked,
+                'exclude_info': infoCheckBox.checkState() == Qt.Checked,
+                'exclude_error': errorCheckBox.checkState() == Qt.Checked,
+                'exclude_critical': criticalCheckBox.checkState() == Qt.Checked
+            }
+        }
+
+        self._context.rx['component_perspective'].on_next(perspective)
+
 
     def closeEvent(self, log_observer):
         log_observer.dispose()
@@ -133,6 +169,6 @@ class Plugin(PluginBase):
         # Generate_window is received to generate a new MDI window
         self._new_window_observer = self._context.rx['new_window_widget'].pipe(
             op.filter(lambda value: isinstance(value, QMdiSubWindow))
-        ).subscribe(on_next=self._new_window)
+        ).subscribe(on_next=lambda _: self._new_window(_, rx_value.perspective))
 
         self._context.rx['new_window'].on_next(Empty())
