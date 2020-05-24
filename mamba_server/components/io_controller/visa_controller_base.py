@@ -159,6 +159,7 @@ class VisaControllerBase(ComponentBase):
     def _visa_disconnect(self, result: Telemetry):
         if self._inst is not None:
             self._inst.close()
+            self._inst = None
             if result.id in self._shared_memory_setter:
                 self._shared_memory[self._shared_memory_setter[result.id]] = 0
             self._log_dev("Closed connection to SMB")

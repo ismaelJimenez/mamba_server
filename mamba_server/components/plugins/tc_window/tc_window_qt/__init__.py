@@ -15,16 +15,14 @@ from PySide2.QtGui import QIcon, QCursor, QFont, QColor
 
 from mamba_server.components.plugins import PluginBase
 from mamba_server.components.main.observable_types import RunAction
-from mamba_server.components.observable_types import Empty, Telemetry
+from mamba_server.components.observable_types import Empty, Telecommand
 from mamba_server.exceptions import ComponentConfigException
 
 class CustomTable(QTableWidget):
-    def __init__(self, parent, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         QTableWidget.__init__(self, *args, **kwargs)
-        self.parent = parent
 
     def mousePressEvent(self, event):
-        print('PRESS EVENT')
         if event.button() == Qt.RightButton:
             it = self.itemAt(event.pos())
 
@@ -34,12 +32,6 @@ class CustomTable(QTableWidget):
                 action = menu.exec_(QCursor.pos())
 
                 if action == remove_action:
-                    self.parent._observed_services[self.itemAt(it.row(), 0).text()] -= 1
-
-                    if self.parent._observed_services[self.itemAt(it.row(), 0).text()] == 0:
-                        self.parent._observed_services.pop(self.itemAt(it.row(), 0).text(), None)
-                        self.parent._observer_modified.on_next(None)
-
                     self.removeRow(it.row())
 
         QTableWidget.mousePressEvent(self, event)
@@ -51,11 +43,7 @@ class Plugin(PluginBase):
         # Define custom variables
         self._app = None
         self._io_services = {}
-        self._service_tables = []
-        self._observed_services = {}
 
-        self._observer_modified = Subject()
-        self._io_result_subs = None
         self._new_window_observer = None
 
         super(Plugin, self).__init__(os.path.dirname(__file__), context,
@@ -69,89 +57,145 @@ class Plugin(PluginBase):
             op.filter(lambda value: isinstance(value, dict))).subscribe(
                 on_next=self._io_service_signature)
 
-        self._observer_modified.subscribe(
-                on_next=self._process_observer_modification)
-
-    def _process_observer_modification(self, rx_value):
-        if self._io_result_subs is not None:
-            self._io_result_subs.dispose()
-
-        self._io_result_subs = self._context.rx['io_result'].pipe(
-            op.filter(lambda value: isinstance(value, Telemetry) and value.id in self._observed_services)).subscribe(
-                on_next=self._process_io_result)
-
-    def _process_io_result(self, rx_value: Telemetry):
-        print('IO RESULT')
-        for table in self._service_tables:
-            for row in range(0, table.rowCount()):
-                service_id = table.item(table.visualRow(row), 0).text()
-                if service_id == rx_value.id:
-                    table.item(table.visualRow(row), 2).setText(rx_value.value)
-                    table.item(table.visualRow(row), 4).setText(str(time.time()))
-                    if rx_value.type == 'error':
-                        table.item(table.visualRow(row), 2).setBackground(Qt.red)
-                        table.item(table.visualRow(row), 2).setForeground(Qt.black)
-                    else:
-                        table.item(table.visualRow(row), 2).setBackground(Qt.black)
-                        table.item(table.visualRow(row), 2).setForeground(Qt.green)
-
     def generate_service_combobox(self, providerCombo, serviceCombo):
         serviceCombo.clear()
 
         for service, info in self._io_services[providerCombo.currentText()].items():
-            if info['signature'][1] is not None and info['signature'][1] != 'None':
-                serviceCombo.addItem(service)
+            serviceCombo.addItem(service)
+
+    def call_service(self, service_id, services_table):
+        args = []
+
+        for row in range(0, services_table.rowCount()):
+            if services_table.cellWidget(row, 0).text() == service_id:
+                for param_index in range(2, 6):
+                    param = services_table.item(row, param_index).text()
+                    if (param == '-') or (param == ''):
+                        break
+                    else:
+                        args.append(param)
+
+        self._context.rx['tc'].on_next(
+            Telecommand(tc_id=service_id,
+                        args=args,
+                        tc_type='tc'))
 
     def add_service(self, providerCombo, serviceCombo, services_table):
-        if (serviceCombo.currentText() == '') or (providerCombo.currentText() == ''):
-            return
-
-        for row in range(0, services_table.rowCount()):  # Do not allow 2 services with same name
-            if services_table.item(row, 0).text() == serviceCombo.currentText():
-                return
-
         provider = providerCombo.currentText()
         service = serviceCombo.currentText()
 
+        parameters = self._io_services[providerCombo.currentText()][service]['signature'][0]
+        num_params = len(parameters)
+
         services_table.insertRow(0)
 
-        service_item = QTableWidgetItem(service)
-        service_item.setFlags(Qt.ItemIsEnabled)
+        service_btn = QPushButton(service)
+        service_btn.clicked.connect(lambda: self.call_service(service, services_table))
 
         description_item = QTableWidgetItem(self._io_services[providerCombo.currentText()][service]['description'])
         description_item.setFlags(Qt.ItemIsEnabled)
 
-        measured_value = QTableWidgetItem("N/A")
-        measured_value.setFlags(Qt.ItemIsEnabled)
-        measured_value.setTextAlignment(Qt.AlignCenter)
+        if num_params > 0:
+            param = parameters[0]
 
-        units = QTableWidgetItem("-")
-        units.setFlags(Qt.ItemIsEnabled)
-        units.setTextAlignment(Qt.AlignCenter)
+            param_1 = QTableWidgetItem("")
+            param_1.setTextAlignment(Qt.AlignCenter)
 
-        stamp = QTableWidgetItem("N/A")
-        stamp.setFlags(Qt.ItemIsEnabled)
-        stamp.setTextAlignment(Qt.AlignCenter)
-
-        font = QFont()
-        font.setBold(True)
-
-        services_table.setItem(0, 0, service_item)
-        services_table.setItem(0, 1, description_item)
-        services_table.setItem(0, 2, measured_value)
-        services_table.item(0, 2).setBackground(Qt.black)
-        services_table.item(0, 2).setForeground(Qt.green)
-        services_table.item(0, 2).setFont(font)
-        services_table.setItem(0, 3, units)
-        services_table.setItem(0, 4, stamp)
-        services_table.item(0, 4).setFont(font)
-        services_table.item(0, 4).setForeground(Qt.darkGray)
-
-        if self._observed_services.get(service) is None:
-            self._observed_services[service] = 1
-            self._observer_modified.on_next(None)
+            param_1.setToolTip(param)
         else:
-            self._observed_services[service] += 1
+            param_1 = QTableWidgetItem("-")
+            param_1.setTextAlignment(Qt.AlignCenter)
+            param_1.setFlags(Qt.ItemIsEnabled)
+
+        if num_params > 1:
+            param = parameters[1]
+
+            param_2 = QTableWidgetItem("")
+            param_2.setTextAlignment(Qt.AlignCenter)
+
+            param_2.setToolTip(param)
+        else:
+            param_2 = QTableWidgetItem("-")
+            param_2.setTextAlignment(Qt.AlignCenter)
+            param_2.setFlags(Qt.ItemIsEnabled)
+
+        if num_params > 2:
+            param = parameters[2]
+
+            param_3 = QTableWidgetItem("")
+            param_3.setTextAlignment(Qt.AlignCenter)
+
+            param_3.setToolTip(param)
+        else:
+            param_3 = QTableWidgetItem("-")
+            param_3.setTextAlignment(Qt.AlignCenter)
+            param_3.setFlags(Qt.ItemIsEnabled)
+
+        if num_params > 3:
+            param = parameters[3]
+
+            param_4 = QTableWidgetItem("")
+            param_4.setTextAlignment(Qt.AlignCenter)
+
+            param_4.setToolTip(param)
+        else:
+            param_4 = QTableWidgetItem("-")
+            param_4.setTextAlignment(Qt.AlignCenter)
+            param_4.setFlags(Qt.ItemIsEnabled)
+
+        services_table.setCellWidget(0, 0, service_btn)
+        services_table.setItem(0, 1, description_item)
+        services_table.setItem(0, 2, param_1)
+        services_table.setItem(0, 3, param_2)
+        services_table.setItem(0, 4, param_3)
+        services_table.setItem(0, 5, param_4)
+
+
+
+
+        # if (serviceCombo.currentText() == '') or (providerCombo.currentText() == ''):
+        #     return
+        #
+        # for row in range(0, services_table.rowCount()):  # Do not allow 2 services with same name
+        #     if services_table.item(row, 0).text() == serviceCombo.currentText():
+        #         return
+        #
+        # provider = providerCombo.currentText()
+        # service = serviceCombo.currentText()
+        #
+        # services_table.insertRow(0)
+        #
+        # service_item = QTableWidgetItem(service)
+        # service_item.setFlags(Qt.ItemIsEnabled)
+        #
+        # description_item = QTableWidgetItem(self._io_services[providerCombo.currentText()][service]['description'])
+        # description_item.setFlags(Qt.ItemIsEnabled)
+        #
+        # # measured_value = QTableWidgetItem("N/A")
+        # # measured_value.setFlags(Qt.ItemIsEnabled)
+        # # measured_value.setTextAlignment(Qt.AlignCenter)
+        # #
+        # # units = QTableWidgetItem("-")
+        # # units.setFlags(Qt.ItemIsEnabled)
+        # # units.setTextAlignment(Qt.AlignCenter)
+        # #
+        # # stamp = QTableWidgetItem("N/A")
+        # # stamp.setFlags(Qt.ItemIsEnabled)
+        # # stamp.setTextAlignment(Qt.AlignCenter)
+        # #
+        # # font = QFont()
+        # # font.setBold(True)
+        #
+        # services_table.setItem(0, 0, service_item)
+        # services_table.setItem(0, 1, description_item)
+        # # services_table.setItem(0, 2, measured_value)
+        # # services_table.item(0, 2).setBackground(Qt.black)
+        # # services_table.item(0, 2).setForeground(Qt.green)
+        # # services_table.item(0, 2).setFont(font)
+        # # services_table.setItem(0, 3, units)
+        # # services_table.setItem(0, 4, stamp)
+        # # services_table.item(0, 4).setFont(font)
+        # # services_table.item(0, 4).setForeground(Qt.darkGray)
 
     def _new_window(self, window: QMdiSubWindow):
         self._new_window_observer.dispose()
@@ -180,11 +224,10 @@ class Plugin(PluginBase):
         serviceLayout.addWidget(addServiceButton)
 
         requestLabel = QLabel("Services:")
-        services_table = CustomTable(self)
-        self._service_tables.append(services_table)
-        services_table.setColumnCount(5)
+        services_table = CustomTable()
+        services_table.setColumnCount(6)
 
-        services_table.setHorizontalHeaderLabels(["Service", "Description", "Measure", "Unit", "Stamp"])
+        services_table.setHorizontalHeaderLabels(["Service", "Description", "Param#1", "Param#2", "Param#3", "Param#4"])
 
         services_table.verticalHeader().setSectionsMovable(True)
         services_table.verticalHeader().setDragEnabled(True)
@@ -204,27 +247,16 @@ class Plugin(PluginBase):
 
         window.adjustSize()
 
-        services_table.setColumnWidth(0, window.width()*0.2)
-        services_table.setColumnWidth(1, window.width()*0.2)
+        services_table.setColumnWidth(0, window.width()*0.3)
+        services_table.setColumnWidth(1, window.width()*0.4)
         services_table.setColumnWidth(2, window.width()*0.2)
         services_table.setColumnWidth(3, window.width()*0.2)
         services_table.setColumnWidth(4, window.width()*0.2)
+        services_table.setColumnWidth(5, window.width()*0.2)
 
         window.show()
 
         window.destroyed.connect(lambda: self.closeEvent(services_table))
-
-    def closeEvent(self, services_table):
-        for row in range(0, services_table.rowCount()):
-            service_id = services_table.item(services_table.visualRow(row), 0).text()
-
-            self._observed_services[services_table.item(services_table.visualRow(row), 0).text()] -= 1
-
-            if self._observed_services[services_table.item(services_table.visualRow(row), 0).text()] == 0:
-                self._observed_services.pop(services_table.item(services_table.visualRow(row), 0).text(), None)
-
-            self._service_tables.remove(services_table)
-            self._observer_modified.on_next(None)
 
     def _io_service_signature(self, signatures: dict):
         """ Entry point for processing the service signatures.

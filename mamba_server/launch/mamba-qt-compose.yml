@@ -6,6 +6,7 @@ services:
 
   # Main window plugins
   quit:
+  tc_window_qt:
   tm_window_qt:
   about_qt:
 
