@@ -165,7 +165,7 @@ class VisaControllerBase(ComponentBase):
 
     def _service_preprocessing(self, service_request: IoServiceRequest,
                                result: Telemetry) -> None:
-        """Perform preprocessing of the services listed in _custom_process.
+        """Perform preprocessing of the services.
 
         Note: This step is useful in case a merge of multiple arguments into
         one unique argument is needed. If the 'command' argument is not
@@ -193,10 +193,7 @@ class VisaControllerBase(ComponentBase):
             result.value = self._shared_memory[self._shared_memory_getter[
                 service_request.id]]
         elif self._service_info[service_request.id].get('command') is None:
-            if service_request.id not in self._custom_process:
-                result.type = 'error'
-                result.value = 'Command implementation for ' \
-                               f'{service_request.id} is missing in component'
+            pass
         elif self._inst is None:
             result.type = 'error'
             result.value = 'Not possible to perform command before ' \
