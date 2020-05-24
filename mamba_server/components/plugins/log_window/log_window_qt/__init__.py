@@ -128,9 +128,12 @@ class Plugin(PluginBase):
 
         self._context.rx['generate_perspective'].pipe(
             op.filter(lambda value: isinstance(value, Empty))).subscribe(
-                on_next=lambda _: self._generate_perspective(window, debugCheckBox, infoCheckBox, errorCheckBox, criticalCheckBox))
+                on_next=lambda _: self._generate_perspective(
+                    window, debugCheckBox, infoCheckBox, errorCheckBox,
+                    criticalCheckBox))
 
-    def _generate_perspective(self, window: QMdiSubWindow, debugCheckBox, infoCheckBox, errorCheckBox, criticalCheckBox):
+    def _generate_perspective(self, window: QMdiSubWindow, debugCheckBox,
+                              infoCheckBox, errorCheckBox, criticalCheckBox):
         perspective = {
             'menu_title': self._configuration['menu'],
             'action_name': self._configuration['name'],
@@ -147,7 +150,6 @@ class Plugin(PluginBase):
         }
 
         self._context.rx['component_perspective'].on_next(perspective)
-
 
     def closeEvent(self, log_observer):
         log_observer.dispose()
@@ -169,6 +171,7 @@ class Plugin(PluginBase):
         # Generate_window is received to generate a new MDI window
         self._new_window_observer = self._context.rx['new_window_widget'].pipe(
             op.filter(lambda value: isinstance(value, QMdiSubWindow))
-        ).subscribe(on_next=lambda _: self._new_window(_, rx_value.perspective))
+        ).subscribe(
+            on_next=lambda _: self._new_window(_, rx_value.perspective))
 
         self._context.rx['new_window'].on_next(Empty())

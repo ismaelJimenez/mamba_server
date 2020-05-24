@@ -2,13 +2,10 @@
 
 import os
 
-import time, threading
 from PySide2.QtCore import QTimer
 import json
 
-from rx import operators as op
-
-from PySide2.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog
+from PySide2.QtWidgets import QApplication, QWidget, QFileDialog
 
 from mamba_server.components.plugins import PluginBase
 from mamba_server.components.observable_types import Empty
@@ -28,10 +25,13 @@ class Plugin(PluginBase):
 
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getSaveFileName(QWidget(), "Save Perspective", "",
-                                                  "Perspective Files (*.json)", options=options)
+        fileName, _ = QFileDialog.getSaveFileName(QWidget(),
+                                                  "Save Perspective",
+                                                  "",
+                                                  "Perspective Files (*.json)",
+                                                  options=options)
         if fileName:
-            if not '.json' in fileName:
+            if '.json' not in fileName:
                 fileName = fileName + '.json'
             with open(fileName, 'w') as fout:
                 json.dump(self._perspectives, fout)
@@ -52,10 +52,13 @@ class Plugin(PluginBase):
         """
         self._perspectives = []
 
-        perspectives_observer = self._context.rx['component_perspective'].subscribe(
+        perspectives_observer = self._context.rx[
+            'component_perspective'].subscribe(
                 on_next=self._process_component_perspective)
 
-        QTimer.singleShot(int(1000), lambda: self.process_received_perspectived(perspectives_observer))
+        QTimer.singleShot(
+            int(1000),
+            lambda: self.process_received_perspectived(perspectives_observer))
 
         self._context.rx['generate_perspective'].on_next(Empty())
 

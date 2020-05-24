@@ -1,17 +1,11 @@
 """ Plugin to close Mamba Application """
 
 import os
-
-import time, threading
-from PySide2.QtCore import QTimer
 import json
 
-from rx import operators as op
-
-from PySide2.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog
+from PySide2.QtWidgets import QApplication, QWidget, QFileDialog
 
 from mamba_server.components.plugins import PluginBase
-from mamba_server.components.observable_types import Empty
 from mamba_server.components.main.observable_types import RunAction
 
 
@@ -28,10 +22,13 @@ class Plugin(PluginBase):
 
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getSaveFileName(QWidget(), "Save Perspective", "",
-                                                  "Perspective Files (*.json)", options=options)
+        fileName, _ = QFileDialog.getSaveFileName(QWidget(),
+                                                  "Save Perspective",
+                                                  "",
+                                                  "Perspective Files (*.json)",
+                                                  options=options)
         if fileName:
-            if not '.json' in fileName:
+            if '.json' not in fileName:
                 fileName = fileName + '.json'
             with open(fileName, 'w') as fout:
                 json.dump(self._perspectives, fout)
@@ -52,8 +49,11 @@ class Plugin(PluginBase):
         """
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getOpenFileName(QWidget(), "Load Perspective", "",
-                                                  "Perspective Files (*.json)", options=options)
+        fileName, _ = QFileDialog.getOpenFileName(QWidget(),
+                                                  "Load Perspective",
+                                                  "",
+                                                  "Perspective Files (*.json)",
+                                                  options=options)
 
         if fileName:
             with open(fileName, "r") as read_file:
