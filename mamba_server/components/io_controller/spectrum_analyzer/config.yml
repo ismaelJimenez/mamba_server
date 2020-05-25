@@ -1,0 +1,50 @@
+name: spectrum_analyzer
+visa-sim: simulator/spectrum_analyzer/spectrum_analyzer.yaml
+resource-name: TCPIP0::1.2.3.4::INSTR
+
+topics:
+  SA_CONNECT:
+    key: '@connect'
+    description: Establish Connection with Digitizer
+
+  SA_DISCONNECT:
+    key: '@disconnect'
+    description: Close connection with Digitizer
+
+  SA_RAW:
+    description: Send a raw command to the instrument
+    signature: [[str], None]
+    command: '{:}'
+
+  SA_TRIGGER_OUT:
+    description: Sets the source of the reference frequency
+    signature: [[], None]
+    command: 'OUTP:TRIG2:PULS:IMM'
+
+  SA_TC_QUERY_TRIGGER_IN:
+    description: Query the connection status to the instrument
+    signature: [[int], bool]
+
+  SA_TM_QUERY_TRIGGER_IN:
+    description: Query the instrument identification
+    signature: [[], bool]
+
+  SA_QUERY_CONNECTED:
+    description: Query the connection status to the instrument
+    signature: [[], bool]
+
+parameters:
+  connected:
+    default: false
+    setter:
+      SA_CONNECT:
+      SA_DISCONNECT:
+    getter:
+      SA_QUERY_CONNECTED:
+
+  query_trigger_in:
+    default: 1
+    setter:
+      SA_TC_QUERY_TRIGGER_IN:
+    getter:
+      SA_TM_QUERY_TRIGGER_IN:

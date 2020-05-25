@@ -28,6 +28,7 @@ services:
   rf_signal_generator:
   digitizer:
   tcp_socket_io_controller:
+  spectrum_analyzer:
 
   # Equipment simulators
   simulator_cyclic_tcp_server:
