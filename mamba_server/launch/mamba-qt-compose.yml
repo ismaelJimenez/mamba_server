@@ -27,3 +27,6 @@ services:
   shutdown:
   rf_signal_generator:
   digitizer:
+
+  # Equipment simulators
+  simulator_cyclic_tcp_server:

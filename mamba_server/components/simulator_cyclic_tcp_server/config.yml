@@ -1,0 +1,18 @@
+name: simulator_cyclic_tcp_server
+host: 0.0.0.0
+tc_port: 8081
+tm_port: 8082
+
+device:
+    eom:
+      TCPIP INSTR:
+        q: "\r\n"
+        r: "\n"
+
+    properties:
+        tm_1:
+          default: 1
+        tm_2:
+          default: '2'
+        tm_3:
+          default: 3
