@@ -91,7 +91,7 @@ class Plugin(PluginBase):
             for row in range(0, table.rowCount()):
                 service_id = table.item(table.visualRow(row), 0).text()
                 if service_id == rx_value.id:
-                    table.item(table.visualRow(row), 2).setText(rx_value.value)
+                    table.item(table.visualRow(row), 2).setText(str(rx_value.value))
                     table.item(table.visualRow(row),
                                4).setText(str(time.time()))
                     if rx_value.type == 'error':
