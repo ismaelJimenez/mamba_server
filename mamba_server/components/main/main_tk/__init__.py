@@ -25,6 +25,14 @@ class MainWindow(MainBase):
         self._app.protocol("WM_DELETE_WINDOW", self._close)
         self._app.title(self._configuration['title'])
 
+        screen_width = self._load_app.winfo_screenwidth()
+        screen_height = self._load_app.winfo_screenheight()
+        self._app.geometry(
+            '%dx%d+%d+%d' %
+            (screen_width/2, screen_height/2,
+             screen_width / 15,
+             screen_height / 15))
+
     def _create_menu_bar(self):
         """ Entry point for creating the top menu bar """
         self._menu_bar = tk.Menu(self._app)

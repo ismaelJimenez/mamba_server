@@ -57,13 +57,19 @@ class App(Frame):
         label3.grid(row=2, column=0, pady=(5, 0), sticky='nw')
 
         self.debugCheckBox = IntVar()
-        Checkbutton(self, text="Debug", variable=self.debugCheckBox).grid(row=3, sticky=W)
+        Checkbutton(self, text="Debug", variable=self.debugCheckBox, command = self.onClickedDebug).grid(row=3, sticky=W)
         self.infoCheckBox = IntVar()
         Checkbutton(self, text="Info", variable=self.infoCheckBox).grid(row=4, sticky=W)
         self.errorCheckBox = IntVar()
         Checkbutton(self, text="Error", variable=self.errorCheckBox).grid(row=5, sticky=W)
         self.criticalCheckBox = IntVar()
         Checkbutton(self, text="Critical", variable=self.criticalCheckBox).grid(row=6, sticky=W)
+
+
+    def onClickedDebug(self):
+        # calling IntVar.get() returns the state
+        # of the widget it is associated with
+        print(self.debugCheckBox.get())
 
     def new_log(self, log: Log):
         if (log.level == LogLevel.Dev and
@@ -118,6 +124,7 @@ class Plugin(PluginBase):
         # stop. destroy() just terminates the mainloop and deletes all
         # widgets.
 
+        self.closeEvent(self.log_observer)
         self._app.destroy()
         self._app = None
 
@@ -130,111 +137,66 @@ class Plugin(PluginBase):
         # INFO: quit() stops the TCL interpreter, so the Tkinter - app will
         # stop. destroy() just terminates the mainloop and deletes all
         # widgets.
+        print("A TOMAR POR CULO")
         self.close()
 
     #def _new_window(self, window: QMdiSubWindow, perspective):
-    def _new_window(self):
+    def _new_window(self, perspective):
         self._app = tk.Tk()
-        log_table = App(self._app)
         self._app.protocol("WM_DELETE_WINDOW", self.close)
         self._app.title(self._configuration['name'])
 
         self._show()
 
-        # self._new_window_observer.dispose()
-        #
-        # child = QWidget()
-        # logLayout = QVBoxLayout()
-        # excludeMessageLayout = QVBoxLayout()
-        #
-        # logLabel = QLabel("Mamba Log:")
-        # log_table = QTableWidget()
-        # log_table.setColumnCount(5)
-        # log_table.setColumnWidth(0, window.width() * 0.3)
-        # log_table.setColumnWidth(1, window.width() * 1.2)
-        # log_table.setColumnWidth(2, window.width() * 1.2)
-        # log_table.setColumnWidth(3, window.width() * 1.2)
-        # log_table.setColumnWidth(4, window.width() * 1.2)
-        # log_table.setHorizontalHeaderLabels(
-        #     ["#", "Message", "Severity", "Node", "Stamp"])
-        #
-        # logLayout.addWidget(logLabel)
-        # logLayout.addWidget(log_table)
-        #
-        # groupBox = QGroupBox("Exclude Messages:")
-        # debugCheckBox = QCheckBox("Debug")
-        # infoCheckBox = QCheckBox("Info")
-        # errorCheckBox = QCheckBox("Error")
-        # criticalCheckBox = QCheckBox("Critical")
-        #
-        # groupBoxLayout = QVBoxLayout()
-        # groupBoxLayout.addWidget(debugCheckBox)
-        # groupBoxLayout.addWidget(infoCheckBox)
-        # groupBoxLayout.addWidget(errorCheckBox)
-        # groupBoxLayout.addWidget(criticalCheckBox)
-        # groupBox.setLayout(groupBoxLayout)
-        #
-        # mainLayout = QVBoxLayout()
-        # mainLayout.addLayout(logLayout)
-        # mainLayout.addWidget(groupBox)
-        #
-        # child.setLayout(mainLayout)
-        #
-        # window.setWidget(child)
-        # window.setAttribute(Qt.WA_DeleteOnClose)
-        #
+        log_table = App(self._app)
+        self.log_table = log_table
+
         # if perspective is not None:
-        #     window.move(perspective['pos_x'], perspective['pos_y'])
-        #     window.resize(perspective['width'], perspective['height'])
+        # #     window.move(perspective['pos_x'], perspective['pos_y'])
+        # #     window.resize(perspective['width'], perspective['height'])
+        # #
         #
-        #     if perspective['exclude_debug']:
-        #         debugCheckBox.setChecked(True)
-        #
-        #     if perspective['exclude_info']:
-        #         infoCheckBox.setChecked(True)
-        #
-        #     if perspective['exclude_error']:
-        #         errorCheckBox.setChecked(True)
-        #
-        #     if perspective['exclude_critical']:
-        #         criticalCheckBox.setChecked(True)
+        #     log_table.debugCheckBox.set(int(perspective['exclude_debug']))
+        #     log_table.infoCheckBox.set(int(perspective['exclude_info']))
+        #     log_table.errorCheckBox.set(int(perspective['exclude_error']))
+        #     log_table.criticalCheckBox.set(int(perspective['exclude_critical']))
+
         # else:
         #     window.adjustSize()
         #
         # window.show()
         #
         # Register to the topic provided by the io_controller services
-        log_observer = self._context.rx['log'].pipe(
+        self.log_observer = self._context.rx['log'].pipe(
             op.filter(lambda value: isinstance(value, Log))).subscribe(
                 on_next=lambda _: self._received_log(
                     _, log_table))
-        #
-        # window.destroyed.connect(lambda: self.closeEvent(log_observer))
-        #
-        # self._context.rx['generate_perspective'].pipe(
-        #     op.filter(lambda value: isinstance(value, Empty))).subscribe(
-        #         on_next=lambda _: self._generate_perspective(
-        #             window, debugCheckBox, infoCheckBox, errorCheckBox,
-        #             criticalCheckBox))
 
-    def _generate_perspective(self, window: QMdiSubWindow, debugCheckBox,
-                              infoCheckBox, errorCheckBox, criticalCheckBox):
-        # perspective = {
-        #     'menu_title': self._configuration['menu'],
-        #     'action_name': self._configuration['name'],
-        #     'data': {
+        # window.destroyed.connect(lambda: self.closeEvent(log_observer))
+
+        self._context.rx['generate_perspective'].pipe(
+            op.filter(lambda value: isinstance(value, Empty))).subscribe(
+                on_next=lambda _: self._generate_perspective(log_table))
+
+    def _generate_perspective(self, log_table):
+        perspective = {
+            'menu_title': self._configuration['menu'],
+            'action_name': self._configuration['name'],
+            'data': {
         #         'pos_x': window.pos().x(),
         #         'pos_y': window.pos().y(),
         #         'width': window.size().width(),
         #         'height': window.size().height(),
-        #         'exclude_debug': debugCheckBox.checkState() == Qt.Checked,
-        #         'exclude_info': infoCheckBox.checkState() == Qt.Checked,
-        #         'exclude_error': errorCheckBox.checkState() == Qt.Checked,
-        #         'exclude_critical': criticalCheckBox.checkState() == Qt.Checked
-        #     }
-        # }
+                'exclude_debug': str(log_table.debugCheckBox.get()),
+                'exclude_info': str(log_table.infoCheckBox.get()),
+                'exclude_error': str(log_table.errorCheckBox.get()),
+                'exclude_critical': str(log_table.criticalCheckBox.get())
+            }
+        }
 
-        perspective = {}
+        #print("GENERATING PERSPECTIVE")
+
+        #perspective = {}
 
         self._context.rx['component_perspective'].on_next(perspective)
 
@@ -262,4 +224,4 @@ class Plugin(PluginBase):
         #     on_next=lambda _: self._new_window(_, rx_value.perspective))
         #
         # self._context.rx['new_window'].on_next(Empty())
-        self._new_window()
+        self._new_window(rx_value.perspective)
