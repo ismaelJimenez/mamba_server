@@ -99,6 +99,8 @@ class Plugin(PluginBase):
         super(Plugin, self).__init__(os.path.dirname(__file__), context,
                                      local_config)
 
+        self._windows = []
+
     def _received_log(self, log: Log, log_table):
         """ Entry point for processing a new raw telecommand coming from the
             socket server.
@@ -137,19 +139,36 @@ class Plugin(PluginBase):
         # INFO: quit() stops the TCL interpreter, so the Tkinter - app will
         # stop. destroy() just terminates the mainloop and deletes all
         # widgets.
-        print("A TOMAR POR CULO")
         self.close()
+
+    def close_window(self, app, log_observer, generate_pers):
+        self._windows.remove(app)
+        log_observer.dispose()
+        generate_pers.dispose()
+        app.destroy()
 
     #def _new_window(self, window: QMdiSubWindow, perspective):
     def _new_window(self, perspective):
-        self._app = tk.Tk()
-        self._app.protocol("WM_DELETE_WINDOW", self.close)
-        self._app.title(self._configuration['name'])
 
-        self._show()
+        # Register to the topic provided by the io_controller services
+        log_observer = self._context.rx['log'].pipe(
+            op.filter(lambda value: isinstance(value, Log))).subscribe(
+                on_next=lambda _: self._received_log(
+                    _, log_table))
 
-        log_table = App(self._app)
-        self.log_table = log_table
+        generate_pers = self._context.rx['generate_perspective'].pipe(
+            op.filter(lambda value: isinstance(value, Empty))).subscribe(
+                on_next=lambda _: self._generate_perspective(log_table))
+
+        app = tk.Tk()
+        app.protocol("WM_DELETE_WINDOW", lambda: self.close(app, log_observer, generate_pers))
+        app.title(self._configuration['name'])
+        log_table = App(app)
+
+        app.update()
+        app.deiconify()
+
+        self._windows.append(app)
 
         # if perspective is not None:
         # #     window.move(perspective['pos_x'], perspective['pos_y'])
@@ -166,17 +185,11 @@ class Plugin(PluginBase):
         #
         # window.show()
         #
-        # Register to the topic provided by the io_controller services
-        self.log_observer = self._context.rx['log'].pipe(
-            op.filter(lambda value: isinstance(value, Log))).subscribe(
-                on_next=lambda _: self._received_log(
-                    _, log_table))
+
 
         # window.destroyed.connect(lambda: self.closeEvent(log_observer))
 
-        self._context.rx['generate_perspective'].pipe(
-            op.filter(lambda value: isinstance(value, Empty))).subscribe(
-                on_next=lambda _: self._generate_perspective(log_table))
+
 
     def _generate_perspective(self, log_table):
         perspective = {
