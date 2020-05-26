@@ -6,6 +6,7 @@ services:
 
   # Main window plugins
   quit:
+  log_window_tk:
   about_tk:
 
   # Utilities
