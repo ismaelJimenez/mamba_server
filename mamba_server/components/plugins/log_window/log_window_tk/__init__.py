@@ -57,14 +57,19 @@ class App(Frame):
         label3.grid(row=2, column=0, pady=(5, 0), sticky='nw')
 
         self.debugCheckBox = IntVar()
-        Checkbutton(self, text="Debug", variable=self.debugCheckBox, command = self.onClickedDebug).grid(row=3, sticky=W)
+        Checkbutton(self,
+                    text="Debug",
+                    variable=self.debugCheckBox,
+                    command=self.onClickedDebug).grid(row=3, sticky=W)
         self.infoCheckBox = IntVar()
-        Checkbutton(self, text="Info", variable=self.infoCheckBox).grid(row=4, sticky=W)
+        Checkbutton(self, text="Info",
+                    variable=self.infoCheckBox).grid(row=4, sticky=W)
         self.errorCheckBox = IntVar()
-        Checkbutton(self, text="Error", variable=self.errorCheckBox).grid(row=5, sticky=W)
+        Checkbutton(self, text="Error",
+                    variable=self.errorCheckBox).grid(row=5, sticky=W)
         self.criticalCheckBox = IntVar()
-        Checkbutton(self, text="Critical", variable=self.criticalCheckBox).grid(row=6, sticky=W)
-
+        Checkbutton(self, text="Critical",
+                    variable=self.criticalCheckBox).grid(row=6, sticky=W)
 
     def onClickedDebug(self):
         # calling IntVar.get() returns the state
@@ -83,18 +88,20 @@ class App(Frame):
             self.treeview.insert('',
                                  0,
                                  text=str(self._log_numer),
-                                 values=(log.message, str(log.level), log.source, str(time.time())))
+                                 values=(log.message, str(log.level),
+                                         log.source, str(time.time())))
 
             self._log_numer += 1
+
 
 class Plugin(PluginBase):
     """ Plugin to show About message implemented in TkInter """
     def __init__(self, context, local_config=None):
         # Define custom variables
-        #self._app = None
-        #self._log_numer = 1
+        # self._app = None
+        # self._log_numer = 1
 
-        #self._new_window_observer = None
+        # self._new_window_observer = None
 
         super(Plugin, self).__init__(os.path.dirname(__file__), context,
                                      local_config)
@@ -147,21 +154,21 @@ class Plugin(PluginBase):
         generate_pers.dispose()
         app.destroy()
 
-    #def _new_window(self, window: QMdiSubWindow, perspective):
+    # def _new_window(self, window: QMdiSubWindow, perspective):
     def _new_window(self, perspective):
 
         # Register to the topic provided by the io_controller services
         log_observer = self._context.rx['log'].pipe(
             op.filter(lambda value: isinstance(value, Log))).subscribe(
-                on_next=lambda _: self._received_log(
-                    _, log_table))
+                on_next=lambda _: self._received_log(_, log_table))
 
         generate_pers = self._context.rx['generate_perspective'].pipe(
             op.filter(lambda value: isinstance(value, Empty))).subscribe(
                 on_next=lambda _: self._generate_perspective(log_table))
 
         app = tk.Tk()
-        app.protocol("WM_DELETE_WINDOW", lambda: self.close(app, log_observer, generate_pers))
+        app.protocol("WM_DELETE_WINDOW",
+                     lambda: self.close(app, log_observer, generate_pers))
         app.title(self._configuration['name'])
         log_table = App(app)
 
@@ -186,20 +193,17 @@ class Plugin(PluginBase):
         # window.show()
         #
 
-
         # window.destroyed.connect(lambda: self.closeEvent(log_observer))
-
-
 
     def _generate_perspective(self, log_table):
         perspective = {
             'menu_title': self._configuration['menu'],
             'action_name': self._configuration['name'],
             'data': {
-        #         'pos_x': window.pos().x(),
-        #         'pos_y': window.pos().y(),
-        #         'width': window.size().width(),
-        #         'height': window.size().height(),
+                #         'pos_x': window.pos().x(),
+                #         'pos_y': window.pos().y(),
+                #         'width': window.size().width(),
+                #         'height': window.size().height(),
                 'exclude_debug': str(log_table.debugCheckBox.get()),
                 'exclude_info': str(log_table.infoCheckBox.get()),
                 'exclude_error': str(log_table.errorCheckBox.get()),
@@ -207,9 +211,9 @@ class Plugin(PluginBase):
             }
         }
 
-        #print("GENERATING PERSPECTIVE")
+        # print("GENERATING PERSPECTIVE")
 
-        #perspective = {}
+        # perspective = {}
 
         self._context.rx['component_perspective'].on_next(perspective)
 
@@ -221,7 +225,8 @@ class Plugin(PluginBase):
 
         # Initialize custom variables
         # self._app = QApplication(
-        #     []) if QApplication.instance() is None else QApplication.instance(
+        #     []) if QApplication.instance() is None
+        #     else QApplication.instance(
         #     )
 
     def run(self, rx_value: RunAction):
@@ -231,7 +236,8 @@ class Plugin(PluginBase):
                 rx_value (RunAction): The value published by the subject.
         """
         # Generate_window is received to generate a new MDI window
-        # self._new_window_observer = self._context.rx['new_window_widget'].pipe(
+        # self._new_window_observer = self._context.
+        # rx['new_window_widget'].pipe(
         #     op.filter(lambda value: isinstance(value, QMdiSubWindow))
         # ).subscribe(
         #     on_next=lambda _: self._new_window(_, rx_value.perspective))

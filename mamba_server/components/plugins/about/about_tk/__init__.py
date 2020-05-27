@@ -34,6 +34,7 @@ class Plugin(PluginBase):
             Args:
                 rx_value (RunAction): The value published by the subject.
         """
+        self._log_dev("pepe")
         app = tk.Tk()
         app.overrideredirect(1)
         app.withdraw()

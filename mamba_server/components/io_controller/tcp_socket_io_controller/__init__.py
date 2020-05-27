@@ -18,7 +18,8 @@ from mamba_server.utils.misc import path_from_string
 
 
 class ThreadedTmHandler:
-    def __init__(self, HOST, PORT, eom, shared_memory, rx, log_info, shared_memory_getter):
+    def __init__(self, HOST, PORT, eom, shared_memory, rx, log_info,
+                 shared_memory_getter):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
             # Connect to server and send data
             sock.connect((HOST, PORT))
@@ -39,7 +40,7 @@ class ThreadedTmHandler:
 
                     result = Telemetry(tm_id=shared_memory_getter[cmd[0]],
                                        tm_type='tm',
-                                       value= cmd[1])
+                                       value=cmd[1])
 
                     rx['io_result'].on_next(result)
 
@@ -59,8 +60,8 @@ class TcpControllerBase(ComponentBase):
     def __init__(self,
                  context: Context,
                  local_config: Optional[dict] = None) -> None:
-        super(TcpControllerBase, self).__init__(os.path.dirname(__file__), context,
-                                                 local_config)
+        super(TcpControllerBase, self).__init__(os.path.dirname(__file__),
+                                                context, local_config)
 
         # Initialize observers
         self._register_observers()
@@ -70,9 +71,9 @@ class TcpControllerBase(ComponentBase):
         self._shared_memory_getter: Dict[str, str] = {}
         self._shared_memory_setter: Dict[str, str] = {}
         self._service_info: Dict[str, dict] = {}
-        #self._inst_tm = None
+        # self._inst_tm = None
         self._inst_tm_thread = None
-        #self._inst_tc = None
+        # self._inst_tc = None
 
         self._eom_q = self._configuration['eom']['TCPIP INSTR']['q']
         self._eom_r = self._configuration['eom']['TCPIP INSTR']['r']
@@ -91,6 +92,7 @@ class TcpControllerBase(ComponentBase):
             Args:
                 rx_value: The value published by the subject.
         """
+
     #     if self._inst is not None:
     #         self._inst.close()
     #         self._inst = None
@@ -119,8 +121,8 @@ class TcpControllerBase(ComponentBase):
         """ Entry point for component initialization """
 
         self._topics_format_validation()
-    #    self._tcp_sim_file_validation()
-    #
+        #    self._tcp_sim_file_validation()
+        #
         for key, service_data in self._configuration['topics'].items():
             # Create new service signature dictionary
             service_dict = {
@@ -178,33 +180,31 @@ class TcpControllerBase(ComponentBase):
 
     def _tcp_connect(self, result: Telemetry) -> None:
 
-        self._inst_tm_thread = threading.Thread(target=ThreadedTmHandler, args=(
-            self._configuration['resource-name'],
-                          self._configuration['tm_port'],
-                          self._eom_r,
-                          self._shared_memory,
-                          self._context.rx,
-                          self._log_info,
-                          self._shared_memory_getter))
+        self._inst_tm_thread = threading.Thread(
+            target=ThreadedTmHandler,
+            args=(self._configuration['resource-name'],
+                  self._configuration['tm_port'], self._eom_r,
+                  self._shared_memory, self._context.rx, self._log_info,
+                  self._shared_memory_getter))
 
         self._inst_tm_thread.start()
 
-    #     if self._configuration.get('tcp-sim'):
-    #         self._inst = pytcp.ResourceManager(
-    #             f"{self._simulation_file}@sim").open_resource(
-    #                 self._configuration['resource-name'],
-    #                 read_termination='\n')
-    #     else:
-    #         try:
-    #             self._inst = pytcp.ResourceManager().open_resource(
-    #                 self._configuration['resource-name'],
-    #                 read_termination='\n')
-    #         except (OSError, pytcp.errors.TcpIOError):
-    #             result.type = 'error'
-    #             result.value = 'Instrument is unreachable'
-    #
-    #     if self._inst is not None:
-    #         self._inst.timeout = 3000  # Default timeout
+        #     if self._configuration.get('tcp-sim'):
+        #         self._inst = pytcp.ResourceManager(
+        #             f"{self._simulation_file}@sim").open_resource(
+        #                 self._configuration['resource-name'],
+        #                 read_termination='\n')
+        #     else:
+        #         try:
+        #             self._inst = pytcp.ResourceManager().open_resource(
+        #                 self._configuration['resource-name'],
+        #                 read_termination='\n')
+        #         except (OSError, pytcp.errors.TcpIOError):
+        #             result.type = 'error'
+        #             result.value = 'Instrument is unreachable'
+        #
+        #     if self._inst is not None:
+        #         self._inst.timeout = 3000  # Default timeout
 
         if result.id in self._shared_memory_setter:
             self._shared_memory[self._shared_memory_setter[result.id]] = 1
@@ -249,40 +249,10 @@ class TcpControllerBase(ComponentBase):
         elif self._service_info[service_request.id].get('command') is None:
             pass
         else:
-            send_tcp_tc(self._configuration['resource-name'], self._configuration['tc_port'], self._service_info[service_request.id]
-                                         ['command'].format(*service_request.args), self._eom_q)
-
-
-    #     elif self._service_info[service_request.id]['signature'][
-    #             1] is not None and self._service_info[
-    #                 service_request.id]['signature'][1] != 'None':
-    #         try:
-    #             if (len(self._service_info[service_request.id]['signature'][0])
-    #                     == 1) and (len(service_request.args) > 1):
-    #                 service_request.args = [' '.join(service_request.args)]
-    #
-    #             value = self._inst.query(
-    #                 self._service_info[service_request.id]['command'].format(
-    #                     *service_request.args)).replace(' ', '_')
-    #
-    #             if service_request.id in self._shared_memory_setter:
-    #                 self._shared_memory[self._shared_memory_setter[
-    #                     service_request.id]] = value
-    #             else:
-    #                 result.value = value
-    #         except OSError:
-    #             result.type = 'error'
-    #             result.value = 'Not possible to communicate to the instrument'
-    #     else:
-    #         try:
-    #             if (len(self._service_info[service_request.id]['signature'][0])
-    #                     == 1) and (len(service_request.args) > 1):
-    #                 service_request.args = [' '.join(service_request.args)]
-    #
-    #             self._inst.write(self._service_info[service_request.id]
-    #                              ['command'].format(*service_request.args))
-    #         except OSError:
-    #             result.type = 'error'
-    #             result.value = 'Not possible to communicate to the instrument'
+            send_tcp_tc(
+                self._configuration['resource-name'],
+                self._configuration['tc_port'],
+                self._service_info[service_request.id]['command'].format(
+                    *service_request.args), self._eom_q)
 
         self._context.rx['io_result'].on_next(result)

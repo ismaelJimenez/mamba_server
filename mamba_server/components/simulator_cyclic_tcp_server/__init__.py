@@ -26,8 +26,11 @@ class ThreadedCyclicTmHandler(socketserver.BaseRequestHandler):
         while True:
             try:
                 for telemetry, value in self.server.telemetries.items():
-                    self.server.log_dev(fr' - Published socket TM: {telemetry} {value}')
-                    self.request.sendall(f'{telemetry} {value}{self.server.eom}'.encode('utf-8'))
+                    self.server.log_dev(
+                        fr' - Published socket TM: {telemetry} {value}')
+                    self.request.sendall(
+                        f'{telemetry} {value}{self.server.eom}'.encode(
+                            'utf-8'))
                     time.sleep(1)
             except BrokenPipeError:
                 break
@@ -35,7 +38,8 @@ class ThreadedCyclicTmHandler(socketserver.BaseRequestHandler):
         self.server.log_info('Remote socket connection has been closed')
 
 
-class ThreadedCyclicTmServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+class ThreadedCyclicTmServer(socketserver.ThreadingMixIn,
+                             socketserver.TCPServer):
     pass
 
 
@@ -100,7 +104,8 @@ class Driver(ComponentBase):
                 on_next=self._close)
 
     def initialize(self):
-        if not all(key in self._configuration for key in ['host', 'tc_port', 'tm_port']):
+        if not all(key in self._configuration
+                   for key in ['host', 'tc_port', 'tm_port']):
             raise ComponentConfigException(
                 "Missing required elements in component configuration")
 
@@ -123,8 +128,6 @@ class Driver(ComponentBase):
         self._tm_server_thread.daemon = True
         self._tm_server_thread.start()
         print("TM Server loop running in thread:", self._tm_server_thread.name)
-
-
 
         # Create the socket server, binding to host and port
         self._tc_server = ThreadedTcServer(

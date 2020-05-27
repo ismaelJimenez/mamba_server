@@ -2,11 +2,11 @@
 
 import os
 
-#from PySide2.QtCore import QTimer
+# from PySide2.QtCore import QTimer
 import json
 import threading
 
-#from PySide2.QtWidgets import QApplication, QWidget, QFileDialog
+# from PySide2.QtWidgets import QApplication, QWidget, QFileDialog
 import tkinter as tk
 from tkinter.filedialog import asksaveasfilename
 
@@ -26,7 +26,9 @@ class Plugin(PluginBase):
     def process_received_perspectived(self, perspectives_observer):
         perspectives_observer.dispose()
 
-        fileName = asksaveasfilename(title="Save Perspective", defaultextension=".json", filetypes=[("perspective", "*.json")])
+        fileName = asksaveasfilename(title="Save Perspective",
+                                     defaultextension=".json",
+                                     filetypes=[("perspective", "*.json")])
         if fileName:
             if '.json' not in fileName:
                 fileName = fileName + '.json'
@@ -52,7 +54,9 @@ class Plugin(PluginBase):
         self._app.overrideredirect(1)
         self._app.withdraw()
 
-        self._app.after(int(1000), lambda: self.process_received_perspectived(perspectives_observer))
+        self._app.after(
+            int(1000),
+            lambda: self.process_received_perspectived(perspectives_observer))
 
         self._context.rx['generate_perspective'].on_next(Empty())
         print("Sent generate perspective")
