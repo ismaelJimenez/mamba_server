@@ -58,26 +58,25 @@ class App(Frame):
 
         self.debugCheckBox = BooleanVar()
         tk.Checkbutton(self,
-                                text="Debug",
-                                onvalue=True,
-                                variable=self.debugCheckBox,
-                                command=self.onClickedDebug).grid(row=3,
-                                                                  sticky=W)
+                       text="Debug",
+                       onvalue=True,
+                       variable=self.debugCheckBox,
+                       command=self.onClickedDebug).grid(row=3, sticky=W)
         self.infoCheckBox = BooleanVar()
         tk.Checkbutton(self,
-                    text="Info",
-                    onvalue=True,
-                    variable=self.infoCheckBox).grid(row=4, sticky=W)
+                       text="Info",
+                       onvalue=True,
+                       variable=self.infoCheckBox).grid(row=4, sticky=W)
         self.errorCheckBox = BooleanVar()
         tk.Checkbutton(self,
-                    text="Error",
-                    onvalue=True,
-                    variable=self.errorCheckBox).grid(row=5, sticky=W)
+                       text="Error",
+                       onvalue=True,
+                       variable=self.errorCheckBox).grid(row=5, sticky=W)
         self.criticalCheckBox = BooleanVar()
         tk.Checkbutton(self,
-                    text="Critical",
-                    onvalue=True,
-                    variable=self.criticalCheckBox).grid(row=6, sticky=W)
+                       text="Critical",
+                       onvalue=True,
+                       variable=self.criticalCheckBox).grid(row=6, sticky=W)
 
     def onClickedDebug(self):
         # calling IntVar.get() returns the state

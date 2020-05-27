@@ -9,15 +9,10 @@ from rx.subject import Subject
 
 import tkinter as tk
 
-# from PySide2.QtWidgets import QLabel, QWidget, QApplication, QComboBox, \
-#     QHBoxLayout, QMdiSubWindow, QPushButton, QTableWidget, QMenu, QVBoxLayout,\
-#     QAbstractItemView, QTableWidgetItem
-# from PySide2.QtCore import QTimer, Qt
-# from PySide2.QtGui import QIcon, QCursor, QFont, QColor
-
 from mamba_server.components.plugins import PluginBase
 from mamba_server.components.main.observable_types import RunAction
-from mamba_server.components.observable_types import Empty, Telemetry, Telecommand
+from mamba_server.components.observable_types import Empty, \
+    Telemetry, Telecommand
 from mamba_server.exceptions import ComponentConfigException
 
 from tkinter import *
@@ -42,8 +37,8 @@ class App(Frame):
         self.serviceCombo['values'] = ()
 
         for service, info in _io_services[self.providerCombo.get()].items():
-                self.serviceCombo['values'] = (*self.serviceCombo['values'],
-                                               service)
+            self.serviceCombo['values'] = (*self.serviceCombo['values'],
+                                           service)
 
     def CreateUI(self, parent, _io_services):
         label1 = tk.Label(self, text="Provider:")
@@ -83,7 +78,8 @@ class App(Frame):
         add_button.grid(row=0, column=6, pady=(5, 0), sticky='nw')
 
         tv = Treeview(self)
-        tv['columns'] = ('description', 'param_1', 'param_2', 'param_3', 'param_4')
+        tv['columns'] = ('description', 'param_1', 'param_2', 'param_3',
+                         'param_4')
         tv.heading("#0", text='Service', anchor='center')
         tv.column("#0", anchor="center", width=50)
         tv.heading('description', text='Description')
@@ -108,114 +104,83 @@ class App(Frame):
         self.buttons_frame.grid(row=2)
 
         self.call_button = Button(self.buttons_frame,
-                                 text='Call',
-                                 command=self.call)
+                                  text='Call',
+                                  command=self.call)
 
         self.call_button.grid(row=0, column=1, columnspan=5)
 
         self.remove_button = Button(self.buttons_frame,
-                                 text='Remove',
-                                 command=self.remove_item)
+                                    text='Remove',
+                                    command=self.remove_item)
 
         self.remove_button.grid(row=0, column=6)
 
-        self.treeview.bind("<<TreeviewSelect>>",
-                  self.OnDoubleClick)  # single click, without "index out of range" error
+        self.treeview.bind(
+            "<<TreeviewSelect>>", self.OnDoubleClick
+        )  # single click, without "index out of range" error
 
         self.grid_rowconfigure(1, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
     def OnDoubleClick(self, event):
-        # item = self.treeview.selection()
-        # print('item:', item)
-        # print('event:', event)
-        # item = self.treeview.selection()[0]
-        #
-        # print("you clicked on", self.treeview.item(self.treeview.selection()[0], "text"))
-            parameters = self.observed_services[self.treeview.item(self.treeview.selection()[0], "text")]
-            num_parameter = 4 - parameters.count('-')
+        parameters = self.observed_services[self.treeview.item(
+            self.treeview.selection()[0], "text")]
+        num_parameter = 4 - parameters.count('-')
 
-            if num_parameter == 0:
-                return
+        if num_parameter == 0:
+            return
 
-            self.item_dialog = Toplevel(self.master)
+        self.item_dialog = Toplevel(self.master)
 
-            self.item_dialog.title(self.treeview.item(self.treeview.selection()[0], "text"))
-            # self.item_dialog.geometry('202x197')
-            #
-            # self.item_dialog_text_frame = Frame(self.item_dialog)
-            # self.item_dialog_text_frame.grid(row=0, sticky=W)
-            #
-            # self.item_dialog_combobox_frame = Frame(self.item_dialog)
-            # self.item_dialog_combobox_frame.grid(row=1, sticky=W)
-            #
-            # self.item_dialog_another_frame = Frame(self.item_dialog)
-            # self.item_dialog_another_frame.grid(row=2)
-            #
-            #
-            # self.subject_label = Label(self.item_dialog_text_frame,
-            #                            text='Subject:')
-            # self.subject_label.grid(row=0, sticky=W)
-            #
-            # self.subject_text = Text(self.item_dialog_text_frame,
-            #                          width=28,
-            #                          height=9)
-            # self.subject_text.grid(row=1)
-            #
-            # self.priority_label = Label(self.item_dialog_combobox_frame,
-            #                             text='Priority:')
-            #
-            # self.priority_label.grid(row=0, column=0, sticky=W)
-            #
-            # self.priority_combobox = ttk.Combobox(self.item_dialog_combobox_frame,
-            #                                       width=17)
-            # self.priority_combobox.grid(row=0, column=1)
-            # self.priority_combobox['values'] = ('High', 'Medium', 'Low')
-            #
+        self.item_dialog.title(
+            self.treeview.item(self.treeview.selection()[0], "text"))
 
-            if num_parameter > 0:
-                tk.Label(self.item_dialog, text="Parameter 1").grid(row=0)
-                self.e1 = tk.Entry(self.item_dialog)
-                self.e1.grid(row=0, column=1)
-                self.e1.insert(END, str(parameters[0]))
+        if num_parameter > 0:
+            tk.Label(self.item_dialog, text="Parameter 1").grid(row=0)
+            self.e1 = tk.Entry(self.item_dialog)
+            self.e1.grid(row=0, column=1)
+            self.e1.insert(END, str(parameters[0]))
 
-            if num_parameter > 1:
-                tk.Label(self.item_dialog, text="Parameter 2").grid(row=1)
-                self.e2 = tk.Entry(self.item_dialog)
-                self.e2.grid(row=1, column=1)
-                self.e2.insert(END, str(parameters[1]))
+        if num_parameter > 1:
+            tk.Label(self.item_dialog, text="Parameter 2").grid(row=1)
+            self.e2 = tk.Entry(self.item_dialog)
+            self.e2.grid(row=1, column=1)
+            self.e2.insert(END, str(parameters[1]))
 
-            if num_parameter > 2:
-                tk.Label(self.item_dialog, text="Parameter 3").grid(row=2)
-                self.e3 = tk.Entry(self.item_dialog)
-                self.e3.grid(row=2, column=1)
-                self.e3.insert(END, str(parameters[2]))
+        if num_parameter > 2:
+            tk.Label(self.item_dialog, text="Parameter 3").grid(row=2)
+            self.e3 = tk.Entry(self.item_dialog)
+            self.e3.grid(row=2, column=1)
+            self.e3.insert(END, str(parameters[2]))
 
-            if num_parameter > 3:
-                tk.Label(self.item_dialog, text="Parameter 4").grid(row=3)
-                self.e4 = tk.Entry(self.item_dialog)
-                self.e4.grid(row=3, column=1)
-                self.e4.insert(END, str(parameters[3]))
+        if num_parameter > 3:
+            tk.Label(self.item_dialog, text="Parameter 4").grid(row=3)
+            self.e4 = tk.Entry(self.item_dialog)
+            self.e4.grid(row=3, column=1)
+            self.e4.insert(END, str(parameters[3]))
 
-            self.item_dialog_buttons_frame = Frame(self.item_dialog)
-            self.item_dialog_buttons_frame.grid(row=4)
+        self.item_dialog_buttons_frame = Frame(self.item_dialog)
+        self.item_dialog_buttons_frame.grid(row=4)
 
-            self.item_dialog_ok_button = Button(self.item_dialog_buttons_frame,
+        self.item_dialog_ok_button = Button(
+            self.item_dialog_buttons_frame,
+            width=9,
+            text='OK',
+            command=lambda: self.modify_parameters(
+                self.treeview.item(self.treeview.selection()[0], "text"),
+                num_parameter))
+        self.item_dialog_ok_button.grid(row=0, column=0)
+
+        self.item_dialog_cancel_button = Button(self.item_dialog_buttons_frame,
                                                 width=9,
-                                                text='OK',
-                                                command=lambda:self.modify_parameters(self.treeview.item(self.treeview.selection()[0], "text"), num_parameter))
-            self.item_dialog_ok_button.grid(row=0, column=0)
+                                                text='Cancel',
+                                                command=self.close_item_dialog)
+        self.item_dialog_cancel_button.grid(row=0, column=4)
 
-            self.item_dialog_cancel_button = Button(self.item_dialog_buttons_frame,
-                                                    width=9,
-                                                    text='Cancel',
-                                                    command=self.close_item_dialog)
-            self.item_dialog_cancel_button.grid(row=0, column=4)
-
-            self.item_dialog.wait_window()
+        self.item_dialog.wait_window()
 
     def modify_parameters(self, id, num_params):
-        result = [None]*4
+        result = [None] * 4
 
         if num_params > 0:
             result[0] = self.e1.get()
@@ -243,10 +208,11 @@ class App(Frame):
 
         for each in listOfEntriesInTreeView:
             if self.treeview.item(each)['text'] == id:
-                self.treeview.item(each, text=id, values=(self.treeview.item(each)['values'][0], result[0],
-                                  result[1],
-                                  result[2],
-                                  result[3]))
+                self.treeview.item(
+                    each,
+                    text=id,
+                    values=(self.treeview.item(each)['values'][0], result[0],
+                            result[1], result[2], result[3]))
 
         self.close_item_dialog()
 
@@ -260,13 +226,13 @@ class App(Frame):
         print(id)
         print(args)
 
-        self._rx['tc'].on_next(
-            Telecommand(tc_id=id, args=args, tc_type='tc'))
+        self._rx['tc'].on_next(Telecommand(tc_id=id, args=args, tc_type='tc'))
 
     def remove_item(self):
         selected_items = self.treeview.selection()
         for selected_item in selected_items:
-            self.observed_services.pop(self.treeview.item(selected_item)['text'], None)
+            self.observed_services.pop(
+                self.treeview.item(selected_item)['text'], None)
             self.treeview.delete(selected_item)
 
     def _add_button(self, _io_services):
@@ -282,7 +248,7 @@ class App(Frame):
         if service in self.observed_services:
             return
         else:
-            args = [''] * num_params + ['-'] * (4-num_params)
+            args = [''] * num_params + ['-'] * (4 - num_params)
             self.observed_services[service] = args
 
         description_item = _io_services[provider][service]['description']
@@ -290,7 +256,8 @@ class App(Frame):
         self.treeview.insert('',
                              0,
                              text=self.serviceCombo.get(),
-                             values=(description_item, args[0], args[1], args[2], args[3]))
+                             values=(description_item, args[0], args[1],
+                                     args[2], args[3]))
         #    log.message, str(log.level),
         #        log.source, str(time.time())))
         print("Add button")
@@ -310,36 +277,6 @@ class App(Frame):
 
     def new_log(self, log):
         pass
-
-
-# class CustomTable(QTableWidget):
-#     def __init__(self, parent, *args, **kwargs):
-#         QTableWidget.__init__(self, *args, **kwargs)
-#         self.parent = parent
-#
-#     def mousePressEvent(self, event):
-#         print('PRESS EVENT')
-#         if event.button() == Qt.RightButton:
-#             it = self.itemAt(event.pos())
-#
-#             if it is not None:
-#                 menu = QMenu(self)
-#                 remove_action = menu.addAction("Remove")
-#                 action = menu.exec_(QCursor.pos())
-#
-#                 if action == remove_action:
-#                     self.parent._observed_services[self.itemAt(it.row(),
-#                                                                0).text()] -= 1
-#
-#                     if self.parent._observed_services[self.itemAt(
-#                             it.row(), 0).text()] == 0:
-#                         self.parent._observed_services.pop(
-#                             self.itemAt(it.row(), 0).text(), None)
-#                         self.parent._observer_modified.on_next(None)
-#
-#                     self.removeRow(it.row())
-#
-#         QTableWidget.mousePressEvent(self, event)
 
 
 class Plugin(PluginBase):
@@ -404,7 +341,7 @@ class Plugin(PluginBase):
 
         for service, info in self._io_services[
                 providerCombo.currentText()].items():
-                serviceCombo.addItem(service)
+            serviceCombo.addItem(service)
 
     def add_service(self, provider, service, services_table):
         pass
@@ -467,85 +404,6 @@ class Plugin(PluginBase):
         app.title(self._configuration['name'])
         self.log_table = App(app, self._io_services, self._context.rx)
 
-        # child = QWidget()
-        # providerLabel = QLabel("Provider:")
-        # providerCombo = QComboBox()
-        #
-        # serviceLabel = QLabel("Service:")
-        # serviceCombo = QComboBox()
-        #
-        # for service, value in self._io_services.items():
-        #     providerCombo.addItem(service)
-        #
-        # providerCombo.currentTextChanged.connect(
-        #     lambda: self.generate_service_combobox(providerCombo, serviceCombo
-        #                                            ))
-        #
-        # addServiceButton = QPushButton("Add")
-        # addServiceButton.setAutoDefault(False)
-        # addServiceButton.setIcon(QIcon.fromTheme("list-add"))
-        #
-        # serviceLayout = QHBoxLayout()
-        # serviceLayout.addWidget(providerLabel)
-        # serviceLayout.addWidget(providerCombo)
-        # serviceLayout.addWidget(serviceLabel)
-        # serviceLayout.addWidget(serviceCombo)
-        # serviceLayout.addWidget(addServiceButton)
-        #
-        # requestLabel = QLabel("Services:")
-        # services_table = CustomTable(self)
-        # self._service_tables.append(services_table)
-        # services_table.setColumnCount(5)
-        #
-        # services_table.setHorizontalHeaderLabels(
-        #     ["Service", "Description", "Measure", "Unit", "Stamp"])
-        #
-        # services_table.verticalHeader().setSectionsMovable(True)
-        # services_table.verticalHeader().setDragEnabled(True)
-        # services_table.verticalHeader().setDragDropMode(
-        #     QAbstractItemView.InternalMove)
-        #
-        # addServiceButton.clicked.connect(
-        #     lambda: self.add_service(providerCombo.currentText(
-        #     ), serviceCombo.currentText(), services_table))
-        #
-        # mainLayout = QVBoxLayout()
-        # mainLayout.addLayout(serviceLayout)
-        # mainLayout.addWidget(requestLabel)
-        # mainLayout.addWidget(services_table)
-        #
-        # child.setLayout(mainLayout)
-        #
-        # window.setWidget(child)
-        # window.setAttribute(Qt.WA_DeleteOnClose)
-        #
-        # if perspective is not None:
-        #     window.move(perspective['pos_x'], perspective['pos_y'])
-        #     window.resize(perspective['width'], perspective['height'])
-        #
-        #     for service_id in reversed(perspective['services']):
-        #         for provider, services in self._io_services.items():
-        #             if service_id in services:
-        #                 self.add_service(provider, service_id, services_table)
-        #                 break
-        # else:
-        #     window.adjustSize()
-        #
-        # services_table.setColumnWidth(0, window.width() * 0.2)
-        # services_table.setColumnWidth(1, window.width() * 0.2)
-        # services_table.setColumnWidth(2, window.width() * 0.2)
-        # services_table.setColumnWidth(3, window.width() * 0.2)
-        # services_table.setColumnWidth(4, window.width() * 0.2)
-        #
-        # window.show()
-        #
-        # window.destroyed.connect(lambda: self.closeEvent(services_table))
-        #
-        # self._context.rx['generate_perspective'].pipe(
-        #     op.filter(lambda value: isinstance(value, Empty))).subscribe(
-        #         on_next=lambda _: self._generate_perspective(
-        #             window, services_table))
-
     def _generate_perspective(self, window, services_table):
         # perspective = {
         #     'menu_title': self._configuration['menu'],
@@ -596,11 +454,6 @@ class Plugin(PluginBase):
     def initialize(self):
         super(Plugin, self).initialize()
 
-        # Initialize custom variables
-        # self._app = QApplication(
-        #     []) if QApplication.instance() is None else QApplication.instance(
-        #     )
-
     def run(self, rx_value: RunAction):
         """ Entry point for running the plugin
 
@@ -608,10 +461,4 @@ class Plugin(PluginBase):
                 rx_value (RunAction): The value published by the subject.
         """
         # Generate_window is received to generate a new MDI window
-        # self._new_window_observer = self._context.rx['new_window_widget'].pipe(
-        #     op.filter(lambda value: isinstance(value, QMdiSubWindow))
-        # ).subscribe(
-        #     on_next=lambda _: self._new_window(_, rx_value.perspective))
-        #
-        # self._context.rx['new_window'].on_next(Empty())
         self._new_window(rx_value.perspective)

@@ -9,12 +9,6 @@ from rx.subject import Subject
 
 import tkinter as tk
 
-# from PySide2.QtWidgets import QLabel, QWidget, QApplication, QComboBox, \
-#     QHBoxLayout, QMdiSubWindow, QPushButton, QTableWidget, QMenu, QVBoxLayout,\
-#     QAbstractItemView, QTableWidgetItem
-# from PySide2.QtCore import QTimer, Qt
-# from PySide2.QtGui import QIcon, QCursor, QFont, QColor
-
 from mamba_server.components.plugins import PluginBase
 from mamba_server.components.main.observable_types import RunAction
 from mamba_server.components.observable_types import Empty, Telemetry
@@ -140,12 +134,14 @@ class App(Frame):
         if rx_value.id in self.observed_services:
             for children in self.treeview.get_children():
                 if self.treeview.item(children)['text'] == rx_value.id:
-                    self.treeview.item(children, text=rx_value.id, values=(
-                        self.treeview.item(children)['values'][0], rx_value.value,
-                        self.treeview.item(children)['values'][2],
-                        self.treeview.item(children)['values'][3],
-                        str(time.time())))
-
+                    self.treeview.item(
+                        children,
+                        text=rx_value.id,
+                        values=(self.treeview.item(children)['values'][0],
+                                rx_value.value,
+                                self.treeview.item(children)['values'][2],
+                                self.treeview.item(children)['values'][3],
+                                str(time.time())))
 
                 #
                 # child = self.treeview.item(children)
@@ -157,36 +153,6 @@ class App(Frame):
         pass
 
 
-# class CustomTable(QTableWidget):
-#     def __init__(self, parent, *args, **kwargs):
-#         QTableWidget.__init__(self, *args, **kwargs)
-#         self.parent = parent
-#
-#     def mousePressEvent(self, event):
-#         print('PRESS EVENT')
-#         if event.button() == Qt.RightButton:
-#             it = self.itemAt(event.pos())
-#
-#             if it is not None:
-#                 menu = QMenu(self)
-#                 remove_action = menu.addAction("Remove")
-#                 action = menu.exec_(QCursor.pos())
-#
-#                 if action == remove_action:
-#                     self.parent._observed_services[self.itemAt(it.row(),
-#                                                                0).text()] -= 1
-#
-#                     if self.parent._observed_services[self.itemAt(
-#                             it.row(), 0).text()] == 0:
-#                         self.parent._observed_services.pop(
-#                             self.itemAt(it.row(), 0).text(), None)
-#                         self.parent._observer_modified.on_next(None)
-#
-#                     self.removeRow(it.row())
-#
-#         QTableWidget.mousePressEvent(self, event)
-
-
 class Plugin(PluginBase):
     """ Plugin to show About message implemented in Qt5 """
     def __init__(self, context, local_config=None):
@@ -194,7 +160,7 @@ class Plugin(PluginBase):
         self._app = None
         self._io_services = {}
         self._service_tables = []
-        #self._observed_services = {}
+        # self._observed_services = {}
 
         self._observer_modified = Subject()
         self._io_result_subs = None
@@ -220,28 +186,28 @@ class Plugin(PluginBase):
 
         self._io_result_subs = self._context.rx['io_result'].pipe(
             op.filter(lambda value: isinstance(value, Telemetry))).subscribe(
-                          on_next=lambda _: print("PACO"))
+                on_next=lambda _: print("PACO"))
 
-    #def _process_io_result(self, rx_value: Telemetry):
+    # def _process_io_result(self, rx_value: Telemetry):
     #    print('IO RESULT')
-        # for table in self._service_tables:
-        #     for row in range(0, table.rowCount()):
-        #         service_id = table.item(table.visualRow(row), 0).text()
-        #         if service_id == rx_value.id:
-        #             table.item(table.visualRow(row),
-        #                        2).setText(str(rx_value.value))
-        #             table.item(table.visualRow(row),
-        #                        4).setText(str(time.time()))
-        #             if rx_value.type == 'error':
-        #                 table.item(table.visualRow(row),
-        #                            2).setBackground(Qt.red)
-        #                 table.item(table.visualRow(row),
-        #                            2).setForeground(Qt.black)
-        #             else:
-        #                 table.item(table.visualRow(row),
-        #                            2).setBackground(Qt.black)
-        #                 table.item(table.visualRow(row),
-        #                            2).setForeground(Qt.green)
+    # for table in self._service_tables:
+    #     for row in range(0, table.rowCount()):
+    #         service_id = table.item(table.visualRow(row), 0).text()
+    #         if service_id == rx_value.id:
+    #             table.item(table.visualRow(row),
+    #                        2).setText(str(rx_value.value))
+    #             table.item(table.visualRow(row),
+    #                        4).setText(str(time.time()))
+    #             if rx_value.type == 'error':
+    #                 table.item(table.visualRow(row),
+    #                            2).setBackground(Qt.red)
+    #                 table.item(table.visualRow(row),
+    #                            2).setForeground(Qt.black)
+    #             else:
+    #                 table.item(table.visualRow(row),
+    #                            2).setBackground(Qt.black)
+    #                 table.item(table.visualRow(row),
+    #                            2).setForeground(Qt.green)
 
     def generate_service_combobox(self, providerCombo, serviceCombo):
         serviceCombo.clear()
@@ -315,87 +281,7 @@ class Plugin(PluginBase):
 
         self._io_result_subs = self._context.rx['io_result'].pipe(
             op.filter(lambda value: isinstance(value, Telemetry))).subscribe(
-                          on_next=self.log_table._process_io_result)
-
-
-        # child = QWidget()
-        # providerLabel = QLabel("Provider:")
-        # providerCombo = QComboBox()
-        #
-        # serviceLabel = QLabel("Service:")
-        # serviceCombo = QComboBox()
-        #
-        # for service, value in self._io_services.items():
-        #     providerCombo.addItem(service)
-        #
-        # providerCombo.currentTextChanged.connect(
-        #     lambda: self.generate_service_combobox(providerCombo, serviceCombo
-        #                                            ))
-        #
-        # addServiceButton = QPushButton("Add")
-        # addServiceButton.setAutoDefault(False)
-        # addServiceButton.setIcon(QIcon.fromTheme("list-add"))
-        #
-        # serviceLayout = QHBoxLayout()
-        # serviceLayout.addWidget(providerLabel)
-        # serviceLayout.addWidget(providerCombo)
-        # serviceLayout.addWidget(serviceLabel)
-        # serviceLayout.addWidget(serviceCombo)
-        # serviceLayout.addWidget(addServiceButton)
-        #
-        # requestLabel = QLabel("Services:")
-        # services_table = CustomTable(self)
-        # self._service_tables.append(services_table)
-        # services_table.setColumnCount(5)
-        #
-        # services_table.setHorizontalHeaderLabels(
-        #     ["Service", "Description", "Measure", "Unit", "Stamp"])
-        #
-        # services_table.verticalHeader().setSectionsMovable(True)
-        # services_table.verticalHeader().setDragEnabled(True)
-        # services_table.verticalHeader().setDragDropMode(
-        #     QAbstractItemView.InternalMove)
-        #
-        # addServiceButton.clicked.connect(
-        #     lambda: self.add_service(providerCombo.currentText(
-        #     ), serviceCombo.currentText(), services_table))
-        #
-        # mainLayout = QVBoxLayout()
-        # mainLayout.addLayout(serviceLayout)
-        # mainLayout.addWidget(requestLabel)
-        # mainLayout.addWidget(services_table)
-        #
-        # child.setLayout(mainLayout)
-        #
-        # window.setWidget(child)
-        # window.setAttribute(Qt.WA_DeleteOnClose)
-        #
-        # if perspective is not None:
-        #     window.move(perspective['pos_x'], perspective['pos_y'])
-        #     window.resize(perspective['width'], perspective['height'])
-        #
-        #     for service_id in reversed(perspective['services']):
-        #         for provider, services in self._io_services.items():
-        #             if service_id in services:
-        #                 self.add_service(provider, service_id, services_table)
-        #                 break
-        # else:
-        #     window.adjustSize()
-        #
-        # services_table.setColumnWidth(0, window.width() * 0.2)
-        # services_table.setColumnWidth(1, window.width() * 0.2)
-        # services_table.setColumnWidth(2, window.width() * 0.2)
-        # services_table.setColumnWidth(3, window.width() * 0.2)
-        # services_table.setColumnWidth(4, window.width() * 0.2)
-        #
-        # window.show()
-        #
-        # window.destroyed.connect(lambda: self.closeEvent(services_table))
-        #
-        # self._context.rx['generate_perspective'].pipe(
-        #     op.filter(lambda value: isinstance(value, Empty))).subscribe(
-        #         on_next=lambda _: self._generate_perspective(
-        #             window, services_table))
+                on_next=self.log_table._process_io_result)
 
     def _generate_perspective(self, window, services_table):
         # perspective = {
@@ -447,22 +333,10 @@ class Plugin(PluginBase):
     def initialize(self):
         super(Plugin, self).initialize()
 
-        # Initialize custom variables
-        # self._app = QApplication(
-        #     []) if QApplication.instance() is None else QApplication.instance(
-        #     )
-
     def run(self, rx_value: RunAction):
         """ Entry point for running the plugin
 
             Args:
                 rx_value (RunAction): The value published by the subject.
         """
-        # Generate_window is received to generate a new MDI window
-        # self._new_window_observer = self._context.rx['new_window_widget'].pipe(
-        #     op.filter(lambda value: isinstance(value, QMdiSubWindow))
-        # ).subscribe(
-        #     on_next=lambda _: self._new_window(_, rx_value.perspective))
-        #
-        # self._context.rx['new_window'].on_next(Empty())
         self._new_window(rx_value.perspective)
