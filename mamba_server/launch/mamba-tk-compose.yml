@@ -6,6 +6,8 @@ services:
 
   # Main window plugins
   quit:
+  tm_window_tk:
+  tc_window_tk:
   log_window_tk:
   load_perspective_tk:
   save_perspective_tk:
@@ -25,3 +27,7 @@ services:
   shutdown:
   rf_signal_generator:
   digitizer:
+  tcp_socket_io_controller:
+
+  # Equipment simulators
+  simulator_cyclic_tcp_server:
