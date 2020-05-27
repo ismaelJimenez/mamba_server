@@ -56,31 +56,27 @@ class App(Frame):
         label3 = tk.Label(self, text="Exclude Messages:")
         label3.grid(row=2, column=0, pady=(5, 0), sticky='nw')
 
-        self.debugCheckBox = IntVar()
-        self._pru = Checkbutton(self,
+        self.debugCheckBox = BooleanVar()
+        tk.Checkbutton(self,
                                 text="Debug",
-                                onvalue=1,
-                                offvalue=0,
+                                onvalue=True,
                                 variable=self.debugCheckBox,
                                 command=self.onClickedDebug).grid(row=3,
                                                                   sticky=W)
-        self.infoCheckBox = IntVar()
-        Checkbutton(self,
+        self.infoCheckBox = BooleanVar()
+        tk.Checkbutton(self,
                     text="Info",
-                    onvalue=1,
-                    offvalue=0,
+                    onvalue=True,
                     variable=self.infoCheckBox).grid(row=4, sticky=W)
-        self.errorCheckBox = IntVar()
-        Checkbutton(self,
+        self.errorCheckBox = BooleanVar()
+        tk.Checkbutton(self,
                     text="Error",
-                    onvalue=1,
-                    offvalue=0,
+                    onvalue=True,
                     variable=self.errorCheckBox).grid(row=5, sticky=W)
-        self.criticalCheckBox = IntVar()
-        Checkbutton(self,
+        self.criticalCheckBox = BooleanVar()
+        tk.Checkbutton(self,
                     text="Critical",
-                    onvalue=1,
-                    offvalue=0,
+                    onvalue=True,
                     variable=self.criticalCheckBox).grid(row=6, sticky=W)
 
     def onClickedDebug(self):
