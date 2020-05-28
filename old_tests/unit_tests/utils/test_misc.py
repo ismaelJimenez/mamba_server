@@ -60,8 +60,11 @@ class TestClass:
         assert 'generate' in cmds
 
     def test_get_classes_from_module_commands_class_gui_plugin(self):
-        assert misc.get_classes_from_module('mamba.commands',
-                                            ComponentBase) == {}
+        components = misc.get_classes_from_module('mamba.commands',
+                                            ComponentBase)
+        assert len(components) == 2
+        assert 'main' in components
+        assert 'plugin' in components
 
     def test_get_classes_from_module_components_class_gui_plugin_recursive(
             self):
@@ -111,28 +114,30 @@ class TestClass:
 
     def test_get_components_local(self):
         components_dict = misc.get_components({
-            'about_qt': None,
-            'quit': None
+            'about': {'component': 'about_qt'},
+            'quit': {'component': 'quit'}
         }, ['mamba.components.plugins'], ComponentBase, Context())
         assert len(components_dict) == 2
-        assert 'about_qt' in components_dict
+        assert 'about' in components_dict
         assert 'quit' in components_dict
 
         components_dict = misc.get_components(
-            {'plugin_1': None}, ['components', 'mamba.components'],
+            {'plugin_1': {'component': 'about_qt'}}, ['components', 'mamba.components'],
             ComponentBase, Context())
         assert len(components_dict) == 1
         assert 'plugin_1' in components_dict
 
         components_dict = misc.get_components(
             {
-                'about_qt': None,
-                'quit': None,
-                'plugin_1': None
+                'about': {'component': 'about_qt'},
+                'about_1': {'component': 'about_qt'},
+                'quit': {'component': 'quit'},
+                'plugin_1': {'component': 'about_qt'}
             }, ['mamba.components.plugins', 'components'],
             ComponentBase, Context())
-        assert len(components_dict) == 3
-        assert 'about_qt' in components_dict
+        assert len(components_dict) == 4
+        assert 'about_1' in components_dict
+        assert 'about' in components_dict
         assert 'quit' in components_dict
         assert 'plugin_1' in components_dict
 
@@ -151,11 +156,11 @@ class TestClass:
 
     def test_get_components_valid_id_and_type(self):
         components_dict = misc.get_components({
-            'about_qt': None,
-            'quit': None
+            'about': {'component': 'about_qt'},
+            'quit': {'component': 'quit'}
         }, ['mamba.components.plugins'], ComponentBase, Context())
         assert len(components_dict) == 2
-        assert 'about_qt' in components_dict
+        assert 'about' in components_dict
         assert 'quit' in components_dict
 
     def test_get_components_invalid_id(self):
@@ -165,7 +170,15 @@ class TestClass:
                 'about_tk_fail': None
             }, ['mamba.components.plugins'], ComponentBase, Context())
 
-        assert 'not a valid component identifier' in str(excinfo.value)
+        assert 'about_qt: missing component property' in str(excinfo.value)
+
+        with pytest.raises(LaunchFileException) as excinfo:
+            misc.get_components({
+                'about_qt': {'component': 'wrong'}
+            }, ['mamba.components.plugins'], ComponentBase, Context())
+
+        assert "about_qt: component wrong' is not a valid component " \
+               "identifier" in str(excinfo.value)
 
     def test_path_from_string(self):
         assert "../artwork/mamba_loading.png" == misc.path_from_string(

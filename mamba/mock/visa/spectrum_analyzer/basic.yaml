@@ -13,12 +13,12 @@ devices:
         - q: ':SYST:ERR?'
           default: '0, No Error'
           command_error: '1, Command error'
-#    properties:
-#      trigger_in:
-#        default: '0'
-#        getter:
-#          q: "*OPC?"
-#          r: "{:}"
+    properties:
+      trigger_in:
+        default: '0'
+        getter:
+          q: "*OPC?"
+          r: "{:}"
 
 resources:
   TCPIP0::1.2.3.4::INSTR:
