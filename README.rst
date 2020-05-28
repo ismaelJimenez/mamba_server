@@ -7,6 +7,8 @@ Mamba-Server
 .. image:: https://img.shields.io/codecov/c/github/mamba-framework/mamba-server/master.svg
    :target: https://codecov.io/github/mamba-framework/mamba-server?branch=master
    :alt: Coverage report
+.. image:: https://img.shields.io/pypi/v/Mamba-Server.svg
+        :target: https://pypi.python.org/pypi/Mamba-Server
 .. image:: https://img.shields.io/badge/license-%20MIT-blue.svg
    :target: ../master/LICENSE
 
