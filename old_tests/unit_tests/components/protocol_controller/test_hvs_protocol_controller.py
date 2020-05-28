@@ -1,7 +1,7 @@
 import pytest
 import os
 
-from mamba.context import Context
+from mamba.core.context import Context
 from mamba.components.protocol_controller.hvs_protocol_controller import Driver
 from mamba.components.observable_types import Telemetry, Telecommand, \
     IoServiceRequest

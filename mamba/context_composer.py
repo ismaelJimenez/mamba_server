@@ -2,7 +2,7 @@
 import sys
 import yaml
 
-from mamba.context import Context
+from mamba.core.context import Context
 from mamba.utils.misc import get_components
 from mamba.components import ComponentBase
 
@@ -13,7 +13,7 @@ DEFAULT_RX = 'mamba'
 
 def execute(launch_file, mamba_dir, project_dir):
     """ Compose context from launch file """
-    component_folders = ['mamba.components']
+    component_folders = ['mamba.components', 'mamba.mock']
 
     if project_dir is not None:
         component_folders.append('components')

@@ -4,7 +4,7 @@ import pytest
 
 from rx import operators as op
 
-from mamba.subject_factory import SubjectFactory as SubjectFactory
+from mamba.core.subject_factory import SubjectFactory as SubjectFactory
 
 
 class DummyObservableClass:

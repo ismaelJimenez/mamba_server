@@ -1,4 +1,4 @@
-from mamba.context import Context
+from mamba.core.context import Context
 
 
 class TestClassSignal:

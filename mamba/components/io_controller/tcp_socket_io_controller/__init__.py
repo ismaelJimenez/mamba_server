@@ -6,7 +6,7 @@ import socket
 
 from rx import operators as op
 
-from mamba.context import Context
+from mamba.core.context import Context
 from mamba.components import ComponentBase
 from mamba.internal.exceptions import ComponentConfigException
 from mamba.components.observable_types import IoServiceRequest, \

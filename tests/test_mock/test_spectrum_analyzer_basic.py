@@ -16,13 +16,12 @@ class TestClass:
 
     def setup_method(self):
         """ setup_method called for every method """
-        mamba_dir = os.path.join(os.path.dirname(__file__), '..',
-                                 '..', 'mamba')
+        mamba_dir = os.path.join(os.path.dirname(__file__), '..', '..',
+                                 'mamba')
         asd = os.path.join(mamba_dir, MOCK_FILE)
         self.visa_inst = pyvisa.ResourceManager(
             f"{os.path.join(mamba_dir, MOCK_FILE)}@sim").open_resource(
-            INST_ADDRESS,
-            read_termination='\n')
+                INST_ADDRESS, read_termination='\n')
 
     def teardown_method(self):
         """ teardown_method called for every method """

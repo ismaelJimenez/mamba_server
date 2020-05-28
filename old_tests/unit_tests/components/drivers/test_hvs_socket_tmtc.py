@@ -1,7 +1,7 @@
 import pytest
 import os
 
-from mamba.context import Context
+from mamba.core.context import Context
 from mamba.components.drivers.socket_tmtc.hvs_socket_tmtc import Driver
 from mamba.components.observable_types import RawTelemetry, \
     RawTelecommand, Telemetry, Telecommand

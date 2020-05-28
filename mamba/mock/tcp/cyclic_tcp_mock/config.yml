@@ -1,7 +1,14 @@
-name: simulator_cyclic_tcp_server
+# Component name
+
+name: cyclic_tcp_mock
+
+# Component network configuration
+
 host: 0.0.0.0
 tc_port: 8081
 tm_port: 8082
+
+# Component TMTC
 
 device:
     eom:

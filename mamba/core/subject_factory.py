@@ -1,7 +1,6 @@
 """ The Mamba implementation of a RxPy Reactive Interface """
 
 from rx.subject import Subject
-from rx import operators as op
 
 
 class SubjectFactory:

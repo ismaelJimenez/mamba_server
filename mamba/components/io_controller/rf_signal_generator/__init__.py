@@ -1,8 +1,8 @@
 """ RF Signal Generator IO Controller"""
-from typing import Optional, List
+from typing import Optional
 import os
 
-from mamba.context import Context
+from mamba.core.context import Context
 from mamba.components.observable_types import IoServiceRequest,\
     Telemetry
 from mamba.components.io_controller import VisaControllerBase

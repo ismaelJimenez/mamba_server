@@ -3,7 +3,7 @@ import os
 import socket
 import time
 
-from mamba.context import Context
+from mamba.core.context import Context
 from mamba.components.drivers.socket_server import Driver
 from mamba.components.observable_types import Empty, RawTelemetry, RawTelecommand
 

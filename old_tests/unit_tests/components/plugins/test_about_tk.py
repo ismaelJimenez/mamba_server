@@ -1,7 +1,7 @@
 import pytest
 import os
 
-from mamba.context import Context
+from mamba.core.context import Context
 from mamba.components.plugins.about.about_tk import Plugin
 from mamba.components.main.main_tk import MainWindow
 

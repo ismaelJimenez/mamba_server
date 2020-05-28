@@ -1,6 +1,6 @@
 """Application context that is shared between components"""
 
-from mamba.subject_factory import SubjectFactory
+from mamba.core.subject_factory import SubjectFactory
 
 
 class Context:

@@ -65,4 +65,4 @@ services:
   # Mocks
 
   simulator_cyclic_tcp_server:
-    component: simulator_cyclic_tcp_server
+    component: cyclic_tcp_mock

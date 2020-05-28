@@ -1,6 +1,6 @@
 import os
 
-from mamba.context import Context
+from mamba.core.context import Context
 from mamba.components.plugins.quit import Plugin
 from mamba.components.main.main_qt import MainWindow
 
