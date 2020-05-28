@@ -95,7 +95,7 @@ class CyclicTcpMock(ComponentBase):
         self._log_info(f'TC Server running in thread: '
                        f'{self._tc_server_thread.name}')
 
-    def _close(self, rx_value: Empty) -> None:
+    def _close(self, rx_value: Optional[Empty] = None) -> None:
         """ Entry point for closing the component """
         if self._tm_server is not None:
             self._tm_server.do_run = False
@@ -103,6 +103,11 @@ class CyclicTcpMock(ComponentBase):
         if self._tc_server is not None:
             self._tc_server.do_run = False
             self._tc_server.shutdown()
+
+        if self._tm_server_thread is not None:
+            self._tm_server_thread.join()
+        if self._tc_server_thread is not None:
+            self._tc_server_thread.join()
 
 
 class ThreadedCyclicTmHandler(socketserver.BaseRequestHandler):
@@ -122,7 +127,7 @@ class ThreadedCyclicTmHandler(socketserver.BaseRequestHandler):
                     self.server.log_dev(fr' - Publish socket TM: {socket_tm}')
                     self.request.sendall(
                         f'{socket_tm}{self.server.eom}'.encode('utf-8'))
-                time.sleep(1)
+                time.sleep(2)
             except BrokenPipeError:
                 break
 
