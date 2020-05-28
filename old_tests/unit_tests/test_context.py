@@ -1,7 +1,4 @@
-import pytest
-
 from mamba.context import Context
-from mamba.exceptions import ComponentConfigException
 
 
 class TestClassSignal:

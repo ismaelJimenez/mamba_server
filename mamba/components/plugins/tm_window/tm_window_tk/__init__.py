@@ -1,7 +1,6 @@
 """ Plugin to show About message implemented in Qt5 """
 
 import os
-import pkgutil
 import time
 
 from rx import operators as op
@@ -12,7 +11,6 @@ import tkinter as tk
 from mamba.components.plugins import PluginBase
 from mamba.components.main.observable_types import RunAction
 from mamba.components.observable_types import Empty, Telemetry
-from mamba.exceptions import ComponentConfigException
 
 from tkinter import *
 from tkinter.ttk import *

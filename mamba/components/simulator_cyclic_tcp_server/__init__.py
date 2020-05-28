@@ -8,9 +8,8 @@ import time
 from rx import operators as op
 
 from mamba.components import ComponentBase
-from mamba.components.observable_types import RawTelecommand, \
-    RawTelemetry, Empty
-from mamba.exceptions import ComponentConfigException
+from mamba.components.observable_types import Empty
+from mamba.internal.exceptions import ComponentConfigException
 
 
 class ThreadedCyclicTmHandler(socketserver.BaseRequestHandler):

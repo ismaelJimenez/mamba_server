@@ -1,20 +1,16 @@
 """ TCP controller base """
-from typing import Optional, List, Dict, Union
+from typing import Optional, Dict, Union
 import os
-import pyvisa
 import threading
 import socket
-import socketserver
-import time
 
 from rx import operators as op
 
 from mamba.context import Context
 from mamba.components import ComponentBase
-from mamba.exceptions import ComponentConfigException
+from mamba.internal.exceptions import ComponentConfigException
 from mamba.components.observable_types import IoServiceRequest, \
     Telemetry, Empty
-from mamba.utils.misc import path_from_string
 
 
 class ThreadedTmHandler:

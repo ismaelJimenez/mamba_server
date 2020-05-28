@@ -1,22 +1,18 @@
 """ Plugin to show About message implemented in Qt5 """
 
 import os
-import pkgutil
-import time
 
 from rx import operators as op
-from rx.subject import Subject
 
 from PySide2.QtWidgets import QLabel, QWidget, QApplication, QComboBox, \
     QHBoxLayout, QMdiSubWindow, QPushButton, QTableWidget, QMenu, QVBoxLayout,\
     QAbstractItemView, QTableWidgetItem
-from PySide2.QtCore import QTimer, Qt
-from PySide2.QtGui import QIcon, QCursor, QFont, QColor
+from PySide2.QtCore import Qt
+from PySide2.QtGui import QIcon, QCursor
 
 from mamba.components.plugins import PluginBase
 from mamba.components.main.observable_types import RunAction
 from mamba.components.observable_types import Empty, Telecommand
-from mamba.exceptions import ComponentConfigException
 
 
 class CustomTable(QTableWidget):

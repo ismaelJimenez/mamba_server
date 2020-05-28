@@ -7,7 +7,7 @@ import inspect
 from importlib import import_module
 from pkgutil import iter_modules
 
-from mamba.exceptions import LaunchFileException
+from mamba.internal.exceptions import LaunchFileException
 
 
 def path_from_string(path_str):

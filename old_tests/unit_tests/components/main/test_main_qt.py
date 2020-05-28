@@ -3,7 +3,7 @@ import os
 
 from mamba.components.main.main_qt import MainWindow
 from mamba.context import Context
-from mamba.exceptions import ComponentConfigException
+from mamba.internal.exceptions import ComponentConfigException
 
 from mamba.components.main.observable_types.register_action import RegisterAction
 from mamba.components.observable_types.app_status import AppStatus

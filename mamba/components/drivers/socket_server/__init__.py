@@ -9,7 +9,7 @@ from rx import operators as op
 from mamba.components import ComponentBase
 from mamba.components.observable_types import RawTelecommand, \
     RawTelemetry, Empty
-from mamba.exceptions import ComponentConfigException
+from mamba.internal.exceptions import ComponentConfigException
 
 
 class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
