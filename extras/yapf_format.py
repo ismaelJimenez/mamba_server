@@ -6,7 +6,7 @@ import os
 
 search_folders = [
     os.getcwd(),
-    os.path.join(os.getcwd(), '..', 'mamba_server'),
+    os.path.join(os.getcwd(), '..', 'mamba'),
     os.path.join(os.getcwd(), '..', 'tests')
 ]
 

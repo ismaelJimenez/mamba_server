@@ -1,5 +1,5 @@
 [run]
 branch = true
-include = mamba_server/*
+include = mamba/*
 omit =
   tests/*

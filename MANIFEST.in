@@ -2,7 +2,7 @@ include README.rst
 include LICENSE
 include MANIFEST.in
 
-recursive-include mamba_server *
+recursive-include mamba *
 recursive-include artwork *.png
 
 recursive-include extras *

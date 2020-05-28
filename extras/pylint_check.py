@@ -4,7 +4,7 @@
 import subprocess
 import os
 
-search_folders = [os.path.join(os.getcwd(), '..', 'mamba_server')]
+search_folders = [os.path.join(os.getcwd(), '..', 'mamba')]
 
 for search_folder in search_folders:
     subprocess.call([f'pylint {os.path.abspath(search_folder)}'], shell=True)

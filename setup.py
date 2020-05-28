@@ -4,7 +4,7 @@ from pkg_resources import parse_version
 from setuptools import setup, find_packages, __version__ as setuptools_version
 
 
-with open(join(dirname(__file__), 'mamba_server/VERSION'), 'rb') as f:
+with open(join(dirname(__file__), 'mamba/VERSION'), 'rb') as f:
     version = f.read().decode('ascii').strip()
 
 
@@ -39,13 +39,13 @@ setup(
     long_description=open('README.rst').read(),
     author='Mamba-Server developers',
     maintainer='Ismael Jimenez',
-    maintainer_email='mamba_server.framework@gmail.com',
+    maintainer_email='mamba.framework@gmail.com',
     license='MIT',
     packages=find_packages(exclude=('tests', 'tests.*')),
     include_package_data=True,
     zip_safe=False,
     entry_points={
-        "console_scripts": ["mamba = mamba_server.cmdline:execute"]
+        "console_scripts": ["mamba = mamba.cmdline:execute"]
     },
     classifiers=[
         'Development Status :: 1 - Planning',

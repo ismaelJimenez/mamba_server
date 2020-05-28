@@ -34,7 +34,7 @@ try:
     mamba_rx_time = timeit.timeit(
         "subject.on_next(pow(2, 3))",
         setup=
-        'from mamba_server.rx_mamba import Subject; subject = Subject(); subject.subscribe(lambda i: None)',
+        'from mamba.rx_mamba import Subject; subject = Subject(); subject.subscribe(lambda i: None)',
         number=NUMBER_OF_LOOPS) / NUMBER_OF_LOOPS
 
 finally:
