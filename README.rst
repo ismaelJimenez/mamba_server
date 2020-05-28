@@ -9,6 +9,9 @@ Mamba-Server
    :alt: Coverage report
 .. image:: https://img.shields.io/pypi/v/Mamba-Server.svg
         :target: https://pypi.python.org/pypi/Mamba-Server
+.. image:: https://img.shields.io/readthedocs/mamba-server.svg
+        :target: https://readthedocs.org/projects/mamba-server/builds/
+        :alt: Documentation Status
 .. image:: https://img.shields.io/badge/license-%20MIT-blue.svg
    :target: ../master/LICENSE
 
