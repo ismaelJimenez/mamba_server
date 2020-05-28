@@ -76,13 +76,17 @@ def get_components(used_components, modules, component_type, context):
 
     dict_used_components = {}
 
-    for used_component, args in used_components.items():
-        if used_component in all_components_by_type:
-            dict_used_components[used_component] = all_components_by_type[
-                used_component](context, args)
+    for component_name, args in used_components.items():
+        if args is None or 'component' not in args:
+            raise LaunchFileException(
+                f"'{component_name}: missing component property")
+
+        if args['component'] in all_components_by_type:
+            dict_used_components[component_name] = all_components_by_type[
+                args['component']](context, args)
         else:
             raise LaunchFileException(
-                f"'{used_component}' is not a valid component identifier")
+                f"{component_name}: component {args['component']}' is not a valid component identifier")
 
     return dict_used_components
 

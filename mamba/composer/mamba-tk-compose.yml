@@ -1,0 +1,68 @@
+version: '0.1'
+services:
+
+  # GUI
+  main_window:
+    component: main_tk
+    title: Mamba Server App
+
+  quit_window:
+    component: quit
+
+  tc_window:
+    component: tc_window_tk
+
+  tm_window:
+    component: tm_window_tk
+
+  log_window:
+    component: log_window_tk
+
+  load_perspective:
+    component: load_perspective_tk
+
+  save_perspective:
+    component: save_perspective_tk
+
+  about_window:
+    component: about_tk
+
+  # Utilities
+
+  logger:
+    component: logger
+
+  # Networking
+
+  socket_server:
+    component: socket_server
+
+  # Protocol
+
+  socket_translator:
+    component: hvs_socket_tmtc
+
+  protocol_controller:
+    component: hvs_protocol_controller
+
+  # IO Controllers
+
+  shutdown:
+    component: shutdown
+
+  rf_signal_generator:
+    component: rf_signal_generator
+
+  digitizer:
+    component: digitizer
+
+  tcp_socket_io_controller:
+    component: tcp_socket_io_controller
+
+  spectrum_analyzer:
+    component: spectrum_analyzer
+
+  # Mocks
+
+  simulator_cyclic_tcp_server:
+    component: simulator_cyclic_tcp_server

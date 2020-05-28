@@ -7,7 +7,7 @@ from mamba.commands import MambaCommand
 from mamba.context_composer import execute
 
 DEFAULT_LAUNCH_FILE = 'mamba-qt'
-LAUNCH_FILES_DIR = 'launch'
+LAUNCH_FILES_DIR = 'composer'
 
 
 class Command(MambaCommand):
