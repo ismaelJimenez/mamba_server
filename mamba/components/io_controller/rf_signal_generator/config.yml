@@ -1,5 +1,5 @@
 name: smb100b
-visa-sim: simulator/rf_signal_generator/rs_smb100b.yaml
+visa-sim: mock/visa/signal_generator/rs_smb100b.yaml
 resource-name: TCPIP0::1.2.3.4::INSTR
 
 topics:

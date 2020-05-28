@@ -183,7 +183,7 @@ class TestClass:
                     'signature': [[], 'str']
                 }
             },
-            'visa-sim': 'simulator/rf_signal_generator/rs_smb100b.yaml'
+            'visa-sim': 'mock/visa/signal_generator/rs_smb100b.yaml'
         }
 
         # Test custom variables default values
@@ -328,7 +328,7 @@ class TestClass:
                     'signature': [[], 'str']
                 }
             },
-            'visa-sim': 'simulator/rf_signal_generator/rs_smb100b.yaml'
+            'visa-sim': 'mock/visa/signal_generator/rs_smb100b.yaml'
         }
 
         # Test custom variables default values

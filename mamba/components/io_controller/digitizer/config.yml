@@ -1,5 +1,5 @@
 name: m8131a
-visa-sim: simulator/digitizer/ks_m8131a.yaml
+visa-sim: mock/visa/digitizer/ks_m8131a.yaml
 resource-name: TCPIP0::1.2.3.4::INSTR
 
 topics:
