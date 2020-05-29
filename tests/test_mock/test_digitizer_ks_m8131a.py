@@ -1,7 +1,7 @@
 import os
 import pyvisa
 
-MOCK_FILE = os.path.join('mock', 'visa', 'digitizer', 'ks_m8131a.yaml')
+MOCK_FILE = os.path.join('mock', 'visa', 'digitizer', 'ks_m8131a.yml')
 INST_ADDRESS = 'TCPIP0::1.2.3.4::INSTR'
 
 

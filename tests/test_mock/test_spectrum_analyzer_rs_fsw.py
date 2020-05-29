@@ -1,7 +1,7 @@
 import os
 import pyvisa
 
-MOCK_FILE = os.path.join('mock', 'visa', 'spectrum_analyzer', 'rs_fsw.yaml')
+MOCK_FILE = os.path.join('mock', 'visa', 'spectrum_analyzer', 'rs_fsw.yml')
 INST_ADDRESS = 'TCPIP0::1.2.3.4::INSTR'
 
 

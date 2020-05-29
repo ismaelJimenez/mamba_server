@@ -183,7 +183,7 @@ class TestClass:
                     'signature': [[], 'str']
                 }
             },
-            'visa-sim': 'mock/visa/signal_generator/rs_smb100b.yaml'
+            'visa-sim': 'mock/visa/signal_generator/rs_smb100b.yml'
         }
 
         # Test custom variables default values
@@ -328,7 +328,7 @@ class TestClass:
                     'signature': [[], 'str']
                 }
             },
-            'visa-sim': 'mock/visa/signal_generator/rs_smb100b.yaml'
+            'visa-sim': 'mock/visa/signal_generator/rs_smb100b.yml'
         }
 
         # Test custom variables default values
@@ -463,7 +463,7 @@ class TestClass:
             }
         }
         assert component._inst is None
-        assert 'rs_smb100b.yaml' in component._simulation_file
+        assert 'rs_smb100b.yml' in component._simulation_file
 
     def test_visa_sim_local_from_project_folder(self):
         """ Test component creation behaviour with default context """

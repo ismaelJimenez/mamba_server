@@ -1,5 +1,5 @@
 name: spectrum_analyzer
-visa-sim: mock/visa/spectrum_analyzer/basic.yaml
+visa-sim: mock/visa/spectrum_analyzer/basic.yml
 resource-name: TCPIP0::1.2.3.4::INSTR
 
 topics:

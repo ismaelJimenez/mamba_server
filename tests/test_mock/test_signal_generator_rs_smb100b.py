@@ -1,7 +1,7 @@
 import os
 import pyvisa
 
-MOCK_FILE = os.path.join('mock', 'visa', 'signal_generator', 'rs_smb100b.yaml')
+MOCK_FILE = os.path.join('mock', 'visa', 'signal_generator', 'rs_smb100b.yml')
 INST_ADDRESS = 'TCPIP0::1.2.3.4::INSTR'
 
 
