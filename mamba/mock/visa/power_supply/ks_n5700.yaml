@@ -1,0 +1,82 @@
+# As per Keysight N5700 DC Power Supply User’s Guide.
+spec: "1.0"
+devices:
+  device 1:
+
+    eom:
+      TCPIP INSTR:
+        q: "\r\n"
+        r: "\n"
+
+    dialogues:
+      - q: "*IDN?"
+        r: "Keysight Technologies, N5700, SN XXXX, FW YYYY"
+
+    properties:
+      output_current:
+        default: 0
+        getter:
+          q: "CURR?"
+          r: "{:}"
+        setter:
+          q: "CURR {:}"
+
+      output_voltage:
+        default: 0
+        getter:
+          q: "VOLT?"
+          r: "{:}"
+        setter:
+          q: "VOLT {:}"
+
+      over_voltage_protection:
+        default: 0
+        getter:
+          q: "VOLT:PROT:LEV?"
+          r: "{:}"
+        setter:
+          q: "VOLT:PROT:LEV {:}"
+
+      power_output:
+        default: 0
+        getter:
+          q: "OUTP:STAT?"
+          r: "{:}"
+        setter:
+          q: "OUTP:STAT {:}"
+
+#      frequency_mode:
+#        default: 'CW'
+#        getter:
+#          q: "FREQuency:MODE?"
+#          r: "{:}"
+#        setter:
+#          q: "FREQuency:MODE {:}"
+#
+#      frequency:
+#        default: '100000000'
+#        getter:
+#          q: "FREQuency:CW?"
+#          r: "{:}"
+#        setter:
+#          q: "FREQuency:CW {:}"
+#
+#      power:
+#        default: '-30'
+#        getter:
+#          q: "POWer?"
+#          r: "{:}"
+#        setter:
+#          q: "POWer {:}"
+#
+#      clock_reference:
+#        default: 'INT'
+#        getter:
+#          q: "SOURce:ROSCillator:SOURce?"
+#          r: "{:}"
+#        setter:
+#          q: "SOURce:ROSCillator:SOURce {:}"
+
+resources:
+  TCPIP0::1.2.3.4::INSTR:
+    device: device 1
