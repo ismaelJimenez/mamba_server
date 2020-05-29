@@ -1,0 +1,82 @@
+# As per Agilent 33502A 2-Channel Isolated Amplifier Programmer's Reference.
+spec: "1.0"
+devices:
+  device 1:
+
+    eom:
+      TCPIP INSTR:
+        q: "\r\n"
+        r: "\n"
+
+    dialogues:
+      - q: "*IDN?"
+        r: "Agilent Technologies,33502A,MY12345678,1.00-01-01-01"
+
+    properties:
+      channel_1_gain:
+        default: 'DIR'
+        getter:
+          q: "ROUT1:PATH?"
+          r: "{:}"
+        setter:
+          q: "ROUT1:PATH {:}"
+
+      channel_2_gain:
+        default: 'DIR'
+        getter:
+          q: "ROUT2:PATH?"
+          r: "{:}"
+        setter:
+          q: "ROUT2:PATH {:}"
+
+      output_1_state:
+        default: 0
+        getter:
+          q: "OUTP1:STATe?"
+          r: "{:}"
+        setter:
+          q: "OUTP1 {:}"
+
+      output_2_state:
+        default: 0
+        getter:
+          q: "OUTP2:STATe?"
+          r: "{:}"
+        setter:
+          q: "OUTP2 {:}"
+
+      channel_1_coupling:
+        default: 'DC'
+        getter:
+          q: "INP1:COUP?"
+          r: "{:}"
+        setter:
+          q: "INP1:COUP {:}"
+
+      channel_2_coupling:
+        default: 'DC'
+        getter:
+          q: "INP2:COUP?"
+          r: "{:}"
+        setter:
+          q: "INP2:COUP {:}"
+
+      channel_1_impedance:
+        default: 1000000
+        getter:
+          q: "INP1:IMP?"
+          r: "{:}"
+        setter:
+          q: "INP1:IMP {:}"
+
+      channel_2_impedance:
+        default: 1000000
+        getter:
+          q: "INP2:IMP?"
+          r: "{:}"
+        setter:
+          q: "INP2:IMP {:}"
+
+resources:
+  TCPIP0::1.2.3.4::INSTR:
+    device: device 1

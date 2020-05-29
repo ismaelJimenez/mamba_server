@@ -45,38 +45,6 @@ devices:
         setter:
           q: "OUTP:STAT {:}"
 
-#      frequency_mode:
-#        default: 'CW'
-#        getter:
-#          q: "FREQuency:MODE?"
-#          r: "{:}"
-#        setter:
-#          q: "FREQuency:MODE {:}"
-#
-#      frequency:
-#        default: '100000000'
-#        getter:
-#          q: "FREQuency:CW?"
-#          r: "{:}"
-#        setter:
-#          q: "FREQuency:CW {:}"
-#
-#      power:
-#        default: '-30'
-#        getter:
-#          q: "POWer?"
-#          r: "{:}"
-#        setter:
-#          q: "POWer {:}"
-#
-#      clock_reference:
-#        default: 'INT'
-#        getter:
-#          q: "SOURce:ROSCillator:SOURce?"
-#          r: "{:}"
-#        setter:
-#          q: "SOURce:ROSCillator:SOURce {:}"
-
 resources:
   TCPIP0::1.2.3.4::INSTR:
     device: device 1
