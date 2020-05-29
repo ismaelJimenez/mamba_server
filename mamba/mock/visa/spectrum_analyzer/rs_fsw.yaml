@@ -1,3 +1,4 @@
+# As per R&S®FSW User Manual. Version 44 (FW: 4.60) - 14/04/2020
 spec: "1.0"
 devices:
   device 1:
@@ -7,15 +8,15 @@ devices:
         r: "\n"
     dialogues:
       - q: "*IDN?"
-        r: "None"
+        r: "Rohde&Schwarz,FSW-26,1312.8000K26/100005,1.30"
     error:
       error_queue:
         - q: ':SYST:ERR?'
           default: '0, No Error'
           command_error: '1, Command error'
     properties:
-      trigger_in:
-        default: '0'
+      command_process:
+        default: '1'
         getter:
           q: "*OPC?"
           r: "{:}"
