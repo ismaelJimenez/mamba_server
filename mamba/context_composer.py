@@ -8,8 +8,6 @@ from mamba.components import ComponentBase
 
 from mamba.components.observable_types.app_status import AppStatus
 
-DEFAULT_RX = 'mamba'
-
 
 def execute(launch_file, mamba_dir, project_dir):
     """ Compose context from launch file """

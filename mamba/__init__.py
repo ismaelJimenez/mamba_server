@@ -20,6 +20,6 @@ version_info = tuple(
 del pkgutil
 
 # Check minimum required Python version
-if sys.version_info < (3, 5):
-    print("Mamba %s requires Python 3.5" % __version__)
+if sys.version_info < (3, 6):
+    print("Mamba %s requires Python 3.6" % __version__)
     sys.exit(1)
