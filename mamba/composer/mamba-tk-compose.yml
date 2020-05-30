@@ -64,5 +64,11 @@ services:
 
   # Mocks
 
-  simulator_cyclic_tcp_server:
-    component: simulator_cyclic_tcp_server
+  cyclic_tcp_server_mock:
+    component: cyclic_tcp_mock
+
+  rpc_server_mock:
+    component: xmlrpc_mock
+
+  http_server_mock:
+    component: flask_server_mock

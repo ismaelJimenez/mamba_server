@@ -1,12 +1,13 @@
 """Application context that is shared between components"""
+from typing import Dict, Any
 
 from mamba.core.subject_factory import SubjectFactory
 
 
 class Context:
     """Application context class"""
-    def __init__(self):
-        self._memory = {}
+    def __init__(self) -> None:
+        self._memory: Dict[str, Any] = {}
         self.rx = SubjectFactory()
 
     def get(self, parameter):

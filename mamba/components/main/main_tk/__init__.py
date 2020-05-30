@@ -3,6 +3,8 @@
 import os
 import tkinter as tk
 
+from typing import Callable
+
 from mamba.components.main import MainBase
 from mamba.components.observable_types import Empty
 from mamba.components.main.observable_types import RegisterAction, \
@@ -125,7 +127,7 @@ class MainWindow(MainBase):
         """
         self._app.mainloop()
 
-    def _after(self, time_msec: int, action: callable):
+    def _after(self, time_msec: int, action: Callable):
         """ Make the application perform an action after a time delay.
 
         Args:

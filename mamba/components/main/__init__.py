@@ -3,6 +3,7 @@
 import os
 import time
 
+from typing import Callable
 from rx import operators as op
 
 from mamba.components import ComponentBase
@@ -89,7 +90,7 @@ class MainBase(ComponentBase):
         """
         raise NotImplementedError
 
-    def _after(self, time_msec: int, action: callable):
+    def _after(self, time_msec: int, action: Callable):
         """ Make the application perform an action after a time delay.
 
         Args:

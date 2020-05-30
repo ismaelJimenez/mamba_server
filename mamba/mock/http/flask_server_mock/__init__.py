@@ -3,7 +3,7 @@
 import os
 import threading
 import http.client
-from typing import Optional
+from typing import Optional, Dict, Union
 
 from flask import Flask, request, make_response, jsonify, abort
 from rx import operators as op
@@ -13,7 +13,7 @@ from mamba.components.observable_types import Empty
 from mamba.internal.exceptions import ComponentConfigException
 from mamba.core.context import Context
 
-params_dict = {}
+params_dict: Dict[str, Union[str, int, float]] = {}
 
 app = Flask(__name__)
 

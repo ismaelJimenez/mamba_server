@@ -7,7 +7,14 @@ __all__ = ['__version__', 'version_info']
 
 # Mamba version
 import pkgutil
-__version__ = pkgutil.get_data(__package__, 'VERSION').decode('ascii').strip()
+
+version_file = pkgutil.get_data(__package__, 'VERSION')
+
+if version_file is not None:
+    __version__ = version_file.decode('ascii').strip()
+else:
+    __version__ = "0.0.0"
+
 version_info = tuple(
     int(v) if v.isdigit() else v for v in __version__.split('.'))
 del pkgutil

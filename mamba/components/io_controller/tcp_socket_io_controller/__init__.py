@@ -68,7 +68,7 @@ class TcpControllerBase(ComponentBase):
         self._shared_memory_setter: Dict[str, str] = {}
         self._service_info: Dict[str, dict] = {}
         # self._inst_tm = None
-        self._inst_tm_thread = None
+        self._inst_tm_thread: Optional[threading.Thread] = None
         # self._inst_tc = None
 
         self._eom_q = self._configuration['eom']['TCPIP INSTR']['q']
