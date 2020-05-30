@@ -10,27 +10,24 @@ class Context:
         self._memory: Dict[str, Any] = {}
         self.rx = SubjectFactory()
 
-    def get(self, parameter):
+    def get(self, parameter: str) -> Any:
         """Returns the value of a context parameter, or None if it
         doesn´t exists.
 
         Args:
-            parameter (str): String identifier of the parameter.
+            parameter: Identifier of the parameter.
 
         Returns:
            The parameter value. None if parameter does not exists in context.
         """
-        if parameter in self._memory:
-            return self._memory[parameter]
+        return self._memory.get(parameter)
 
-        return None
-
-    def set(self, parameter, value):
+    def set(self, parameter: str, value: Any) -> None:
         """Set the value of a context parameter. If already exists, value is
         overwritten.
 
         Args:
-            parameter (str): String identifier of the parameter.
+            parameter: Identifier of the parameter.
             value: New parameter value.
         """
         self._memory[parameter] = value
