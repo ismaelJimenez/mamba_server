@@ -1,4 +1,7 @@
 pytest
+flask
+jsonify
+request
 mypy
 pyvisa
 pyvisa-py
