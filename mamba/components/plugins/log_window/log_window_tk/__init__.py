@@ -2,8 +2,8 @@
 
 import os
 import tkinter as tk
-from tkinter import *
-from tkinter.ttk import *
+from tkinter import Frame, N, S, W, E, BooleanVar
+from tkinter.ttk import Treeview
 import time
 
 from rx import operators as op

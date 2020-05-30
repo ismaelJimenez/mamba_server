@@ -13,8 +13,8 @@ from mamba.components.main.observable_types import RunAction
 from mamba.components.observable_types import Empty, \
     Telemetry, Telecommand
 
-from tkinter import *
-from tkinter.ttk import *
+from tkinter import Frame, N, S, W, E, Button, Toplevel, END
+from tkinter.ttk import Treeview
 
 
 class App(Frame):
