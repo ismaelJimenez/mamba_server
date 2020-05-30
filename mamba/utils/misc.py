@@ -87,8 +87,7 @@ def get_components(used_components, modules, component_type, context):
         else:
             raise LaunchFileException(
                 f"{component_name}: component {args['component']}' is not a "
-                f"valid component identifier"
-            )
+                f"valid component identifier")
 
     return dict_used_components
 

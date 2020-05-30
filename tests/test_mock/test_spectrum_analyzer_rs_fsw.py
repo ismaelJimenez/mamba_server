@@ -28,7 +28,8 @@ class TestClass:
         self.visa_inst.close()
 
     def test_dialogues(self):
-        assert self.visa_inst.query('*IDN?') == 'Rohde&Schwarz,FSW-26,1312.8000K26/100005,1.30'
+        assert self.visa_inst.query(
+            '*IDN?') == 'Rohde&Schwarz,FSW-26,1312.8000K26/100005,1.30'
 
     def test_properties(self):
         assert self.visa_inst.query('*OPC?') == '1'

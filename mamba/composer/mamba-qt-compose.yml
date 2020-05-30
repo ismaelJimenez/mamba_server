@@ -62,7 +62,11 @@ services:
   spectrum_analyzer:
     component: spectrum_analyzer
 
+
   # Mocks
 
   simulator_cyclic_tcp_server:
     component: cyclic_tcp_mock
+
+  xmlrpc_server_mock:
+    component: xmlrpc_mock

@@ -1,0 +1,19 @@
+# Component name
+
+name: xmlrpc_mock
+
+# Component network configuration
+
+host: 0.0.0.0
+port: 8090
+
+# Component TMTC
+
+device:
+    properties:
+        tm_1:
+          default: 1
+        tm_2:
+          default: '2'
+        tm_3:
+          default: 3

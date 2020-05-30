@@ -63,7 +63,11 @@ class TestClass:
         self.mock._close()
 
     def test_error_handling(self):
-        self.mock = CyclicTcpMock(Context(), local_config={'tm_port': 8083, 'tc_port': 8084})
+        self.mock = CyclicTcpMock(Context(),
+                                  local_config={
+                                      'tm_port': 8083,
+                                      'tc_port': 8084
+                                  })
         self.mock.initialize()
         # Create a socket (SOCK_STREAM means a TCP socket)
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
@@ -82,7 +86,8 @@ class TestClass:
                 # Connect to server and send data
                 sock_tc.connect(("localhost", 8084))
 
-                sock_tc.sendall(bytes('tm_1 5\n', "utf-8"))  # Command with wrong ending
+                sock_tc.sendall(bytes('tm_1 5\n',
+                                      "utf-8"))  # Command with wrong ending
 
                 time.sleep(2)
 
@@ -94,11 +99,11 @@ class TestClass:
 
                 assert received == 'tm_1 1\ntm_2 2\ntm_3 3\n'
 
-                sock_tc.sendall(bytes('tm_4 4\r\n', "utf-8"))  # Not existing TM
+                sock_tc.sendall(bytes('tm_4 4\r\n',
+                                      "utf-8"))  # Not existing TM
 
                 time.sleep(2)
 
                 assert received == 'tm_1 1\ntm_2 2\ntm_3 3\n'
 
         self.mock._close()
-
