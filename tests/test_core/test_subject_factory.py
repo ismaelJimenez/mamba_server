@@ -1,4 +1,4 @@
-""" Rx_Py Subject Factory tests """
+""" Subject Factory tests """
 
 import pytest
 
