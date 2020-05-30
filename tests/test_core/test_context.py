@@ -29,21 +29,21 @@ class TestClassSignal:
 
     def test_context_rx(self):
         context = Context()
-        callback_test = CallbackTestClass()
+        callback_test_class = CallbackTestClass()
 
         assert isinstance(context.rx, SubjectFactory)
 
-        context.rx['test_1'].subscribe(on_next=callback_test.test_func_1)
+        context.rx['test_1'].subscribe(on_next=callback_test_class.test_func_1)
 
-        assert callback_test.func_1_times_called == 0
-        assert callback_test.func_1_last_value is None
+        assert callback_test_class.func_1_times_called == 0
+        assert callback_test_class.func_1_last_value is None
 
         context.rx['test_1'].on_next(2)
 
-        assert callback_test.func_1_times_called == 1
-        assert callback_test.func_1_last_value == 2
+        assert callback_test_class.func_1_times_called == 1
+        assert callback_test_class.func_1_last_value == 2
 
         context.rx['test_1'].on_next([1, 2, 3])
 
-        assert callback_test.func_1_times_called == 2
-        assert callback_test.func_1_last_value == [1, 2, 3]
+        assert callback_test_class.func_1_times_called == 2
+        assert callback_test_class.func_1_last_value == [1, 2, 3]
