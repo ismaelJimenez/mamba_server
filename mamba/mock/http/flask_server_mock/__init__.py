@@ -108,5 +108,6 @@ class FlaskServerMock(ComponentBase):
     def _close(self, rx_value: Optional[Empty] = None) -> None:
         """ Entry point for closing the component """
         if self._flask_server_thread is not None:
-            conn = http.client.HTTPConnection('localhost', self._configuration['port'])
+            conn = http.client.HTTPConnection('localhost',
+                                              self._configuration['port'])
             conn.request("POST", "/shutdown")
