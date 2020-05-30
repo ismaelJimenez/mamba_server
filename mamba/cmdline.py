@@ -8,7 +8,7 @@ sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
 import mamba  # noqa
 from mamba.commands import MambaCommand  # noqa
-from mamba.utils.misc import get_classes_from_module  # noqa
+from mamba.core.utils import get_classes_from_module  # noqa
 
 
 def execute(argv=None):

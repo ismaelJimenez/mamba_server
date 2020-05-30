@@ -10,7 +10,7 @@ from mamba.components import ComponentBase
 from mamba.core.exceptions import ComponentConfigException
 from mamba.components.observable_types import IoServiceRequest, \
     Telemetry, Empty
-from mamba.utils.misc import path_from_string
+from mamba.core.utils import path_from_string
 
 
 class VisaControllerBase(ComponentBase):

@@ -8,7 +8,7 @@ class ComponentConfigException(Exception):
               self).__init__(msg or "Component configuration error")
 
 
-class LaunchFileException(Exception):
+class ComposeFileException(Exception):
     def __init__(self, msg: Optional[str] = None) -> None:
-        super(LaunchFileException,
+        super(ComposeFileException,
               self).__init__(msg or "Launch file configuration error")

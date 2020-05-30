@@ -8,7 +8,7 @@ from rx import operators as op
 
 from mamba.components import ComponentBase
 from mamba.core.exceptions import ComponentConfigException
-from mamba.utils.misc import path_from_string
+from mamba.core.utils import path_from_string
 from mamba.components.observable_types import Empty, AppStatus
 from mamba.components.main.observable_types import RegisterAction, \
     RunAction
