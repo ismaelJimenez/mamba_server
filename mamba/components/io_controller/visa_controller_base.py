@@ -7,7 +7,7 @@ from rx import operators as op
 
 from mamba.core.context import Context
 from mamba.components import ComponentBase
-from mamba.internal.exceptions import ComponentConfigException
+from mamba.core.exceptions import ComponentConfigException
 from mamba.components.observable_types import IoServiceRequest, \
     Telemetry, Empty
 from mamba.utils.misc import path_from_string

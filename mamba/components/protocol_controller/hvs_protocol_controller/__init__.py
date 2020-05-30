@@ -5,7 +5,7 @@ from rx import operators as op
 from mamba.components.observable_types import Telecommand, Telemetry,\
     IoServiceRequest
 from mamba.components import ComponentBase
-from mamba.internal.exceptions import ComponentConfigException
+from mamba.core.exceptions import ComponentConfigException
 
 
 class Driver(ComponentBase):

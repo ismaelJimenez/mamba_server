@@ -3,7 +3,7 @@
 from rx import operators as op
 
 from mamba.components import ComponentBase
-from mamba.internal.exceptions import ComponentConfigException
+from mamba.core.exceptions import ComponentConfigException
 
 from mamba.components.main.observable_types import RegisterAction,\
     RunAction

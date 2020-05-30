@@ -9,7 +9,7 @@ from mamba.utils import misc
 from mamba.commands import MambaCommand
 from mamba.components import ComponentBase
 
-from mamba.internal.exceptions import LaunchFileException
+from mamba.core.exceptions import LaunchFileException
 from mamba.utils.test import get_testenv, cmd_exec
 from os.path import join, exists
 

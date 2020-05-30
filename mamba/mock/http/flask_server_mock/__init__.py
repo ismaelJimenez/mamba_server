@@ -10,7 +10,7 @@ from rx import operators as op
 
 from mamba.components import ComponentBase
 from mamba.components.observable_types import Empty
-from mamba.internal.exceptions import ComponentConfigException
+from mamba.core.exceptions import ComponentConfigException
 from mamba.core.context import Context
 
 params_dict: Dict[str, Union[str, int, float]] = {}
