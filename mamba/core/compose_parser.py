@@ -11,9 +11,9 @@ from mamba.components import ComponentBase
 from mamba.core.msg.app_status import AppStatus
 
 
-def execute(compose_file: str,
-            mamba_dir: str,
-            project_dir: Optional[str] = None) -> None:
+def compose_parser(compose_file: str,
+                   mamba_dir: str,
+                   project_dir: Optional[str] = None) -> None:
     """ Compose Mamba App from launch file """
 
     component_folders = ['mamba.components', 'mamba.mock']
@@ -28,7 +28,7 @@ def execute(compose_file: str,
         context.set('mamba_dir', mamba_dir)
         context.set('project_dir', project_dir)
 
-        if 'services' in compose_config:
+        if isinstance(compose_config, dict) and compose_config.get('services') is not None:
             services = get_components(compose_config['services'],
                                       component_folders, ComponentBase,
                                       context)
@@ -36,7 +36,9 @@ def execute(compose_file: str,
             for key, service in services.items():
                 service.initialize()
 
-        # Start Mamba App
-        context.rx['app_status'].on_next(AppStatus.Running)
+            # Start Mamba App
+            context.rx['app_status'].on_next(AppStatus.Running)
 
-        sys.exit(0)
+            return 0
+        else:
+            return 1

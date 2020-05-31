@@ -4,7 +4,7 @@ from os import listdir
 from os.path import join, exists
 from mamba.commands import MambaCommand
 
-from mamba.core.compose_parser import execute
+from mamba.core.compose_parser import compose_parser
 
 DEFAULT_LAUNCH_FILE = 'mamba-qt'
 LAUNCH_FILES_DIR = 'composer'
@@ -51,7 +51,7 @@ class Command(MambaCommand):
         if args.run:
             launch_file = _find_launch_file(args.run, mamba_dir, project_dir)
             if launch_file is not None:
-                execute(launch_file, mamba_dir, project_dir)
+                compose_parser(launch_file, mamba_dir, project_dir)
             else:
                 return 1
 
