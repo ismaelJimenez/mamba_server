@@ -2,7 +2,7 @@ import pytest
 import os
 
 from mamba.core.context import Context
-from mamba.components.protocol_controller.hvs_protocol_controller import Driver
+from mamba.component.protocol_controller.hvs_protocol_controller import Driver
 from mamba.core.msg import ServiceResponse, ServiceRequest
 from mamba.core.exceptions import ComponentConfigException
 

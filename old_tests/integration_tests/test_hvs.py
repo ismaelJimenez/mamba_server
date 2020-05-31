@@ -3,10 +3,10 @@ import socket
 import time
 
 from mamba.core.context import Context
-from mamba.components.drivers.socket_tmtc.hvs_socket_tmtc import Driver as HvsSocketTmtc
-from mamba.components.protocol_controller.hvs_protocol_controller import Driver as HvsProtocolCtrl
-from mamba.components.io_controller.rf_signal_generator import RfSignalGenerator
-from mamba.components.drivers.socket_server import Driver as SocketServer
+from mamba.component.drivers.socket_tmtc.hvs_socket_tmtc import Driver as HvsSocketTmtc
+from mamba.component.protocol_controller.hvs_protocol_controller import Driver as HvsProtocolCtrl
+from mamba.component.io_controller.rf_signal_generator import RfSignalGenerator
+from mamba.component.drivers.socket_server import Driver as SocketServer
 from mamba.core.msg import ServiceResponse, ServiceRequest
 
 

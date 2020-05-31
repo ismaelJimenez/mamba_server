@@ -34,8 +34,8 @@ class TestClass:
         assert exists(join(self.proj_path, 'mamba.cfg'))
         assert exists(join(self.proj_path, 'launch'))
         assert exists(join(self.proj_path, 'launch', 'project-compose.yml'))
-        assert exists(join(self.proj_path, 'components'))
-        assert exists(join(self.proj_path, 'components', '__init__.py'))
+        assert exists(join(self.proj_path, 'component'))
+        assert exists(join(self.proj_path, 'component', '__init__.py'))
 
         output = cmd_exec_output(self, 'mamba.cmdline', 'start',
                                  self.project_name + '2')

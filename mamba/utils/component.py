@@ -1,4 +1,4 @@
-""" Mamba generic utility functions for components """
+""" Mamba generic utility functions for component """
 
 
 def merge_dicts(dict_1, dict_2):

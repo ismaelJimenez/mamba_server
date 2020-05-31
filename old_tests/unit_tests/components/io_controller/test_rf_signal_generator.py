@@ -6,7 +6,7 @@ from tempfile import NamedTemporaryFile
 from rx import operators as op
 
 from mamba.core.context import Context
-from mamba.components.io_controller import RfSignalGenerator
+from mamba.component.io_controller import RfSignalGenerator
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.msg import Empty, ServiceRequest, ServiceResponse
 

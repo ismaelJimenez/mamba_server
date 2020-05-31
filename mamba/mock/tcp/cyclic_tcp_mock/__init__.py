@@ -8,7 +8,7 @@ from typing import Optional
 
 from rx import operators as op
 
-from mamba.components import ComponentBase
+from mamba.component import ComponentBase
 from mamba.core.msg import Empty
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.context import Context

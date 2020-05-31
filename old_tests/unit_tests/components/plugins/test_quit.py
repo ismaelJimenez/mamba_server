@@ -1,11 +1,11 @@
 import os
 
 from mamba.core.context import Context
-from mamba.components.plugins.quit import Plugin
-from mamba.components.main.main_qt import MainWindow
+from mamba.component.plugins.quit import Plugin
+from mamba.component.main.main_qt import MainWindow
 
 from mamba.core.msg.empty import Empty
-from mamba.components.main.observable_types.run_action import RunAction
+from mamba.component.main.observable_types.run_action import RunAction
 
 
 class DummyTestClass:

@@ -2,8 +2,8 @@ import pytest
 import os
 
 from mamba.core.context import Context
-from mamba.components.plugins.about.about_tk import Plugin
-from mamba.components.main.main_tk import MainWindow
+from mamba.component.plugins.about.about_tk import Plugin
+from mamba.component.main.main_tk import MainWindow
 
 
 class TestClass:

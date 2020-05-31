@@ -67,7 +67,7 @@ class Command(MambaCommand):
             print(f"error: '{component_type}' is not a valid component type")
             return 1
 
-        component_dir = join(project_dir, 'components', component_type, module)
+        component_dir = join(project_dir, 'component', component_type, module)
 
         if exists(component_dir):
             print(f'error: component {module} already exists in '
@@ -87,7 +87,7 @@ class Command(MambaCommand):
 
 
 def _templates_dir(mamba_dir, component_type):
-    return os.path.join(mamba_dir, 'commands', TEMPLATES_DIR, 'components',
+    return os.path.join(mamba_dir, 'commands', TEMPLATES_DIR, 'component',
                         component_type)
 
 

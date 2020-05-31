@@ -6,7 +6,7 @@ from shutil import rmtree
 
 from mamba.core.compose_parser import compose_parser
 from mamba.core import utils
-from mamba.components import ComponentBase
+from mamba.component import ComponentBase
 from mamba.utils.test import get_testenv, cmd_exec
 from os.path import join, exists
 from mamba.core.context import Context
@@ -31,7 +31,7 @@ class TestClass:
         self.cwd = join(self.temp_path, self.project_name)
         assert cmd_exec(self, 'mamba.cmdline', 'generate', 'plugin',
                         'plugin_1') == 0
-        assert exists(join(self.proj_path, 'components', 'plugin', 'plugin_1'))
+        assert exists(join(self.proj_path, 'component', 'plugin', 'plugin_1'))
         assert exists(join(self.proj_path, 'composer'))
 
         self.mamba_dir = os.path.join(os.path.dirname(__file__), '..', '..',
@@ -62,7 +62,7 @@ class TestClass:
 
     def test_get_classes_from_module_components_local(self):
         # Test component load
-        classes_dict = utils.get_classes_from_module('components',
+        classes_dict = utils.get_classes_from_module('component',
                                                      ComponentBase)
         assert len(classes_dict) == 1
         assert 'plugin_1' in classes_dict
@@ -70,15 +70,15 @@ class TestClass:
     def test_get_components_duplicated_component(self):
         assert cmd_exec(self, 'mamba.cmdline', 'generate', 'plugin',
                         'quit') == 0
-        assert exists(join(self.proj_path, 'components', 'plugin', 'quit'))
+        assert exists(join(self.proj_path, 'component', 'plugin', 'quit'))
 
         with pytest.raises(ComposeFileException) as excinfo:
             utils.get_components('quit',
-                                 ['mamba.components.plugins', 'components'],
+                                 ['mamba.component.plugins', 'component'],
                                  ComponentBase, Context())
 
         assert 'is duplicated' in str(excinfo.value)
-        rmtree(join(self.proj_path, 'components', 'plugin', 'quit'))
+        rmtree(join(self.proj_path, 'component', 'plugin', 'quit'))
 
     def test_get_components_local(self):
         components_dict = utils.get_components(
@@ -89,7 +89,7 @@ class TestClass:
                 'quit': {
                     'component': 'quit'
                 }
-            }, ['mamba.components.plugins'], ComponentBase, Context())
+            }, ['mamba.component.plugins'], ComponentBase, Context())
         assert len(components_dict) == 2
         assert 'about' in components_dict
         assert 'quit' in components_dict
@@ -97,7 +97,7 @@ class TestClass:
         components_dict = utils.get_components(
             {'plugin_1': {
                 'component': 'about_qt'
-            }}, ['components', 'mamba.components'], ComponentBase, Context())
+            }}, ['component', 'mamba.component'], ComponentBase, Context())
         assert len(components_dict) == 1
         assert 'plugin_1' in components_dict
 
@@ -115,7 +115,7 @@ class TestClass:
                 'plugin_1': {
                     'component': 'about_qt'
                 }
-            }, ['mamba.components.plugins', 'components'], ComponentBase,
+            }, ['mamba.component.plugins', 'component'], ComponentBase,
             Context())
         assert len(components_dict) == 4
         assert 'about_1' in components_dict
@@ -126,12 +126,12 @@ class TestClass:
     def test_get_components_duplicated_component(self):
         assert cmd_exec(self, 'mamba.cmdline', 'generate', 'plugin',
                         'quit') == 0
-        assert exists(join(self.proj_path, 'components', 'plugin', 'quit'))
+        assert exists(join(self.proj_path, 'component', 'plugin', 'quit'))
 
         with pytest.raises(ComposeFileException) as excinfo:
             utils.get_components(['quit'],
-                                 ['mamba.components.plugins', 'components'],
+                                 ['mamba.component.plugins', 'component'],
                                  ComponentBase, Context())
 
         assert 'is duplicated' in str(excinfo.value)
-        rmtree(join(self.proj_path, 'components', 'plugin', 'quit'))
+        rmtree(join(self.proj_path, 'component', 'plugin', 'quit'))

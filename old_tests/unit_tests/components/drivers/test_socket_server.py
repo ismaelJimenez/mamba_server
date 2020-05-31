@@ -4,7 +4,7 @@ import socket
 import time
 
 from mamba.core.context import Context
-from mamba.components.drivers.socket_server import Driver
+from mamba.component.drivers.socket_server import Driver
 from mamba.core.msg import Empty, Raw
 
 

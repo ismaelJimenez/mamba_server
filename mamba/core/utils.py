@@ -69,17 +69,17 @@ def get_classes_from_module(module: str,
 def get_components(used_components: Dict[str, dict], modules: List[str],
                    component_type: type,
                    context: Context) -> Dict[str, object]:
-    """Returns a dictionary of instantiated components with context.
+    """Returns a dictionary of instantiated component with context.
 
     Args:
-        used_components: The dictionary of used components.
-        modules: The folders where to look for the components.
-        component_type: The class type of the components.
+        used_components: The dictionary of used component.
+        modules: The folders where to look for the component.
+        component_type: The class type of the component.
         context: The application context to instantiate
-                           the components with.
+                           the component with.
 
     Returns:
-        The instantiated dictionary of components.
+        The instantiated dictionary of component.
 
     Raises:
         ComposeFileException: If a given component id is not found.

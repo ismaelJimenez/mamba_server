@@ -1,4 +1,4 @@
-"""Application context that is shared between components"""
+"""Application context that is shared between component"""
 from typing import Dict, Any
 
 from mamba.core.subject_factory import SubjectFactory

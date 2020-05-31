@@ -2,7 +2,7 @@ import pytest
 import os
 
 from mamba.core.context import Context
-from mamba.components.drivers.socket_tmtc.hvs_socket_tmtc import Driver
+from mamba.component.drivers.socket_tmtc.hvs_socket_tmtc import Driver
 from mamba.core.msg import Raw, ServiceResponse, ServiceRequest
 
 

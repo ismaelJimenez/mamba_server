@@ -8,7 +8,7 @@ from typing import Optional, Dict, Union
 from flask import Flask, request, make_response, jsonify, abort
 from rx import operators as op
 
-from mamba.components import ComponentBase
+from mamba.component import ComponentBase
 from mamba.core.msg import Empty
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.context import Context

@@ -6,7 +6,7 @@ from typing import Optional
 
 from mamba.core.context import Context
 from mamba.core.utils import get_components
-from mamba.components import ComponentBase
+from mamba.component import ComponentBase
 
 from mamba.core.msg.app_status import AppStatus
 
@@ -16,10 +16,10 @@ def compose_parser(compose_file: str,
                    project_dir: Optional[str] = None) -> None:
     """ Compose Mamba App from launch file """
 
-    component_folders = ['mamba.components', 'mamba.mock']
+    component_folders = ['mamba.component', 'mamba.mock']
 
     if project_dir is not None:
-        component_folders.append('components')
+        component_folders.append('component')
 
     with open(compose_file) as file:
         compose_config = yaml.load(file, Loader=yaml.FullLoader)

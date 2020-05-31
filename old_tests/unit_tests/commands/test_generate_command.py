@@ -35,24 +35,24 @@ class TestClass:
 
         assert cmd_exec(self, 'mamba.cmdline', 'generate', 'plugin',
                         'plugin_1') == 0
-        assert exists(join(self.proj_path, 'components', 'plugin'))
-        assert exists(join(self.proj_path, 'components', 'plugin', 'plugin_1'))
+        assert exists(join(self.proj_path, 'component', 'plugin'))
+        assert exists(join(self.proj_path, 'component', 'plugin', 'plugin_1'))
         assert exists(
-            join(self.proj_path, 'components', 'plugin', 'plugin_1',
+            join(self.proj_path, 'component', 'plugin', 'plugin_1',
                  '__init__.py'))
         assert exists(
-            join(self.proj_path, 'components', 'plugin', 'plugin_1',
+            join(self.proj_path, 'component', 'plugin', 'plugin_1',
                  'config.yml'))
 
         assert cmd_exec(self, 'mamba.cmdline', 'generate', 'main',
                         'main_1') == 0
-        assert exists(join(self.proj_path, 'components', 'main'))
-        assert exists(join(self.proj_path, 'components', 'main', 'main_1'))
+        assert exists(join(self.proj_path, 'component', 'main'))
+        assert exists(join(self.proj_path, 'component', 'main', 'main_1'))
         assert exists(
-            join(self.proj_path, 'components', 'main', 'main_1',
+            join(self.proj_path, 'component', 'main', 'main_1',
                  '__init__.py'))
         assert exists(
-            join(self.proj_path, 'components', 'main', 'main_1', 'config.yml'))
+            join(self.proj_path, 'component', 'main', 'main_1', 'config.yml'))
 
     def test_generate_valid_project_folder_duplicated_name(self):
         assert cmd_exec(self, 'mamba.cmdline', 'start',
