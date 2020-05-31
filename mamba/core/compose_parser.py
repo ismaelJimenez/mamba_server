@@ -28,7 +28,8 @@ def compose_parser(compose_file: str,
         context.set('mamba_dir', mamba_dir)
         context.set('project_dir', project_dir)
 
-        if isinstance(compose_config, dict) and compose_config.get('services') is not None:
+        if isinstance(compose_config,
+                      dict) and compose_config.get('services') is not None:
             services = get_components(compose_config['services'],
                                       component_folders, ComponentBase,
                                       context)
