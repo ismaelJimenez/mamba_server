@@ -10,7 +10,7 @@ import tkinter as tk
 
 from mamba.components.plugins import PluginBase
 from mamba.components.main.observable_types import RunAction
-from mamba.components.observable_types import Empty, \
+from mamba.core.msg import Empty, \
     Telemetry, Telecommand
 
 from tkinter import Frame, N, S, W, E, Button, Toplevel, END

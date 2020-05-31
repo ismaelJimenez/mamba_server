@@ -2,7 +2,7 @@ import os
 
 from rx import operators as op
 
-from mamba.components.observable_types import Log
+from mamba.core.msg import Log
 from mamba.components import ComponentBase
 
 

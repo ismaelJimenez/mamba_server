@@ -6,8 +6,8 @@ from mamba.core.context import Context
 from mamba.core.exceptions import ComponentConfigException
 
 from mamba.components.main.observable_types.register_action import RegisterAction
-from mamba.components.observable_types.app_status import AppStatus
-from mamba.components.observable_types.empty import Empty
+from mamba.core.msg.app_status import AppStatus
+from mamba.core.msg.empty import Empty
 
 
 class TestClass:

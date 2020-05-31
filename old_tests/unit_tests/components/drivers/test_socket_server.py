@@ -5,7 +5,7 @@ import time
 
 from mamba.core.context import Context
 from mamba.components.drivers.socket_server import Driver
-from mamba.components.observable_types import Empty, RawTelemetry, RawTelecommand
+from mamba.core.msg import Empty, RawTelemetry, RawTelecommand
 
 
 class DummyTestClass:

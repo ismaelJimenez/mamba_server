@@ -8,7 +8,7 @@ from mamba.core.context import Context
 from mamba.core.utils import get_components
 from mamba.components import ComponentBase
 
-from mamba.components.observable_types.app_status import AppStatus
+from mamba.core.msg.app_status import AppStatus
 
 
 def execute(compose_file: str,

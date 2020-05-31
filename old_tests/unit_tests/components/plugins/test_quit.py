@@ -4,7 +4,7 @@ from mamba.core.context import Context
 from mamba.components.plugins.quit import Plugin
 from mamba.components.main.main_qt import MainWindow
 
-from mamba.components.observable_types.empty import Empty
+from mamba.core.msg.empty import Empty
 from mamba.components.main.observable_types.run_action import RunAction
 
 

@@ -3,7 +3,7 @@
 import os
 
 from mamba.components.main import MainBase
-from mamba.components.observable_types.empty import Empty
+from mamba.core.msg.empty import Empty
 from mamba.components.main.observable_types.register_action \
     import RegisterAction
 

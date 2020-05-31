@@ -2,7 +2,7 @@ import os
 
 from rx import operators as op
 
-from mamba.components.observable_types import Telecommand, Telemetry,\
+from mamba.core.msg import Telecommand, Telemetry,\
     IoServiceRequest
 from mamba.components import ComponentBase
 from mamba.core.exceptions import ComponentConfigException

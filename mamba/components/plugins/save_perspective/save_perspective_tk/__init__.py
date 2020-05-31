@@ -4,14 +4,13 @@ import os
 
 # from PySide2.QtCore import QTimer
 import json
-import threading
 
 # from PySide2.QtWidgets import QApplication, QWidget, QFileDialog
 import tkinter as tk
 from tkinter.filedialog import asksaveasfilename
 
 from mamba.components.plugins import PluginBase
-from mamba.components.observable_types import Empty
+from mamba.core.msg import Empty
 from mamba.components.main.observable_types import RunAction
 
 

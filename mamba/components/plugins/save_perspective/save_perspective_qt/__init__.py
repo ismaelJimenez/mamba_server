@@ -8,7 +8,7 @@ import json
 from PySide2.QtWidgets import QApplication, QWidget, QFileDialog
 
 from mamba.components.plugins import PluginBase
-from mamba.components.observable_types import Empty
+from mamba.core.msg import Empty
 from mamba.components.main.observable_types import RunAction
 
 

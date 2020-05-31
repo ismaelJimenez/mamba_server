@@ -8,7 +8,7 @@ from rx import operators as op
 from mamba.core.context import Context
 from mamba.components.io_controller import RfSignalGenerator
 from mamba.core.exceptions import ComponentConfigException
-from mamba.components.observable_types import Empty, IoServiceRequest, Telemetry
+from mamba.core.msg import Empty, IoServiceRequest, Telemetry
 
 
 class DummyTestClass:

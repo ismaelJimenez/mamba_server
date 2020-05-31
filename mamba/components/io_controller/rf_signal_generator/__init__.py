@@ -3,7 +3,7 @@ from typing import Optional
 import os
 
 from mamba.core.context import Context
-from mamba.components.observable_types import IoServiceRequest,\
+from mamba.core.msg import IoServiceRequest,\
     Telemetry
 from mamba.components.io_controller import VisaControllerBase
 

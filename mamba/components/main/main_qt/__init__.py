@@ -12,7 +12,7 @@ from PySide2.QtCore import QTimer, Qt
 from PySide2.QtGui import QPixmap, QGuiApplication
 
 from mamba.components.main import MainBase
-from mamba.components.observable_types import Empty
+from mamba.core.msg import Empty
 from mamba.components.main.observable_types import RegisterAction, \
     RunAction
 

@@ -8,13 +8,9 @@ import time
 
 from rx import operators as op
 
-from PySide2.QtWidgets import QLabel, QWidget, QApplication, QMdiSubWindow,\
-    QTableWidget, QVBoxLayout, QGroupBox, QCheckBox, QTableWidgetItem
-from PySide2.QtCore import Qt
-
 from mamba.components.plugins import PluginBase
 from mamba.components.main.observable_types import RunAction
-from mamba.components.observable_types import Empty, Log, LogLevel
+from mamba.core.msg import Empty, Log, LogLevel
 
 
 class App(Frame):

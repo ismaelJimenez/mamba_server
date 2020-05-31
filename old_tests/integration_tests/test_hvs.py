@@ -7,7 +7,7 @@ from mamba.components.drivers.socket_tmtc.hvs_socket_tmtc import Driver as HvsSo
 from mamba.components.protocol_controller.hvs_protocol_controller import Driver as HvsProtocolCtrl
 from mamba.components.io_controller.rf_signal_generator import RfSignalGenerator
 from mamba.components.drivers.socket_server import Driver as SocketServer
-from mamba.components.observable_types import Telemetry, Telecommand, IoServiceRequest
+from mamba.core.msg import Telemetry, Telecommand, IoServiceRequest
 
 
 def client_tc(ip, port, message):

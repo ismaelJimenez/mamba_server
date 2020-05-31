@@ -6,7 +6,7 @@ import tkinter as tk
 from typing import Callable
 
 from mamba.components.main import MainBase
-from mamba.components.observable_types import Empty
+from mamba.core.msg import Empty
 from mamba.components.main.observable_types import RegisterAction, \
     RunAction
 

@@ -7,9 +7,10 @@ from typing import Optional
 from rx import operators as op
 
 from mamba.components import ComponentBase
-from mamba.components.observable_types import Empty
+from mamba.core.msg import Empty
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.context import Context
+from mamba.core.utils import get_properties_dict
 
 from xmlrpc.server import SimpleXMLRPCServer
 from xmlrpc.server import SimpleXMLRPCRequestHandler
@@ -39,14 +40,7 @@ class XmlRpcMock(ComponentBase):
         super(XmlRpcMock, self).__init__(os.path.dirname(__file__), context,
                                          local_config)
 
-        # Component configuration
-        self._tm_dict = {}
-
-        if 'device' in self._configuration and 'properties' in \
-                self._configuration['device']:
-            for key, value in self._configuration['device'][
-                    'properties'].items():
-                self._tm_dict[key] = value.get('default')
+        self._tm_dict = get_properties_dict(self._configuration)
 
         self._server: Optional[MockXMLRPCServer] = None
         self._server_thread: Optional[threading.Thread] = None

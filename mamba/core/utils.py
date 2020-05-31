@@ -4,13 +4,35 @@ import os
 import re
 import inspect
 
-from typing import List, Iterator, Dict, Any, Callable
+from typing import List, Iterator, Dict, Callable, Any
 from types import ModuleType
 from importlib import import_module
 from pkgutil import iter_modules
 
 from mamba.core.context import Context
 from mamba.core.exceptions import ComposeFileException
+
+
+def get_properties_dict(configuration: Dict[str, dict]) -> Dict[str, Any]:
+    """Return a dictionary of properties with default values composed from
+    a configuration file.
+
+    Args:
+        configuration: The path string formatted in windows or linux style.
+
+    Returns:
+        The dictionary of properties.
+    """
+    if 'device' in configuration and 'properties' in \
+            configuration['device']:
+        properties_dict = {
+            key: value.get('default')
+            for key, value in configuration['device']['properties'].items()
+        }
+    else:
+        properties_dict = {}
+
+    return properties_dict
 
 
 def path_from_string(path_str: str) -> str:

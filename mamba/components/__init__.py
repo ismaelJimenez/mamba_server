@@ -4,7 +4,7 @@ import os
 import yaml
 
 from mamba.utils.component import merge_dicts
-from mamba.components.observable_types import Log, LogLevel
+from mamba.core.msg import Log, LogLevel
 
 COMPONENT_CONFIG_FILE = "config.yml"
 

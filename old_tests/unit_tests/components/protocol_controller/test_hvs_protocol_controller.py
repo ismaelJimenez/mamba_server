@@ -3,7 +3,7 @@ import os
 
 from mamba.core.context import Context
 from mamba.components.protocol_controller.hvs_protocol_controller import Driver
-from mamba.components.observable_types import Telemetry, Telecommand, \
+from mamba.core.msg import Telemetry, Telecommand, \
     IoServiceRequest
 from mamba.core.exceptions import ComponentConfigException
 

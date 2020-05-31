@@ -5,7 +5,7 @@ import time
 
 from rx import operators as op
 
-from mamba.components.observable_types import RawTelemetry, \
+from mamba.core.msg import RawTelemetry, \
     RawTelecommand, Telecommand, Telemetry
 from mamba.components import ComponentBase
 

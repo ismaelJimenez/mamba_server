@@ -12,7 +12,7 @@ from PySide2.QtGui import QIcon, QCursor
 
 from mamba.components.plugins import PluginBase
 from mamba.components.main.observable_types import RunAction
-from mamba.components.observable_types import Empty, Telecommand
+from mamba.core.msg import Empty, Telecommand
 
 
 class CustomTable(QTableWidget):

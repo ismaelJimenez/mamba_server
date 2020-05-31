@@ -9,9 +9,10 @@ from flask import Flask, request, make_response, jsonify, abort
 from rx import operators as op
 
 from mamba.components import ComponentBase
-from mamba.components.observable_types import Empty
+from mamba.core.msg import Empty
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.context import Context
+from mamba.core.utils import get_properties_dict
 
 params_dict: Dict[str, Union[str, int, float]] = {}
 
@@ -69,13 +70,7 @@ class FlaskServerMock(ComponentBase):
                                               context, local_config)
 
         # Component configuration
-        params_dict = {}  # Value of the parameters
-
-        if 'device' in self._configuration and 'properties' in \
-                self._configuration['device']:
-            for key, value in self._configuration['device'][
-                    'properties'].items():
-                params_dict[key] = value.get('default')
+        params_dict = get_properties_dict(self._configuration)
 
         self._flask_server_thread: Optional[threading.Thread] = None
 

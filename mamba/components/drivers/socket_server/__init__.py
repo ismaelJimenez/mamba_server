@@ -7,7 +7,7 @@ import socketserver
 from rx import operators as op
 
 from mamba.components import ComponentBase
-from mamba.components.observable_types import RawTelecommand, \
+from mamba.core.msg import RawTelecommand, \
     RawTelemetry, Empty
 from mamba.core.exceptions import ComponentConfigException
 

@@ -9,9 +9,10 @@ from typing import Optional
 from rx import operators as op
 
 from mamba.components import ComponentBase
-from mamba.components.observable_types import Empty
+from mamba.core.msg import Empty
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.context import Context
+from mamba.core.utils import get_properties_dict
 
 
 class CyclicTcpMock(ComponentBase):
@@ -32,13 +33,7 @@ class CyclicTcpMock(ComponentBase):
             self.eom_q = "\r\n"
             self.eom_r = "\n"
 
-        self.dict = {}  # Value of the telemetries
-
-        if 'device' in self._configuration and 'properties' in \
-                self._configuration['device']:
-            for key, value in self._configuration['device'][
-                    'properties'].items():
-                self.dict[key] = value.get('default')
+        self.dict = get_properties_dict(self._configuration)
 
         self._tm_server: Optional[ThreadedCyclicTmServer] = None
         self._tm_server_thread: Optional[threading.Thread] = None

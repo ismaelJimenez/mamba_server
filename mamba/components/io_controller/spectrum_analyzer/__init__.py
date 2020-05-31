@@ -4,7 +4,7 @@ import os
 import threading
 import pyvisa
 
-from mamba.components.observable_types import IoServiceRequest,\
+from mamba.core.msg import IoServiceRequest,\
     Telemetry
 from mamba.components.io_controller import VisaControllerBase
 
