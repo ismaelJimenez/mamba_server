@@ -28,11 +28,11 @@ class Plugin(PluginBase):
 
     def _received_log(self, log: Log, log_table, debugCheckBox, infoCheckBox,
                       errorCheckBox, criticalCheckBox):
-        """ Entry point for processing a new raw telecommand coming from the
+        """ Entry point for processing a new msg telecommand coming from the
             socket server.
 
             Args:
-                raw_tc (Log): The raw telecommand coming from
+                raw_tc (Log): The msg telecommand coming from
                                          the socket.
         """
         if (log.level == LogLevel.Dev and
@@ -46,13 +46,13 @@ class Plugin(PluginBase):
             log_table.insertRow(0)
             log_table.setItem(0, 0,
                               QTableWidgetItem('#' + str(self._log_numer)))
-            log_table.setItem(0, 1, QTableWidgetItem(log.message))
+            log_table.setItem(0, 1, QTableWidgetItem(log.msg))
             log_table.setItem(0, 2, QTableWidgetItem(str(log.level)))
-            log_table.setItem(0, 3, QTableWidgetItem(log.source))
+            log_table.setItem(0, 3, QTableWidgetItem(log.src))
             log_table.setItem(0, 4, QTableWidgetItem(str(time.time())))
             self._log_numer += 1
 
-        print(f'WINDOW: [{log.level}] [{log.source}] {log.message}')
+        print(f'WINDOW: [{log.level}] [{log.src}] {log.msg}')
 
     def _new_window(self, window: QMdiSubWindow, perspective):
         self._new_window_observer.dispose()

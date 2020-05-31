@@ -10,7 +10,7 @@ import tkinter as tk
 
 from mamba.components.plugins import PluginBase
 from mamba.components.main.observable_types import RunAction
-from mamba.core.msg import Empty, Telemetry
+from mamba.core.msg import Empty, ServiceResponse
 
 from tkinter import Frame, N, S, W, E, Button
 from tkinter.ttk import Treeview
@@ -125,7 +125,7 @@ class App(Frame):
         # of the widget it is associated with
         print(self.debugCheckBox.get())
 
-    def _process_io_result(self, rx_value: Telemetry):
+    def _process_io_result(self, rx_value: ServiceResponse):
         print("REC!!")
         print(rx_value.id)
         print(self.observed_services)
@@ -183,8 +183,8 @@ class Plugin(PluginBase):
             self._io_result_subs.dispose()
 
         self._io_result_subs = self._context.rx['io_result'].pipe(
-            op.filter(lambda value: isinstance(value, Telemetry))).subscribe(
-                on_next=lambda _: print("PACO"))
+            op.filter(lambda value: isinstance(value, ServiceResponse))
+        ).subscribe(on_next=lambda _: print("PACO"))
 
     # def _process_io_result(self, rx_value: Telemetry):
     #    print('IO RESULT')
@@ -278,8 +278,8 @@ class Plugin(PluginBase):
         self.log_table = App(app, self._io_services)
 
         self._io_result_subs = self._context.rx['io_result'].pipe(
-            op.filter(lambda value: isinstance(value, Telemetry))).subscribe(
-                on_next=self.log_table._process_io_result)
+            op.filter(lambda value: isinstance(value, ServiceResponse))
+        ).subscribe(on_next=self.log_table._process_io_result)
 
     def _generate_perspective(self, window, services_table):
         # perspective = {

@@ -14,7 +14,7 @@ from PySide2.QtGui import QIcon, QCursor, QFont
 
 from mamba.components.plugins import PluginBase
 from mamba.components.main.observable_types import RunAction
-from mamba.core.msg import Empty, Telemetry
+from mamba.core.msg import Empty, ServiceResponse
 
 
 class CustomTable(QTableWidget):
@@ -79,11 +79,11 @@ class Plugin(PluginBase):
             self._io_result_subs.dispose()
 
         self._io_result_subs = self._context.rx['io_result'].pipe(
-            op.filter(lambda value: isinstance(value, Telemetry) and value.id
-                      in self._observed_services)).subscribe(
+            op.filter(lambda value: isinstance(value, ServiceResponse) and
+                      value.id in self._observed_services)).subscribe(
                           on_next=self._process_io_result)
 
-    def _process_io_result(self, rx_value: Telemetry):
+    def _process_io_result(self, rx_value: ServiceResponse):
         print('IO RESULT')
         for table in self._service_tables:
             for row in range(0, table.rowCount()):

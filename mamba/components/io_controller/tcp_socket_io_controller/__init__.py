@@ -9,8 +9,8 @@ from rx import operators as op
 from mamba.core.context import Context
 from mamba.components import ComponentBase
 from mamba.core.exceptions import ComponentConfigException
-from mamba.core.msg import IoServiceRequest, \
-    Telemetry, Empty
+from mamba.core.msg import ServiceRequest, \
+    ServiceResponse, Empty
 
 
 class ThreadedTmHandler:
@@ -34,9 +34,9 @@ class ThreadedTmHandler:
                     print(cmd)
                     shared_memory[cmd[0]] = cmd[1]
 
-                    result = Telemetry(tm_id=shared_memory_getter[cmd[0]],
-                                       tm_type='tm',
-                                       value=cmd[1])
+                    result = ServiceResponse(id=shared_memory_getter[cmd[0]],
+                                             type='tm',
+                                             value=cmd[1])
 
                     rx['io_result'].on_next(result)
 
@@ -170,11 +170,11 @@ class TcpControllerBase(ComponentBase):
 
         # Subscribe to the services request
         self._context.rx['io_service_request'].pipe(
-            op.filter(lambda value: isinstance(value, IoServiceRequest) and
+            op.filter(lambda value: isinstance(value, ServiceRequest) and
                       (value.id in self._service_info))).subscribe(
                           on_next=self._run_command)
 
-    def _tcp_connect(self, result: Telemetry) -> None:
+    def _tcp_connect(self, result: ServiceResponse) -> None:
 
         self._inst_tm_thread = threading.Thread(
             target=ThreadedTmHandler,
@@ -207,14 +207,14 @@ class TcpControllerBase(ComponentBase):
 
         self._log_dev("Established connection to remote server")
 
-    def _tcp_disconnect(self, result: Telemetry) -> None:
+    def _tcp_disconnect(self, result: ServiceResponse) -> None:
         self._inst_tm_thread = None
         if result.id in self._shared_memory_setter:
             self._shared_memory[self._shared_memory_setter[result.id]] = 0
         self._log_dev("Closed connection to remote server")
 
-    def _service_preprocessing(self, service_request: IoServiceRequest,
-                               result: Telemetry) -> None:
+    def _service_preprocessing(self, service_request: ServiceRequest,
+                               result: ServiceResponse) -> None:
         """Perform preprocessing of the services.
 
         Note: This step is useful in case a merge of multiple arguments into
@@ -226,11 +226,11 @@ class TcpControllerBase(ComponentBase):
             result: The result to be published.
         """
 
-    def _run_command(self, service_request: IoServiceRequest) -> None:
+    def _run_command(self, service_request: ServiceRequest) -> None:
         self._log_dev(f"Received service request: {service_request.id}")
 
-        result = Telemetry(tm_id=service_request.id,
-                           tm_type=service_request.type)
+        result = ServiceResponse(id=service_request.id,
+                                 type=service_request.type)
 
         self._service_preprocessing(service_request, result)
 

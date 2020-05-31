@@ -11,7 +11,7 @@ import tkinter as tk
 from mamba.components.plugins import PluginBase
 from mamba.components.main.observable_types import RunAction
 from mamba.core.msg import Empty, \
-    Telemetry, Telecommand
+    ServiceResponse, ServiceRequest
 
 from tkinter import Frame, N, S, W, E, Button, Toplevel, END
 from tkinter.ttk import Treeview
@@ -224,7 +224,7 @@ class App(Frame):
         print(id)
         print(args)
 
-        self._rx['tc'].on_next(Telecommand(tc_id=id, args=args, tc_type='tc'))
+        self._rx['tc'].on_next(ServiceRequest(id=id, args=args, type='tc'))
 
     def remove_item(self):
         selected_items = self.treeview.selection()
@@ -265,7 +265,7 @@ class App(Frame):
         # of the widget it is associated with
         print(self.debugCheckBox.get())
 
-    def _process_io_result(self, rx_value: Telemetry):
+    def _process_io_result(self, rx_value: ServiceResponse):
         if rx_value.id in self.observed_services:
             for children in self.treeview.get_children():
                 child = self.treeview.item(children)
@@ -309,11 +309,11 @@ class Plugin(PluginBase):
             self._io_result_subs.dispose()
 
         self._io_result_subs = self._context.rx['io_result'].pipe(
-            op.filter(lambda value: isinstance(value, Telemetry) and value.id
-                      in self._observed_services)).subscribe(
+            op.filter(lambda value: isinstance(value, ServiceResponse) and
+                      value.id in self._observed_services)).subscribe(
                           on_next=self.log_table._process_io_result)
 
-    def _process_io_result(self, rx_value: Telemetry):
+    def _process_io_result(self, rx_value: ServiceResponse):
         print('IO RESULT')
         # for table in self._service_tables:
         #     for row in range(0, table.rowCount()):

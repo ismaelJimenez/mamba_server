@@ -9,7 +9,7 @@ class LogLevel(enum.Enum):
 
 
 class Log:
-    def __init__(self, level: LogLevel, message: str, source: str = ''):
+    def __init__(self, level: LogLevel, msg: str, src: str = '') -> None:
         self.level = level
-        self.message = message
-        self.source = source
+        self.msg = msg
+        self.src = src

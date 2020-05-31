@@ -12,7 +12,7 @@ from PySide2.QtGui import QIcon, QCursor
 
 from mamba.components.plugins import PluginBase
 from mamba.components.main.observable_types import RunAction
-from mamba.core.msg import Empty, Telecommand
+from mamba.core.msg import Empty, ServiceRequest
 
 
 class CustomTable(QTableWidget):
@@ -74,7 +74,7 @@ class Plugin(PluginBase):
                         args.append(param)
 
         self._context.rx['tc'].on_next(
-            Telecommand(tc_id=service_id, args=args, tc_type='tc'))
+            ServiceRequest(id=service_id, args=args, type='tc'))
 
     def add_service(self, provider, service, services_table):
         parameters = self._io_services[provider][service]['signature'][0]

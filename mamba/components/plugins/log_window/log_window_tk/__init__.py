@@ -91,8 +91,8 @@ class App(Frame):
             self.treeview.insert('',
                                  0,
                                  text=str(self._log_numer),
-                                 values=(log.message, str(log.level),
-                                         log.source, str(time.time())))
+                                 values=(log.msg, str(log.level), log.src,
+                                         str(time.time())))
 
             self._log_numer += 1
 
@@ -112,11 +112,11 @@ class Plugin(PluginBase):
         self._windows = []
 
     def _received_log(self, log: Log, log_table):
-        """ Entry point for processing a new raw telecommand coming from the
+        """ Entry point for processing a new msg telecommand coming from the
             socket server.
 
             Args:
-                raw_tc (Log): The raw telecommand coming from
+                raw_tc (Log): The msg telecommand coming from
                                          the socket.
         """
         log_table.new_log(log)

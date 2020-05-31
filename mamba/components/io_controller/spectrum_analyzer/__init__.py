@@ -4,8 +4,8 @@ import os
 import threading
 import pyvisa
 
-from mamba.core.msg import IoServiceRequest,\
-    Telemetry
+from mamba.core.msg import ServiceRequest,\
+    ServiceResponse
 from mamba.components.io_controller import VisaControllerBase
 
 
@@ -39,8 +39,8 @@ class SpectrumAnalyzer(VisaControllerBase):
 
         self._trigger_in_thread = None
 
-    def _service_preprocessing(self, service_request: IoServiceRequest,
-                               result: Telemetry) -> None:
+    def _service_preprocessing(self, service_request: ServiceRequest,
+                               result: ServiceResponse) -> None:
         """Perform preprocessing of the services listed in _custom_process.
         Note: This step is useful in case a merge of multiple arguments into
         one unique argument is needed. If the 'command' argument is not

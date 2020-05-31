@@ -12,7 +12,7 @@ topics:
     description: Close connection with Digitizer
 
   DIGITIZER_RAW:
-    description: Send a raw command to the instrument
+    description: Send a msg command to the instrument
     signature: [[str], None]
     command: '{:}'
 
@@ -22,7 +22,7 @@ topics:
     command: ':TIMebase:REFClock {:}'
 
   DIGITIZER_TC_QUERY_RAW:
-    description: Perform raw query to the instrument
+    description: Perform msg query to the instrument
     signature: [[str], str]
     command: '{:}'
 
@@ -37,7 +37,7 @@ topics:
     command: ':TIMebase:REFClock?'
 
   DIGITIZER_TM_QUERY_RAW:
-    description: Retrieve the value of the last raw query
+    description: Retrieve the value of the last msg query
     signature: [[], str]
     command: '{:}'
 

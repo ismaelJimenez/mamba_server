@@ -8,7 +8,7 @@ from rx import operators as op
 from mamba.core.context import Context
 from mamba.components.io_controller import RfSignalGenerator
 from mamba.core.exceptions import ComponentConfigException
-from mamba.core.msg import Empty, IoServiceRequest, Telemetry
+from mamba.core.msg import Empty, ServiceRequest, ServiceResponse
 
 
 class DummyTestClass:
@@ -163,7 +163,7 @@ class TestClass:
                 },
                 'SMB_RAW': {
                     'command': '{:}',
-                    'description': 'Send a raw command to the instrument',
+                    'description': 'Send a msg command to the instrument',
                     'signature': [['str'], 'None']
                 },
                 'SMB_RST': {
@@ -172,14 +172,14 @@ class TestClass:
                 },
                 'SMB_TC_QUERY_RAW': {
                     'command': '{:}',
-                    'description': 'Perform raw query to the '
+                    'description': 'Perform msg query to the '
                     'instrument',
                     'signature': [['str'], 'str']
                 },
                 'SMB_TM_QUERY_RAW': {
                     'command': '{:}',
                     'description': 'Retrieve the value of the '
-                    'last raw query',
+                    'last msg query',
                     'signature': [[], 'str']
                 }
             },
@@ -308,7 +308,7 @@ class TestClass:
                 },
                 'SMB_RAW': {
                     'command': '{:}',
-                    'description': 'Send a raw command to the instrument',
+                    'description': 'Send a msg command to the instrument',
                     'signature': [['str'], 'None']
                 },
                 'SMB_RST': {
@@ -317,14 +317,14 @@ class TestClass:
                 },
                 'SMB_TC_QUERY_RAW': {
                     'command': '{:}',
-                    'description': 'Perform raw query to the '
+                    'description': 'Perform msg query to the '
                     'instrument',
                     'signature': [['str'], 'str']
                 },
                 'SMB_TM_QUERY_RAW': {
                     'command': '{:}',
                     'description': 'Retrieve the value of the '
-                    'last raw query',
+                    'last msg query',
                     'signature': [[], 'str']
                 }
             },
@@ -439,7 +439,7 @@ class TestClass:
             },
             'SMB_RAW': {
                 'command': '{:}',
-                'description': 'Send a raw command to the instrument',
+                'description': 'Send a msg command to the instrument',
                 'key': None,
                 'signature': [['str'], 'None']
             },
@@ -451,13 +451,13 @@ class TestClass:
             },
             'SMB_TC_QUERY_RAW': {
                 'command': '{:}',
-                'description': 'Perform raw query to the instrument',
+                'description': 'Perform msg query to the instrument',
                 'key': None,
                 'signature': [['str'], 'str']
             },
             'SMB_TM_QUERY_RAW': {
                 'command': '{:}',
-                'description': 'Retrieve the value of the last raw query',
+                'description': 'Retrieve the value of the last msg query',
                 'key': None,
                 'signature': [[], 'str']
             }
@@ -620,7 +620,7 @@ class TestClass:
                 },
                 'SMB_RAW': {
                     'command': '{:}',
-                    'description': 'Send a raw command to the instrument',
+                    'description': 'Send a msg command to the instrument',
                     'signature': [['str'], 'None']
                 },
                 'SMB_RST': {
@@ -629,14 +629,14 @@ class TestClass:
                 },
                 'SMB_TC_QUERY_RAW': {
                     'command': '{:}',
-                    'description': 'Perform raw query to the '
+                    'description': 'Perform msg query to the '
                     'instrument',
                     'signature': [['str'], 'str']
                 },
                 'SMB_TM_QUERY_RAW': {
                     'command': '{:}',
                     'description': 'Retrieve the value of the '
-                    'last raw query',
+                    'last msg query',
                     'signature': [[], 'str']
                 }
             },
@@ -757,7 +757,7 @@ class TestClass:
             },
             'SMB_RAW': {
                 'command': '{:}',
-                'description': 'Send a raw command to the instrument',
+                'description': 'Send a msg command to the instrument',
                 'key': None,
                 'signature': [['str'], 'None']
             },
@@ -769,13 +769,13 @@ class TestClass:
             },
             'SMB_TC_QUERY_RAW': {
                 'command': '{:}',
-                'description': 'Perform raw query to the instrument',
+                'description': 'Perform msg query to the instrument',
                 'key': None,
                 'signature': [['str'], 'str']
             },
             'SMB_TM_QUERY_RAW': {
                 'command': '{:}',
-                'description': 'Retrieve the value of the last raw query',
+                'description': 'Retrieve the value of the last msg query',
                 'key': None,
                 'signature': [[], 'str']
             }
@@ -905,7 +905,7 @@ class TestClass:
                     'signature': [[], 'float']
                 },
                 'SMB_RAW': {
-                    'description': 'Send a raw command to the instrument',
+                    'description': 'Send a msg command to the instrument',
                     'signature': [['str'], 'None']
                 },
                 'SMB_RST': {
@@ -913,11 +913,11 @@ class TestClass:
                     'signature': [[], None]
                 },
                 'SMB_TC_QUERY_RAW': {
-                    'description': 'Perform raw query to the instrument',
+                    'description': 'Perform msg query to the instrument',
                     'signature': [['str'], 'str']
                 },
                 'SMB_TM_QUERY_RAW': {
-                    'description': 'Retrieve the value of the last raw query',
+                    'description': 'Retrieve the value of the last msg query',
                     'signature': [[], 'str']
                 }
             }
@@ -1021,7 +1021,7 @@ class TestClass:
                     'signature': [[], 'float']
                 },
                 'SMB_RAW': {
-                    'description': 'Send a raw command to the instrument',
+                    'description': 'Send a msg command to the instrument',
                     'signature': [['str'], 'None']
                 },
                 'SMB_RST': {
@@ -1029,13 +1029,13 @@ class TestClass:
                     'signature': [[], None]
                 },
                 'SMB_TC_QUERY_RAW': {
-                    'description': 'Perform raw query to the '
+                    'description': 'Perform msg query to the '
                     'instrument',
                     'signature': [['str'], 'str']
                 },
                 'SMB_TM_QUERY_RAW': {
                     'description': 'Retrieve the value of the '
-                    'last raw query',
+                    'last msg query',
                     'signature': [[], 'str']
                 }
             }
@@ -1049,19 +1049,19 @@ class TestClass:
 
         # Subscribe to the topic that shall be published
         self.context.rx['io_result'].pipe(
-            op.filter(lambda value: isinstance(value, Telemetry))).subscribe(
+            op.filter(lambda value: isinstance(value, ServiceResponse))).subscribe(
                 dummy_test_class.test_function)
 
         # 1 - Test that component only gets activated for implemented services
         self.context.rx['io_service_request'].on_next(
-            IoServiceRequest(id='NOT_EXISTING', type='any', args=[]))
+            ServiceRequest(id='NOT_EXISTING', type='any', args=[]))
 
         assert dummy_test_class.times_called == 0
         assert dummy_test_class.last_value is None
 
         # 2 - Test generic command before connection to the instrument has been established
         self.context.rx['io_service_request'].on_next(
-            IoServiceRequest(id='SMB_RST', type='tc', args=[]))
+            ServiceRequest(id='SMB_RST', type='tc', args=[]))
 
         time.sleep(.1)
 
@@ -1074,7 +1074,7 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            IoServiceRequest(id='SMB_CONNECT', type='tc', args=[]))
+            ServiceRequest(id='SMB_CONNECT', type='tc', args=[]))
 
         time.sleep(.1)
 
@@ -1086,7 +1086,7 @@ class TestClass:
 
         # 4 - Test generic command
         self.context.rx['io_service_request'].on_next(
-            IoServiceRequest(id='SMB_OUT_POWER', type='tc', args=[1]))
+            ServiceRequest(id='SMB_OUT_POWER', type='tc', args=[1]))
 
         time.sleep(.1)
 
@@ -1097,7 +1097,7 @@ class TestClass:
 
         # 5 - Test generic query
         self.context.rx['io_service_request'].on_next(
-            IoServiceRequest(id='SMB_QUERY_OUT_POWER', type='tm', args=[]))
+            ServiceRequest(id='SMB_QUERY_OUT_POWER', type='tm', args=[]))
 
         time.sleep(.1)
 
@@ -1113,7 +1113,7 @@ class TestClass:
         }
 
         self.context.rx['io_service_request'].on_next(
-            IoServiceRequest(id='SMB_TC_QUERY_RAW', type='tc', args=['OUTP?']))
+            ServiceRequest(id='SMB_TC_QUERY_RAW', type='tc', args=['OUTP?']))
 
         time.sleep(.1)
 
@@ -1129,7 +1129,7 @@ class TestClass:
 
         # 7 - Test shared memory get
         self.context.rx['io_service_request'].on_next(
-            IoServiceRequest(id='SMB_TM_QUERY_RAW', type='tm', args=[]))
+            ServiceRequest(id='SMB_TM_QUERY_RAW', type='tm', args=[]))
 
         time.sleep(.1)
 
@@ -1138,9 +1138,9 @@ class TestClass:
         assert dummy_test_class.last_value.type == 'tm'
         assert dummy_test_class.last_value.value == '1'
 
-        # 8 - Test special case of raw command
+        # 8 - Test special case of msg command
         self.context.rx['io_service_request'].on_next(
-            IoServiceRequest(id='SMB_RAW', type='tc', args=['OUTP', '0']))
+            ServiceRequest(id='SMB_RAW', type='tc', args=['OUTP', '0']))
 
         time.sleep(.1)
 
@@ -1150,7 +1150,7 @@ class TestClass:
         assert dummy_test_class.last_value.value is None
 
         self.context.rx['io_service_request'].on_next(
-            IoServiceRequest(id='SMB_QUERY_OUT_POWER', type='tm', args=[]))
+            ServiceRequest(id='SMB_QUERY_OUT_POWER', type='tm', args=[]))
 
         time.sleep(.1)
 
@@ -1164,7 +1164,7 @@ class TestClass:
 
         # Subscribe to the topic that shall be published
         self.context.rx['io_result'].pipe(
-            op.filter(lambda value: isinstance(value, Telemetry))).subscribe(
+            op.filter(lambda value: isinstance(value, ServiceResponse))).subscribe(
                 dummy_test_class.test_function)
 
         # Test simulated normal connection to the instrument
@@ -1174,7 +1174,7 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            IoServiceRequest(id='SMB_CONNECT', type='tc', args=[]))
+            ServiceRequest(id='SMB_CONNECT', type='tc', args=[]))
 
         time.sleep(.1)
 
@@ -1189,7 +1189,7 @@ class TestClass:
 
         # Subscribe to the topic that shall be published
         self.context.rx['io_result'].pipe(
-            op.filter(lambda value: isinstance(value, Telemetry))).subscribe(
+            op.filter(lambda value: isinstance(value, ServiceResponse))).subscribe(
                 dummy_test_class.test_function)
 
         # Test simulated normal connection to the instrument
@@ -1201,7 +1201,7 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            IoServiceRequest(id='SMB_CONNECT', type='tc', args=[]))
+            ServiceRequest(id='SMB_CONNECT', type='tc', args=[]))
 
         time.sleep(.1)
 
@@ -1216,7 +1216,7 @@ class TestClass:
 
         # Subscribe to the topic that shall be published
         self.context.rx['io_result'].pipe(
-            op.filter(lambda value: isinstance(value, Telemetry))).subscribe(
+            op.filter(lambda value: isinstance(value, ServiceResponse))).subscribe(
                 dummy_test_class.test_function)
 
         # Test real connection to missing instrument
@@ -1226,7 +1226,7 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            IoServiceRequest(id='SMB_DISCONNECT', type='tc', args=[]))
+            ServiceRequest(id='SMB_DISCONNECT', type='tc', args=[]))
 
         time.sleep(.1)
 
@@ -1297,7 +1297,7 @@ class TestClass:
 
         # Subscribe to the topic that shall be published
         self.context.rx['io_result'].pipe(
-            op.filter(lambda value: isinstance(value, Telemetry))).subscribe(
+            op.filter(lambda value: isinstance(value, ServiceResponse))).subscribe(
                 dummy_test_class.test_function)
 
         # Test real connection to missing instrument
@@ -1308,7 +1308,7 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            IoServiceRequest(id='SMB_CONNECT', type='tc', args=[]))
+            ServiceRequest(id='SMB_CONNECT', type='tc', args=[]))
 
         time.sleep(.1)
 

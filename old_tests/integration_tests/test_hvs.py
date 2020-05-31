@@ -7,7 +7,7 @@ from mamba.components.drivers.socket_tmtc.hvs_socket_tmtc import Driver as HvsSo
 from mamba.components.protocol_controller.hvs_protocol_controller import Driver as HvsProtocolCtrl
 from mamba.components.io_controller.rf_signal_generator import RfSignalGenerator
 from mamba.components.drivers.socket_server import Driver as SocketServer
-from mamba.core.msg import Telemetry, Telecommand, IoServiceRequest
+from mamba.core.msg import ServiceResponse, ServiceRequest
 
 
 def client_tc(ip, port, message):
@@ -59,42 +59,42 @@ class TestClass:
         # Subscribe to the 'tc' that shall be published
         self.context.rx['tc'].subscribe(dummy_test_class.test_function)
 
-        # Send single raw TC - 1. Helo
+        # Send single msg TC - 1. Helo
         client_tc('127.0.0.1', 8080, "helo test\r\n")
         time.sleep(0.1)
 
         assert dummy_test_class.times_called == 1
-        assert isinstance(dummy_test_class.last_value, Telecommand)
+        assert isinstance(dummy_test_class.last_value, ServiceRequest)
         assert dummy_test_class.last_value.id == 'test'
         assert dummy_test_class.last_value.type == 'helo'
         assert dummy_test_class.last_value.args == []
 
-        # Send single raw TC - 2. Tc_Meta
+        # Send single msg TC - 2. Tc_Meta
         client_tc('127.0.0.1', 8080, "tc_meta test\r\n")
         time.sleep(0.1)
 
         assert dummy_test_class.times_called == 2
-        assert isinstance(dummy_test_class.last_value, Telecommand)
+        assert isinstance(dummy_test_class.last_value, ServiceRequest)
         assert dummy_test_class.last_value.id == 'test'
         assert dummy_test_class.last_value.type == 'tc_meta'
         assert dummy_test_class.last_value.args == []
 
-        # Send single raw TC - 3. Tm_Meta
+        # Send single msg TC - 3. Tm_Meta
         client_tc('127.0.0.1', 8080, "tm_meta test\r\n")
         time.sleep(0.1)
 
         assert dummy_test_class.times_called == 3
-        assert isinstance(dummy_test_class.last_value, Telecommand)
+        assert isinstance(dummy_test_class.last_value, ServiceRequest)
         assert dummy_test_class.last_value.id == 'test'
         assert dummy_test_class.last_value.type == 'tm_meta'
         assert dummy_test_class.last_value.args == []
 
-        # Send single raw TC - 4. Tc
+        # Send single msg TC - 4. Tc
         client_tc('127.0.0.1', 8080, 'tc test "arg_1"\r\n')
         time.sleep(0.1)
 
         assert dummy_test_class.times_called == 4
-        assert isinstance(dummy_test_class.last_value, Telecommand)
+        assert isinstance(dummy_test_class.last_value, ServiceRequest)
         assert dummy_test_class.last_value.id == 'test'
         assert dummy_test_class.last_value.type == 'tc'
         assert dummy_test_class.last_value.args == ['arg_1']
@@ -103,7 +103,7 @@ class TestClass:
         time.sleep(0.1)
 
         assert dummy_test_class.times_called == 5
-        assert isinstance(dummy_test_class.last_value, Telecommand)
+        assert isinstance(dummy_test_class.last_value, ServiceRequest)
         assert dummy_test_class.last_value.id == 'test'
         assert dummy_test_class.last_value.type == 'tc'
         assert dummy_test_class.last_value.args == ['arg_1', 'arg_2']
@@ -112,17 +112,17 @@ class TestClass:
         time.sleep(0.1)
 
         assert dummy_test_class.times_called == 6
-        assert isinstance(dummy_test_class.last_value, Telecommand)
+        assert isinstance(dummy_test_class.last_value, ServiceRequest)
         assert dummy_test_class.last_value.id == 'test'
         assert dummy_test_class.last_value.type == 'tc'
         assert dummy_test_class.last_value.args == ['2.3', 'arg_2']
 
-        # Send single raw TC - 5. Tm
+        # Send single msg TC - 5. Tm
         client_tc('127.0.0.1', 8080, 'tm test \r\n')
         time.sleep(0.1)
 
         assert dummy_test_class.times_called == 7
-        assert isinstance(dummy_test_class.last_value, Telecommand)
+        assert isinstance(dummy_test_class.last_value, ServiceRequest)
         assert dummy_test_class.last_value.id == 'test'
         assert dummy_test_class.last_value.type == 'tm'
         assert dummy_test_class.last_value.args == []
@@ -131,17 +131,17 @@ class TestClass:
         time.sleep(0.1)
 
         assert dummy_test_class.times_called == 8
-        assert isinstance(dummy_test_class.last_value, Telecommand)
+        assert isinstance(dummy_test_class.last_value, ServiceRequest)
         assert dummy_test_class.last_value.id == 'test_2'
         assert dummy_test_class.last_value.type == 'tm'
         assert dummy_test_class.last_value.args == []
 
-        # Send multiple raw TC
+        # Send multiple msg TC
         client_tc('127.0.0.1', 8080, 'helo test_2\r\nhelo test_3\r\n')
         time.sleep(0.1)
 
         assert dummy_test_class.times_called == 10
-        assert isinstance(dummy_test_class.last_value, Telecommand)
+        assert isinstance(dummy_test_class.last_value, ServiceRequest)
         assert dummy_test_class.last_value.id == 'test_3'
         assert dummy_test_class.last_value.type == 'helo'
         assert dummy_test_class.last_value.args == []
@@ -151,7 +151,7 @@ class TestClass:
         time.sleep(0.1)
 
         assert dummy_test_class.times_called == 11
-        assert isinstance(dummy_test_class.last_value, Telecommand)
+        assert isinstance(dummy_test_class.last_value, ServiceRequest)
         assert dummy_test_class.last_value.id == 'test'
         assert dummy_test_class.last_value.type == 'wrong'
         assert dummy_test_class.last_value.args == []
@@ -173,13 +173,13 @@ class TestClass:
 
             # Send single TM - 1. Helo
             self.context.rx['tm'].on_next(
-                Telemetry(tm_id='test', tm_type='helo'))
+                ServiceResponse(id='test', type='helo'))
             assert str(sock.recv(1024), 'ascii') == '> OK helo test\r\n'
 
             # Send single TM - 2. Tc_Meta
             self.context.rx['tm'].on_next(
-                Telemetry(tm_id='test',
-                          tm_type='tc_meta',
+                ServiceResponse(id='test',
+                          type='tc_meta',
                           value={
                               'signature': [['str', 'int'], 'str'],
                               'description': 'description test 1'
@@ -190,8 +190,8 @@ class TestClass:
 
             # Send single TM - 3. Tm_Meta
             self.context.rx['tm'].on_next(
-                Telemetry(tm_id='test',
-                          tm_type='tm_meta',
+                ServiceResponse(id='test',
+                          type='tm_meta',
                           value={
                               'signature': [['str', 'int'], 'str'],
                               'description': 'description test 1'
@@ -202,14 +202,14 @@ class TestClass:
                 'ascii') == '> OK test;str;str;description test 1;7;4\r\n'
 
             # Send single TM - 4. Tc
-            self.context.rx['tm'].on_next(Telemetry(tm_id='test',
-                                                    tm_type='tc'))
+            self.context.rx['tm'].on_next(ServiceResponse(id='test',
+                                                    type='tc'))
 
             assert str(sock.recv(1024), 'ascii') == '> OK test\r\n'
 
             # Send single TM - 5. Tm
             self.context.rx['tm'].on_next(
-                Telemetry(tm_id='test', tm_type='tm', value=1))
+                ServiceResponse(id='test', type='tm', value=1))
 
             data = str(sock.recv(1024), 'ascii')
             assert '> OK ' in data
@@ -217,16 +217,16 @@ class TestClass:
 
             # Send single TM - 6. Error
             self.context.rx['tm'].on_next(
-                Telemetry(tm_id='test', tm_type='error', value='error msg'))
+                ServiceResponse(id='test', type='error', value='error msg'))
 
             assert str(sock.recv(1024),
                        'ascii') == '> ERROR test error msg\r\n'
 
             # Send multiple TM
             self.context.rx['tm'].on_next(
-                Telemetry(tm_id='test_3', tm_type='helo'))
+                ServiceResponse(id='test_3', type='helo'))
             self.context.rx['tm'].on_next(
-                Telemetry(tm_id='test_4', tm_type='helo'))
+                ServiceResponse(id='test_4', type='helo'))
 
             assert str(sock.recv(1024),
                        'ascii') == '> OK helo test_3\r\n> OK helo test_4\r\n'
@@ -267,12 +267,12 @@ class TestClass:
         self.context.rx['io_service_request'].subscribe(
             dummy_test_class.test_function)
 
-        # Send single raw TC - 1. Tc
+        # Send single msg TC - 1. Tc
         client_tc('127.0.0.1', 8080, 'tc TEST_TC_3 3\r\n')
         time.sleep(0.1)
 
         assert dummy_test_class.times_called == 1
-        assert isinstance(dummy_test_class.last_value, IoServiceRequest)
+        assert isinstance(dummy_test_class.last_value, ServiceRequest)
         assert dummy_test_class.last_value.id == 'TEST_TC_3'
         assert dummy_test_class.last_value.type == 'tc'
         assert dummy_test_class.last_value.args == ['3']
@@ -281,17 +281,17 @@ class TestClass:
         time.sleep(0.1)
 
         assert dummy_test_class.times_called == 2
-        assert isinstance(dummy_test_class.last_value, IoServiceRequest)
+        assert isinstance(dummy_test_class.last_value, ServiceRequest)
         assert dummy_test_class.last_value.id == 'TEST_TC_3'
         assert dummy_test_class.last_value.type == 'tc'
         assert dummy_test_class.last_value.args == ['3', 'test_arg']
 
-        # Send single raw TC - 2. Tm
+        # Send single msg TC - 2. Tm
         client_tc('127.0.0.1', 8080, 'tm TEST_TC_3\r\n')
         time.sleep(0.1)
 
         assert dummy_test_class.times_called == 3
-        assert isinstance(dummy_test_class.last_value, IoServiceRequest)
+        assert isinstance(dummy_test_class.last_value, ServiceRequest)
         assert dummy_test_class.last_value.id == 'TEST_TC_3'
         assert dummy_test_class.last_value.type == 'tm'
         assert dummy_test_class.last_value.args == []
@@ -300,7 +300,7 @@ class TestClass:
         time.sleep(0.1)
 
         assert dummy_test_class.times_called == 4
-        assert isinstance(dummy_test_class.last_value, IoServiceRequest)
+        assert isinstance(dummy_test_class.last_value, ServiceRequest)
         assert dummy_test_class.last_value.id == 'TEST_TC_3'
         assert dummy_test_class.last_value.type == 'tm'
         assert dummy_test_class.last_value.args == ['1']
@@ -349,14 +349,14 @@ class TestClass:
             assert str(sock.recv(1024),
                        'ascii') == '> OK helo test_program\r\n'
 
-            # Send single raw TC - 2. Tc_Meta
+            # Send single msg TC - 2. Tc_Meta
             client_tc('127.0.0.1', 8080, 'tc_meta TEST_TC_3\r\n')
             time.sleep(0.1)
 
             assert str(sock.recv(1024),
                        'ascii') == '> OK TEST_TC_3;2;custom command 3\r\n'
 
-            # Send single raw TC - 3. Tm_Meta
+            # Send single msg TC - 3. Tm_Meta
             client_tc('127.0.0.1', 8080, 'tm_meta TEST_TC_3\r\n')
             time.sleep(0.1)
 
@@ -406,7 +406,7 @@ class TestClass:
             assert str(sock.recv(1024),
                        'ascii') == '> OK helo test_program\r\n'
 
-            # Send single raw TC - 2. Tc_Meta
+            # Send single msg TC - 2. Tc_Meta
             client_tc('127.0.0.1', 8080, 'tc_meta SMB_FREQ_MODE\r\n')
             time.sleep(0.1)
 
@@ -414,17 +414,17 @@ class TestClass:
                        'ascii') == '> OK SMB_FREQ_MODE;1;Set the frequency mode ' \
                                    'for generating the RF output signal\r\n'
 
-            # Send single raw TC - 3. Tm_Meta
+            # Send single msg TC - 3. Tm_Meta
             client_tc('127.0.0.1', 8080, 'tm_meta SMB_TC_QUERY_RAW\r\n')
             time.sleep(0.1)
 
             assert str(
                 sock.recv(1024), 'ascii'
-            ) == '> OK SMB_TC_QUERY_RAW;str;str;Perform raw query to the instrument;7;4\r\n'
+            ) == '> OK SMB_TC_QUERY_RAW;str;str;Perform msg query to the instrument;7;4\r\n'
 
-            # Send single raw TC - 4. Tc
+            # Send single msg TC - 4. Tc
 
-            # Test Telecommand before connection
+            # Test ServiceRequest before connection
             client_tc('127.0.0.1', 8080, 'tc SMB_RST\r\n')
             time.sleep(0.1)
 
@@ -443,7 +443,7 @@ class TestClass:
 
             assert str(sock.recv(1024), 'ascii') == '> OK SMB_RAW\r\n'
 
-            # Send single raw TC - 5. Tm
+            # Send single msg TC - 5. Tm
             client_tc('127.0.0.1', 8080, 'tm SMB_QUERY_OUT_POWER\r\n')
             time.sleep(0.1)
 

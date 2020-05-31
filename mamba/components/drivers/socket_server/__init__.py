@@ -7,8 +7,7 @@ import socketserver
 from rx import operators as op
 
 from mamba.components import ComponentBase
-from mamba.core.msg import RawTelecommand, \
-    RawTelemetry, Empty
+from mamba.core.msg import Raw, Empty
 from mamba.core.exceptions import ComponentConfigException
 
 
@@ -23,8 +22,8 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
     def handle(self):
         # Register observer for raw_tm
         observer = self.server.raw_tm.pipe(
-            op.filter(lambda value: isinstance(value, RawTelemetry))
-        ).subscribe(on_next=self.send_tm)
+            op.filter(lambda value: isinstance(value, Raw))).subscribe(
+                on_next=self.send_tm)
 
         # Send incoming data to raw_tc
         while True:
@@ -33,15 +32,15 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
             if not data:
                 break
             self.server.log_dev(fr' -> Received socket TC: {data}')
-            self.server.raw_tc.on_next(RawTelecommand(data))
+            self.server.raw_tc.on_next(Raw(data))
 
         # Dispose observer when connection is closed
         observer.dispose()
 
         self.server.log_info('Remote socket connection has been closed')
 
-    def send_tm(self, raw_tm: RawTelemetry):
-        """ Send raw telemetry over the socket connection """
+    def send_tm(self, raw_tm: Raw):
+        """ Send msg telemetry over the socket connection """
         self.server.log_dev(fr' <- Published socket TM: {raw_tm.raw}')
         self.request.sendall(raw_tm.raw.encode('utf-8'))
 

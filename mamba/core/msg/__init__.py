@@ -1,8 +1,6 @@
 from .app_status import AppStatus
 from .empty import Empty
-from .io_service_request import IoServiceRequest
+from .service_request import ServiceRequest
 from .log import Log, LogLevel
-from .raw_telecommand import RawTelecommand
-from .raw_telemetry import RawTelemetry
-from .telecommand import Telecommand
-from .telemetry import Telemetry
+from .raw import Raw
+from .service_response import ServiceResponse

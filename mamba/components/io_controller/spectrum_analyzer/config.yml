@@ -12,7 +12,7 @@ topics:
     description: Close connection with Digitizer
 
   SA_RAW:
-    description: Send a raw command to the instrument
+    description: Send a msg command to the instrument
     signature: [[str], None]
     command: '{:}'
 

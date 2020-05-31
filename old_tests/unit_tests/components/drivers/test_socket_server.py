@@ -5,7 +5,7 @@ import time
 
 from mamba.core.context import Context
 from mamba.components.drivers.socket_server import Driver
-from mamba.core.msg import Empty, RawTelemetry, RawTelecommand
+from mamba.core.msg import Empty, Raw
 
 
 class DummyTestClass:
@@ -96,22 +96,22 @@ class TestClass:
         time.sleep(.1)
 
         assert dummy_test_class.times_called == 1
-        assert isinstance(dummy_test_class.last_value, RawTelecommand)
-        assert dummy_test_class.last_value.raw == "Hello World 1\r\n"
+        assert isinstance(dummy_test_class.last_value, Raw)
+        assert dummy_test_class.last_value.msg == "Hello World 1\r\n"
 
         client_tc('127.0.0.1', 8080, "Hello World 2\r\n")
         time.sleep(.1)
 
         assert dummy_test_class.times_called == 2
-        assert isinstance(dummy_test_class.last_value, RawTelecommand)
-        assert dummy_test_class.last_value.raw == "Hello World 2\r\n"
+        assert isinstance(dummy_test_class.last_value, Raw)
+        assert dummy_test_class.last_value.msg == "Hello World 2\r\n"
 
         client_tc('127.0.0.1', 8080, "Hello World 3\r\nHello World 4\r\n")
         time.sleep(.1)
 
         assert dummy_test_class.times_called == 3
-        assert isinstance(dummy_test_class.last_value, RawTelecommand)
-        assert dummy_test_class.last_value.raw == "Hello World 3\r\nHello World 4\r\n"
+        assert isinstance(dummy_test_class.last_value, Raw)
+        assert dummy_test_class.last_value.msg == "Hello World 3\r\nHello World 4\r\n"
 
         # Close open threads
         component._close()
@@ -130,12 +130,12 @@ class TestClass:
 
             # Send TM
             self.context.rx['raw_tm'].on_next(
-                RawTelemetry("Hello World 1\r\n"))
+                Raw("Hello World 1\r\n"))
             assert str(sock.recv(1024), 'ascii') == 'Hello World 1\r\n'
 
             # Send TM
             self.context.rx['raw_tm'].on_next(
-                RawTelemetry("Hello World 2\r\nHello World 3\r\n"))
+                Raw("Hello World 2\r\nHello World 3\r\n"))
             assert str(sock.recv(1024),
                        'ascii') == 'Hello World 2\r\nHello World 3\r\n'
 

@@ -21,11 +21,11 @@ class Logger(ComponentBase):
                 on_next=self._received_log)
 
     def _received_log(self, log: Log):
-        """ Entry point for processing a new raw telecommand coming from the
+        """ Entry point for processing a new msg telecommand coming from the
             socket server.
 
             Args:
-                raw_tc (Log): The raw telecommand coming from
+                raw_tc (Log): The msg telecommand coming from
                                          the socket.
         """
-        print(f'[{log.level}] [{log.source}] {log.message}')
+        print(f'[{log.level}] [{log.src}] {log.msg}')

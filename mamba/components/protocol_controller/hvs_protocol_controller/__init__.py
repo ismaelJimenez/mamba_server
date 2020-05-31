@@ -2,8 +2,8 @@ import os
 
 from rx import operators as op
 
-from mamba.core.msg import Telecommand, Telemetry,\
-    IoServiceRequest
+from mamba.core.msg import ServiceRequest, ServiceResponse,\
+    ServiceRequest
 from mamba.components import ComponentBase
 from mamba.core.exceptions import ComponentConfigException
 
@@ -25,22 +25,22 @@ class Driver(ComponentBase):
 
         # Register to the tc provided by the socket protocol translator service
         self._context.rx['tc'].pipe(
-            op.filter(lambda value: isinstance(value, Telecommand))).subscribe(
-                on_next=self._received_tc)
+            op.filter(lambda value: isinstance(value, ServiceRequest))
+        ).subscribe(on_next=self._received_tc)
 
         # Register to the topic provided by the io_controller services
         self._context.rx['io_service_signature'].pipe(
             op.filter(lambda value: isinstance(value, dict))).subscribe(
                 on_next=self._io_service_signature)
 
-    def _generate_tm(self, telecommand: Telecommand):
+    def _generate_tm(self, telecommand: ServiceRequest):
         """ Entry point for generating response telemetry
 
             Args:
                 telecommand: The service request received.
         """
 
-        result = Telemetry(tm_id=telecommand.id, tm_type=telecommand.type)
+        result = ServiceResponse(id=telecommand.id, type=telecommand.type)
 
         if 'meta' in telecommand.type:
             io_service = self._io_services[telecommand.id]
@@ -52,7 +52,7 @@ class Driver(ComponentBase):
 
         self._context.rx['tm'].on_next(result)
 
-    def _generate_error_tm(self, telecommand: Telecommand, message: str):
+    def _generate_error_tm(self, telecommand: ServiceRequest, message: str):
         """ Entry point for generating error response telemetry
 
             Args:
@@ -61,9 +61,9 @@ class Driver(ComponentBase):
         """
 
         self._context.rx['tm'].on_next(
-            Telemetry(tm_id=telecommand.id, tm_type='error', value=message))
+            ServiceResponse(id=telecommand.id, type='error', value=message))
 
-    def _generate_io_service_request(self, telecommand: Telecommand):
+    def _generate_io_service_request(self, telecommand: ServiceRequest):
         """ Entry point for generating a IO Service request to fulfill
             a request
 
@@ -72,15 +72,15 @@ class Driver(ComponentBase):
         """
 
         self._io_result_subs = self._context.rx['io_result'].pipe(
-            op.filter(lambda value: isinstance(value, Telemetry))).subscribe(
-                on_next=self._process_io_result)
+            op.filter(lambda value: isinstance(value, ServiceResponse))
+        ).subscribe(on_next=self._process_io_result)
 
         self._context.rx['io_service_request'].on_next(
-            IoServiceRequest(id=telecommand.id,
-                             type=telecommand.type,
-                             args=telecommand.args))
+            ServiceRequest(id=telecommand.id,
+                           type=telecommand.type,
+                           args=telecommand.args))
 
-    def _received_tc(self, telecommand: Telecommand):
+    def _received_tc(self, telecommand: ServiceRequest):
         """ Entry point for processing a new telecommand coming from the
             socket translator.
 
@@ -100,7 +100,7 @@ class Driver(ComponentBase):
         else:
             self._generate_error_tm(telecommand, 'Not recognized command type')
 
-    def _process_io_result(self, rx_result: Telemetry):
+    def _process_io_result(self, rx_result: ServiceResponse):
         """ Entry point for processing the IO Service results.
 
             Args:

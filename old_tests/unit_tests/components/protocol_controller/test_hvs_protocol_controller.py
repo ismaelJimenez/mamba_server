@@ -3,8 +3,7 @@ import os
 
 from mamba.core.context import Context
 from mamba.components.protocol_controller.hvs_protocol_controller import Driver
-from mamba.core.msg import Telemetry, Telecommand, \
-    IoServiceRequest
+from mamba.core.msg import ServiceResponse, ServiceRequest
 from mamba.core.exceptions import ComponentConfigException
 
 
@@ -179,20 +178,20 @@ class TestClass:
 
         # Send single TC - 1. Helo
         self.context.rx['tc'].on_next(
-            Telecommand(tc_id='test', tc_type='helo', args=[]))
+            ServiceRequest(id='test', type='helo', args=[]))
 
         assert dummy_test_class.times_called_tm == 1
-        assert isinstance(dummy_test_class.last_value_tm, Telemetry)
+        assert isinstance(dummy_test_class.last_value_tm, ServiceResponse)
         assert dummy_test_class.last_value_tm.id == 'test'
         assert dummy_test_class.last_value_tm.type == 'helo'
         assert dummy_test_class.last_value_tm.value is None
 
-        # Send single raw TC - 2. Tc_Meta
+        # Send single msg TC - 2. Tc_Meta
         self.context.rx['tc'].on_next(
-            Telecommand(tc_id='TEST_TC_3', tc_type='tc_meta', args=[]))
+            ServiceRequest(id='TEST_TC_3', type='tc_meta', args=[]))
 
         assert dummy_test_class.times_called_tm == 2
-        assert isinstance(dummy_test_class.last_value_tm, Telemetry)
+        assert isinstance(dummy_test_class.last_value_tm, ServiceResponse)
         assert dummy_test_class.last_value_tm.id == 'TEST_TC_3'
         assert dummy_test_class.last_value_tm.type == 'tc_meta'
         assert dummy_test_class.last_value_tm.value == {
@@ -200,12 +199,12 @@ class TestClass:
             'signature': [['int'], 'str']
         }
 
-        # Send single raw TC - 3. Tm_Meta
+        # Send single msg TC - 3. Tm_Meta
         self.context.rx['tc'].on_next(
-            Telecommand(tc_id='TEST_TC_3', tc_type='tm_meta', args=[]))
+            ServiceRequest(id='TEST_TC_3', type='tm_meta', args=[]))
 
         assert dummy_test_class.times_called_tm == 3
-        assert isinstance(dummy_test_class.last_value_tm, Telemetry)
+        assert isinstance(dummy_test_class.last_value_tm, ServiceResponse)
         assert dummy_test_class.last_value_tm.id == 'TEST_TC_3'
         assert dummy_test_class.last_value_tm.type == 'tm_meta'
         assert dummy_test_class.last_value_tm.value == {
@@ -213,60 +212,60 @@ class TestClass:
             'signature': [['int'], 'str']
         }
 
-        # Send single raw TC - 4. Tc
+        # Send single msg TC - 4. Tc
         self.context.rx['tc'].on_next(
-            Telecommand(tc_id='TEST_TC_3', tc_type='tc', args=[3]))
+            ServiceRequest(id='TEST_TC_3', type='tc', args=[3]))
 
         assert dummy_test_class.times_called_io == 1
-        assert isinstance(dummy_test_class.last_value_io, IoServiceRequest)
+        assert isinstance(dummy_test_class.last_value_io, ServiceRequest)
         assert dummy_test_class.last_value_io.id == 'TEST_TC_3'
         assert dummy_test_class.last_value_io.type == 'tc'
         assert dummy_test_class.last_value_io.args == [3]
 
         self.context.rx['tc'].on_next(
-            Telecommand(tc_id='TEST_TC_3', tc_type='tc', args=[3, 'test_arg']))
+            ServiceRequest(id='TEST_TC_3', type='tc', args=[3, 'test_arg']))
 
         assert dummy_test_class.times_called_io == 2
-        assert isinstance(dummy_test_class.last_value_io, IoServiceRequest)
+        assert isinstance(dummy_test_class.last_value_io, ServiceRequest)
         assert dummy_test_class.last_value_io.id == 'TEST_TC_3'
         assert dummy_test_class.last_value_io.type == 'tc'
         assert dummy_test_class.last_value_io.args == [3, 'test_arg']
 
-        # Send single raw TC - 5. Tm
+        # Send single msg TC - 5. Tm
         self.context.rx['tc'].on_next(
-            Telecommand(tc_id='TEST_TC_3', tc_type='tm', args=[]))
+            ServiceRequest(id='TEST_TC_3', type='tm', args=[]))
 
         assert dummy_test_class.times_called_io == 3
-        assert isinstance(dummy_test_class.last_value_io, IoServiceRequest)
+        assert isinstance(dummy_test_class.last_value_io, ServiceRequest)
         assert dummy_test_class.last_value_io.id == 'TEST_TC_3'
         assert dummy_test_class.last_value_io.type == 'tm'
         assert dummy_test_class.last_value_io.args == []
 
         self.context.rx['tc'].on_next(
-            Telecommand(tc_id='TEST_TC_3', tc_type='tm', args=[1]))
+            ServiceRequest(id='TEST_TC_3', type='tm', args=[1]))
 
         assert dummy_test_class.times_called_io == 4
-        assert isinstance(dummy_test_class.last_value_io, IoServiceRequest)
+        assert isinstance(dummy_test_class.last_value_io, ServiceRequest)
         assert dummy_test_class.last_value_io.id == 'TEST_TC_3'
         assert dummy_test_class.last_value_io.type == 'tm'
         assert dummy_test_class.last_value_io.args == [1]
 
         # Send unexisting TC type
         self.context.rx['tc'].on_next(
-            Telecommand(tc_id='TEST_TC_3', tc_type='wrong', args=[1]))
+            ServiceRequest(id='TEST_TC_3', type='wrong', args=[1]))
 
         assert dummy_test_class.times_called_tm == 4
-        assert isinstance(dummy_test_class.last_value_tm, Telemetry)
+        assert isinstance(dummy_test_class.last_value_tm, ServiceResponse)
         assert dummy_test_class.last_value_tm.id == 'TEST_TC_3'
         assert dummy_test_class.last_value_tm.type == 'error'
         assert dummy_test_class.last_value_tm.value == 'Not recognized command type'
 
         # Send unexisting TC id
         self.context.rx['tc'].on_next(
-            Telecommand(tc_id='TEST_TC_WRONG', tc_type='tc', args=[1]))
+            ServiceRequest(id='TEST_TC_WRONG', type='tc', args=[1]))
 
         assert dummy_test_class.times_called_tm == 5
-        assert isinstance(dummy_test_class.last_value_tm, Telemetry)
+        assert isinstance(dummy_test_class.last_value_tm, ServiceResponse)
         assert dummy_test_class.last_value_tm.id == 'TEST_TC_WRONG'
         assert dummy_test_class.last_value_tm.type == 'error'
         assert dummy_test_class.last_value_tm.value == 'Not recognized command'

@@ -8,8 +8,8 @@ from rx import operators as op
 from mamba.core.context import Context
 from mamba.components import ComponentBase
 from mamba.core.exceptions import ComponentConfigException
-from mamba.core.msg import IoServiceRequest, \
-    Telemetry, Empty
+from mamba.core.msg import ServiceRequest, \
+    ServiceResponse, Empty
 from mamba.core.utils import path_from_string
 
 
@@ -128,11 +128,11 @@ class VisaControllerBase(ComponentBase):
 
         # Subscribe to the services request
         self._context.rx['io_service_request'].pipe(
-            op.filter(lambda value: isinstance(value, IoServiceRequest) and
+            op.filter(lambda value: isinstance(value, ServiceRequest) and
                       (value.id in self._service_info))).subscribe(
                           on_next=self._run_command)
 
-    def _visa_connect(self, result: Telemetry) -> None:
+    def _visa_connect(self, result: ServiceResponse) -> None:
         if self._configuration.get('visa-sim'):
             self._inst = pyvisa.ResourceManager(
                 f"{self._simulation_file}@sim").open_resource(
@@ -155,7 +155,7 @@ class VisaControllerBase(ComponentBase):
 
             self._log_dev("Established connection to SMB")
 
-    def _visa_disconnect(self, result: Telemetry) -> None:
+    def _visa_disconnect(self, result: ServiceResponse) -> None:
         if self._inst is not None:
             self._inst.close()
             self._inst = None
@@ -163,8 +163,8 @@ class VisaControllerBase(ComponentBase):
                 self._shared_memory[self._shared_memory_setter[result.id]] = 0
             self._log_dev("Closed connection to SMB")
 
-    def _service_preprocessing(self, service_request: IoServiceRequest,
-                               result: Telemetry) -> None:
+    def _service_preprocessing(self, service_request: ServiceRequest,
+                               result: ServiceResponse) -> None:
         """Perform preprocessing of the services.
 
         Note: This step is useful in case a merge of multiple arguments into
@@ -176,11 +176,11 @@ class VisaControllerBase(ComponentBase):
             result: The result to be published.
         """
 
-    def _run_command(self, service_request: IoServiceRequest) -> None:
+    def _run_command(self, service_request: ServiceRequest) -> None:
         self._log_dev(f"Received service request: {service_request.id}")
 
-        result = Telemetry(tm_id=service_request.id,
-                           tm_type=service_request.type)
+        result = ServiceResponse(id=service_request.id,
+                                 type=service_request.type)
 
         self._service_preprocessing(service_request, result)
 
