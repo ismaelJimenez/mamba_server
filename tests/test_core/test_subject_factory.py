@@ -69,7 +69,7 @@ class TestClassSubjectFactoryClass:
         subj_1 = dummy_subject_factory['TestSubject'].subscribe(
             callback_test_class.test_func_1)
 
-        subj_2 = dummy_subject_factory['TestSubject'].subscribe(
+        dummy_subject_factory['TestSubject'].subscribe(
             callback_test_class.test_func_2)
 
         subj_1.dispose()

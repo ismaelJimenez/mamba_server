@@ -67,19 +67,6 @@ class TestClass:
         assert len(classes_dict) == 1
         assert 'plugin_1' in classes_dict
 
-    def test_get_components_duplicated_component(self):
-        assert cmd_exec(self, 'mamba.cmdline', 'generate', 'plugin',
-                        'quit') == 0
-        assert exists(join(self.proj_path, 'component', 'plugin', 'quit'))
-
-        with pytest.raises(ComposeFileException) as excinfo:
-            utils.get_components('quit',
-                                 ['mamba.component.plugins', 'component'],
-                                 ComponentBase, Context())
-
-        assert 'is duplicated' in str(excinfo.value)
-        rmtree(join(self.proj_path, 'component', 'plugin', 'quit'))
-
     def test_get_components_local(self):
         components_dict = utils.get_components(
             {
@@ -129,7 +116,7 @@ class TestClass:
         assert exists(join(self.proj_path, 'component', 'plugin', 'quit'))
 
         with pytest.raises(ComposeFileException) as excinfo:
-            utils.get_components(['quit'],
+            utils.get_components({'quit': {}},
                                  ['mamba.component.plugins', 'component'],
                                  ComponentBase, Context())
 

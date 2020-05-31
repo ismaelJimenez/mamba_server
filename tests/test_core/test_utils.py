@@ -68,8 +68,8 @@ class TestClass:
     def test_get_components_invalid_id(self):
         with pytest.raises(ComposeFileException) as excinfo:
             utils.get_components({
-                'about_qt': None,
-                'about_tk_fail': None
+                'about_qt': {},
+                'about_tk_fail': {}
             }, ['mamba.component.plugins'], ComponentBase, Context())
 
         assert 'about_qt: missing component property' in str(excinfo.value)
