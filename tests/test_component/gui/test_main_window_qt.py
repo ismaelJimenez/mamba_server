@@ -24,8 +24,7 @@ class TestClass:
         self.context = Context()
         self.context.set(
             'mamba_dir',
-            os.path.join(os.path.dirname(__file__), '..', '..', '..',
-                         'mamba'))
+            os.path.join(os.path.dirname(__file__), '..', '..', '..', 'mamba'))
 
     def teardown_method(self):
         """ teardown_method called for every method """
@@ -104,13 +103,13 @@ class TestClass:
     def test_w_custom_context(self):
         """ Test component creation behaviour with default context """
         component = MainWindowQt(self.context,
-                               local_config={
-                                   'load_screen': {
-                                       'time': 1
-                                   },
-                                   'title': 'Mamba Server Custom',
-                                   'unused': 12
-                               })
+                                 local_config={
+                                     'load_screen': {
+                                         'time': 1
+                                     },
+                                     'title': 'Mamba Server Custom',
+                                     'unused': 12
+                                 })
 
         # Test default configuration load
         assert component._configuration == {
@@ -131,29 +130,30 @@ class TestClass:
 
         with pytest.raises(ComponentConfigException) as excinfo:
             MainWindowQt(self.context,
-                       local_config={
-                           'load_screen': {
-                               'image': 'Non-existent',
-                               'time': 1
-                           }
-                       })
+                         local_config={
+                             'load_screen': {
+                                 'image': 'Non-existent',
+                                 'time': 1
+                             }
+                         })
 
         assert "Image file 'Non-existent' not found" in str(excinfo.value)
 
         with pytest.raises(ComponentConfigException) as excinfo:
-            MainWindowQt(self.context,
-                       local_config={'load_screen': {
-                           'time': 'Not-a-number'
-                       }})
+            MainWindowQt(
+                self.context,
+                local_config={'load_screen': {
+                    'time': 'Not-a-number'
+                }})
 
         assert "Load Screen time is not a valid number" in str(excinfo.value)
 
     def test_app_status_observer(self):
         """ Test component creation behaviour with default context """
         component = MainWindowQt(self.context,
-                               local_config={'load_screen': {
-                                   'time': 0
-                               }})
+                                 local_config={'load_screen': {
+                                     'time': 0
+                                 }})
         component.initialize()
 
         # Test load window is shown
@@ -168,9 +168,9 @@ class TestClass:
     def test_quit_observer_on_load(self):
         """ Test component quit observer """
         component = MainWindowQt(self.context,
-                               local_config={'load_screen': {
-                                   'time': 10
-                               }})
+                                 local_config={'load_screen': {
+                                     'time': 10
+                                 }})
         component.initialize()
 
         # Test quit while on load window
@@ -186,9 +186,9 @@ class TestClass:
     def test_quit_observer_on_main(self):
         """ Test component creation behaviour with default context """
         component = MainWindowQt(self.context,
-                               local_config={'load_screen': {
-                                   'time': None
-                               }})
+                                 local_config={'load_screen': {
+                                     'time': None
+                                 }})
         component.initialize()
 
         # Test quit while on main window
@@ -203,9 +203,9 @@ class TestClass:
     def test_register_observer_on_menu(self):
         """ Test component creation behaviour with default context """
         component = MainWindowQt(self.context,
-                               local_config={'load_screen': {
-                                   'time': None
-                               }})
+                                 local_config={'load_screen': {
+                                     'time': None
+                                 }})
         component.initialize()
 
         component._after(
@@ -242,9 +242,9 @@ class TestClass:
     def test_register_observer_on_load(self):
         """ Test component creation behaviour with default context """
         component = MainWindowQt(self.context,
-                               local_config={'load_screen': {
-                                   'time': 10
-                               }})
+                                 local_config={'load_screen': {
+                                     'time': 10
+                                 }})
         component.initialize()
 
         # Test register while on load window

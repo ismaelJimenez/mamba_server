@@ -13,12 +13,11 @@ from mamba.component.gui.msg import RegisterAction, RunAction
 class MainWindowTk(MainWindow):
     """ Main window implemented with TkInter """
     def __init__(self, context, local_config=None):
-        super(MainWindowTk, self).__init__(os.path.dirname(__file__), context,
-                                           local_config)
+        super().__init__(os.path.dirname(__file__), context, local_config)
 
     # Functions to be adapted
 
-    def _create_main_window(self):
+    def _create_main_window(self) -> None:
         """ Entry point for initializing the main window
             Note: It should be hidden per default.
         """
@@ -26,18 +25,20 @@ class MainWindowTk(MainWindow):
         self._app.protocol("WM_DELETE_WINDOW", self._close)
         self._app.title(self._configuration['title'])
 
-        screen_width = self._load_app.winfo_screenwidth()
-        screen_height = self._load_app.winfo_screenheight()
-        self._app.geometry('%dx%d+%d+%d' %
-                           (screen_width / 2, screen_height / 2,
-                            screen_width / 15, screen_height / 15))
+        if self._load_app is not None:
+            screen_width = self._load_app.winfo_screenwidth()
+            screen_height = self._load_app.winfo_screenheight()
+            self._app.geometry('%dx%d+%d+%d' %
+                               (screen_width / 2, screen_height / 2,
+                                screen_width / 15, screen_height / 15))
 
-    def _create_menu_bar(self):
+    def _create_menu_bar(self) -> None:
         """ Entry point for creating the top menu bar """
         self._menu_bar = tk.Menu(self._app)
-        self._app.config(menu=self._menu_bar)
+        if self._app is not None:
+            self._app.config(menu=self._menu_bar)
 
-    def _create_splash_window(self):
+    def _create_splash_window(self) -> None:
         """ Entry point for creating and showing the load screen """
         # Create new splash window
         self._load_app = tk.Tk()
@@ -65,7 +66,8 @@ class MainWindowTk(MainWindow):
         self._load_app.update()
         self._load_app.deiconify()
 
-    def _menu_add_action(self, menu: tk.Menu, rx_value: RegisterAction):
+    def _menu_add_action(self, menu: tk.Menu,
+                         rx_value: RegisterAction) -> None:
         """ Entry point for adding an action to a given menu
 
             Args:
@@ -78,22 +80,25 @@ class MainWindowTk(MainWindow):
                 RunAction(menu_title=rx_value.menu_title,
                           action_name=rx_value.action_name)))
 
-    def _close_load_screen(self):
+    def _close_load_screen(self) -> None:
         """ Entry point for closing the load screen """
-        self._load_app.destroy()
-        self._load_app = None
+        if self._load_app is not None:
+            self._load_app.destroy()
+            self._load_app = None
 
-    def _show(self):
+    def _show(self) -> None:
         """ Entry point for showing main screen """
-        self._app.update()
-        self._app.deiconify()
+        if self._app is not None:
+            self._app.update()
+            self._app.deiconify()
 
-    def _hide(self):
+    def _hide(self) -> None:
         """ Entry point for hiding main screen """
-        self._app.withdraw()
-        self._app.update()
+        if self._app is not None:
+            self._app.withdraw()
+            self._app.update()
 
-    def _close(self, rx_value: Empty):
+    def _close(self, rx_value: Empty) -> None:
         """ Entry point for closing application
 
             Args:
@@ -107,13 +112,14 @@ class MainWindowTk(MainWindow):
             self._load_app.destroy()
             self._load_app.quit()
 
-        self._app.destroy()
-        self._app.quit()
+        if self._app is not None:
+            self._app.destroy()
+            self._app.quit()
 
         self._load_app = None
         self._app = None
 
-    def _start_event_loop(self):
+    def _start_event_loop(self) -> None:
         """
         Enters the main event loop and waits until close() is called.
 
@@ -124,16 +130,18 @@ class MainWindowTk(MainWindow):
         Generally, no user interaction can take place before calling
         start_event_loop().
         """
-        self._app.mainloop()
+        if self._app is not None:
+            self._app.mainloop()
 
-    def _after(self, time_msec: int, action: Callable):
+    def _after(self, time_msec: int, action: Callable) -> None:
         """ Make the application perform an action after a time delay.
 
         Args:
             time_msec (int): The time in milliseconds to delay he action.
             action (callable): The action to execute after time_msec delay.
         """
-        self._app.after(int(time_msec), action)
+        if self._app is not None:
+            self._app.after(int(time_msec), action)
 
     def _add_menu(self, menu_name: str) -> tk.Menu:
         """Add a new top level menu in main window menu bar.
@@ -144,6 +152,9 @@ class MainWindowTk(MainWindow):
         Returns:
             tk.Menu: A reference to the newly created menu.
         """
+        if not isinstance(self._menu_bar, tk.Menu):
+            raise RuntimeError("Missing Menu Bar")
+
         menu = tk.Menu(self._menu_bar, tearoff=0)
         self._menu_bar.add_cascade(label=menu_name, menu=menu)
         self._menus[menu_name] = menu
