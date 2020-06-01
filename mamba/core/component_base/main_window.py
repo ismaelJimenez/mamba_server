@@ -21,7 +21,7 @@ class MainWindow(ComponentBase):
                  config_folder: str,
                  context: Context,
                  local_config: Optional[Dict[str, dict]] = None) -> None:
-        super(MainWindow, self).__init__(config_folder, context, local_config)
+        super().__init__(config_folder, context, local_config)
 
         # Initialize custom variables
         self._load_app: Optional[Any] = None
