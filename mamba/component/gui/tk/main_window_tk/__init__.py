@@ -123,7 +123,10 @@ class MainWindowTk(MainWindow):
         # stop. destroy() just terminates the mainloop and deletes all
         # widgets.
 
-        if self._app is not None:
+        if self._load_app is not None:
+            self._load_app.destroy()
+            self._load_app.quit()
+        elif self._app is not None:
             self._app.destroy()
             self._app.quit()
 

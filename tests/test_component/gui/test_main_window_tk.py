@@ -47,7 +47,8 @@ class TestClass:
                 'image': 'artwork/mamba_loading.png',
                 'time': 5
             },
-            'title': 'Mamba Server'
+            'title': 'Mamba Server',
+            'background': 'artwork/app_background.png',
         }
 
         # Test custom variables default values
@@ -79,7 +80,8 @@ class TestClass:
                 'image': 'artwork/mamba_loading.png',
                 'time': 5
             },
-            'title': 'Mamba Server'
+            'title': 'Mamba Server',
+            'background': 'artwork/app_background.png',
         }
 
         # Test countdown timestamp has not been modified
@@ -118,6 +120,7 @@ class TestClass:
                 'time': 1
             },
             'title': 'Mamba Server Custom',
+            'background': 'artwork/app_background.png',
             'unused': 12
         }
 
