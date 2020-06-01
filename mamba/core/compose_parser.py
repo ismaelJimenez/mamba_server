@@ -13,7 +13,7 @@ from mamba.core.msg.app_status import AppStatus
 
 def compose_parser(compose_file: str,
                    mamba_dir: str,
-                   project_dir: Optional[str] = None) -> None:
+                   project_dir: Optional[str] = None) -> int:
     """ Compose Mamba App from launch file """
 
     component_folders = ['mamba.component', 'mamba.mock']
@@ -35,7 +35,8 @@ def compose_parser(compose_file: str,
                                       context)
 
             for key, service in services.items():
-                service.initialize()
+                if isinstance(service, ComponentBase):
+                    service.initialize()
 
             # Start Mamba App
             context.rx['app_status'].on_next(AppStatus.Running)
