@@ -22,7 +22,7 @@ class MainWindowQt(MainWindow):
                  context: Context,
                  local_config: Optional[Dict[str, dict]] = None) -> None:
         # Initialize custom variables
-        self._qt_app = QApplication(
+        self._qt_app = self._qt_app = QApplication(
             []) if QApplication.instance() is None else QApplication.instance(
             )
         self._action_widgets: List[QWidget] = []  # Storage of actions
