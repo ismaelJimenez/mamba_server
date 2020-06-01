@@ -11,12 +11,12 @@ from PySide2.QtWidgets import QApplication, QMainWindow, QWidget, \
 from PySide2.QtCore import QTimer, Qt
 from PySide2.QtGui import QPixmap, QGuiApplication
 
-from mamba.component.main import MainBase
+from mamba.core.component_base import MainWindow
 from mamba.core.msg import Empty
 from mamba.component.gui.msg import RegisterAction, RunAction
 
 
-class MainWindow(MainBase):
+class MainWindowQt(MainWindow):
     """ Main window implemented with Qt5 """
     def __init__(self, context, local_config=None):
         # Initialize custom variables
@@ -25,13 +25,13 @@ class MainWindow(MainBase):
             )
         self._action_widgets = []  # Storage of actions
 
-        super(MainWindow, self).__init__(os.path.dirname(__file__), context,
-                                         local_config)
+        super(MainWindowQt, self).__init__(os.path.dirname(__file__), context,
+                                           local_config)
 
     # Functions to be adapted
 
     def _register_observers(self):
-        super(MainWindow, self)._register_observers()
+        super(MainWindowQt, self)._register_observers()
 
         # Generate_window is received to generate a new MDI window
         self._context.rx['new_window'].pipe(

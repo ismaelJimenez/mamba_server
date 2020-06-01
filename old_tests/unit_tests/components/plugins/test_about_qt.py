@@ -3,7 +3,7 @@ import os
 
 from mamba.core.context import Context
 from mamba.component.plugins.about.about_qt import Plugin
-from mamba.component.main.main_qt import MainWindow
+from mamba.component.gui.qt.main_qt import MainWindow
 
 
 class TestClass:

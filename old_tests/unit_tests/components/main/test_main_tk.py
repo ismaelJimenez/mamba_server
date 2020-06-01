@@ -1,7 +1,7 @@
 import pytest
 import os
 
-from mamba.component.main.main_tk import MainWindow
+from mamba.component.gui.tk.main_tk import MainWindow
 from mamba.core.context import Context
 from mamba.core.exceptions import ComponentConfigException
 

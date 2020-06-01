@@ -2,7 +2,7 @@ import os
 
 from mamba.core.context import Context
 from mamba.component.plugins.quit import Plugin
-from mamba.component.main.main_qt import MainWindow
+from mamba.component.gui.qt.main_qt import MainWindow
 
 from mamba.core.msg.empty import Empty
 from mamba.component.gui.msg.run_action import RunAction

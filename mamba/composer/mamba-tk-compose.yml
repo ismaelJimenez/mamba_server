@@ -3,7 +3,7 @@ services:
 
   # GUI
   main_window:
-    component: main_tk
+    component: main_window_tk
     title: Mamba Server App
 
   quit_window:

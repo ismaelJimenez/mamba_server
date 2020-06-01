@@ -13,10 +13,10 @@ from mamba.core.msg import Empty, AppStatus
 from mamba.component.gui.msg import RegisterAction
 
 
-class MainBase(ComponentBase):
+class MainWindow(ComponentBase):
     """ Main window base class """
     def __init__(self, config_folder, context, local_config=None):
-        super(MainBase, self).__init__(config_folder, context, local_config)
+        super(MainWindow, self).__init__(config_folder, context, local_config)
 
         # Initialize custom variables
         self._load_app = None

@@ -2,13 +2,13 @@
 
 import os
 
-from mamba.component.main import MainBase
+from mamba.core.component_base import MainWindow
 from mamba.core.msg.empty import Empty
 from mamba.component.gui.msg.register_action \
     import RegisterAction
 
 
-class MainWindow(MainBase):
+class MainWindow(MainWindow):
     """ Custom Main window """
     def __init__(self, context, local_config=None):
         super(MainWindow, self).__init__(os.path.dirname(__file__), context,

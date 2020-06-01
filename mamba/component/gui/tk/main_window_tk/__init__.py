@@ -5,16 +5,16 @@ import tkinter as tk
 
 from typing import Callable
 
-from mamba.component.main import MainBase
+from mamba.core.component_base import MainWindow
 from mamba.core.msg import Empty
 from mamba.component.gui.msg import RegisterAction, RunAction
 
 
-class MainWindow(MainBase):
+class MainWindowTk(MainWindow):
     """ Main window implemented with TkInter """
     def __init__(self, context, local_config=None):
-        super(MainWindow, self).__init__(os.path.dirname(__file__), context,
-                                         local_config)
+        super(MainWindowTk, self).__init__(os.path.dirname(__file__), context,
+                                           local_config)
 
     # Functions to be adapted
 
