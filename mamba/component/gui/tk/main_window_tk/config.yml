@@ -1,4 +1,5 @@
 title: Mamba Server  # Main Window Title
+background: artwork/app_background.png
 load_screen:
   image: artwork/mamba_loading.png  # Pixmap Image
   time: 5  # Minimum time load image shall be shown

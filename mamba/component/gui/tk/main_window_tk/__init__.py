@@ -5,6 +5,7 @@ import tkinter as tk
 
 from typing import Callable
 
+from mamba.core.utils import path_from_string
 from mamba.core.component_base import MainWindow
 from mamba.core.msg import Empty
 from mamba.component.gui.msg import RegisterAction, RunAction
@@ -21,7 +22,7 @@ class MainWindowTk(MainWindow):
         """ Entry point for initializing the main window
             Note: It should be hidden per default.
         """
-        self._app = tk.Tk()
+        self._app = tk.Toplevel()
         self._app.protocol("WM_DELETE_WINDOW", self._close)
         self._app.title(self._configuration['title'])
 
@@ -30,6 +31,21 @@ class MainWindowTk(MainWindow):
         self._app.geometry('%dx%d+%d+%d' %
                            (screen_width / 2, screen_height / 2,
                             screen_width / 15, screen_height / 15))
+
+        self.app_file = os.path.join(
+            self._context.get('mamba_dir'),
+            path_from_string(self._configuration['background']))
+
+        self._app_image = tk.PhotoImage(file=self.app_file)
+
+        self._canvas = tk.Canvas(self._app,
+                                 height=self._app_image.height(),
+                                 width=self._app_image.width(),
+                                 bg="brown")
+        self._canvas.create_image(self._app_image.width() / 2,
+                                  self._app_image.height() / 2,
+                                  image=self._app_image)
+        self._canvas.pack()
 
     def _create_menu_bar(self) -> None:
         """ Entry point for creating the top menu bar """
@@ -82,8 +98,8 @@ class MainWindowTk(MainWindow):
     def _close_load_screen(self) -> None:
         """ Entry point for closing the load screen """
         if self._load_app is not None:
-            self._load_app.destroy()
-            self._load_app = None
+            self._load_app.withdraw()
+            self._load_app.update()
 
     def _show(self) -> None:
         """ Entry point for showing main screen """
@@ -106,10 +122,6 @@ class MainWindowTk(MainWindow):
         # INFO: quit() stops the TCL interpreter, so the Tkinter - app will
         # stop. destroy() just terminates the mainloop and deletes all
         # widgets.
-
-        if self._load_app is not None:
-            self._load_app.destroy()
-            self._load_app.quit()
 
         if self._app is not None:
             self._app.destroy()
