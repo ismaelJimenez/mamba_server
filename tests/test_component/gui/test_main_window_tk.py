@@ -1,7 +1,7 @@
 import pytest
 import os
 
-from mamba.component.gui.qt.main_qt import MainWindow
+from mamba.component.gui.tk import MainWindowTk
 from mamba.core.context import Context
 from mamba.core.exceptions import ComponentConfigException
 
@@ -24,7 +24,7 @@ class TestClass:
         self.context = Context()
         self.context.set(
             'mamba_dir',
-            os.path.join(os.path.dirname(__file__), '..', '..', '..', '..',
+            os.path.join(os.path.dirname(__file__), '..', '..', '..',
                          'mamba'))
 
     def teardown_method(self):
@@ -34,13 +34,13 @@ class TestClass:
     def test_wo_context(self):
         """ Test component behaviour without required context """
         with pytest.raises(TypeError) as excinfo:
-            MainWindow()
+            MainWindowTk()
 
         assert "missing 1 required positional argument" in str(excinfo.value)
 
     def test_w_default_context_component_creation(self):
         """ Test component creation behaviour with default context """
-        component = MainWindow(self.context)
+        component = MainWindowTk(self.context)
 
         # Test default configuration load
         assert component._configuration == {
@@ -54,22 +54,22 @@ class TestClass:
         # Test custom variables default values
         assert component._app is None
         assert component._menu_bar is None
-        assert component._menus is None
-        assert component._menu_actions is None
+        assert component._menus == {}
+        assert component._menu_actions == []
 
         # Test countdown started
         assert component._init_timestamp is not None
 
         # Test load window is shown on component creation
-        assert component._load_app.isVisible()
+        assert component._load_app.winfo_ismapped() == 1
 
         # Force close of any opened windows
-        component._close(Empty())
-        component._qt_app.quit()
+        component._load_app.quit()
+        component._load_app.destroy()
 
     def test_w_default_context_component_initialization(self):
         """ Test component initialization behaviour with default context """
-        component = MainWindow(self.context)
+        component = MainWindowTk(self.context)
         component_creation_ts = component._init_timestamp
 
         component.initialize()
@@ -87,10 +87,10 @@ class TestClass:
         assert component_creation_ts == component._init_timestamp
 
         # Test load window is still shown after component initialization
-        assert component._load_app.isVisible()
+        assert component._load_app.winfo_ismapped() == 1
 
         # Test main window is hidden after component initialization
-        assert not component._app.isVisible()
+        assert component._app.winfo_ismapped() == 0
 
         # Test custom variables initialization values
         assert component._menu_bar is not None
@@ -98,12 +98,12 @@ class TestClass:
         assert component._menu_actions == []
 
         # Force close of any opened windows
-        component._close(Empty())
-        component._qt_app.quit()
+        component._load_app.quit()
+        component._load_app.destroy()
 
     def test_w_custom_context(self):
         """ Test component creation behaviour with default context """
-        component = MainWindow(self.context,
+        component = MainWindowTk(self.context,
                                local_config={
                                    'load_screen': {
                                        'time': 1
@@ -123,14 +123,14 @@ class TestClass:
         }
 
         # Force close of any opened windows
-        component._close(Empty())
-        component._qt_app.quit()
+        component._load_app.quit()
+        component._load_app.destroy()
 
     def test_w_wrong_custom_context(self):
         """ Test component creation behaviour with default context """
 
         with pytest.raises(ComponentConfigException) as excinfo:
-            MainWindow(self.context,
+            MainWindowTk(self.context,
                        local_config={
                            'load_screen': {
                                'image': 'Non-existent',
@@ -141,7 +141,7 @@ class TestClass:
         assert "Image file 'Non-existent' not found" in str(excinfo.value)
 
         with pytest.raises(ComponentConfigException) as excinfo:
-            MainWindow(self.context,
+            MainWindowTk(self.context,
                        local_config={'load_screen': {
                            'time': 'Not-a-number'
                        }})
@@ -150,14 +150,14 @@ class TestClass:
 
     def test_app_status_observer(self):
         """ Test component creation behaviour with default context """
-        component = MainWindow(self.context,
+        component = MainWindowTk(self.context,
                                local_config={'load_screen': {
-                                   'time': 0
+                                   'time': None
                                }})
         component.initialize()
 
         # Test load window is shown
-        assert component._load_app.isVisible()
+        assert component._load_app.winfo_ismapped() == 1
 
         component._after(1000, lambda: component._close(Empty()))
         self.context.rx['app_status'].on_next(AppStatus.Running)
@@ -166,43 +166,44 @@ class TestClass:
         assert component._load_app is None
 
     def test_quit_observer_on_load(self):
-        """ Test component quit observer """
-        component = MainWindow(self.context,
+        """ Test component creation behaviour with default context """
+        component = MainWindowTk(self.context,
                                local_config={'load_screen': {
                                    'time': 10
                                }})
         component.initialize()
 
         # Test quit while on load window
-        assert component._load_app.isVisible()
+        assert component._load_app.winfo_ismapped() == 1
         component._after(1000,
                          lambda: self.context.rx['quit'].on_next(Empty()))
         self.context.rx['app_status'].on_next(AppStatus.Running)
 
         # Test load screen has been closed
-        assert not component._load_app.isVisible()
-        assert not component._app.isVisible()
+        assert component._load_app is None
+        assert component._app is None
 
     def test_quit_observer_on_main(self):
-        """ Test component creation behaviour with default context """
-        component = MainWindow(self.context,
+        """ Test component quit observer """
+        component = MainWindowTk(self.context,
                                local_config={'load_screen': {
                                    'time': None
                                }})
         component.initialize()
 
         # Test quit while on main window
-        assert component._load_app.isVisible()
+        assert component._load_app.winfo_ismapped() == 1
         component._after(1000,
                          lambda: self.context.rx['quit'].on_next(Empty()))
         self.context.rx['app_status'].on_next(AppStatus.Running)
 
         # Test load screen has been closed
-        assert not component._app.isVisible()
+        assert component._load_app is None
+        assert component._app is None
 
     def test_register_observer_on_menu(self):
         """ Test component creation behaviour with default context """
-        component = MainWindow(self.context,
+        component = MainWindowTk(self.context,
                                local_config={'load_screen': {
                                    'time': None
                                }})
@@ -232,6 +233,7 @@ class TestClass:
 
         component._after(1500,
                          lambda: self.context.rx['quit'].on_next(Empty()))
+
         self.context.rx['app_status'].on_next(AppStatus.Running)
 
         assert component._is_action_in_menu('Test Menu 1', 'Test Action 1')
@@ -241,14 +243,14 @@ class TestClass:
 
     def test_register_observer_on_load(self):
         """ Test component creation behaviour with default context """
-        component = MainWindow(self.context,
+        component = MainWindowTk(self.context,
                                local_config={'load_screen': {
                                    'time': 10
                                }})
         component.initialize()
 
         # Test register while on load window
-        assert component._load_app.isVisible()
+        assert component._load_app.winfo_ismapped() == 1
 
         self.context.rx['register_action'].on_next(
             RegisterAction(menu_title='Test Menu 1',
@@ -282,59 +284,59 @@ class TestClass:
                "'Test Action 1" in str(excinfo.value)
 
         # Force close of any opened windows
-        component._close(Empty())
-        component._qt_app.quit()
+        component._load_app.quit()
+        component._load_app.destroy()
 
     def test_internal_show(self):
-        component = MainWindow(self.context)
+        component = MainWindowTk(self.context)
         component.initialize()
 
         # Test window is hidden per default
-        assert not component._app.isVisible()
+        assert component._app.winfo_ismapped() == 0
 
         # Test window show
         component._show()
-        assert component._app.isVisible()
+        assert component._app.winfo_ismapped() == 1
 
         # Force close of any opened windows
-        component._close(Empty())
-        component._qt_app.quit()
+        component._load_app.quit()
+        component._load_app.destroy()
 
     def test_main_tk_hide(self):
-        component = MainWindow(self.context)
+        component = MainWindowTk(self.context)
         component.initialize()
 
         # Test window is hidden per default
-        assert not component._app.isVisible()
+        assert component._app.winfo_ismapped() == 0
 
         # Test window show
         component._show()
-        assert component._app.isVisible()
+        assert component._app.winfo_ismapped() == 1
 
         # Test window hide
         component._hide()
-        assert not component._app.isVisible()
+        assert component._app.winfo_ismapped() == 0
 
         # Test window hide does not destroy window
         component._show()
-        assert component._app.isVisible()
+        assert component._app.winfo_ismapped() == 1
 
         # Force close of any opened windows
-        component._close(Empty())
-        component._qt_app.quit()
+        component._load_app.quit()
+        component._load_app.destroy()
 
     def test_internal_event_loop_after(self):
-        component = MainWindow(self.context)
+        component = MainWindowTk(self.context)
         component.initialize()
 
         # Close window after 100 milliseconds
         component._after(100, lambda: component._close(Empty()))
         component._start_event_loop()
 
-        assert not component._app.isVisible()
+        assert component._app is None
 
     def test_internal_add_menu(self):
-        component = MainWindow(self.context)
+        component = MainWindowTk(self.context)
         component.initialize()
 
         assert not component._exists_menu('test_menu')
@@ -344,11 +346,11 @@ class TestClass:
         assert component._exists_menu('test_menu')
 
         # Force close of any opened windows
-        component._close(Empty())
-        component._qt_app.quit()
+        component._load_app.quit()
+        component._load_app.destroy()
 
     def test_internal_get_menu(self):
-        component = MainWindow(self.context)
+        component = MainWindowTk(self.context)
         component.initialize()
 
         assert component._get_menu('test_menu') is None
@@ -358,5 +360,5 @@ class TestClass:
         assert component._get_menu('test_menu') is not None
 
         # Force close of any opened windows
-        component._close(Empty())
-        component._qt_app.quit()
+        component._load_app.quit()
+        component._load_app.destroy()

@@ -1,16 +1,16 @@
 """ Main window implemented with Qt5 """
 
 import os
-
-from typing import Callable
+from typing import Callable, Optional, Dict, List
 
 from rx import operators as op
 
 from PySide2.QtWidgets import QApplication, QMainWindow, QWidget, \
-    QMenu, QAction, QSplashScreen, QMdiArea, QMdiSubWindow
+    QMenu, QAction, QSplashScreen, QMdiArea, QMdiSubWindow, QMenuBar
 from PySide2.QtCore import QTimer, Qt
-from PySide2.QtGui import QPixmap, QGuiApplication
+from PySide2.QtGui import QPixmap, QGuiApplication, QKeySequence
 
+from mamba.core.context import Context
 from mamba.core.component_base import MainWindow
 from mamba.core.msg import Empty
 from mamba.component.gui.msg import RegisterAction, RunAction
@@ -18,37 +18,35 @@ from mamba.component.gui.msg import RegisterAction, RunAction
 
 class MainWindowQt(MainWindow):
     """ Main window implemented with Qt5 """
-    def __init__(self, context, local_config=None):
+    def __init__(self,
+                 context: Context,
+                 local_config: Optional[Dict[str, dict]] = None) -> None:
         # Initialize custom variables
-        self._qt_app = self._qt_app = QApplication(
+        self._qt_app = QApplication(
             []) if QApplication.instance() is None else QApplication.instance(
             )
-        self._action_widgets = []  # Storage of actions
+        self._action_widgets: List[QWidget] = []  # Storage of actions
 
-        super(MainWindowQt, self).__init__(os.path.dirname(__file__), context,
-                                           local_config)
+        super().__init__(os.path.dirname(__file__), context, local_config)
 
     # Functions to be adapted
 
-    def _register_observers(self):
-        super(MainWindowQt, self)._register_observers()
+    def _register_observers(self) -> None:
+        super()._register_observers()
 
-        # Generate_window is received to generate a new MDI window
-        self._context.rx['new_window'].pipe(
-            op.filter(lambda value: isinstance(value, Empty))).subscribe(
-                on_next=self._new_window)
+        # register_window is received to register a new MDI window
+        self._context.rx['register_window'].pipe(
+            op.filter(lambda value: isinstance(value, QMdiSubWindow))
+        ).subscribe(on_next=self._register_window)
 
-    def _new_window(self, rx_value):
-        subWindow1 = QMdiSubWindow()
-        self._app.mdiArea.addSubWindow(subWindow1)
+    def _register_window(self, rx_value: QMdiSubWindow):
+        self._app.mdiArea.addSubWindow(rx_value)
 
-        self._context.rx['new_window_widget'].on_next(subWindow1)
-
-    def _create_main_window(self):
+    def _create_main_window(self) -> None:
         """ Entry point for initializing the main window
             Note: It should be hidden per default.
         """
-        self._app = QMainWindow()
+        self._app: QMainWindow = QMainWindow()
         self._app.setWindowTitle(self._configuration['title'])
 
         self._app.mdiArea = QMdiArea()
@@ -56,11 +54,11 @@ class MainWindowQt(MainWindow):
         self._app.mdiArea.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self._app.setCentralWidget(self._app.mdiArea)
 
-    def _create_menu_bar(self):
+    def _create_menu_bar(self) -> None:
         """ Entry point for creating the top menu bar """
         self._menu_bar = self._app.menuBar()
 
-    def _create_splash_window(self):
+    def _create_splash_window(self) -> None:
         """ Entry point for creating and showing the load screen """
         # Create new splash window
         self._load_app = QSplashScreen()
@@ -69,12 +67,12 @@ class MainWindowQt(MainWindow):
         # Customize splash window size
         screen = QGuiApplication.primaryScreen().geometry()
         self._load_app.move(
-            (screen.width() - self._load_app.size().width()) / 2,
-            (screen.height() - self._load_app.size().height()) / 2)
+            int((screen.width() - self._load_app.size().width()) / 2),
+            int((screen.height() - self._load_app.size().height()) / 2))
 
         self._load_app.show()
 
-    def _menu_add_action(self, menu: QMenu, rx_value: RegisterAction):
+    def _menu_add_action(self, menu: QMenu, rx_value: RegisterAction) -> None:
         """ Entry point for adding an action to a given menu
 
             Args:
@@ -83,32 +81,33 @@ class MainWindowQt(MainWindow):
         """
         # Register callback when command is selected from the menu
         widget = QWidget()
-        action = QAction(
-            rx_value.action_name,
-            widget,
-            shortcut=rx_value.shortcut,
-            statusTip=rx_value.status_tip,
-            triggered=lambda: self._context.rx['run_plugin'].on_next(
+        action = QAction(text=rx_value.action_name, parent=widget)
+        if rx_value.shortcut is not None:
+            action.setShortcut(QKeySequence(rx_value.shortcut))
+        action.setStatusTip(rx_value.status_tip)
+        action.triggered.connect(
+            lambda: self._context.rx['run_plugin'].on_next(
                 RunAction(menu_title=rx_value.menu_title,
                           action_name=rx_value.action_name)))
 
         self._action_widgets.append(widget)
         menu.addAction(action)
 
-    def _close_load_screen(self):
+    def _close_load_screen(self) -> None:
         """ Entry point for closing the load screen """
-        self._load_app.destroy()
-        self._load_app = None
+        if self._load_app is not None:
+            self._load_app.destroy()
+            self._load_app = None
 
-    def _show(self):
+    def _show(self) -> None:
         """ Entry point for showing main screen """
         self._app.showMaximized()
 
-    def _hide(self):
+    def _hide(self) -> None:
         """ Entry point for hiding main screen """
         self._app.hide()
 
-    def _close(self, rx_value: Empty):
+    def _close(self, rx_value: Empty) -> None:
         """ Entry point for closing application
 
             Args:
@@ -120,7 +119,7 @@ class MainWindowQt(MainWindow):
         if self._app is not None:
             self._app.close()
 
-    def _start_event_loop(self):
+    def _start_event_loop(self) -> None:
         """
         Enters the main event loop and waits until close() is called.
 
@@ -131,9 +130,10 @@ class MainWindowQt(MainWindow):
         Generally, no user interaction can take place before calling
         start_event_loop().
         """
-        self._qt_app.exec_()
+        if isinstance(self._qt_app, QApplication):
+            self._qt_app.exec_()
 
-    def _after(self, time_msec: int, action: Callable):
+    def _after(self, time_msec: int, action: Callable) -> None:
         """ Make the application perform an action after a time delay.
 
         Args:
@@ -146,11 +146,14 @@ class MainWindowQt(MainWindow):
         """Add a new top level menu in main window menu bar.
 
         Args:
-            menu_name (str): The new menu name.
+            menu_name: The new menu name.
 
         Returns:
             QMenu: A reference to the newly created menu.
         """
+        if not isinstance(self._menu_bar, QMenuBar):
+            raise RuntimeError("Missing Menu Bar")
+
         menu = self._menu_bar.addMenu(menu_name)
         self._menus[menu_name] = menu
         return menu

@@ -58,13 +58,11 @@ class Plugin(PluginBase):
 
         self._observer_modified = Subject()
         self._io_result_subs = None
-        self._new_window_observer = None
 
-        super(Plugin, self).__init__(os.path.dirname(__file__), context,
-                                     local_config)
+        super().__init__(os.path.dirname(__file__), context, local_config)
 
     def _register_observers(self):
-        super(Plugin, self)._register_observers()
+        super()._register_observers()
 
         # Register to the topic provided by the io_controller services
         self._context.rx['io_service_signature'].pipe(
@@ -163,8 +161,9 @@ class Plugin(PluginBase):
         else:
             self._observed_services[service] += 1
 
-    def _new_window(self, window: QMdiSubWindow, perspective):
-        self._new_window_observer.dispose()
+    def _new_window(self, perspective):
+        window = QMdiSubWindow()
+        self._context.rx['register_window'].on_next(window)
 
         child = QWidget()
         providerLabel = QLabel("Provider:")
@@ -293,7 +292,7 @@ class Plugin(PluginBase):
             {signatures['provider']: signatures['services']})
 
     def initialize(self):
-        super(Plugin, self).initialize()
+        super().initialize()
 
         # Initialize custom variables
         self._app = QApplication(
@@ -306,10 +305,4 @@ class Plugin(PluginBase):
             Args:
                 rx_value (RunAction): The value published by the subject.
         """
-        # Generate_window is received to generate a new MDI window
-        self._new_window_observer = self._context.rx['new_window_widget'].pipe(
-            op.filter(lambda value: isinstance(value, QMdiSubWindow))
-        ).subscribe(
-            on_next=lambda _: self._new_window(_, rx_value.perspective))
-
-        self._context.rx['new_window'].on_next(Empty())
+        self._new_window(rx_value.perspective)

@@ -23,7 +23,7 @@ class RequestHandler(SimpleXMLRPCRequestHandler):
 
 class MockXMLRPCServer(SimpleXMLRPCServer):
     def __init__(self, address, tm_dict, request_handler=RequestHandler):
-        super(MockXMLRPCServer, self).__init__(address, request_handler)
+        super().__init__(address, request_handler)
 
         self.register_introspection_functions()
         self._tm_dict = tm_dict
@@ -37,8 +37,7 @@ class XmlRpcMock(ComponentBase):
     def __init__(self,
                  context: Context,
                  local_config: Optional[dict] = None) -> None:
-        super(XmlRpcMock, self).__init__(os.path.dirname(__file__), context,
-                                         local_config)
+        super().__init__(os.path.dirname(__file__), context, local_config)
 
         self._tm_dict = get_properties_dict(self._configuration)
 

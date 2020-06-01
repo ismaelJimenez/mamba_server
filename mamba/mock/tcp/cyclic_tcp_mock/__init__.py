@@ -20,8 +20,7 @@ class CyclicTcpMock(ComponentBase):
     def __init__(self,
                  context: Context,
                  local_config: Optional[dict] = None) -> None:
-        super(CyclicTcpMock, self).__init__(os.path.dirname(__file__), context,
-                                            local_config)
+        super().__init__(os.path.dirname(__file__), context, local_config)
 
         # Component configuration
         try:
@@ -134,8 +133,7 @@ class ThreadedCyclicTmServer(socketserver.ThreadingMixIn,
     """ Cyclic Telemetry server """
     def __init__(self, server_address, request_handler_class,
                  parent: CyclicTcpMock) -> None:
-        super(ThreadedCyclicTmServer, self).__init__(server_address,
-                                                     request_handler_class)
+        super().__init__(server_address, request_handler_class)
         self.log_dev = parent._log_dev
         self.log_info = parent._log_info
         self.telemetries = parent.dict
@@ -173,8 +171,7 @@ class ThreadedTcServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     """ TC server to modify the telemetries """
     def __init__(self, server_address, request_handler_class,
                  parent: CyclicTcpMock) -> None:
-        super(ThreadedTcServer, self).__init__(server_address,
-                                               request_handler_class)
+        super().__init__(server_address, request_handler_class)
         self.log_dev = parent._log_dev
         self.log_info = parent._log_info
         self.telemetries = parent.dict

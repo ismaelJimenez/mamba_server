@@ -66,8 +66,7 @@ class FlaskServerMock(ComponentBase):
                  context: Context,
                  local_config: Optional[dict] = None) -> None:
         global params_dict
-        super(FlaskServerMock, self).__init__(os.path.dirname(__file__),
-                                              context, local_config)
+        super().__init__(os.path.dirname(__file__), context, local_config)
 
         # Component configuration
         params_dict = get_properties_dict(self._configuration)

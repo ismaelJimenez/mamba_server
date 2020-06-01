@@ -3,10 +3,12 @@
 import os
 import time
 
-from typing import Callable
+from typing import Callable, Optional, Dict, List, Any
+from mamba.core.typing import Menu
 from rx import operators as op
 
 from mamba.component import ComponentBase
+from mamba.core.context import Context
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.utils import path_from_string
 from mamba.core.msg import Empty, AppStatus
@@ -15,15 +17,18 @@ from mamba.component.gui.msg import RegisterAction
 
 class MainWindow(ComponentBase):
     """ Main window base class """
-    def __init__(self, config_folder, context, local_config=None):
+    def __init__(self,
+                 config_folder: str,
+                 context: Context,
+                 local_config: Optional[Dict[str, dict]] = None) -> None:
         super(MainWindow, self).__init__(config_folder, context, local_config)
 
         # Initialize custom variables
-        self._load_app = None
-        self._app = None
-        self._menu_bar = None
-        self._menus = None
-        self._menu_actions = None
+        self._load_app: Optional[Any] = None
+        self._app: Optional[Any] = None
+        self._menu_bar: Optional[Any] = None
+        self._menus: Dict[str, Menu] = {}
+        self._menu_actions: List[str] = []
 
         # Initialize Splash screen, if any
         self._splash_show()
@@ -33,42 +38,42 @@ class MainWindow(ComponentBase):
 
     # Functions to be adapted
 
-    def _create_main_window(self):
+    def _create_main_window(self) -> None:
         """ Entry point for initializing the main window
             Note: It should be hidden per default.
         """
         raise NotImplementedError
 
-    def _create_menu_bar(self):
+    def _create_menu_bar(self) -> None:
         """ Entry point for creating the top menu bar """
         raise NotImplementedError
 
-    def _create_splash_window(self):
+    def _create_splash_window(self) -> None:
         """ Entry point for creating and showing the load screen """
         raise NotImplementedError
 
-    def _menu_add_action(self, menu, rx_value):
+    def _menu_add_action(self, menu: Menu, rx_value: RegisterAction) -> None:
         """ Entry point for adding an action to a given menu
 
             Args:
                 menu: The given menu.
-                rx_value (RegisterAction): The value published by the subject.
+                rx_value: The value published by the subject.
         """
         raise NotImplementedError
 
-    def _close_load_screen(self):
+    def _close_load_screen(self) -> None:
         """ Entry point for closing the load screen """
         raise NotImplementedError
 
-    def _show(self):
+    def _show(self) -> None:
         """ Entry point for showing main screen """
         raise NotImplementedError
 
-    def _hide(self):
+    def _hide(self) -> None:
         """ Entry point for hiding main screen """
         raise NotImplementedError
 
-    def _close(self, rx_value: Empty):
+    def _close(self, rx_value: Empty) -> None:
         """ Entry point for closing application
 
             Args:
@@ -76,7 +81,7 @@ class MainWindow(ComponentBase):
         """
         raise NotImplementedError
 
-    def _start_event_loop(self):
+    def _start_event_loop(self) -> None:
         """
         Enters the main event loop and waits until close() is called.
 
@@ -89,7 +94,7 @@ class MainWindow(ComponentBase):
         """
         raise NotImplementedError
 
-    def _after(self, time_msec: int, action: Callable):
+    def _after(self, time_msec: int, action: Callable) -> None:
         """ Make the application perform an action after a time delay.
 
         Args:
@@ -98,20 +103,20 @@ class MainWindow(ComponentBase):
         """
         raise NotImplementedError
 
-    def _add_menu(self, menu_name: str):
+    def _add_menu(self, menu_name: str) -> Menu:
         """Add a new top level menu in main window menu bar.
 
         Args:
             menu_name (str): The new menu name.
 
         Returns:
-            tk.Menu: A reference to the newly created menu.
+            Menu: A reference to the newly created menu.
         """
         raise NotImplementedError
 
     # Common functions
 
-    def initialize(self):
+    def initialize(self) -> None:
         """ Entry point for component initialization """
 
         # Create new main window
@@ -123,11 +128,7 @@ class MainWindow(ComponentBase):
         # Initialize main window menu bar
         self._create_menu_bar()
 
-        # Initialize actions storage
-        self._menus = {}
-        self._menu_actions = []
-
-    def _register_observers(self):
+    def _register_observers(self) -> None:
         """ Entry point for registering component observers """
 
         # Quit is sent to command App finalization
@@ -141,13 +142,13 @@ class MainWindow(ComponentBase):
             op.filter(lambda value: isinstance(value, AppStatus) and value ==
                       AppStatus.Running)).subscribe(on_next=self._run)
 
-        # Register_action is sent by the plugins to register a new menu
+        # Register_action is sent by the gui plugins to register a new menu
         # bar action
         self._context.rx['register_action'].pipe(
             op.filter(lambda value: isinstance(value, RegisterAction))
         ).subscribe(on_next=self._register_action)
 
-    def _splash_show(self):
+    def _splash_show(self) -> None:
         """ Entry point for showing load splash screen """
 
         # Show load screen only if it is defined in the configuration
@@ -189,7 +190,7 @@ class MainWindow(ComponentBase):
 
             self._create_splash_window()
 
-    def _register_action(self, rx_value: RegisterAction):
+    def _register_action(self, rx_value: RegisterAction) -> None:
         """ Entry point for registering a new menu bar action.
 
             Args:
@@ -213,7 +214,7 @@ class MainWindow(ComponentBase):
         self._menu_actions.append(
             f'{rx_value.menu_title}_{rx_value.action_name}')
 
-    def _run(self, rx_value: AppStatus):
+    def _run(self, rx_value: AppStatus) -> None:
         """ Entry point for running the window
 
             Args:
@@ -233,7 +234,7 @@ class MainWindow(ComponentBase):
         # Start application event loop
         self._start_event_loop()
 
-    def _transition_load_to_main(self):
+    def _transition_load_to_main(self) -> None:
         """ Entry point for showing the main window and closing load screen """
         # Close load splash if any
         if self._load_app is not None:
@@ -253,15 +254,15 @@ class MainWindow(ComponentBase):
         """
         return search_menu in self._menus
 
-    def _get_menu(self, search_menu: str):
+    def _get_menu(self, search_menu: str) -> Menu:
         """Returns Menu is already in Main Window Menu bar.
 
         Args:
             search_menu (str): The searched menu name.
 
         Returns:
-            tk.Menu: Menu with title "search_menu". None is menu has
-                     not been found.
+            Menu: Menu with title "search_menu". None is menu has
+                  not been found.
         """
         if search_menu in self._menus:
             return self._menus[search_menu]
