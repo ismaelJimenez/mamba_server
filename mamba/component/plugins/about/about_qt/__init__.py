@@ -6,7 +6,7 @@ import pkgutil
 from PySide2.QtWidgets import QMessageBox, QWidget, QApplication
 
 from mamba.component.plugins import PluginBase
-from mamba.component.main.observable_types import RunAction
+from mamba.component.gui.msg import RunAction
 
 
 class Plugin(PluginBase):

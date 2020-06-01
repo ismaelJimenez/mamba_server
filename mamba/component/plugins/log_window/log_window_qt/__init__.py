@@ -10,7 +10,7 @@ from PySide2.QtWidgets import QLabel, QWidget, QApplication, QMdiSubWindow,\
 from PySide2.QtCore import Qt
 
 from mamba.component.plugins import PluginBase
-from mamba.component.main.observable_types import RunAction
+from mamba.component.gui.msg import RunAction
 from mamba.core.msg import Empty, Log, LogLevel
 
 

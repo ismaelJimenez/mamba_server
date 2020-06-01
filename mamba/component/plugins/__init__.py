@@ -4,9 +4,7 @@ from rx import operators as op
 
 from mamba.component import ComponentBase
 from mamba.core.exceptions import ComponentConfigException
-
-from mamba.component.main.observable_types import RegisterAction,\
-    RunAction
+from mamba.component.gui.msg import RegisterAction, RunAction
 
 
 class PluginBase(ComponentBase):

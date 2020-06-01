@@ -27,8 +27,8 @@ class TestClass:
 
     def test_get_classes_from_module_components_class_gui_plugin_recursive(
             self):
-        classes_dict = utils.get_classes_from_module(
-            'mamba.component.plugins', ComponentBase)
+        classes_dict = utils.get_classes_from_module('mamba.component.plugins',
+                                                     ComponentBase)
         assert len(classes_dict) == 14  # One class is the base
         assert 'tm_window_tk' in classes_dict
         assert 'tc_window_tk' in classes_dict

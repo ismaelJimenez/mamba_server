@@ -5,7 +5,7 @@ from mamba.component.plugins.quit import Plugin
 from mamba.component.main.main_qt import MainWindow
 
 from mamba.core.msg.empty import Empty
-from mamba.component.main.observable_types.run_action import RunAction
+from mamba.component.gui.msg.run_action import RunAction
 
 
 class DummyTestClass:

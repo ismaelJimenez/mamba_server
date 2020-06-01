@@ -5,7 +5,7 @@ import os
 from mamba.component.plugins import PluginBase
 
 from mamba.core.msg import Empty
-from mamba.component.main.observable_types import RunAction
+from mamba.component.gui.msg import RunAction
 
 
 class Plugin(PluginBase):

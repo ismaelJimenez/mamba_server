@@ -10,8 +10,7 @@ from mamba.component import ComponentBase
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.utils import path_from_string
 from mamba.core.msg import Empty, AppStatus
-from mamba.component.main.observable_types import RegisterAction, \
-    RunAction
+from mamba.component.gui.msg import RegisterAction
 
 
 class MainBase(ComponentBase):

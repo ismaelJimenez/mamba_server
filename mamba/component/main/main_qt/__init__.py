@@ -13,8 +13,7 @@ from PySide2.QtGui import QPixmap, QGuiApplication
 
 from mamba.component.main import MainBase
 from mamba.core.msg import Empty
-from mamba.component.main.observable_types import RegisterAction, \
-    RunAction
+from mamba.component.gui.msg import RegisterAction, RunAction
 
 
 class MainWindow(MainBase):

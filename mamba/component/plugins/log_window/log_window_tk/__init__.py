@@ -9,7 +9,7 @@ import time
 from rx import operators as op
 
 from mamba.component.plugins import PluginBase
-from mamba.component.main.observable_types import RunAction
+from mamba.component.gui.msg import RunAction
 from mamba.core.msg import Empty, Log, LogLevel
 
 

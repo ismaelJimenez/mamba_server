@@ -6,7 +6,7 @@ import json
 from tkinter.filedialog import askopenfilename
 
 from mamba.component.plugins import PluginBase
-from mamba.component.main.observable_types import RunAction
+from mamba.component.gui.msg import RunAction
 
 
 class Plugin(PluginBase):

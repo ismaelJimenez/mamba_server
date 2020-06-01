@@ -9,7 +9,7 @@ from rx.subject import Subject
 import tkinter as tk
 
 from mamba.component.plugins import PluginBase
-from mamba.component.main.observable_types import RunAction
+from mamba.component.gui.msg import RunAction
 from mamba.core.msg import Empty, ServiceResponse
 
 from tkinter import Frame, N, S, W, E, Button

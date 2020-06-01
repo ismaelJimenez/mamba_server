@@ -4,7 +4,7 @@ import os
 
 from mamba.component.main import MainBase
 from mamba.core.msg.empty import Empty
-from mamba.component.main.observable_types.register_action \
+from mamba.component.gui.msg.register_action \
     import RegisterAction
 
 

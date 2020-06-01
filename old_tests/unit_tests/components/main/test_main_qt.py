@@ -5,7 +5,7 @@ from mamba.component.main.main_qt import MainWindow
 from mamba.core.context import Context
 from mamba.core.exceptions import ComponentConfigException
 
-from mamba.component.main.observable_types.register_action import RegisterAction
+from mamba.component.gui.msg.register_action import RegisterAction
 from mamba.core.msg.app_status import AppStatus
 from mamba.core.msg.empty import Empty
 

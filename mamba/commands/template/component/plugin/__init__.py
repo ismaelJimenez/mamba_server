@@ -3,7 +3,7 @@
 import os
 
 from mamba.component.plugins import PluginBase
-from mamba.component.main.observable_types.run_action \
+from mamba.component.gui.msg.run_action \
     import RunAction
 
 
