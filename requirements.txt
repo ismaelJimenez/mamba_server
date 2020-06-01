@@ -15,6 +15,6 @@ pytest-cov
 pytest-qt
 setuptools
 wheel
-PySide2
+PySide2==5.14
 yapf
 twine

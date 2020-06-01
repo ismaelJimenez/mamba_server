@@ -37,10 +37,10 @@ class TestClass:
 
         assert "missing 1 required positional argument" in str(excinfo.value)
 
-    # def test_w_default_context_component_creation(self):
-    #     """ Test component creation behaviour with default context """
-    #     component = MainWindowQt(self.context)
-    #
+    def test_w_default_context_component_creation(self):
+        """ Test component creation behaviour with default context """
+        component = MainWindowQt(self.context)
+
     #     # Test default configuration load
     #     assert component._configuration == {
     #         'load_screen': {
