@@ -41,8 +41,8 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
 
     def send_tm(self, raw_tm: Raw):
         """ Send msg telemetry over the socket connection """
-        self.server.log_dev(fr' <- Published socket TM: {raw_tm.raw}')
-        self.request.sendall(raw_tm.raw.encode('utf-8'))
+        self.server.log_dev(fr' <- Published socket TM: {raw_tm.msg}')
+        self.request.sendall(raw_tm.msg.encode('utf-8'))
 
 
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
