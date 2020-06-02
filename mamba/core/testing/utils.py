@@ -25,6 +25,7 @@ class CallbackTestClass:
         self.func_2_times_called += 1
         self.func_2_last_value = rx_on_next
 
+
 def get_testenv():
     """Return a OS environment dict suitable to fork processes that need
     to import this installation of Mamba, instead of a system installed one.

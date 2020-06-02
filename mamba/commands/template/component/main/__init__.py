@@ -8,11 +8,10 @@ from mamba.component.gui.msg.register_action \
     import RegisterAction
 
 
-class MainWindow(MainWindow):
+class MainWindowCustom(MainWindow):
     """ Custom Main window """
     def __init__(self, context, local_config=None):
-        super(MainWindow, self).__init__(os.path.dirname(__file__), context,
-                                         local_config)
+        super().__init__(os.path.dirname(__file__), context, local_config)
 
     # Functions to be adapted
 

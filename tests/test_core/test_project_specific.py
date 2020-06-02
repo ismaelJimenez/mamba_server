@@ -29,8 +29,7 @@ class TestClass:
         # Initialize plugin in local folder
         assert cmd_exec(self, 'mamba', 'start', self.project_name) == 0
         self.cwd = join(self.temp_path, self.project_name)
-        assert cmd_exec(self, 'mamba', 'generate', 'plugin',
-                        'plugin_1') == 0
+        assert cmd_exec(self, 'mamba', 'generate', 'plugin', 'plugin_1') == 0
         assert exists(join(self.proj_path, 'component', 'plugin', 'plugin_1'))
         assert exists(join(self.proj_path, 'composer'))
 
@@ -111,8 +110,7 @@ class TestClass:
         assert 'plugin_1' in components_dict
 
     def test_get_components_duplicated_component(self):
-        assert cmd_exec(self, 'mamba', 'generate', 'plugin',
-                        'quit') == 0
+        assert cmd_exec(self, 'mamba', 'generate', 'plugin', 'quit') == 0
         assert exists(join(self.proj_path, 'component', 'plugin', 'quit'))
 
         with pytest.raises(ComposeFileException) as excinfo:
