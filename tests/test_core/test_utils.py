@@ -91,3 +91,112 @@ class TestClass:
             "/home/artwork/mamba_loading.png")
         assert "../artwork/mamba_loading.png" == utils.path_from_string(
             "../artwork/mamba_loading.png")
+
+    def test_merge_dicts(self):
+        # Test behaviour with no conflict
+        assert utils.merge_dicts({
+            1: {
+                "a": "A"
+            },
+            2: {
+                "b": "B"
+            }
+        }, {
+            2: {
+                "c": "C"
+            },
+            3: {
+                "d": "D"
+            }
+        }) == {
+            1: {
+                'a': 'A'
+            },
+            2: {
+                'b': 'B',
+                'c': 'C'
+            },
+            3: {
+                'd': 'D'
+            }
+        }
+
+        # Test behaviour with None
+        assert utils.merge_dicts({
+            1: {
+                "a": "A"
+            },
+            2: {
+                "b": "B"
+            }
+        }, None) == {
+            1: {
+                'a': 'A'
+            },
+            2: {
+                'b': 'B'
+            }
+        }
+
+        assert utils.merge_dicts(None, {
+            1: {
+                "a": "A"
+            },
+            2: {
+                "b": "B"
+            }
+        }) == {
+            1: {
+                'a': 'A'
+            },
+            2: {
+                'b': 'B'
+            }
+        }
+
+        assert utils.merge_dicts({
+            1: {
+                "a": None
+            },
+            2: {
+                "b": "B"
+            }
+        }, {
+            1: {
+                "a": "A"
+            },
+            2: {
+                "b": "C"
+            }
+        }) == {
+            1: {
+                'a': None
+            },
+            2: {
+                'b': 'B'
+            }
+        }
+
+        # Test behaviour with conflict
+        assert utils.merge_dicts({
+            1: {
+                "a": "A"
+            },
+            2: {
+                "b": "B"
+            }
+        }, {
+            1: {
+                "a": "A"
+            },
+            2: {
+                "b": "C"
+            }
+        }) == {
+            1: {
+                'a': 'A'
+            },
+            2: {
+                'b': 'B'
+            }
+        }

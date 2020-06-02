@@ -7,7 +7,7 @@ from shutil import rmtree
 from mamba.core.compose_parser import compose_parser
 from mamba.core import utils
 from mamba.component import ComponentBase
-from mamba.utils.test import get_testenv, cmd_exec
+from mamba.core.testing.utils import get_testenv, cmd_exec
 from os.path import join, exists
 from mamba.core.context import Context
 from mamba.core.exceptions import ComposeFileException
