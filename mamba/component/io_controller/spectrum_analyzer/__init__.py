@@ -19,16 +19,11 @@ class ThreadedTriggerInHandler:
 
         _inst.timeout = sleep_seconds * 1000
 
-        # print(f"init wait for {sleep_seconds}")
-        # import time
-        # time.sleep(sleep_seconds)
-        # print("end wait")
-
         try:
             _inst.query('*OPC?')  # This waits for trigger
             _shared_memory[shared_memory_setter[tm_id]] = 1
         except pyvisa.errors.VisaIOError:
-            _shared_memory[shared_memory_setter[tm_id]] = 'timedout'
+            pass
 
 
 class SpectrumAnalyzer(VisaControllerBase):
@@ -49,7 +44,7 @@ class SpectrumAnalyzer(VisaControllerBase):
             service_request: The current service request.
             result: The result to be published.
         """
-        if service_request.id == 'SA_TC_QUERY_TRIGGER_IN':
+        if service_request.id == 'FSW_TC_QUERY_TRIGGER_IN':
             self._shared_memory[self._shared_memory_setter[
                 service_request.id]] = 0
 
@@ -61,7 +56,7 @@ class SpectrumAnalyzer(VisaControllerBase):
 
             self._trigger_in_thread.start()
 
-        if service_request.id == 'SA_TM_QUERY_TRIGGER_IN':
+        if service_request.id == 'FSW_TM_QUERY_TRIGGER_IN':
             if self._shared_memory[self._shared_memory_getter[
                     service_request.id]] == 'timedout':
                 result.type = 'error'
