@@ -28,12 +28,12 @@ class TestClass:
         rmtree(self.temp_path)
 
     def test_generate_valid_project_folder(self):
-        assert cmd_exec(self, 'mamba.cmdline', 'start',
+        assert cmd_exec(self, 'mamba', 'start',
                         self.project_name) == 0
 
         self.cwd = join(self.temp_path, self.project_name)
 
-        assert cmd_exec(self, 'mamba.cmdline', 'generate', 'plugin',
+        assert cmd_exec(self, 'mamba', 'generate', 'plugin',
                         'plugin_1') == 0
         assert exists(join(self.proj_path, 'component', 'plugin'))
         assert exists(join(self.proj_path, 'component', 'plugin', 'plugin_1'))
@@ -44,7 +44,7 @@ class TestClass:
             join(self.proj_path, 'component', 'plugin', 'plugin_1',
                  'config.yml'))
 
-        assert cmd_exec(self, 'mamba.cmdline', 'generate', 'main',
+        assert cmd_exec(self, 'mamba', 'generate', 'main',
                         'main_1') == 0
         assert exists(join(self.proj_path, 'component', 'main'))
         assert exists(join(self.proj_path, 'component', 'main', 'main_1'))
@@ -55,91 +55,91 @@ class TestClass:
             join(self.proj_path, 'component', 'main', 'main_1', 'config.yml'))
 
     def test_generate_valid_project_folder_duplicated_name(self):
-        assert cmd_exec(self, 'mamba.cmdline', 'start',
+        assert cmd_exec(self, 'mamba', 'start',
                         self.project_name) == 0
 
         self.cwd = join(self.temp_path, self.project_name)
 
-        assert cmd_exec(self, 'mamba.cmdline', 'generate', 'plugin',
+        assert cmd_exec(self, 'mamba', 'generate', 'plugin',
                         'plugin_1') == 0
 
-        output = cmd_exec_output(self, 'mamba.cmdline', 'generate',
+        output = cmd_exec_output(self, 'mamba', 'generate',
                                  'plugin', 'plugin_2')
         assert 'Component' in output
         assert 'plugin_2' in output
         assert 'created in' in output
 
-        assert cmd_exec(self, 'mamba.cmdline', 'generate', 'plugin',
+        assert cmd_exec(self, 'mamba', 'generate', 'plugin',
                         'plugin_1') == 1
 
-        output = cmd_exec_output(self, 'mamba.cmdline', 'generate',
+        output = cmd_exec_output(self, 'mamba', 'generate',
                                  'plugin', 'plugin_2')
         assert 'error' in output
         assert 'already exists' in output
 
-        assert cmd_exec(self, 'mamba.cmdline', 'generate', 'main',
+        assert cmd_exec(self, 'mamba', 'generate', 'main',
                         'main_1') == 0
 
-        output = cmd_exec_output(self, 'mamba.cmdline', 'generate',
+        output = cmd_exec_output(self, 'mamba', 'generate',
                                  'main', 'main_2')
         assert 'Component' in output
         assert 'main_2' in output
         assert 'created in' in output
 
-        assert cmd_exec(self, 'mamba.cmdline', 'generate', 'main',
+        assert cmd_exec(self, 'mamba', 'generate', 'main',
                         'main_1') == 1
 
-        output = cmd_exec_output(self, 'mamba.cmdline', 'generate',
+        output = cmd_exec_output(self, 'mamba', 'generate',
                                  'main', 'main_2')
 
         assert 'error' in output
         assert 'already exists' in output
 
-        output = cmd_exec_output(self, 'mamba.cmdline', 'generate',
+        output = cmd_exec_output(self, 'mamba', 'generate',
                                  'wrong', 'comp_1')
         assert 'error' in output
         assert 'not a valid component type' in output
 
     def test_generate_invalid_project(self):
-        assert cmd_exec(self, 'mamba.cmdline', 'generate', 'plugin',
+        assert cmd_exec(self, 'mamba', 'generate', 'plugin',
                         'plugin_1') == 1
 
-        output = cmd_exec_output(self, 'mamba.cmdline', 'generate',
+        output = cmd_exec_output(self, 'mamba', 'generate',
                                  'plugin', 'plugin_1')
         assert 'error' in output
         assert 'can only be used inside a Mamba Project' in output
 
-        assert cmd_exec(self, 'mamba.cmdline', 'generate', 'main',
+        assert cmd_exec(self, 'mamba', 'generate', 'main',
                         'main_1') == 1
 
-        output = cmd_exec_output(self, 'mamba.cmdline', 'generate',
+        output = cmd_exec_output(self, 'mamba', 'generate',
                                  'main', 'main_1')
         assert 'error' in output
         assert 'can only be used inside a Mamba Project' in output
 
     def test_generate_incomplete_arguments(self):
-        assert cmd_exec(self, 'mamba.cmdline', 'start',
+        assert cmd_exec(self, 'mamba', 'start',
                         self.project_name) == 0
 
         self.cwd = join(self.temp_path, self.project_name)
 
-        assert cmd_exec(self, 'mamba.cmdline', 'generate') == 2
+        assert cmd_exec(self, 'mamba', 'generate') == 2
 
-        output = cmd_exec_output(self, 'mamba.cmdline', 'generate')
+        output = cmd_exec_output(self, 'mamba', 'generate')
         assert 'error' in output
         assert 'component_type' in output
 
-        assert cmd_exec(self, 'mamba.cmdline', 'generate',
+        assert cmd_exec(self, 'mamba', 'generate',
                         'plugin') == 2
 
-        output = cmd_exec_output(self, 'mamba.cmdline', 'generate',
+        output = cmd_exec_output(self, 'mamba', 'generate',
                                  'plugin')
         assert 'error' in output
         assert 'component_name' in output
 
     def test_generate_help(self):
-        assert cmd_exec(self, 'mamba.cmdline', 'generate', '-h') == 0
-        output = cmd_exec_output(self, 'mamba.cmdline', 'generate',
+        assert cmd_exec(self, 'mamba', 'generate', '-h') == 0
+        output = cmd_exec_output(self, 'mamba', 'generate',
                                  '-h')
         assert 'usage' in output
         assert 'mamba generate <component_type> <component_name>' in output
@@ -151,8 +151,8 @@ class TestClass:
         assert '--list' in output
 
     def test_generate_list(self):
-        assert cmd_exec(self, 'mamba.cmdline', 'generate', '-l') == 0
-        output = cmd_exec_output(self, 'mamba.cmdline', 'generate',
+        assert cmd_exec(self, 'mamba', 'generate', '-l') == 0
+        output = cmd_exec_output(self, 'mamba', 'generate',
                                  '-l')
 
         assert 'Available component types' in output

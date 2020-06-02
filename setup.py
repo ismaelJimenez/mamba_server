@@ -45,7 +45,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     entry_points={
-        "console_scripts": ["mamba = mamba.cmdline:execute"]
+        "console_scripts": ["mamba = mamba:execute"]
     },
     classifiers=[
         'Development Status :: 1 - Planning',

@@ -28,22 +28,22 @@ class TestClass:
         rmtree(self.temp_path)
 
     def test_command_line_help(self):
-        assert cmd_exec(self, 'mamba.cmdline', '-h') == 0
-        output = cmd_exec_output(self, 'mamba.cmdline', '-h')
+        assert cmd_exec(self, 'mamba', '-h') == 0
+        output = cmd_exec_output(self, 'mamba', '-h')
         assert 'Usage' in output
         assert 'mamba <command>' in output
         assert 'generate' in output
         assert 'serve' in output
         assert 'start' in output
 
-        assert cmd_exec(self, 'mamba.cmdline') == 0
-        output = cmd_exec_output(self, 'mamba.cmdline')
+        assert cmd_exec(self, 'mamba') == 0
+        output = cmd_exec_output(self, 'mamba')
         assert 'Usage' in output
         assert 'mamba <command>' in output
         assert 'generate' in output
         assert 'serve' in output
         assert 'start' in output
 
-        assert cmd_exec(self, 'mamba.cmdline', 'wrong_command') == 2
-        output = cmd_exec_output(self, 'mamba.cmdline', 'wrong_command')
+        assert cmd_exec(self, 'mamba', 'wrong_command') == 2
+        output = cmd_exec_output(self, 'mamba', 'wrong_command')
         assert 'Unknown command' in output

@@ -28,8 +28,8 @@ class TestClass:
         rmtree(self.temp_path)
 
     def test_serve_help(self):
-        assert cmd_exec(self, 'mamba.cmdline', 'serve', '-h') == 0
-        output = cmd_exec_output(self, 'mamba.cmdline', 'serve', '-h')
+        assert cmd_exec(self, 'mamba', 'serve', '-h') == 0
+        output = cmd_exec_output(self, 'mamba', 'serve', '-h')
         assert 'usage' in output
         assert 'mamba serve' in output
         assert 'optional arguments' in output
@@ -37,13 +37,13 @@ class TestClass:
         assert '--list' in output
 
     def test_serve_list(self):
-        assert cmd_exec(self, 'mamba.cmdline', 'start',
+        assert cmd_exec(self, 'mamba', 'start',
                         self.project_name) == 0
 
         self.cwd = join(self.temp_path, self.project_name)
 
-        assert cmd_exec(self, 'mamba.cmdline', 'serve', '-l') == 0
-        output = cmd_exec_output(self, 'mamba.cmdline', 'serve', '-l')
+        assert cmd_exec(self, 'mamba', 'serve', '-l') == 0
+        output = cmd_exec_output(self, 'mamba', 'serve', '-l')
         assert 'Available launch files' in output
         assert 'mamba-qt' in output
         assert '[DEFAULT]' in output
@@ -51,7 +51,7 @@ class TestClass:
         assert '- project' in output
 
     def test_serve_non_existing(self):
-        assert cmd_exec(self, 'mamba.cmdline', 'serve',
+        assert cmd_exec(self, 'mamba', 'serve',
                         '-r non_existing') == 1
         assert 'Unable to find launch file' in cmd_exec_output(
-            self, 'mamba.cmdline', 'serve', '-r non_existing')
+            self, 'mamba', 'serve', '-r non_existing')
