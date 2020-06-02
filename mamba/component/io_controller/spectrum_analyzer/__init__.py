@@ -49,7 +49,7 @@ class SpectrumAnalyzer(VisaControllerBase):
             service_request: The current service request.
             result: The result to be published.
         """
-        if service_request.id == 'SA_TC_QUERY_TRIGGER_IN':
+        if service_request.id == 'FSW_TC_QUERY_TRIGGER_IN':
             self._shared_memory[self._shared_memory_setter[
                 service_request.id]] = 0
 
@@ -61,7 +61,7 @@ class SpectrumAnalyzer(VisaControllerBase):
 
             self._trigger_in_thread.start()
 
-        if service_request.id == 'SA_TM_QUERY_TRIGGER_IN':
+        if service_request.id == 'FSW_TM_QUERY_TRIGGER_IN':
             if self._shared_memory[self._shared_memory_getter[
                     service_request.id]] == 'timedout':
                 result.type = 'error'

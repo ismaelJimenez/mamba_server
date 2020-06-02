@@ -28,11 +28,14 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
         # Send incoming data to raw_tc
         while True:
             # self.request is the TCP socket connected to the client
-            data = str(self.request.recv(1024), 'utf-8')
-            if not data:
+            try:
+                data = str(self.request.recv(1024), 'utf-8')
+                if not data:
+                    break
+                self.server.log_dev(fr' -> Received socket TC: {data}')
+                self.server.raw_tc.on_next(Raw(data))
+            except ConnectionResetError:
                 break
-            self.server.log_dev(fr' -> Received socket TC: {data}')
-            self.server.raw_tc.on_next(Raw(data))
 
         # Dispose observer when connection is closed
         observer.dispose()

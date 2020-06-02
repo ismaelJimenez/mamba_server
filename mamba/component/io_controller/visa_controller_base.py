@@ -218,6 +218,9 @@ class VisaControllerBase(ComponentBase):
             except OSError:
                 result.type = 'error'
                 result.value = 'Not possible to communicate to the instrument'
+            except pyvisa.errors.VisaIOError:
+                result.type = 'error'
+                result.value = 'Query timeout'
         else:
             try:
                 if (len(self._service_info[service_request.id]['signature'][0])
