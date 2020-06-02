@@ -1,0 +1,84 @@
+name: n5747a
+visa-sim:
+resource-name: TCPIP0::192.168.0.243::INSTR
+
+topics:
+  PS_CONNECT:
+    key: '@connect'
+    description: Establish Connection with Power Supply
+
+  PS_DISCONNECT:
+    key: '@disconnect'
+    description: Close connection with Power Supply
+
+  PS_RESET:
+    description: reset Power Supply
+    command: '*RST'
+
+  PS_SET_CURR:
+    description: Set the current for the Power Supply
+    signature: [[str], None]
+    command: 'CURR {:}'
+
+  PS_SET_VOLT:
+    description: Set the voltage for the Power Supply
+    signature: [[str], None]
+    command: 'VOLT {:}'
+
+  PS_SET_OVP:
+    description: Set the over-voltage for the Power Supply
+    signature: [[str], None]
+    command: 'VOLT:PROT:LEV {:}'
+
+  PS_SET_OUTPUT_ON:
+    description: Set the output to ON on the
+    signature: [[], None]
+    command: 'OUTP ON'
+
+  PS_SET_OUTPUT_OFF:
+    description: Set the output to OFF on the
+    signature: [[], None]
+    command: 'OUTP OFF'
+
+  PS_QUERY_IDN:
+    description: Query the instrument identification
+    signature: [[], str]
+    command: '*IDN?'
+
+  PS_QUERY_VOLT_SETTING:
+    description: Query the Power Supply Voltage Settings
+    signature: [[], str]
+    command: 'VOLT?'
+
+  PS_QUERY_CURR_SETTING:
+    description: Query the Power Supply Current Settings
+    signature: [[], str]
+    command: 'CURR?'
+
+  PS_QUERY_CURRENT:
+    description: Query the Power Supply Current
+    signature: [[], str]
+    command: 'MEAS:CURR?'
+
+  PS_QUERY_VOLTAGE:
+    description: Query the Power Supply Voltage
+    signature: [[], str]
+    command: 'MEAS:VOLT?'
+
+  PS_QUERY_OUTPUT_STATE:
+    description: Query the Power Supply Output Voltage State
+    signature: [[], str]
+    command: 'OUTP?'
+
+  PS_QUERY_CONNECTED:
+    description: Query the connection status to the instrument
+    signature: [[], bool]
+
+parameters:
+  connected:
+    default: false
+    setter:
+      PS_CONNECT:
+      PS_DISCONNECT:
+    getter:
+      PS_QUERY_CONNECTED:

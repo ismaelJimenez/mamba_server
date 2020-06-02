@@ -1,0 +1,57 @@
+name: ks_33502a
+visa-sim:
+resource-name: TCPIP0::192.168.0.245::INSTR
+
+topics:
+  AMP_CONNECT:
+    key: '@connect'
+    description: Establish Connection with Amplifier
+
+  AMP_DISCONNECT:
+    key: '@disconnect'
+    description: Close connection with Amplifier
+
+  AMP_TC_1_AMP':
+    signature: [[str], None]
+    command: 'ROUT1:PATH {:}'
+
+  AMP_TC_2_AMP':
+    signature: [[str], None]
+    command: 'ROUT2:PATH {:}'
+
+  AMP_TC_1_OUTP':
+    signature: [[str], None]
+    command: 'OUTP1 {:}'
+
+  AMP_TC_2_OUTP':
+    signature: [[str], None]
+    command: 'OUTP2 {:}'
+
+  AMP_TC_1_COUP':
+    signature: [[str], None]
+    command: 'INP1:COUP {:}'
+
+  AMP_TC_2_COUP':
+    signature: [[str], None]
+    command: 'INP2:COUP {:}'
+
+  AMP_TC_1_IMP':
+    signature: [[str], None]
+    command: 'INP1:IMP {:}'
+
+  AMP_TC_2_IMP':
+    signature: [[str], None]
+    command: 'INP2:IMP {:}'
+
+  AMP_QUERY_CONNECTED:
+    description: Query the connection status to the instrument
+    signature: [[], bool]
+
+parameters:
+  connected:
+    default: false
+    setter:
+      AMP_CONNECT:
+      AMP_DISCONNECT:
+    getter:
+      AMP_QUERY_CONNECTED:
