@@ -232,5 +232,8 @@ class VisaControllerBase(ComponentBase):
             except OSError:
                 result.type = 'error'
                 result.value = 'Not possible to communicate to the instrument'
+            except pyvisa.errors.VisaIOError:
+                result.type = 'error'
+                result.value = 'Write timeout'
 
         self._context.rx['io_result'].on_next(result)
