@@ -34,13 +34,13 @@ devices:
         getter:
           q: "FETCh?"
           r: "{:}"
-      dc_voltage_meas:
-        default: 5
+      dc_voltage_meas_channel_4009:
+        default: 0
         getter:
-          q: "MEAS:VOLT:DC? {:}"
+          q: "MEAS:VOLT:DC? 1,0.001,(@4009)"
           r: "{:}"
         setter:
-          q: "CONF:VOLT:DC {:}"
+          q: "CONF:VOLT:DC {:},0.003,(@4009)"
       channel_resistance:
         default: 100
         getter:
