@@ -1,0 +1,170 @@
+name: switch_matrix
+visa-sim: mock/visa/switch_matrix/ks_34980a.yml
+resource-name: TCPIP0::1.2.3.4::INSTR
+
+topics:
+  SWITCH_CONNECT:
+    key: '@connect'
+    description: Establish Connection with Switch Matrix
+
+  SWITCH_DISCONNECT:
+    key: '@disconnect'
+    description: Close connection with Switch Matrix
+
+  SWITCH_RAW:
+    description: Send a msg command to the instrument
+    signature: [[str], None]
+    command: '{:}'
+
+  SWITCH_RST:
+    description: Clear status
+    command: '*CLS'
+
+  SWITCH_ROUT_CLOSE:
+    description: Close channel
+    signature: [[channel_id], None]
+    command: 'ROUT:CLOS {:}'
+
+  SWITCH_ROUT_OPEN:
+    description: Open channel
+    signature: [[channel_id], None]
+    command: 'ROUT:OPEN {:}'
+
+  SWITCH_ROUT_OPEN_ALL:
+    description: Open all channels
+    signature: [[slot_id], None]
+    command: 'ROUT:OPEN:ALL {:}'
+
+  SWITCH_INIT:
+    description: Initiate the scan
+    command: 'INIT'
+
+  SWITCH_CONF_VOLT:
+    description: Configure channel for DC voltage measurements
+    signature: [[str], None]
+    command: 'CONF:VOLT:DC {:}'
+
+  SWITCH_CONF_SCAN:
+    description: Configure scan list
+    signature: [[str], None]
+    command: 'ROUT:SCAN {:}'
+
+  SWITCH_TRACE_ON:
+    description: Enable channel trace output mode
+    signature: [[channel_id], None]
+    command: 'SOUR:FUNC:ENAB ON, {:}'
+
+  SWITCH_TRACE_OFF:
+    description: Disable channel trace output mode
+    signature: [[channel_id], None]
+    command: 'SOUR:FUNC:ENAB OFF, {:}'
+
+  SWITCH_OUTP_ON:
+    description: Enable channel output
+    signature: [[channel_id], None]
+    command: 'OUTP:STAT ON, {:}'
+
+  SWITCH_OUTP_OFF:
+    description: Disable channel output
+    signature: [[channel_id], None]
+    command: 'OUTP:STAT OFF, {:}'
+
+  SWITCH_VOLT_OFFS:
+    description: Configure channel voltage offset
+    signature: [[channel_id], None]
+    command: 'SOUR:FUNC:VOLT:OFFS {:}'
+
+  SWITCH_VOLT_GAIN:
+    description: Configure channel voltage gain
+    signature: [[channel_id], None]
+    command: 'SOUR:FUNC:VOLT:GAIN {:}'
+
+  SWITCH_TRACE_NCYC:
+    description: Configure channel trace cycle count
+    signature: [[channel_id], None]
+    command: 'SOUR:FUNC:TRAC:NCYC {:}'
+
+  SWITCH_TRACE_FUNC:
+    description: Configure channel trace function
+    signature: [[config], None]
+    command: 'TRAC:FUNC {:}'
+
+  SWITCH_TRACE:
+    description: Apply trace to channel
+    signature: [[channel_id], None]
+    command: 'SOUR:FUNC:TRAC {:}'
+
+  SWITCH_FREQ:
+    description: Configure channel frequency
+    signature: [[channel_id], None]
+    command: 'SOUR:FUNC:FREQ {:}'
+
+  SWITCH_TC_QUERY_RAW:
+    description: Perform msg query to the instrument
+    signature: [[str], str]
+    command: '{:}'
+
+  SWITCH_QUERY_IDN:
+    description: Query the instrument identification
+    signature: [[], str]
+    command: '*IDN?'
+
+  SWITCH_QUERY_ROUT_CLOSE:
+    description: Query close state of the channel
+    signature: [[channel_id], bool]
+    command: 'ROUT:CLOS? {:}'
+
+  SWITCH_QUERY_ROUT_OPEN:
+    description: Query open state of the channel
+    signature: [[channel_id], bool]
+    command: 'ROUT:OPEN? {:}'
+
+  SWITCH_QUERY_FETCH:
+    description: Query stored readings from memory
+    signature: [[], str]
+    command: 'FETCh?'
+
+  SWITCH_QUERY_VOLT_MEAS:
+    description: Query open state of the channel
+    signature: [[str], volt]
+    command: 'MEASure:VOLTage:DC? {:}'
+
+  SWITCH_QUERY_CHANNEL_RES:
+    description: Query channel resistance
+    signature: [[str], ohm]
+    command: 'MEAS:RES? {:}'
+
+  SWITCH_QUERY_TRACE:
+    description: Query the trace output mode
+    signature: [[channel_id], None]
+    command: 'SOUR:FUNC:ENAB? {:}'
+
+  SWITCH_TM_QUERY_RAW:
+    description: Retrieve the value of the last msg query
+    signature: [[], str]
+    command: '{:}'
+
+
+  SWITCH_QUERY_FREQ:
+    description: Query channel frequency
+    signature: [[channel_id], None]
+    command: 'SOUR:FUNC:FREQ? {:}'
+
+  SWITCH_QUERY_CONNECTED:
+    description: Query the connection status to the instrument
+    signature: [[], bool]
+
+parameters:
+  connected:
+    default: false
+    setter:
+      SWITCH_CONNECT:
+      SWITCH_DISCONNECT:
+    getter:
+      SWITCH_QUERY_CONNECTED:
+  query_raw_result:
+    default: ''
+    setter:
+      SWITCH_TC_QUERY_RAW:
+    getter:
+      SWITCH_TM_QUERY_RAW:

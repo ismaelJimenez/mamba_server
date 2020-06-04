@@ -1,0 +1,63 @@
+# As per Keysight®Agilent 34980A Multifunction Switch/Measure Unit. Edition 3
+spec: "1.0"
+devices:
+  device 1:
+    eom:
+      TCPIP INSTR:
+        q: "\r\n"
+        r: "\n"
+    dialogues:
+      - q: "*IDN?"
+        r: "AGILENT TECHNOLOGIES,34980A,XXX"
+    error:
+      error_queue:
+        - q: ':SYST:ERR?'
+          default: '0, No Error'
+          command_error: '1, Command error'
+    properties:
+      close_channel:
+        default: 1
+        getter:
+          q: "ROUT:CLOSe? {:}"
+          r: "{:}"
+        setter:
+          q: "ROUT:CLOS {:}"
+      open_channel:
+        default: 1
+        getter:
+          q: "ROUT:OPEN? {:}"
+          r: "{:}"
+        setter:
+          q: "ROUT:OPEN {:}"
+      fetch:
+        default: "some_value"
+        getter:
+          q: "FETCh?"
+          r: "{:}"
+      dc_voltage_meas:
+        default: 5
+        getter:
+          q: "MEAS:VOLT:DC? {:}"
+          r: "{:}"
+        setter:
+          q: "CONF:VOLT:DC {:}"
+      channel_resistance:
+        default: 100
+        getter:
+          q: "MEAS:RES? {:}"
+          r: "{:}"
+      channel_trace:
+        default: 1
+        getter:
+          q: "SOUR:FUNC:ENAB? {:}"
+          r: "{:}"
+      channel_freq:
+        default: 1000
+        getter:
+          q: "SOUR:FUNC:FREQ? {:}"
+          r: "{:}"
+
+resources:
+  TCPIP0::1.2.3.4::INSTR:
+    device: device 1
+
