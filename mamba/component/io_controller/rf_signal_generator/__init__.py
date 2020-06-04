@@ -5,10 +5,10 @@ import os
 from mamba.core.context import Context
 from mamba.core.msg import ServiceRequest,\
     ServiceResponse
-from mamba.component.io_controller import VisaControllerBase
+from mamba.core.component_base import VisaController
 
 
-class RfSignalGenerator(VisaControllerBase):
+class RfSignalGenerator(VisaController):
     """ RF Signal Generator IO Controller class """
     def __init__(self,
                  context: Context,

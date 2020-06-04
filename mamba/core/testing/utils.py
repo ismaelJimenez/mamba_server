@@ -5,6 +5,7 @@ from importlib import import_module
 import tempfile
 import subprocess
 import sys
+import yaml
 
 from typing import Optional, Any
 
@@ -24,6 +25,35 @@ class CallbackTestClass:
     def test_func_2(self, rx_on_next: Optional[Any] = None):
         self.func_2_times_called += 1
         self.func_2_last_value = rx_on_next
+
+
+def get_config_dict(config_file):
+    with open(config_file) as file:
+        return yaml.load(file, Loader=yaml.FullLoader)
+
+
+def compose_service_info(config):
+    return {
+        key: {
+            'description': service_data.get('description') or '',
+            'signature': service_data.get('signature') or [[], None],
+            'command': service_data.get('command'),
+            'key': service_data.get('key')
+        }
+        for key, service_data in config['topics'].items()
+    }
+
+
+def get_io_service_signature(config_info, service_info):
+    services_sig = {
+        key: {
+            'description': value['description'],
+            'signature': value['signature']
+        }
+        for key, value in service_info.items()
+    }
+
+    return {'provider': config_info['name'], 'services': services_sig}
 
 
 def get_testenv():

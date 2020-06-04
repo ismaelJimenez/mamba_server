@@ -1,0 +1,56 @@
+name: switch_matrix_ks_z2091c
+visa-sim: mock/visa/switch_matrix/ks_z2091c.yml
+resource-name: TCPIP0::1.2.3.4::INSTR
+
+topics:
+  SWITCH_Z2091C_CONNECT:
+    key: '@connect'
+    description: Establish Connection with Switch Matrix
+
+  SWITCH_Z2091C_DISCONNECT:
+    key: '@disconnect'
+    description: Close connection with Switch Matrix
+
+  SWITCH_Z2091C_RAW:
+    description: Send a msg command to the instrument
+    signature: [[str], None]
+    command: '{:}'
+
+  SWITCH_Z2091C_RST:
+    description: Clear status
+    command: '*CLS'
+
+  SWITCH_Z2091C_TC_QUERY_RAW:
+    description: Perform msg query to the instrument
+    signature: [[str], str]
+    command: '{:}'
+
+  SWITCH_Z2091C_TM_QUERY_RAW:
+    description: Retrieve the value of the last msg query
+    signature: [[], str]
+    command: '{:}'
+
+  SWITCH_Z2091C_QUERY_IDN:
+    description: Query the instrument identification
+    signature: [[], str]
+    command: '*IDN?'
+
+  SWITCH_Z2091C_QUERY_CONNECTED:
+    description: Query the connection status to the instrument
+    signature: [[], bool]
+
+parameters:
+  connected:
+    default: false
+    setter:
+      SWITCH_Z2091C_CONNECT:
+      SWITCH_Z2091C_DISCONNECT:
+    getter:
+      SWITCH_Z2091C_QUERY_CONNECTED:
+
+  query_raw_result:
+    default: ''
+    setter:
+      SWITCH_Z2091C_TC_QUERY_RAW:
+    getter:
+      SWITCH_Z2091C_TM_QUERY_RAW:

@@ -4,10 +4,10 @@ import os
 
 from mamba.core.msg import ServiceRequest,\
     ServiceResponse
-from mamba.component.io_controller import VisaControllerBase
+from mamba.core.component_base import VisaController
 
 
-class Digitizer(VisaControllerBase):
+class Digitizer(VisaController):
     """ Digitizer IO Controller class """
     def __init__(self, context, local_config=None):
         super(Digitizer, self).__init__(os.path.dirname(__file__), context,

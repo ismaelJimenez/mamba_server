@@ -13,14 +13,14 @@ from mamba.core.msg import ServiceRequest, \
 from mamba.core.utils import path_from_string
 
 
-class VisaControllerBase(ComponentBase):
+class VisaController(ComponentBase):
     """ VISA controller base class """
     def __init__(self,
                  config_folder: str,
                  context: Context,
                  local_config: Optional[dict] = None) -> None:
-        super(VisaControllerBase, self).__init__(config_folder, context,
-                                                 local_config)
+        super(VisaController, self).__init__(config_folder, context,
+                                             local_config)
 
         # Initialize observers
         self._register_observers()

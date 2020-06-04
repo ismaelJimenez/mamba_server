@@ -1,2 +1,1 @@
-from .visa_controller_base import VisaControllerBase
 from .rf_signal_generator import RfSignalGenerator

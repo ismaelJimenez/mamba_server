@@ -62,6 +62,8 @@ services:
   spectrum_analyzer:
     component: spectrum_analyzer
 
+  switch_matrix:
+    component: ks_34980a
 
   # Mocks
 

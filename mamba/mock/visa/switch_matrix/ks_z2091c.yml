@@ -1,0 +1,29 @@
+# As per Keysight®Z2091C SCPI Command Reference Guide. Revision 2.1
+spec: "1.0"
+devices:
+  device 1:
+    eom:
+      TCPIP INSTR:
+        q: "\r\n"
+        r: "\n"
+    dialogues:
+      - q: "*IDN?"
+        r: "Keysight Technologies,Z2091C-001,US56400131,1.1.6450.15113"
+    error:
+      error_queue:
+        - q: ':SYST:ERR?'
+          default: '0, No Error'
+          command_error: '1, Command error'
+    properties:
+      digital_channel_width_example:
+        default: 'BYTE'
+        getter:
+          q: 'CONF:DIG:WIDTH? (@2001)'
+          r: '{:}'
+        setter:
+          q: 'CONF:DIG:WIDTH {:}, (@2001)'
+
+resources:
+  TCPIP0::1.2.3.4::INSTR:
+    device: device 1
+

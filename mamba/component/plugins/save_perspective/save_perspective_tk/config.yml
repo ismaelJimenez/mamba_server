@@ -1,2 +1,2 @@
-name: Save_Perspective  # Name of the action
-menu: Perspective  # High level Menu name shown in the menu bar
+name: Save_View  # Name of the action
+menu: View  # High level Menu name shown in the menu bar

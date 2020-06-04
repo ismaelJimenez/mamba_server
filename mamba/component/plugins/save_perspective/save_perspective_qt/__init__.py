@@ -26,9 +26,9 @@ class Plugin(PluginBase):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         fileName, _ = QFileDialog.getSaveFileName(QWidget(),
-                                                  "Save Perspective",
+                                                  "Save View",
                                                   "",
-                                                  "Perspective Files (*.json)",
+                                                  "View Files (*.json)",
                                                   options=options)
         if fileName:
             if '.json' not in fileName:

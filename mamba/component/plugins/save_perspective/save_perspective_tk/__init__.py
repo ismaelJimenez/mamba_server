@@ -25,7 +25,7 @@ class Plugin(PluginBase):
     def process_received_perspectived(self, perspectives_observer):
         perspectives_observer.dispose()
 
-        fileName = asksaveasfilename(title="Save Perspective",
+        fileName = asksaveasfilename(title="Save View",
                                      defaultextension=".json",
                                      filetypes=[("perspective", "*.json")])
         if fileName:

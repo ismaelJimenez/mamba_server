@@ -31,7 +31,7 @@ class Plugin(PluginBase):
         self._app.overrideredirect(1)
         self._app.withdraw()
 
-        fileName = askopenfilename(title="Load Perspective",
+        fileName = askopenfilename(title="Load View",
                                    defaultextension=".json",
                                    filetypes=[("perspective", "*.json")])
 
