@@ -32,6 +32,9 @@ class VisaController(ComponentBase):
         self._service_info: Dict[str, dict] = {}
         self._inst = None
         self._simulation_file = None
+        self._eom_write = '\r\n'
+        self._eom_read = '\n'
+        self._device_encoding = 'ascii'
 
     def _register_observers(self) -> None:
         """ Entry point for registering component observers """
@@ -76,6 +79,21 @@ class VisaController(ComponentBase):
 
         self._topics_format_validation()
         self._visa_sim_file_validation()
+
+        try:
+            self._eom_write = self._configuration['device']['eom']['write']
+        except KeyError:
+            pass
+
+        try:
+            self._eom_read = self._configuration['device']['eom']['read']
+        except KeyError:
+            pass
+
+        try:
+            self._device_encoding = self._configuration['device']['encoding']
+        except KeyError:
+            pass
 
         for key, service_data in self._configuration['topics'].items():
             # Create new service signature dictionary
@@ -137,7 +155,10 @@ class VisaController(ComponentBase):
             self._inst = pyvisa.ResourceManager(
                 f"{self._simulation_file}@sim").open_resource(
                     self._configuration['resource-name'],
-                    read_termination='\n')
+                    read_termination=self._eom_read,
+                    write_termination=self._eom_write)
+
+            self._inst.encoding = self._device_encoding
         else:
             try:
                 self._inst = pyvisa.ResourceManager().open_resource(

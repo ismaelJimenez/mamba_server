@@ -64,6 +64,9 @@ class TestClass:
         assert component._service_info == {}
         assert component._inst is None
         assert component._simulation_file is None
+        assert component._eom_write == '\r\n'
+        assert component._eom_read == '\n'
+        assert component._device_encoding == 'ascii'
 
     def test_w_default_context_component_initialization(self):
         """ Test component initialization behaviour with default context """
@@ -90,6 +93,9 @@ class TestClass:
         assert component._service_info == self.default_service_info
         assert component._inst is None
         assert 'ks_z2091c.yml' in component._simulation_file
+        assert component._eom_write == '\r\n'
+        assert component._eom_read == '\n'
+        assert component._device_encoding == 'ascii'
 
     def test_visa_sim_local_from_project_folder(self):
         """ Test component creation behaviour with default context """
@@ -306,8 +312,7 @@ class TestClass:
 
         # 4 - Test no system errors
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SWITCH_Z2091C_QUERY_SYS_ERR',
-                           type='tm'))
+            ServiceRequest(id='SWITCH_Z2091C_QUERY_SYS_ERR', type='tm'))
 
         time.sleep(.1)
 
@@ -413,8 +418,7 @@ class TestClass:
 
         # 10 - Test no system errors
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SWITCH_Z2091C_QUERY_SYS_ERR',
-                           type='tm'))
+            ServiceRequest(id='SWITCH_Z2091C_QUERY_SYS_ERR', type='tm'))
 
         time.sleep(.1)
 

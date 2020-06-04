@@ -2,6 +2,12 @@ name: switch_matrix
 visa-sim: mock/visa/switch_matrix/ks_34980a.yml
 resource-name: TCPIP0::1.2.3.4::INSTR
 
+device:
+  encoding: utf-8
+  eom:
+    write: "\n"
+    read: "\n"
+
 topics:
   SWITCH_34980A_CONNECT:
     key: '@connect'

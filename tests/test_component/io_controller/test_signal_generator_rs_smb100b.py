@@ -64,6 +64,9 @@ class TestClass:
         assert component._service_info == {}
         assert component._inst is None
         assert component._simulation_file is None
+        assert component._eom_write == '\r\n'
+        assert component._eom_read == '\n'
+        assert component._device_encoding == 'ascii'
 
     def test_w_default_context_component_initialization(self):
         """ Test component initialization behaviour with default context """
@@ -90,6 +93,9 @@ class TestClass:
         assert component._service_info == self.default_service_info
         assert component._inst is None
         assert 'rs_smb100b.yml' in component._simulation_file
+        assert component._eom_write == '\r\n'
+        assert component._eom_read == '\n'
+        assert component._device_encoding == 'ascii'
 
     def test_visa_sim_local_from_project_folder(self):
         """ Test component creation behaviour with default context """
@@ -174,14 +180,14 @@ class TestClass:
         # Test with wrong topics dictionary
         with pytest.raises(ComponentConfigException) as excinfo:
             SignalGeneratorSmb100b(self.context,
-                                 local_config={
-                                     'topics': 'wrong'
-                                 }).initialize()
+                                   local_config={
+                                       'topics': 'wrong'
+                                   }).initialize()
         assert "Topics configuration: wrong format" in str(excinfo.value)
 
         # In case no new topics are given, use the default ones
         component = SignalGeneratorSmb100b(self.context,
-                                         local_config={'topics': {}})
+                                           local_config={'topics': {}})
         component.initialize()
 
         assert component._configuration == self.default_component_config
@@ -189,9 +195,9 @@ class TestClass:
         # Test with missing simulation file
         with pytest.raises(ComponentConfigException) as excinfo:
             SignalGeneratorSmb100b(self.context,
-                                 local_config={
-                                     'visa-sim': 'non-existing'
-                                 }).initialize()
+                                   local_config={
+                                       'visa-sim': 'non-existing'
+                                   }).initialize()
         assert "Visa-sim file has not been found" in str(excinfo.value)
 
         # Test case properties do not have a getter, setter or default
@@ -306,8 +312,7 @@ class TestClass:
 
         # 4 - Test no system errors
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SG_SMB100b_QUERY_SYS_ERR',
-                           type='tm'))
+            ServiceRequest(id='SG_SMB100b_QUERY_SYS_ERR', type='tm'))
 
         time.sleep(.1)
 
@@ -353,7 +358,8 @@ class TestClass:
 
         assert component._shared_memory == {
             'connected': 1,
-            'query_raw_result': 'Rohde&Schwarz,SMB100B,11400.1000K02/0,4.00.033'
+            'query_raw_result':
+            'Rohde&Schwarz,SMB100B,11400.1000K02/0,4.00.033'
         }
 
         assert dummy_test_class.func_1_times_called == 6
@@ -363,8 +369,7 @@ class TestClass:
 
         # 8 - Test shared memory get
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SG_SMB100b_TM_QUERY_RAW', type='tm',
-                           args=[]))
+            ServiceRequest(id='SG_SMB100b_TM_QUERY_RAW', type='tm', args=[]))
 
         time.sleep(.1)
 
@@ -375,9 +380,7 @@ class TestClass:
 
         # 9 - Test special case of msg command with multiple args
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SG_SMB100b_RAW',
-                           type='tc',
-                           args=['OUTP', '1']))
+            ServiceRequest(id='SG_SMB100b_RAW', type='tc', args=['OUTP', '1']))
 
         time.sleep(.1)
 
@@ -399,8 +402,7 @@ class TestClass:
         }
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SG_SMB100b_TM_QUERY_RAW', type='tm',
-                           args=[]))
+            ServiceRequest(id='SG_SMB100b_TM_QUERY_RAW', type='tm', args=[]))
 
         time.sleep(.1)
 
@@ -411,8 +413,7 @@ class TestClass:
 
         # 10 - Test no system errors
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SG_SMB100b_QUERY_SYS_ERR',
-                           type='tm'))
+            ServiceRequest(id='SG_SMB100b_QUERY_SYS_ERR', type='tm'))
 
         time.sleep(.1)
 
@@ -434,8 +435,7 @@ class TestClass:
         assert dummy_test_class.func_1_last_value.value is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SG_SMB100b_QUERY_CONNECTED',
-                           type='tm',
+            ServiceRequest(id='SG_SMB100b_QUERY_CONNECTED', type='tm',
                            args=[]))
 
         time.sleep(.1)
@@ -502,55 +502,55 @@ class TestClass:
     def test_service_invalid_signature(self):
         with pytest.raises(ComponentConfigException) as excinfo:
             SignalGeneratorSmb100b(self.context,
-                                 local_config={
-                                     'topics': {
-                                         'CUSTOM_TOPIC': {
-                                             'command':
-                                             'SOURce:CUSTOM_SCPI {:}',
-                                             'description':
-                                             'Custom command description'
-                                             'frequency',
-                                             'signature': ['String']
-                                         }
-                                     }
-                                 }).initialize()
+                                   local_config={
+                                       'topics': {
+                                           'CUSTOM_TOPIC': {
+                                               'command':
+                                               'SOURce:CUSTOM_SCPI {:}',
+                                               'description':
+                                               'Custom command description'
+                                               'frequency',
+                                               'signature': ['String']
+                                           }
+                                       }
+                                   }).initialize()
 
         assert 'Signature of service "CUSTOM_TOPIC" is invalid. Format shall' \
                ' be [[arg_1, arg_2, ...], return_type]' in str(excinfo.value)
 
         with pytest.raises(ComponentConfigException) as excinfo:
             SignalGeneratorSmb100b(self.context,
-                                 local_config={
-                                     'topics': {
-                                         'CUSTOM_TOPIC': {
-                                             'command':
-                                             'SOURce:CUSTOM_SCPI {:}',
-                                             'description':
-                                             'Custom command description'
-                                             'frequency',
-                                             'signature': ['String', str]
-                                         }
-                                     }
-                                 }).initialize()
+                                   local_config={
+                                       'topics': {
+                                           'CUSTOM_TOPIC': {
+                                               'command':
+                                               'SOURce:CUSTOM_SCPI {:}',
+                                               'description':
+                                               'Custom command description'
+                                               'frequency',
+                                               'signature': ['String', str]
+                                           }
+                                       }
+                                   }).initialize()
 
         assert 'Signature of service "CUSTOM_TOPIC" is invalid. Format shall' \
                ' be [[arg_1, arg_2, ...], return_type]' in str(excinfo.value)
 
         with pytest.raises(ComponentConfigException) as excinfo:
             SignalGeneratorSmb100b(self.context,
-                                 local_config={
-                                     'topics': {
-                                         'CUSTOM_TOPIC': {
-                                             'command':
-                                             'SOURce:CUSTOM_SCPI {:}',
-                                             'description':
-                                             'Custom command description'
-                                             'frequency',
-                                             'signature':
-                                             'String'
-                                         }
-                                     }
-                                 }).initialize()
+                                   local_config={
+                                       'topics': {
+                                           'CUSTOM_TOPIC': {
+                                               'command':
+                                               'SOURce:CUSTOM_SCPI {:}',
+                                               'description':
+                                               'Custom command description'
+                                               'frequency',
+                                               'signature':
+                                               'String'
+                                           }
+                                       }
+                                   }).initialize()
 
         assert 'Signature of service "CUSTOM_TOPIC" is invalid. Format shall' \
                ' be [[arg_1, arg_2, ...], return_type]' in str(excinfo.value)
@@ -566,7 +566,7 @@ class TestClass:
 
         # Test real connection to missing instrument
         component = SignalGeneratorSmb100b(self.context,
-                                         local_config={'visa-sim': None})
+                                           local_config={'visa-sim': None})
         component.initialize()
 
         assert component._inst is None

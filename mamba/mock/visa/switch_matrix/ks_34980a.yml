@@ -4,11 +4,11 @@ devices:
   device 1:
     eom:
       TCPIP INSTR:
-        q: "\r\n"
+        q: "\n"
         r: "\n"
     dialogues:
       - q: "*IDN?"
-        r: "AGILENT TECHNOLOGIES,34980A,XXX"
+        r: "AGILENT TECHNOLOGIES,34980A,12345,1.11–2.22–3.33–4.44"
       - q: "*CLS"
     error:
       error_queue:
