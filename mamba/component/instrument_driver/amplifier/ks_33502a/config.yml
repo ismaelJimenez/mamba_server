@@ -49,7 +49,7 @@ topics:
 
 parameters:
   connected:
-    default: false
+    default: 0
     setter:
       AMP_CONNECT:
       AMP_DISCONNECT:

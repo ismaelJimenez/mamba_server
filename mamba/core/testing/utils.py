@@ -34,11 +34,10 @@ def get_config_dict(config_file):
 
 def compose_service_info(config):
     return {
-        key: {
+        f'{config["name"]}_{key}'.replace(' ', '_').lower(): {
             'description': service_data.get('description') or '',
             'signature': service_data.get('signature') or [[], None],
-            'command': service_data.get('command'),
-            'key': service_data.get('key')
+            'command': service_data.get('command')
         }
         for key, service_data in config['topics'].items()
     }
@@ -53,7 +52,10 @@ def get_io_service_signature(config_info, service_info):
         for key, value in service_info.items()
     }
 
-    return {'provider': config_info['name'], 'services': services_sig}
+    return {
+        'provider': config_info['name'].replace(' ', '_').lower(),
+        'services': services_sig
+    }
 
 
 def get_testenv():

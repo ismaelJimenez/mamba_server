@@ -35,8 +35,9 @@ class App(Frame):
         for service, info in _io_services[self.providerCombo.get()].items():
             if info['signature'][
                     1] is not None and info['signature'][1] != 'None':
-                self.serviceCombo['values'] = (*self.serviceCombo['values'],
-                                               service)
+                self.serviceCombo['values'] = (
+                    *self.serviceCombo['values'],
+                    service[len(self.providerCombo.get()) + 1:])
 
     def CreateUI(self, parent, _io_services):
         label1 = tk.Label(self, text="Provider:")
@@ -99,8 +100,8 @@ class App(Frame):
         self.grid_columnconfigure(0, weight=1)
 
     def _add_button(self, _io_services):
-        service = self.serviceCombo.get()
         provider = self.providerCombo.get()
+        service = f'{provider}_{self.serviceCombo.get()}'
 
         if (service == '') or (provider == ''):
             return
@@ -114,7 +115,7 @@ class App(Frame):
 
         self.treeview.insert('',
                              0,
-                             text=self.serviceCombo.get(),
+                             text=service,
                              values=(description_item, 'N/A', '-', 'N/A'))
         #    log.message, str(log.level),
         #        log.source, str(time.time())))
@@ -214,7 +215,8 @@ class Plugin(PluginBase):
                 providerCombo.currentText()].items():
             if info['signature'][
                     1] is not None and info['signature'][1] != 'None':
-                serviceCombo.addItem(service)
+                serviceCombo.addItem(service[len(providerCombo.currentText()) +
+                                             1:])
 
     def add_service(self, provider, service, services_table):
         pass

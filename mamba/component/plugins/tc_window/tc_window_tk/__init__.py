@@ -29,14 +29,12 @@ class App(Frame):
         self.observed_services = {}
 
     def selected_new_provider(self, _io_services):
-        print("new provider")
-        print(self.providerCombo.get())
-
         self.serviceCombo['values'] = ()
 
         for service, info in _io_services[self.providerCombo.get()].items():
-            self.serviceCombo['values'] = (*self.serviceCombo['values'],
-                                           service)
+            self.serviceCombo['values'] = (
+                *self.serviceCombo['values'],
+                service[len(self.providerCombo.get()) + 1:])
 
     def CreateUI(self, parent, _io_services):
         label1 = tk.Label(self, text="Provider:")
@@ -234,8 +232,8 @@ class App(Frame):
             self.treeview.delete(selected_item)
 
     def _add_button(self, _io_services):
-        service = self.serviceCombo.get()
         provider = self.providerCombo.get()
+        service = f'{provider}_{self.serviceCombo.get()}'
 
         parameters = _io_services[provider][service]['signature'][0]
         num_params = len(parameters)
@@ -253,7 +251,7 @@ class App(Frame):
 
         self.treeview.insert('',
                              0,
-                             text=self.serviceCombo.get(),
+                             text=service,
                              values=(description_item, args[0], args[1],
                                      args[2], args[3]))
         #    log.message, str(log.level),

@@ -100,8 +100,7 @@ class VisaInstrumentDriver(ComponentBase):
             service_dict = {
                 'description': service_data.get('description') or '',
                 'signature': service_data.get('signature') or [[], None],
-                'command': service_data.get('command'),
-                'key': service_data.get('key'),
+                'command': service_data.get('command')
             }
 
             if not isinstance(service_dict['signature'], list) or len(
@@ -112,7 +111,7 @@ class VisaInstrumentDriver(ComponentBase):
                     f' be [[arg_1, arg_2, ...], return_type]')
 
             # Add new service to the component services dictionary
-            self._service_info[key] = service_dict
+            self._service_info[f'{self._name}_{key}'.lower()] = service_dict
 
         # Compose services signature to be published
         services_sig = {
@@ -134,12 +133,14 @@ class VisaInstrumentDriver(ComponentBase):
                 # Compose dict assigning each getter with his memory slot
                 if 'getter' in service_data:
                     for getter, value in service_data['getter'].items():
-                        self._shared_memory_getter[getter] = key
+                        self._shared_memory_getter[
+                            f'{self._name}_{getter}'.lower()] = key
 
                 # Compose dict assigning each setter with his memory slot
                 if 'setter' in service_data:
                     for setter, value in service_data['setter'].items():
-                        self._shared_memory_setter[setter] = key
+                        self._shared_memory_setter[
+                            f'{self._name}_{setter}'.lower()] = key
 
         # Publish services signature
         self._context.rx['io_service_signature'].on_next(io_signatures)
@@ -162,8 +163,7 @@ class VisaInstrumentDriver(ComponentBase):
         else:
             try:
                 self._inst = pyvisa.ResourceManager().open_resource(
-                    self._configuration['address'],
-                    read_termination='\n')
+                    self._configuration['address'], read_termination='\n')
             except (OSError, pyvisa.errors.VisaIOError):
                 result.type = 'error'
                 result.value = 'Instrument is unreachable'
@@ -205,10 +205,9 @@ class VisaInstrumentDriver(ComponentBase):
 
         self._service_preprocessing(service_request, result)
 
-        if self._service_info[service_request.id].get('key') == '@connect':
+        if service_request.id == f'{self._name}_connect':
             self._visa_connect(result)
-        elif self._service_info[service_request.id].get(
-                'key') == '@disconnect':
+        elif service_request.id == f'{self._name}_disconnect':
             self._visa_disconnect(result)
         elif service_request.id in self._shared_memory_getter:
             result.value = self._shared_memory[self._shared_memory_getter[

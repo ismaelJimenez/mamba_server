@@ -246,8 +246,7 @@ class TcpControllerBase(ComponentBase):
             pass
         else:
             send_tcp_tc(
-                self._configuration['address'],
-                self._configuration['tc_port'],
+                self._configuration['address'], self._configuration['tc_port'],
                 self._service_info[service_request.id]['command'].format(
                     *service_request.args), self._eom_q)
 

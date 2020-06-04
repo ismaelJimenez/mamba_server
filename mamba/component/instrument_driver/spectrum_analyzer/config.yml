@@ -40,7 +40,7 @@ topics:
 
 parameters:
   connected:
-    default: false
+    default: 0
     setter:
       FSW_CONNECT:
       FSW_DISCONNECT:

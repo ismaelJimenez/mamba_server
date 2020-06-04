@@ -110,6 +110,7 @@ def get_components(used_components: Dict[str, dict], modules: List[str],
                 f"'{component_name}: missing component property")
 
         if args['component'] in all_components_by_type:
+            args['name'] = component_name
             dict_used_components[component_name] = all_components_by_type[
                 args['component']](context, args)
         else:

@@ -1,4 +1,4 @@
-name: switch_matrix
+name: Keysight 34980a Switch
 visa-sim: mock/visa/switch_matrix/ks_34980a.yml
 address: TCPIP0::1.2.3.4::INSTR
 
@@ -9,173 +9,170 @@ device:
     read: "\n"
 
 topics:
-  SWITCH_34980A_CONNECT:
-    key: '@connect'
+  CONNECT:
     description: Establish Connection with Switch Matrix
 
-  SWITCH_34980A_DISCONNECT:
-    key: '@disconnect'
+  DISCONNECT:
     description: Close connection with Switch Matrix
 
-  SWITCH_34980A_RAW:
+  RAW:
     description: Send a msg command to the instrument
     signature: [[str], None]
     command: '{:}'
 
-  SWITCH_34980A_RST:
+  RST:
     description: Clear status
     command: '*CLS'
 
-  SWITCH_34980A_ROUT_CLOSE:
+  ROUT_CLOSE:
     description: Close channel
     signature: [[channel_id], None]
     command: 'ROUT:CLOS {:}'
 
-  SWITCH_34980A_ROUT_OPEN:
+  ROUT_OPEN:
     description: Open channel
     signature: [[channel_id], None]
     command: 'ROUT:OPEN {:}'
 
-  SWITCH_34980A_ROUT_OPEN_ALL:
+  ROUT_OPEN_ALL:
     description: Open all channels
     signature: [[slot_id], None]
     command: 'ROUT:OPEN:ALL {:}'
 
-  SWITCH_34980A_INIT:
+  INIT:
     description: Initiate the scan
     command: 'INIT'
 
-  SWITCH_34980A_CONF_VOLT:
+  CONF_VOLT:
     description: Configure channel for DC voltage measurements
     signature: [[str], None]
     command: 'CONF:VOLT:DC {:}'
 
-  SWITCH_34980A_CONF_SCAN:
+  CONF_SCAN:
     description: Configure scan list
     signature: [[str], None]
     command: 'ROUT:SCAN {:}'
 
-  SWITCH_34980A_TRACE_ON:
+  TRACE_ON:
     description: Enable channel trace output mode
     signature: [[channel_id], None]
     command: 'SOUR:FUNC:ENAB ON, {:}'
 
-  SWITCH_34980A_TRACE_OFF:
+  TRACE_OFF:
     description: Disable channel trace output mode
     signature: [[channel_id], None]
     command: 'SOUR:FUNC:ENAB OFF, {:}'
 
-  SWITCH_34980A_OUTP_ON:
+  OUTP_ON:
     description: Enable channel output
     signature: [[channel_id], None]
     command: 'OUTP:STAT ON, {:}'
 
-  SWITCH_34980A_OUTP_OFF:
+  OUTP_OFF:
     description: Disable channel output
     signature: [[channel_id], None]
     command: 'OUTP:STAT OFF, {:}'
 
-  SWITCH_34980A_VOLT_OFFS:
+  VOLT_OFFS:
     description: Configure channel voltage offset
     signature: [[channel_id], None]
     command: 'SOUR:FUNC:VOLT:OFFS {:}'
 
-  SWITCH_34980A_VOLT_GAIN:
+  VOLT_GAIN:
     description: Configure channel voltage gain
     signature: [[channel_id], None]
     command: 'SOUR:FUNC:VOLT:GAIN {:}'
 
-  SWITCH_34980A_TRACE_NCYC:
+  TRACE_NCYC:
     description: Configure channel trace cycle count
     signature: [[channel_id], None]
     command: 'SOUR:FUNC:TRAC:NCYC {:}'
 
-  SWITCH_34980A_TRACE_FUNC:
+  TRACE_FUNC:
     description: Configure channel trace function
     signature: [[config], None]
     command: 'TRAC:FUNC {:}'
 
-  SWITCH_34980A_TRACE:
+  TRACE:
     description: Apply trace to channel
     signature: [[channel_id], None]
     command: 'SOUR:FUNC:TRAC {:}'
 
-  SWITCH_34980A_FREQ:
+  FREQ:
     description: Configure channel frequency
     signature: [[channel_id], None]
     command: 'SOUR:FUNC:FREQ {:}'
 
-  SWITCH_34980A_QUERY_SYS_ERR:
+  QUERY_SYS_ERR:
     description: Query the error queue for the oldest item and removes it from the queue
     signature: [[], str]
     command: 'SYST:ERR?'
 
-  SWITCH_34980A_TC_QUERY_RAW:
+  TC_QUERY_RAW:
     description: Perform msg query to the instrument
     signature: [[str], str]
     command: '{:}'
 
-  SWITCH_34980A_QUERY_IDN:
+  QUERY_IDN:
     description: Query the instrument identification
     signature: [[], str]
     command: '*IDN?'
 
-  SWITCH_34980A_QUERY_ROUT_CLOSE:
+  QUERY_ROUT_CLOSE:
     description: Query close state of the channel
     signature: [[channel_id], bool]
     command: 'ROUT:CLOS? {:}'
 
-  SWITCH_34980A_QUERY_ROUT_OPEN:
+  QUERY_ROUT_OPEN:
     description: Query open state of the channel
     signature: [[channel_id], bool]
     command: 'ROUT:OPEN? {:}'
 
-  SWITCH_34980A_QUERY_FETCH:
+  QUERY_FETCH:
     description: Query stored readings from memory
     signature: [[], str]
     command: 'FETCh?'
 
-  SWITCH_34980A_QUERY_VOLT_MEAS:
+  QUERY_VOLT_MEAS:
     description: Query open state of the channel
     signature: [[str], volt]
     command: 'MEASure:VOLTage:DC? {:}'
 
-  SWITCH_34980A_QUERY_CHANNEL_RES:
+  QUERY_CHANNEL_RES:
     description: Query channel resistance
     signature: [[str], ohm]
     command: 'MEAS:RES? {:}'
 
-  SWITCH_34980A_QUERY_TRACE:
+  QUERY_TRACE:
     description: Query the trace output mode
     signature: [[channel_id], None]
     command: 'SOUR:FUNC:ENAB? {:}'
 
-  SWITCH_34980A_TM_QUERY_RAW:
+  TM_QUERY_RAW:
     description: Retrieve the value of the last msg query
     signature: [[], str]
     command: '{:}'
 
-
-  SWITCH_34980A_QUERY_FREQ:
+  QUERY_FREQ:
     description: Query channel frequency
     signature: [[channel_id], None]
     command: 'SOUR:FUNC:FREQ? {:}'
 
-  SWITCH_34980A_QUERY_CONNECTED:
+  QUERY_CONNECTED:
     description: Query the connection status to the instrument
     signature: [[], bool]
 
 parameters:
   connected:
-    default: false
+    default: 0
     setter:
-      SWITCH_34980A_CONNECT:
-      SWITCH_34980A_DISCONNECT:
+      CONNECT:
+      DISCONNECT:
     getter:
-      SWITCH_34980A_QUERY_CONNECTED:
+      QUERY_CONNECTED:
   query_raw_result:
     default: ''
     setter:
-      SWITCH_34980A_TC_QUERY_RAW:
+      TC_QUERY_RAW:
     getter:
-      SWITCH_34980A_TM_QUERY_RAW:
+      TM_QUERY_RAW:

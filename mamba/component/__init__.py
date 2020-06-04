@@ -28,8 +28,9 @@ class ComponentBase:
 
         self._configuration = merge_dicts(local_config, file_config)
 
-        self._name = self._configuration[
-            'name'] if 'name' in self._configuration else ''
+        self._name = (self._configuration['name'] if 'name'
+                      in self._configuration else '').replace(' ',
+                                                              '_').lower()
         self._log_dev = lambda message: self._context.rx['log'].on_next(
             Log(LogLevel.Dev, message, self._name))
         self._log_info = lambda message: self._context.rx['log'].on_next(

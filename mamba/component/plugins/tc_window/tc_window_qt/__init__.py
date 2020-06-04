@@ -56,7 +56,8 @@ class Plugin(PluginBase):
 
         for service, info in self._io_services[
                 providerCombo.currentText()].items():
-            serviceCombo.addItem(service)
+            serviceCombo.addItem(service[len(providerCombo.currentText()) +
+                                         1:])
 
     def call_service(self, service_id, services_table):
         args = []
@@ -185,9 +186,10 @@ class Plugin(PluginBase):
         services_table.verticalHeader().setDragDropMode(
             QAbstractItemView.InternalMove)
 
-        addServiceButton.clicked.connect(
-            lambda: self.add_service(providerCombo.currentText(
-            ), serviceCombo.currentText(), services_table))
+        addServiceButton.clicked.connect(lambda: self.add_service(
+            providerCombo.currentText(
+            ), f'{providerCombo.currentText()}_{serviceCombo.currentText()}',
+            services_table))
 
         mainLayout = QVBoxLayout()
         mainLayout.addLayout(serviceLayout)

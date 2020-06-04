@@ -12,8 +12,8 @@ from mamba.component.instrument_driver.switch_matrix import SwitchMatrixKsZ2091c
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.msg import Empty, ServiceRequest, ServiceResponse
 
-component_path = os.path.join('component', 'instrument_driver', 'switch_matrix',
-                              'ks_z2091c')
+component_path = os.path.join('component', 'instrument_driver',
+                              'switch_matrix', 'ks_z2091c')
 
 
 class TestClass:
@@ -82,13 +82,13 @@ class TestClass:
             'query_raw_result': ''
         }
         assert component._shared_memory_getter == {
-            'SWITCH_Z2091C_QUERY_CONNECTED': 'connected',
-            'SWITCH_Z2091C_TM_QUERY_RAW': 'query_raw_result'
+            'switch_z2091c_query_connected': 'connected',
+            'switch_z2091c_tm_query_raw': 'query_raw_result'
         }
         assert component._shared_memory_setter == {
-            'SWITCH_Z2091C_CONNECT': 'connected',
-            'SWITCH_Z2091C_DISCONNECT': 'connected',
-            'SWITCH_Z2091C_TC_QUERY_RAW': 'query_raw_result'
+            'switch_z2091c_connect': 'connected',
+            'switch_z2091c_disconnect': 'connected',
+            'switch_z2091c_tc_query_raw': 'query_raw_result'
         }
         assert component._service_info == self.default_service_info
         assert component._inst is None
@@ -160,13 +160,13 @@ class TestClass:
             'query_raw_result': ''
         }
         assert component._shared_memory_getter == {
-            'SWITCH_Z2091C_QUERY_CONNECTED': 'connected',
-            'SWITCH_Z2091C_TM_QUERY_RAW': 'query_raw_result'
+            'custom_name_query_connected': 'connected',
+            'custom_name_tm_query_raw': 'query_raw_result'
         }
         assert component._shared_memory_setter == {
-            'SWITCH_Z2091C_CONNECT': 'connected',
-            'SWITCH_Z2091C_DISCONNECT': 'connected',
-            'SWITCH_Z2091C_TC_QUERY_RAW': 'query_raw_result'
+            'custom_name_connect': 'connected',
+            'custom_name_disconnect': 'connected',
+            'custom_name_tc_query_raw': 'query_raw_result'
         }
 
         custom_service_info = compose_service_info(custom_component_config)
@@ -287,12 +287,12 @@ class TestClass:
 
         # 2 - Test generic command before connection to the instrument has been established
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SWITCH_Z2091C_QUERY_IDN', type='tc', args=[]))
+            ServiceRequest(id='switch_z2091c_query_idn', type='tc', args=[]))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 1
-        assert dummy_test_class.func_1_last_value.id == 'SWITCH_Z2091C_QUERY_IDN'
+        assert dummy_test_class.func_1_last_value.id == 'switch_z2091c_query_idn'
         assert dummy_test_class.func_1_last_value.type == 'error'
         assert dummy_test_class.func_1_last_value.value == 'Not possible to perform command before connection is established'
 
@@ -300,46 +300,46 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SWITCH_Z2091C_CONNECT', type='tc', args=[]))
+            ServiceRequest(id='switch_z2091c_connect', type='tc', args=[]))
 
         time.sleep(.1)
 
         assert component._inst is not None
         assert dummy_test_class.func_1_times_called == 2
-        assert dummy_test_class.func_1_last_value.id == 'SWITCH_Z2091C_CONNECT'
+        assert dummy_test_class.func_1_last_value.id == 'switch_z2091c_connect'
         assert dummy_test_class.func_1_last_value.type == 'tc'
         assert dummy_test_class.func_1_last_value.value is None
 
         # 4 - Test no system errors
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SWITCH_Z2091C_QUERY_SYS_ERR', type='tm'))
+            ServiceRequest(id='switch_z2091c_query_sys_err', type='tm'))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 3
-        assert dummy_test_class.func_1_last_value.id == 'SWITCH_Z2091C_QUERY_SYS_ERR'
+        assert dummy_test_class.func_1_last_value.id == 'switch_z2091c_query_sys_err'
         assert dummy_test_class.func_1_last_value.type == 'tm'
         assert dummy_test_class.func_1_last_value.value == '0,_No_Error'
 
         # 5 - Test generic command
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SWITCH_Z2091C_RST', type='tc', args=[1]))
+            ServiceRequest(id='switch_z2091c_rst', type='tc', args=[1]))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 4
-        assert dummy_test_class.func_1_last_value.id == 'SWITCH_Z2091C_RST'
+        assert dummy_test_class.func_1_last_value.id == 'switch_z2091c_rst'
         assert dummy_test_class.func_1_last_value.type == 'tc'
         assert dummy_test_class.func_1_last_value.value is None
 
         # 6 - Test generic query
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SWITCH_Z2091C_QUERY_IDN', type='tm', args=[]))
+            ServiceRequest(id='switch_z2091c_query_idn', type='tm', args=[]))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 5
-        assert dummy_test_class.func_1_last_value.id == 'SWITCH_Z2091C_QUERY_IDN'
+        assert dummy_test_class.func_1_last_value.id == 'switch_z2091c_query_idn'
         assert dummy_test_class.func_1_last_value.type == 'tm'
         assert dummy_test_class.func_1_last_value.value == 'Keysight_Technologies,Z2091C-001,US56400131,1.1.6450.15113'
 
@@ -350,7 +350,7 @@ class TestClass:
         }
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SWITCH_Z2091C_TC_QUERY_RAW',
+            ServiceRequest(id='switch_z2091c_tc_query_raw',
                            type='tc',
                            args=['*IDN?']))
 
@@ -364,37 +364,37 @@ class TestClass:
         }
 
         assert dummy_test_class.func_1_times_called == 6
-        assert dummy_test_class.func_1_last_value.id == 'SWITCH_Z2091C_TC_QUERY_RAW'
+        assert dummy_test_class.func_1_last_value.id == 'switch_z2091c_tc_query_raw'
         assert dummy_test_class.func_1_last_value.type == 'tc'
         assert dummy_test_class.func_1_last_value.value is None
 
         # 8 - Test shared memory get
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SWITCH_Z2091C_TM_QUERY_RAW', type='tm',
+            ServiceRequest(id='switch_z2091c_tm_query_raw', type='tm',
                            args=[]))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 7
-        assert dummy_test_class.func_1_last_value.id == 'SWITCH_Z2091C_TM_QUERY_RAW'
+        assert dummy_test_class.func_1_last_value.id == 'switch_z2091c_tm_query_raw'
         assert dummy_test_class.func_1_last_value.type == 'tm'
         assert dummy_test_class.func_1_last_value.value == 'Keysight_Technologies,Z2091C-001,US56400131,1.1.6450.15113'
 
         # 9 - Test special case of msg command with multiple args
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SWITCH_Z2091C_RAW',
+            ServiceRequest(id='switch_z2091c_raw',
                            type='tc',
                            args=['CONF:DIG:WIDTH', 'WORD,', '(@2001)']))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 8
-        assert dummy_test_class.func_1_last_value.id == 'SWITCH_Z2091C_RAW'
+        assert dummy_test_class.func_1_last_value.id == 'switch_z2091c_raw'
         assert dummy_test_class.func_1_last_value.type == 'tc'
         assert dummy_test_class.func_1_last_value.value is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SWITCH_Z2091C_TC_QUERY_RAW',
+            ServiceRequest(id='switch_z2091c_tc_query_raw',
                            type='tc',
                            args=['CONF:DIG:WIDTH?', '(@2001)']))
 
@@ -406,41 +406,41 @@ class TestClass:
         }
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SWITCH_Z2091C_TM_QUERY_RAW', type='tm',
+            ServiceRequest(id='switch_z2091c_tm_query_raw', type='tm',
                            args=[]))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 10
-        assert dummy_test_class.func_1_last_value.id == 'SWITCH_Z2091C_TM_QUERY_RAW'
+        assert dummy_test_class.func_1_last_value.id == 'switch_z2091c_tm_query_raw'
         assert dummy_test_class.func_1_last_value.type == 'tm'
         assert dummy_test_class.func_1_last_value.value == 'WORD'
 
         # 10 - Test no system errors
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SWITCH_Z2091C_QUERY_SYS_ERR', type='tm'))
+            ServiceRequest(id='switch_z2091c_query_sys_err', type='tm'))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 11
-        assert dummy_test_class.func_1_last_value.id == 'SWITCH_Z2091C_QUERY_SYS_ERR'
+        assert dummy_test_class.func_1_last_value.id == 'switch_z2091c_query_sys_err'
         assert dummy_test_class.func_1_last_value.type == 'tm'
         assert dummy_test_class.func_1_last_value.value == '0,_No_Error'
 
         # 11 - Test disconnection to the instrument
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SWITCH_Z2091C_DISCONNECT', type='tc', args=[]))
+            ServiceRequest(id='switch_z2091c_disconnect', type='tc', args=[]))
 
         time.sleep(.1)
 
         assert component._inst is None
         assert dummy_test_class.func_1_times_called == 12
-        assert dummy_test_class.func_1_last_value.id == 'SWITCH_Z2091C_DISCONNECT'
+        assert dummy_test_class.func_1_last_value.id == 'switch_z2091c_disconnect'
         assert dummy_test_class.func_1_last_value.type == 'tc'
         assert dummy_test_class.func_1_last_value.value is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SWITCH_Z2091C_QUERY_CONNECTED',
+            ServiceRequest(id='switch_z2091c_query_connected',
                            type='tm',
                            args=[]))
 
@@ -448,7 +448,7 @@ class TestClass:
 
         assert component._inst is None
         assert dummy_test_class.func_1_times_called == 13
-        assert dummy_test_class.func_1_last_value.id == 'SWITCH_Z2091C_QUERY_CONNECTED'
+        assert dummy_test_class.func_1_last_value.id == 'switch_z2091c_query_connected'
         assert dummy_test_class.func_1_last_value.type == 'tm'
         assert dummy_test_class.func_1_last_value.value == 0
 
@@ -470,12 +470,12 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SWITCH_Z2091C_CONNECT', type='tc', args=[]))
+            ServiceRequest(id='switch_z2091c_connect', type='tc', args=[]))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 1
-        assert dummy_test_class.func_1_last_value.id == 'SWITCH_Z2091C_CONNECT'
+        assert dummy_test_class.func_1_last_value.id == 'switch_z2091c_connect'
         assert dummy_test_class.func_1_last_value.type == 'tc'
         assert dummy_test_class.func_1_last_value.value is None
 
@@ -495,13 +495,13 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SWITCH_Z2091C_DISCONNECT', type='tc', args=[]))
+            ServiceRequest(id='switch_z2091c_disconnect', type='tc', args=[]))
 
         time.sleep(.1)
 
         assert component._inst is None
         assert dummy_test_class.func_1_times_called == 1
-        assert dummy_test_class.func_1_last_value.id == 'SWITCH_Z2091C_DISCONNECT'
+        assert dummy_test_class.func_1_last_value.id == 'switch_z2091c_disconnect'
         assert dummy_test_class.func_1_last_value.type == 'tc'
         assert dummy_test_class.func_1_last_value.value is None
 
@@ -578,13 +578,13 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SWITCH_Z2091C_CONNECT', type='tc', args=[]))
+            ServiceRequest(id='switch_z2091c_connect', type='tc', args=[]))
 
         time.sleep(.1)
 
         assert component._inst is None
         assert dummy_test_class.func_1_times_called == 1
-        assert dummy_test_class.func_1_last_value.id == 'SWITCH_Z2091C_CONNECT'
+        assert dummy_test_class.func_1_last_value.id == 'switch_z2091c_connect'
         assert dummy_test_class.func_1_last_value.type == 'error'
         assert dummy_test_class.func_1_last_value.value == 'Instrument is unreachable'
 

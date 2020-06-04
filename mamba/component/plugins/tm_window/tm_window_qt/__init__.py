@@ -109,7 +109,8 @@ class Plugin(PluginBase):
                 providerCombo.currentText()].items():
             if info['signature'][
                     1] is not None and info['signature'][1] != 'None':
-                serviceCombo.addItem(service)
+                serviceCombo.addItem(service[len(providerCombo.currentText()) +
+                                             1:])
 
     def add_service(self, provider, service, services_table):
         if (service == '') or (provider == ''):
@@ -203,9 +204,10 @@ class Plugin(PluginBase):
         services_table.verticalHeader().setDragDropMode(
             QAbstractItemView.InternalMove)
 
-        addServiceButton.clicked.connect(
-            lambda: self.add_service(providerCombo.currentText(
-            ), serviceCombo.currentText(), services_table))
+        addServiceButton.clicked.connect(lambda: self.add_service(
+            providerCombo.currentText(
+            ), f'{providerCombo.currentText()}_{serviceCombo.currentText()}',
+            services_table))
 
         mainLayout = QVBoxLayout()
         mainLayout.addLayout(serviceLayout)
