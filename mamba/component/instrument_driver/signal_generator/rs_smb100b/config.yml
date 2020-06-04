@@ -1,94 +1,94 @@
-name: SG_SMB100b
+name: RS SMB100b Signal Gen
 visa-sim: mock/visa/signal_generator/rs_smb100b.yml
 address: TCPIP0::1.2.3.4::INSTR
 
 topics:
-  CONNECT:
+  connect:
     description: Establish Connection with SMB
 
-  DISCONNECT:
+  disconnect:
     description: Close connection with SMB
 
-  RST:
+  rst:
     description: Clear the output buffer
     command: '*CLS'
 
-  RAW:
+  raw:
     description: Send a msg command to the instrument
     signature: [[str], None]
     command: '{:}'
 
-  FREQ_MODE:
+  freq_mode:
     description: Set the frequency mode for generating the RF output signal
     signature: [[str], None]
     command: 'FREQuency:MODE {:}'
 
-  OUT_POWER:
+  out_power:
     description: Set the RF output signal
     signature: [[str], None]
     command: 'OUTP {:}'
 
-  CW_FREQ:
+  cw_freq:
     description: Sets the frequency of the RF output signal
     signature: [[int], None]
     command: 'FREQuency:CW {:}'
 
-  CLOCK_SRC:
+  clock_src:
     description: Sets the source of the reference frequency
     signature: [[str], None]
     command: 'SOURce:ROSCillator:SOURce {:}'
 
-  POWER_LEVEL:
+  power_level:
     description: Sets the RF level applied to the device under tests
     signature: [[float], None]
     command: 'POWer {:}'
 
-  TC_QUERY_RAW:
+  tc_query_raw:
     description: Perform msg query to the instrument
     signature: [[str], str]
     command: '{:}'
 
-  QUERY_IDN:
+  query_idn:
     description: Query the instrument identification
     signature: [[], str]
     command: '*IDN?'
 
-  QUERY_OUT_POWER:
+  query_out_power:
     description: Query the RF output signal
     signature: [[], int]
     command: 'OUTP?'
 
-  QUERY_FREQ_MODE:
+  query_freq_mode:
     description: Query the frequency mode for generating the RF output signal
     signature: [[], str]
     command: 'FREQuency:MODE?'
 
-  QUERY_CW_FREQ:
+  query_cw_freq:
     description: Query the frequency of the RF output signal
     signature: [[], int]
     command: 'FREQuency:CW?'
 
-  QUERY_CLOCK_SRC:
+  query_clock_src:
     description: Query the source of the reference frequency
     signature: [[], str]
     command: 'SOURce:ROSCillator:SOURce?'
 
-  QUERY_POWER_LEVEL:
+  query_power_level:
     description: Query the RF level applied to the device under tests
     signature: [[], float]
     command: 'POWer?'
 
-  QUERY_SYS_ERR:
+  query_sys_err:
     description: Query the error queue for the oldest item and removes it from the queue
     signature: [[], str]
     command: 'SYST:ERR?'
 
-  TM_QUERY_RAW:
+  tm_query_raw:
     description: Retrieve the value of the last msg query
     signature: [[], str]
     command: '{:}'
 
-  QUERY_CONNECTED:
+  query_connected:
     description: Query the connection status to the instrument
     signature: [[], bool]
 
@@ -96,14 +96,14 @@ parameters:
   connected:
     default: 0
     setter:
-      CONNECT:
-      DISCONNECT:
+      connect:
+      disconnect:
     getter:
-      QUERY_CONNECTED:
+      query_connected:
 
   query_raw_result:
     default: ''
     setter:
-      TC_QUERY_RAW:
+      tc_query_raw:
     getter:
-      TM_QUERY_RAW:
+      tm_query_raw:

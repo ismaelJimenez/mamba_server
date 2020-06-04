@@ -1,44 +1,44 @@
-name: SWITCH_Z2091C
+name: Keysight Z2091C Switch
 visa-sim: mock/visa/switch_matrix/ks_z2091c.yml
 address: TCPIP0::1.2.3.4::INSTR
 
 topics:
-  CONNECT:
+  connect:
     description: Establish Connection with Switch Matrix
 
-  DISCONNECT:
+  disconnect:
     description: Close connection with Switch Matrix
 
-  RAW:
+  raw:
     description: Send a msg command to the instrument
     signature: [[str], None]
     command: '{:}'
 
-  RST:
+  rst:
     description: Clear status
     command: '*CLS'
 
-  QUERY_SYS_ERR:
+  query_sys_err:
     description: Query reads and clears one error.
     signature: [[], str]
     command: 'SYST:ERR?'
 
-  TC_QUERY_RAW:
+  tc_query_raw:
     description: Perform msg query to the instrument
     signature: [[str], str]
     command: '{:}'
 
-  TM_QUERY_RAW:
+  tm_query_raw:
     description: Retrieve the value of the last msg query
     signature: [[], str]
     command: '{:}'
 
-  QUERY_IDN:
+  query_idn:
     description: Query the instrument identification
     signature: [[], str]
     command: '*IDN?'
 
-  QUERY_CONNECTED:
+  query_connected:
     description: Query the connection status to the instrument
     signature: [[], bool]
 
@@ -46,14 +46,14 @@ parameters:
   connected:
     default: 0
     setter:
-      CONNECT:
-      DISCONNECT:
+      connect:
+      disconnect:
     getter:
-      QUERY_CONNECTED:
+      query_connected:
 
   query_raw_result:
     default: ''
     setter:
-      TC_QUERY_RAW:
+      tc_query_raw:
     getter:
-      TM_QUERY_RAW:
+      tm_query_raw:
