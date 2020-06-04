@@ -1,6 +1,6 @@
 name: switch_matrix_ks_z2091c
 visa-sim: mock/visa/switch_matrix/ks_z2091c.yml
-resource-name: TCPIP0::1.2.3.4::INSTR
+address: TCPIP0::1.2.3.4::INSTR
 
 topics:
   SWITCH_Z2091C_CONNECT:

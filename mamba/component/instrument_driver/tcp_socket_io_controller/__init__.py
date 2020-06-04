@@ -178,7 +178,7 @@ class TcpControllerBase(ComponentBase):
 
         self._inst_tm_thread = threading.Thread(
             target=ThreadedTmHandler,
-            args=(self._configuration['resource-name'],
+            args=(self._configuration['address'],
                   self._configuration['tm_port'], self._eom_r,
                   self._shared_memory, self._context.rx, self._log_info,
                   self._shared_memory_getter))
@@ -188,12 +188,12 @@ class TcpControllerBase(ComponentBase):
         #     if self._configuration.get('tcp-sim'):
         #         self._inst = pytcp.ResourceManager(
         #             f"{self._simulation_file}@sim").open_resource(
-        #                 self._configuration['resource-name'],
+        #                 self._configuration['address'],
         #                 read_termination='\n')
         #     else:
         #         try:
         #             self._inst = pytcp.ResourceManager().open_resource(
-        #                 self._configuration['resource-name'],
+        #                 self._configuration['address'],
         #                 read_termination='\n')
         #         except (OSError, pytcp.errors.TcpIOError):
         #             result.type = 'error'
@@ -246,7 +246,7 @@ class TcpControllerBase(ComponentBase):
             pass
         else:
             send_tcp_tc(
-                self._configuration['resource-name'],
+                self._configuration['address'],
                 self._configuration['tc_port'],
                 self._service_info[service_request.id]['command'].format(
                     *service_request.args), self._eom_q)

@@ -1,6 +1,6 @@
 name: n5747a
 visa-sim:
-resource-name: TCPIP0::192.168.0.243::INSTR
+address: TCPIP0::192.168.0.243::INSTR
 
 topics:
   PS_CONNECT:

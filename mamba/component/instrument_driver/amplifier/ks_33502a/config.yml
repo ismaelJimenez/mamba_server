@@ -1,6 +1,6 @@
 name: ks_33502a
 visa-sim:
-resource-name: TCPIP0::192.168.0.245::INSTR
+address: TCPIP0::192.168.0.245::INSTR
 
 topics:
   AMP_CONNECT:

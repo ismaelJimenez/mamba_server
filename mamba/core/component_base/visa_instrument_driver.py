@@ -154,7 +154,7 @@ class VisaInstrumentDriver(ComponentBase):
         if self._configuration.get('visa-sim'):
             self._inst = pyvisa.ResourceManager(
                 f"{self._simulation_file}@sim").open_resource(
-                    self._configuration['resource-name'],
+                    self._configuration['address'],
                     read_termination=self._eom_read,
                     write_termination=self._eom_write)
 
@@ -162,7 +162,7 @@ class VisaInstrumentDriver(ComponentBase):
         else:
             try:
                 self._inst = pyvisa.ResourceManager().open_resource(
-                    self._configuration['resource-name'],
+                    self._configuration['address'],
                     read_termination='\n')
             except (OSError, pyvisa.errors.VisaIOError):
                 result.type = 'error'
