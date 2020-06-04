@@ -50,8 +50,8 @@ services:
   shutdown:
     component: shutdown
 
-  rf_signal_generator:
-    component: rf_signal_generator
+  signal_generator:
+    component: rs_smb100b
 
   digitizer:
     component: digitizer

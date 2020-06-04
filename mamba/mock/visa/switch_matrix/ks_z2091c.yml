@@ -9,9 +9,10 @@ devices:
     dialogues:
       - q: "*IDN?"
         r: "Keysight Technologies,Z2091C-001,US56400131,1.1.6450.15113"
+      - q: "*CLS"
     error:
       error_queue:
-        - q: ':SYST:ERR?'
+        - q: 'SYST:ERR?'
           default: '0, No Error'
           command_error: '1, Command error'
     properties:

@@ -304,29 +304,41 @@ class TestClass:
         assert dummy_test_class.func_1_last_value.type == 'tc'
         assert dummy_test_class.func_1_last_value.value is None
 
-        # 4 - Test generic command
+        # 4 - Test no system errors
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(id='SWITCH_34980A_QUERY_SYS_ERR',
+                           type='tm'))
+
+        time.sleep(.1)
+
+        assert dummy_test_class.func_1_times_called == 3
+        assert dummy_test_class.func_1_last_value.id == 'SWITCH_34980A_QUERY_SYS_ERR'
+        assert dummy_test_class.func_1_last_value.type == 'tm'
+        assert dummy_test_class.func_1_last_value.value == '0,_No_Error'
+
+        # 5 - Test generic command
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(id='SWITCH_34980A_RST', type='tc', args=[1]))
 
         time.sleep(.1)
 
-        assert dummy_test_class.func_1_times_called == 3
+        assert dummy_test_class.func_1_times_called == 4
         assert dummy_test_class.func_1_last_value.id == 'SWITCH_34980A_RST'
         assert dummy_test_class.func_1_last_value.type == 'tc'
         assert dummy_test_class.func_1_last_value.value is None
 
-        # 5 - Test generic query
+        # 6 - Test generic query
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(id='SWITCH_34980A_QUERY_IDN', type='tm', args=[]))
 
         time.sleep(.1)
 
-        assert dummy_test_class.func_1_times_called == 4
+        assert dummy_test_class.func_1_times_called == 5
         assert dummy_test_class.func_1_last_value.id == 'SWITCH_34980A_QUERY_IDN'
         assert dummy_test_class.func_1_last_value.type == 'tm'
         assert dummy_test_class.func_1_last_value.value == 'AGILENT_TECHNOLOGIES,34980A,XXX'
 
-        # 6 - Test shared memory set
+        # 7 - Test shared memory set
         assert component._shared_memory == {
             'connected': 1,
             'query_raw_result': ''
@@ -340,30 +352,28 @@ class TestClass:
         time.sleep(.1)
 
         assert component._shared_memory == {
-            'connected':
-            1,
-            'query_raw_result':
-            'AGILENT_TECHNOLOGIES,34980A,XXX'
+            'connected': 1,
+            'query_raw_result': 'AGILENT_TECHNOLOGIES,34980A,XXX'
         }
 
-        assert dummy_test_class.func_1_times_called == 5
+        assert dummy_test_class.func_1_times_called == 6
         assert dummy_test_class.func_1_last_value.id == 'SWITCH_34980A_TC_QUERY_RAW'
         assert dummy_test_class.func_1_last_value.type == 'tc'
         assert dummy_test_class.func_1_last_value.value is None
 
-        # 7 - Test shared memory get
+        # 8 - Test shared memory get
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(id='SWITCH_34980A_TM_QUERY_RAW', type='tm',
                            args=[]))
 
         time.sleep(.1)
 
-        assert dummy_test_class.func_1_times_called == 6
+        assert dummy_test_class.func_1_times_called == 7
         assert dummy_test_class.func_1_last_value.id == 'SWITCH_34980A_TM_QUERY_RAW'
         assert dummy_test_class.func_1_last_value.type == 'tm'
         assert dummy_test_class.func_1_last_value.value == 'AGILENT_TECHNOLOGIES,34980A,XXX'
 
-        # 8 - Test special case of msg command with multiple args
+        # 9 - Test special case of msg command with multiple args
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(id='SWITCH_34980A_RAW',
                            type='tc',
@@ -371,7 +381,7 @@ class TestClass:
 
         time.sleep(.1)
 
-        assert dummy_test_class.func_1_times_called == 7
+        assert dummy_test_class.func_1_times_called == 8
         assert dummy_test_class.func_1_last_value.id == 'SWITCH_34980A_RAW'
         assert dummy_test_class.func_1_last_value.type == 'tc'
         assert dummy_test_class.func_1_last_value.value is None
@@ -394,19 +404,31 @@ class TestClass:
 
         time.sleep(.1)
 
-        assert dummy_test_class.func_1_times_called == 9
+        assert dummy_test_class.func_1_times_called == 10
         assert dummy_test_class.func_1_last_value.id == 'SWITCH_34980A_TM_QUERY_RAW'
         assert dummy_test_class.func_1_last_value.type == 'tm'
         assert dummy_test_class.func_1_last_value.value == '10'
 
-        # 9 - Test disconnection to the instrument
+        # 10 - Test no system errors
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(id='SWITCH_34980A_QUERY_SYS_ERR',
+                           type='tm'))
+
+        time.sleep(.1)
+
+        assert dummy_test_class.func_1_times_called == 11
+        assert dummy_test_class.func_1_last_value.id == 'SWITCH_34980A_QUERY_SYS_ERR'
+        assert dummy_test_class.func_1_last_value.type == 'tm'
+        assert dummy_test_class.func_1_last_value.value == '0,_No_Error'
+
+        # 11 - Test disconnection to the instrument
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(id='SWITCH_34980A_DISCONNECT', type='tc', args=[]))
 
         time.sleep(.1)
 
         assert component._inst is None
-        assert dummy_test_class.func_1_times_called == 10
+        assert dummy_test_class.func_1_times_called == 12
         assert dummy_test_class.func_1_last_value.id == 'SWITCH_34980A_DISCONNECT'
         assert dummy_test_class.func_1_last_value.type == 'tc'
         assert dummy_test_class.func_1_last_value.value is None
@@ -419,7 +441,7 @@ class TestClass:
         time.sleep(.1)
 
         assert component._inst is None
-        assert dummy_test_class.func_1_times_called == 11
+        assert dummy_test_class.func_1_times_called == 13
         assert dummy_test_class.func_1_last_value.id == 'SWITCH_34980A_QUERY_CONNECTED'
         assert dummy_test_class.func_1_last_value.type == 'tm'
         assert dummy_test_class.func_1_last_value.value == 0

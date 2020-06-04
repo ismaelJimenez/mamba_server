@@ -20,6 +20,11 @@ topics:
     description: Clear status
     command: '*CLS'
 
+  SWITCH_Z2091C_QUERY_SYS_ERR:
+    description: Query reads and clears one error.
+    signature: [[], str]
+    command: 'SYST:ERR?'
+
   SWITCH_Z2091C_TC_QUERY_RAW:
     description: Perform msg query to the instrument
     signature: [[str], str]

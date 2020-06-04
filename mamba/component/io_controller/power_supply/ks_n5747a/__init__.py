@@ -1,9 +1,6 @@
 """ Digitizer IO Controller"""
-
 import os
 
-from mamba.core.msg import ServiceRequest,\
-    ServiceResponse
 from mamba.core.component_base import VisaController
 
 

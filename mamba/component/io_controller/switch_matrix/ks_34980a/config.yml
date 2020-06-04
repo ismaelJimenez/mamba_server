@@ -99,6 +99,11 @@ topics:
     signature: [[channel_id], None]
     command: 'SOUR:FUNC:FREQ {:}'
 
+  SWITCH_34980A_QUERY_SYS_ERR:
+    description: Query the error queue for the oldest item and removes it from the queue
+    signature: [[], str]
+    command: 'SYST:ERR?'
+
   SWITCH_34980A_TC_QUERY_RAW:
     description: Perform msg query to the instrument
     signature: [[str], str]

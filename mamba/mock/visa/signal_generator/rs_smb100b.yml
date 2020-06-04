@@ -11,6 +11,13 @@ devices:
     dialogues:
       - q: "*IDN?"
         r: "Rohde&Schwarz,SMB100B,11400.1000K02/0,4.00.033"
+      - q: "*CLS"
+
+    error:
+      error_queue:
+        - q: 'SYST:ERR?'
+          default: '0, No Error'
+          command_error: '1, Command error'
 
     properties:
       output_power_enabled:

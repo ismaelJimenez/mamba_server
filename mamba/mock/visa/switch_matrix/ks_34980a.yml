@@ -9,9 +9,10 @@ devices:
     dialogues:
       - q: "*IDN?"
         r: "AGILENT TECHNOLOGIES,34980A,XXX"
+      - q: "*CLS"
     error:
       error_queue:
-        - q: ':SYST:ERR?'
+        - q: 'SYST:ERR?'
           default: '0, No Error'
           command_error: '1, Command error'
     properties:

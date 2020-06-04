@@ -1,91 +1,96 @@
-name: smb100b
+name: rs_smb100b
 visa-sim: mock/visa/signal_generator/rs_smb100b.yml
 resource-name: TCPIP0::1.2.3.4::INSTR
 
 topics:
-  SMB_CONNECT:
+  SG_SMB100b_CONNECT:
     key: '@connect'
     description: Establish Connection with SMB
 
-  SMB_DISCONNECT:
+  SG_SMB100b_DISCONNECT:
     key: '@disconnect'
     description: Close connection with SMB
 
-  SMB_RST:
+  SG_SMB100b_RST:
     description: Clear the output buffer
     command: '*CLS'
 
-  SMB_RAW:
+  SG_SMB100b_RAW:
     description: Send a msg command to the instrument
     signature: [[str], None]
     command: '{:}'
 
-  SMB_FREQ_MODE:
+  SG_SMB100b_FREQ_MODE:
     description: Set the frequency mode for generating the RF output signal
     signature: [[str], None]
     command: 'FREQuency:MODE {:}'
 
-  SMB_OUT_POWER:
+  SG_SMB100b_OUT_POWER:
     description: Set the RF output signal
     signature: [[str], None]
     command: 'OUTP {:}'
 
-  SMB_CW_FREQ:
+  SG_SMB100b_CW_FREQ:
     description: Sets the frequency of the RF output signal
     signature: [[int], None]
     command: 'FREQuency:CW {:}'
 
-  SMB_CLOCK_SRC:
+  SG_SMB100b_CLOCK_SRC:
     description: Sets the source of the reference frequency
     signature: [[str], None]
     command: 'SOURce:ROSCillator:SOURce {:}'
 
-  SMB_POWER_LEVEL:
+  SG_SMB100b_POWER_LEVEL:
     description: Sets the RF level applied to the device under tests
     signature: [[float], None]
     command: 'POWer {:}'
 
-  SMB_TC_QUERY_RAW:
+  SG_SMB100b_TC_QUERY_RAW:
     description: Perform msg query to the instrument
     signature: [[str], str]
     command: '{:}'
 
-  SMB_QUERY_IDN:
+  SG_SMB100b_QUERY_IDN:
     description: Query the instrument identification
     signature: [[], str]
     command: '*IDN?'
 
-  SMB_QUERY_OUT_POWER:
+  SG_SMB100b_QUERY_OUT_POWER:
     description: Query the RF output signal
     signature: [[], int]
     command: 'OUTP?'
 
-  SMB_QUERY_FREQ_MODE:
+  SG_SMB100b_QUERY_FREQ_MODE:
     description: Query the frequency mode for generating the RF output signal
     signature: [[], str]
     command: 'FREQuency:MODE?'
 
-  SMB_QUERY_CW_FREQ:
+  SG_SMB100b_QUERY_CW_FREQ:
     description: Query the frequency of the RF output signal
     signature: [[], int]
     command: 'FREQuency:CW?'
 
-  SMB_QUERY_CLOCK_SRC:
+  SG_SMB100b_QUERY_CLOCK_SRC:
     description: Query the source of the reference frequency
     signature: [[], str]
     command: 'SOURce:ROSCillator:SOURce?'
 
-  SMB_QUERY_POWER_LEVEL:
+  SG_SMB100b_QUERY_POWER_LEVEL:
     description: Query the RF level applied to the device under tests
     signature: [[], float]
     command: 'POWer?'
 
-  SMB_TM_QUERY_RAW:
+  SG_SMB100b_QUERY_SYS_ERR:
+    description: Query the error queue for the oldest item and removes it from the queue
+    signature: [[], str]
+    command: 'SYST:ERR?'
+
+  SG_SMB100b_TM_QUERY_RAW:
     description: Retrieve the value of the last msg query
     signature: [[], str]
     command: '{:}'
 
-  SMB_QUERY_CONNECTED:
+  SG_SMB100b_QUERY_CONNECTED:
     description: Query the connection status to the instrument
     signature: [[], bool]
 
@@ -93,14 +98,14 @@ parameters:
   connected:
     default: false
     setter:
-      SMB_CONNECT:
-      SMB_DISCONNECT:
+      SG_SMB100b_CONNECT:
+      SG_SMB100b_DISCONNECT:
     getter:
-      SMB_QUERY_CONNECTED:
+      SG_SMB100b_QUERY_CONNECTED:
 
   query_raw_result:
     default: ''
     setter:
-      SMB_TC_QUERY_RAW:
+      SG_SMB100b_TC_QUERY_RAW:
     getter:
-      SMB_TM_QUERY_RAW:
+      SG_SMB100b_TM_QUERY_RAW:
