@@ -6,7 +6,7 @@ import pyvisa
 
 from mamba.core.msg import ServiceRequest,\
     ServiceResponse
-from mamba.core.component_base import VisaController
+from mamba.core.component_base import VisaInstrumentDriver
 
 
 class ThreadedTriggerInHandler:
@@ -26,7 +26,7 @@ class ThreadedTriggerInHandler:
             pass
 
 
-class SpectrumAnalyzer(VisaController):
+class SpectrumAnalyzer(VisaInstrumentDriver):
     """ Digitizer IO Controller class """
     def __init__(self, context, local_config=None):
         super(SpectrumAnalyzer, self).__init__(os.path.dirname(__file__),

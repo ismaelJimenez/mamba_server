@@ -1,13 +1,14 @@
-""" RF Signal Generator IO Controller"""
-from typing import Optional
+""" Digitizer IO Controller"""
+
 import os
+from typing import Optional
 
 from mamba.core.context import Context
-from mamba.core.component_base import VisaController
+from mamba.core.component_base import VisaInstrumentDriver
 
 
-class SignalGeneratorSmb100b(VisaController):
-    """ RF Signal Generator IO Controller class """
+class SwitchMatrixKs34980a(VisaInstrumentDriver):
+    """ Digitizer IO Controller class """
     def __init__(self,
                  context: Context,
                  local_config: Optional[dict] = None) -> None:

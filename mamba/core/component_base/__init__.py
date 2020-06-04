@@ -1,2 +1,2 @@
 from .main_window import MainWindow
-from .visa_io_controller import VisaController
+from .visa_instrument_driver import VisaInstrumentDriver

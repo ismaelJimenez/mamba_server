@@ -8,12 +8,12 @@ from rx import operators as op
 
 from mamba.core.testing.utils import compose_service_info, get_config_dict, CallbackTestClass, get_io_service_signature
 from mamba.core.context import Context
-from mamba.component.io_controller.switch_matrix import SwitchMatrixKsZ2091c
+from mamba.component.instrument_driver.signal_generator import SignalGeneratorSmb100b
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.msg import Empty, ServiceRequest, ServiceResponse
 
-component_path = os.path.join('component', 'io_controller', 'switch_matrix',
-                              'ks_z2091c')
+component_path = os.path.join('component', 'instrument_driver', 'signal_generator',
+                              'rs_smb100b')
 
 
 class TestClass:
@@ -46,13 +46,13 @@ class TestClass:
     def test_wo_context(self):
         """ Test component behaviour without required context """
         with pytest.raises(TypeError) as excinfo:
-            SwitchMatrixKsZ2091c()
+            SignalGeneratorSmb100b()
 
         assert "missing 1 required positional argument" in str(excinfo.value)
 
     def test_w_default_context_component_creation(self):
         """ Test component creation behaviour with default context """
-        component = SwitchMatrixKsZ2091c(self.context)
+        component = SignalGeneratorSmb100b(self.context)
 
         # Test default configuration load
         assert component._configuration == self.default_component_config
@@ -70,7 +70,7 @@ class TestClass:
 
     def test_w_default_context_component_initialization(self):
         """ Test component initialization behaviour with default context """
-        component = SwitchMatrixKsZ2091c(self.context)
+        component = SignalGeneratorSmb100b(self.context)
         component.initialize()
 
         # Test default configuration load
@@ -82,17 +82,17 @@ class TestClass:
             'query_raw_result': ''
         }
         assert component._shared_memory_getter == {
-            'SWITCH_Z2091C_QUERY_CONNECTED': 'connected',
-            'SWITCH_Z2091C_TM_QUERY_RAW': 'query_raw_result'
+            'SG_SMB100b_QUERY_CONNECTED': 'connected',
+            'SG_SMB100b_TM_QUERY_RAW': 'query_raw_result'
         }
         assert component._shared_memory_setter == {
-            'SWITCH_Z2091C_CONNECT': 'connected',
-            'SWITCH_Z2091C_DISCONNECT': 'connected',
-            'SWITCH_Z2091C_TC_QUERY_RAW': 'query_raw_result'
+            'SG_SMB100b_CONNECT': 'connected',
+            'SG_SMB100b_DISCONNECT': 'connected',
+            'SG_SMB100b_TC_QUERY_RAW': 'query_raw_result'
         }
         assert component._service_info == self.default_service_info
         assert component._inst is None
-        assert 'ks_z2091c.yml' in component._simulation_file
+        assert 'rs_smb100b.yml' in component._simulation_file
         assert component._eom_write == '\r\n'
         assert component._eom_read == '\n'
         assert component._device_encoding == 'ascii'
@@ -106,7 +106,7 @@ class TestClass:
 
         os.chdir(temp_file_folder)
 
-        component = SwitchMatrixKsZ2091c(
+        component = SignalGeneratorSmb100b(
             self.context, local_config={'visa-sim': temp_file_name})
         component.initialize()
 
@@ -118,14 +118,14 @@ class TestClass:
         """ Test component creation behaviour with default context """
         os.chdir('/tmp')
 
-        component = SwitchMatrixKsZ2091c(self.context)
+        component = SignalGeneratorSmb100b(self.context)
         component.initialize()
 
-        assert 'ks_z2091c.yml' in component._simulation_file
+        assert 'rs_smb100b.yml' in component._simulation_file
 
     def test_w_custom_context(self):
         """ Test component creation behaviour with default context """
-        component = SwitchMatrixKsZ2091c(
+        component = SignalGeneratorSmb100b(
             self.context,
             local_config={
                 'name': 'custom_name',
@@ -160,13 +160,13 @@ class TestClass:
             'query_raw_result': ''
         }
         assert component._shared_memory_getter == {
-            'SWITCH_Z2091C_QUERY_CONNECTED': 'connected',
-            'SWITCH_Z2091C_TM_QUERY_RAW': 'query_raw_result'
+            'SG_SMB100b_QUERY_CONNECTED': 'connected',
+            'SG_SMB100b_TM_QUERY_RAW': 'query_raw_result'
         }
         assert component._shared_memory_setter == {
-            'SWITCH_Z2091C_CONNECT': 'connected',
-            'SWITCH_Z2091C_DISCONNECT': 'connected',
-            'SWITCH_Z2091C_TC_QUERY_RAW': 'query_raw_result'
+            'SG_SMB100b_CONNECT': 'connected',
+            'SG_SMB100b_DISCONNECT': 'connected',
+            'SG_SMB100b_TC_QUERY_RAW': 'query_raw_result'
         }
 
         custom_service_info = compose_service_info(custom_component_config)
@@ -179,29 +179,29 @@ class TestClass:
 
         # Test with wrong topics dictionary
         with pytest.raises(ComponentConfigException) as excinfo:
-            SwitchMatrixKsZ2091c(self.context,
-                                 local_config={
-                                     'topics': 'wrong'
-                                 }).initialize()
+            SignalGeneratorSmb100b(self.context,
+                                   local_config={
+                                       'topics': 'wrong'
+                                   }).initialize()
         assert "Topics configuration: wrong format" in str(excinfo.value)
 
         # In case no new topics are given, use the default ones
-        component = SwitchMatrixKsZ2091c(self.context,
-                                         local_config={'topics': {}})
+        component = SignalGeneratorSmb100b(self.context,
+                                           local_config={'topics': {}})
         component.initialize()
 
         assert component._configuration == self.default_component_config
 
         # Test with missing simulation file
         with pytest.raises(ComponentConfigException) as excinfo:
-            SwitchMatrixKsZ2091c(self.context,
-                                 local_config={
-                                     'visa-sim': 'non-existing'
-                                 }).initialize()
+            SignalGeneratorSmb100b(self.context,
+                                   local_config={
+                                       'visa-sim': 'non-existing'
+                                   }).initialize()
         assert "Visa-sim file has not been found" in str(excinfo.value)
 
         # Test case properties do not have a getter, setter or default
-        component = SwitchMatrixKsZ2091c(
+        component = SignalGeneratorSmb100b(
             self.context, local_config={'parameters': {
                 'new_param': {}
             }})
@@ -222,7 +222,7 @@ class TestClass:
             op.filter(lambda value: isinstance(value, dict))).subscribe(
                 dummy_test_class.test_func_1)
 
-        component = SwitchMatrixKsZ2091c(self.context)
+        component = SignalGeneratorSmb100b(self.context)
         component.initialize()
 
         time.sleep(.1)
@@ -231,7 +231,7 @@ class TestClass:
         assert dummy_test_class.func_1_last_value == get_io_service_signature(
             self.default_component_config, self.default_service_info)
 
-        component = SwitchMatrixKsZ2091c(
+        component = SignalGeneratorSmb100b(
             self.context,
             local_config={
                 'name': 'custom_name',
@@ -268,7 +268,7 @@ class TestClass:
 
     def test_io_service_request_observer(self):
         """ Test component io_service_request observer """
-        component = SwitchMatrixKsZ2091c(self.context)
+        component = SignalGeneratorSmb100b(self.context)
         component.initialize()
         dummy_test_class = CallbackTestClass()
 
@@ -287,12 +287,12 @@ class TestClass:
 
         # 2 - Test generic command before connection to the instrument has been established
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SWITCH_Z2091C_QUERY_IDN', type='tc', args=[]))
+            ServiceRequest(id='SG_SMB100b_QUERY_IDN', type='tc', args=[]))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 1
-        assert dummy_test_class.func_1_last_value.id == 'SWITCH_Z2091C_QUERY_IDN'
+        assert dummy_test_class.func_1_last_value.id == 'SG_SMB100b_QUERY_IDN'
         assert dummy_test_class.func_1_last_value.type == 'error'
         assert dummy_test_class.func_1_last_value.value == 'Not possible to perform command before connection is established'
 
@@ -300,48 +300,48 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SWITCH_Z2091C_CONNECT', type='tc', args=[]))
+            ServiceRequest(id='SG_SMB100b_CONNECT', type='tc', args=[]))
 
         time.sleep(.1)
 
         assert component._inst is not None
         assert dummy_test_class.func_1_times_called == 2
-        assert dummy_test_class.func_1_last_value.id == 'SWITCH_Z2091C_CONNECT'
+        assert dummy_test_class.func_1_last_value.id == 'SG_SMB100b_CONNECT'
         assert dummy_test_class.func_1_last_value.type == 'tc'
         assert dummy_test_class.func_1_last_value.value is None
 
         # 4 - Test no system errors
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SWITCH_Z2091C_QUERY_SYS_ERR', type='tm'))
+            ServiceRequest(id='SG_SMB100b_QUERY_SYS_ERR', type='tm'))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 3
-        assert dummy_test_class.func_1_last_value.id == 'SWITCH_Z2091C_QUERY_SYS_ERR'
+        assert dummy_test_class.func_1_last_value.id == 'SG_SMB100b_QUERY_SYS_ERR'
         assert dummy_test_class.func_1_last_value.type == 'tm'
         assert dummy_test_class.func_1_last_value.value == '0,_No_Error'
 
         # 5 - Test generic command
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SWITCH_Z2091C_RST', type='tc', args=[1]))
+            ServiceRequest(id='SG_SMB100b_RST', type='tc', args=[1]))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 4
-        assert dummy_test_class.func_1_last_value.id == 'SWITCH_Z2091C_RST'
+        assert dummy_test_class.func_1_last_value.id == 'SG_SMB100b_RST'
         assert dummy_test_class.func_1_last_value.type == 'tc'
         assert dummy_test_class.func_1_last_value.value is None
 
         # 6 - Test generic query
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SWITCH_Z2091C_QUERY_IDN', type='tm', args=[]))
+            ServiceRequest(id='SG_SMB100b_QUERY_IDN', type='tm', args=[]))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 5
-        assert dummy_test_class.func_1_last_value.id == 'SWITCH_Z2091C_QUERY_IDN'
+        assert dummy_test_class.func_1_last_value.id == 'SG_SMB100b_QUERY_IDN'
         assert dummy_test_class.func_1_last_value.type == 'tm'
-        assert dummy_test_class.func_1_last_value.value == 'Keysight_Technologies,Z2091C-001,US56400131,1.1.6450.15113'
+        assert dummy_test_class.func_1_last_value.value == 'Rohde&Schwarz,SMB100B,11400.1000K02/0,4.00.033'
 
         # 7 - Test shared memory set
         assert component._shared_memory == {
@@ -350,105 +350,99 @@ class TestClass:
         }
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SWITCH_Z2091C_TC_QUERY_RAW',
+            ServiceRequest(id='SG_SMB100b_TC_QUERY_RAW',
                            type='tc',
                            args=['*IDN?']))
 
         time.sleep(.1)
 
         assert component._shared_memory == {
-            'connected':
-            1,
+            'connected': 1,
             'query_raw_result':
-            'Keysight_Technologies,Z2091C-001,US56400131,1.1.6450.15113'
+            'Rohde&Schwarz,SMB100B,11400.1000K02/0,4.00.033'
         }
 
         assert dummy_test_class.func_1_times_called == 6
-        assert dummy_test_class.func_1_last_value.id == 'SWITCH_Z2091C_TC_QUERY_RAW'
+        assert dummy_test_class.func_1_last_value.id == 'SG_SMB100b_TC_QUERY_RAW'
         assert dummy_test_class.func_1_last_value.type == 'tc'
         assert dummy_test_class.func_1_last_value.value is None
 
         # 8 - Test shared memory get
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SWITCH_Z2091C_TM_QUERY_RAW', type='tm',
-                           args=[]))
+            ServiceRequest(id='SG_SMB100b_TM_QUERY_RAW', type='tm', args=[]))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 7
-        assert dummy_test_class.func_1_last_value.id == 'SWITCH_Z2091C_TM_QUERY_RAW'
+        assert dummy_test_class.func_1_last_value.id == 'SG_SMB100b_TM_QUERY_RAW'
         assert dummy_test_class.func_1_last_value.type == 'tm'
-        assert dummy_test_class.func_1_last_value.value == 'Keysight_Technologies,Z2091C-001,US56400131,1.1.6450.15113'
+        assert dummy_test_class.func_1_last_value.value == 'Rohde&Schwarz,SMB100B,11400.1000K02/0,4.00.033'
 
         # 9 - Test special case of msg command with multiple args
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SWITCH_Z2091C_RAW',
-                           type='tc',
-                           args=['CONF:DIG:WIDTH', 'WORD,', '(@2001)']))
+            ServiceRequest(id='SG_SMB100b_RAW', type='tc', args=['OUTP', '1']))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 8
-        assert dummy_test_class.func_1_last_value.id == 'SWITCH_Z2091C_RAW'
+        assert dummy_test_class.func_1_last_value.id == 'SG_SMB100b_RAW'
         assert dummy_test_class.func_1_last_value.type == 'tc'
         assert dummy_test_class.func_1_last_value.value is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SWITCH_Z2091C_TC_QUERY_RAW',
+            ServiceRequest(id='SG_SMB100b_TC_QUERY_RAW',
                            type='tc',
-                           args=['CONF:DIG:WIDTH?', '(@2001)']))
+                           args=['OUTP?']))
 
         time.sleep(.1)
 
         assert component._shared_memory == {
             'connected': 1,
-            'query_raw_result': 'WORD'
+            'query_raw_result': '1'
         }
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SWITCH_Z2091C_TM_QUERY_RAW', type='tm',
-                           args=[]))
+            ServiceRequest(id='SG_SMB100b_TM_QUERY_RAW', type='tm', args=[]))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 10
-        assert dummy_test_class.func_1_last_value.id == 'SWITCH_Z2091C_TM_QUERY_RAW'
+        assert dummy_test_class.func_1_last_value.id == 'SG_SMB100b_TM_QUERY_RAW'
         assert dummy_test_class.func_1_last_value.type == 'tm'
-        assert dummy_test_class.func_1_last_value.value == 'WORD'
+        assert dummy_test_class.func_1_last_value.value == '1'
 
         # 10 - Test no system errors
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SWITCH_Z2091C_QUERY_SYS_ERR', type='tm'))
+            ServiceRequest(id='SG_SMB100b_QUERY_SYS_ERR', type='tm'))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 11
-        assert dummy_test_class.func_1_last_value.id == 'SWITCH_Z2091C_QUERY_SYS_ERR'
+        assert dummy_test_class.func_1_last_value.id == 'SG_SMB100b_QUERY_SYS_ERR'
         assert dummy_test_class.func_1_last_value.type == 'tm'
         assert dummy_test_class.func_1_last_value.value == '0,_No_Error'
 
         # 11 - Test disconnection to the instrument
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SWITCH_Z2091C_DISCONNECT', type='tc', args=[]))
+            ServiceRequest(id='SG_SMB100b_DISCONNECT', type='tc', args=[]))
 
         time.sleep(.1)
 
         assert component._inst is None
         assert dummy_test_class.func_1_times_called == 12
-        assert dummy_test_class.func_1_last_value.id == 'SWITCH_Z2091C_DISCONNECT'
+        assert dummy_test_class.func_1_last_value.id == 'SG_SMB100b_DISCONNECT'
         assert dummy_test_class.func_1_last_value.type == 'tc'
         assert dummy_test_class.func_1_last_value.value is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SWITCH_Z2091C_QUERY_CONNECTED',
-                           type='tm',
+            ServiceRequest(id='SG_SMB100b_QUERY_CONNECTED', type='tm',
                            args=[]))
 
         time.sleep(.1)
 
         assert component._inst is None
         assert dummy_test_class.func_1_times_called == 13
-        assert dummy_test_class.func_1_last_value.id == 'SWITCH_Z2091C_QUERY_CONNECTED'
+        assert dummy_test_class.func_1_last_value.id == 'SG_SMB100b_QUERY_CONNECTED'
         assert dummy_test_class.func_1_last_value.type == 'tm'
         assert dummy_test_class.func_1_last_value.value == 0
 
@@ -462,7 +456,7 @@ class TestClass:
                     dummy_test_class.test_func_1)
 
         # Test simulated normal connection to the instrument
-        component = SwitchMatrixKsZ2091c(
+        component = SignalGeneratorSmb100b(
             self.context,
             local_config={'resource-name': 'TCPIP0::4.3.2.1::INSTR'})
         component.initialize()
@@ -470,12 +464,12 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SWITCH_Z2091C_CONNECT', type='tc', args=[]))
+            ServiceRequest(id='SG_SMB100b_CONNECT', type='tc', args=[]))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 1
-        assert dummy_test_class.func_1_last_value.id == 'SWITCH_Z2091C_CONNECT'
+        assert dummy_test_class.func_1_last_value.id == 'SG_SMB100b_CONNECT'
         assert dummy_test_class.func_1_last_value.type == 'tc'
         assert dummy_test_class.func_1_last_value.value is None
 
@@ -489,74 +483,74 @@ class TestClass:
                     dummy_test_class.test_func_1)
 
         # Test real connection to missing instrument
-        component = SwitchMatrixKsZ2091c(self.context)
+        component = SignalGeneratorSmb100b(self.context)
         component.initialize()
 
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SWITCH_Z2091C_DISCONNECT', type='tc', args=[]))
+            ServiceRequest(id='SG_SMB100b_DISCONNECT', type='tc', args=[]))
 
         time.sleep(.1)
 
         assert component._inst is None
         assert dummy_test_class.func_1_times_called == 1
-        assert dummy_test_class.func_1_last_value.id == 'SWITCH_Z2091C_DISCONNECT'
+        assert dummy_test_class.func_1_last_value.id == 'SG_SMB100b_DISCONNECT'
         assert dummy_test_class.func_1_last_value.type == 'tc'
         assert dummy_test_class.func_1_last_value.value is None
 
     def test_service_invalid_signature(self):
         with pytest.raises(ComponentConfigException) as excinfo:
-            SwitchMatrixKsZ2091c(self.context,
-                                 local_config={
-                                     'topics': {
-                                         'CUSTOM_TOPIC': {
-                                             'command':
-                                             'SOURce:CUSTOM_SCPI {:}',
-                                             'description':
-                                             'Custom command description'
-                                             'frequency',
-                                             'signature': ['String']
-                                         }
-                                     }
-                                 }).initialize()
+            SignalGeneratorSmb100b(self.context,
+                                   local_config={
+                                       'topics': {
+                                           'CUSTOM_TOPIC': {
+                                               'command':
+                                               'SOURce:CUSTOM_SCPI {:}',
+                                               'description':
+                                               'Custom command description'
+                                               'frequency',
+                                               'signature': ['String']
+                                           }
+                                       }
+                                   }).initialize()
 
         assert 'Signature of service "CUSTOM_TOPIC" is invalid. Format shall' \
                ' be [[arg_1, arg_2, ...], return_type]' in str(excinfo.value)
 
         with pytest.raises(ComponentConfigException) as excinfo:
-            SwitchMatrixKsZ2091c(self.context,
-                                 local_config={
-                                     'topics': {
-                                         'CUSTOM_TOPIC': {
-                                             'command':
-                                             'SOURce:CUSTOM_SCPI {:}',
-                                             'description':
-                                             'Custom command description'
-                                             'frequency',
-                                             'signature': ['String', str]
-                                         }
-                                     }
-                                 }).initialize()
+            SignalGeneratorSmb100b(self.context,
+                                   local_config={
+                                       'topics': {
+                                           'CUSTOM_TOPIC': {
+                                               'command':
+                                               'SOURce:CUSTOM_SCPI {:}',
+                                               'description':
+                                               'Custom command description'
+                                               'frequency',
+                                               'signature': ['String', str]
+                                           }
+                                       }
+                                   }).initialize()
 
         assert 'Signature of service "CUSTOM_TOPIC" is invalid. Format shall' \
                ' be [[arg_1, arg_2, ...], return_type]' in str(excinfo.value)
 
         with pytest.raises(ComponentConfigException) as excinfo:
-            SwitchMatrixKsZ2091c(self.context,
-                                 local_config={
-                                     'topics': {
-                                         'CUSTOM_TOPIC': {
-                                             'command':
-                                             'SOURce:CUSTOM_SCPI {:}',
-                                             'description':
-                                             'Custom command description'
-                                             'frequency',
-                                             'signature':
-                                             'String'
-                                         }
-                                     }
-                                 }).initialize()
+            SignalGeneratorSmb100b(self.context,
+                                   local_config={
+                                       'topics': {
+                                           'CUSTOM_TOPIC': {
+                                               'command':
+                                               'SOURce:CUSTOM_SCPI {:}',
+                                               'description':
+                                               'Custom command description'
+                                               'frequency',
+                                               'signature':
+                                               'String'
+                                           }
+                                       }
+                                   }).initialize()
 
         assert 'Signature of service "CUSTOM_TOPIC" is invalid. Format shall' \
                ' be [[arg_1, arg_2, ...], return_type]' in str(excinfo.value)
@@ -571,20 +565,20 @@ class TestClass:
                     dummy_test_class.test_func_1)
 
         # Test real connection to missing instrument
-        component = SwitchMatrixKsZ2091c(self.context,
-                                         local_config={'visa-sim': None})
+        component = SignalGeneratorSmb100b(self.context,
+                                           local_config={'visa-sim': None})
         component.initialize()
 
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='SWITCH_Z2091C_CONNECT', type='tc', args=[]))
+            ServiceRequest(id='SG_SMB100b_CONNECT', type='tc', args=[]))
 
         time.sleep(.1)
 
         assert component._inst is None
         assert dummy_test_class.func_1_times_called == 1
-        assert dummy_test_class.func_1_last_value.id == 'SWITCH_Z2091C_CONNECT'
+        assert dummy_test_class.func_1_last_value.id == 'SG_SMB100b_CONNECT'
         assert dummy_test_class.func_1_last_value.type == 'error'
         assert dummy_test_class.func_1_last_value.value == 'Instrument is unreachable'
 
@@ -596,7 +590,7 @@ class TestClass:
             def close(self):
                 self.called = True
 
-        component = SwitchMatrixKsZ2091c(self.context)
+        component = SignalGeneratorSmb100b(self.context)
         component.initialize()
 
         # Test quit while on load window
