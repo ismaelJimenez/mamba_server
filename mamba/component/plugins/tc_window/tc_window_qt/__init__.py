@@ -8,7 +8,7 @@ from PySide2.QtWidgets import QLabel, QWidget, QApplication, QComboBox, \
     QHBoxLayout, QMdiSubWindow, QPushButton, QTableWidget, QMenu, QVBoxLayout,\
     QAbstractItemView, QTableWidgetItem
 from PySide2.QtCore import Qt
-from PySide2.QtGui import QIcon, QCursor
+from PySide2.QtGui import QIcon, QCursor, QFont
 
 from mamba.component.plugins import PluginBase
 from mamba.component.gui.msg import RunAction
@@ -81,6 +81,10 @@ class Plugin(PluginBase):
         services_table.insertRow(0)
 
         service_btn = QPushButton(service)
+        bold_font = QFont()
+        bold_font.setBold(True)
+        service_btn.setFont(bold_font)
+
         service_btn.clicked.connect(
             lambda: self.call_service(service, services_table))
 
