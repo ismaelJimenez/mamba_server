@@ -3,38 +3,36 @@ visa-sim: mock/visa/spectrum_analyzer/rs_fsw.yml
 address: TCPIP0::1.2.3.4::INSTR
 
 topics:
-  FSW_CONNECT:
-    key: '@connect'
+  connect:
     description: Establish Connection with Digitizer
 
-  FSW_DISCONNECT:
-    key: '@disconnect'
+  disconnect:
     description: Close connection with Digitizer
 
-  FSW_RAW:
+  raw:
     description: Send a msg command to the instrument
     signature: [[str], None]
     command: '{:}'
 
-  FSW_TRIGGER_OUT:
+  trigger_out:
     description: Sets the source of the reference frequency
     signature: [[], None]
     command: 'OUTP:TRIG2:PULS:IMM'
 
-  FSW_QUERY_IDN:
+  query_idn:
     description: Query the instrument identification
     signature: [[], str]
     command: '*IDN?'
 
-  FSW_TC_QUERY_TRIGGER_IN:
+  tc_query_trigger_in:
     description: Query the connection status to the instrument
     signature: [[int], bool]
 
-  FSW_TM_QUERY_TRIGGER_IN:
+  tm_query_trigger_in:
     description: Query the instrument identification
     signature: [[], bool]
 
-  FSW_QUERY_CONNECTED:
+  query_connected:
     description: Query the connection status to the instrument
     signature: [[], bool]
 
@@ -42,14 +40,14 @@ parameters:
   connected:
     default: 0
     setter:
-      FSW_CONNECT:
-      FSW_DISCONNECT:
+      connect:
+      disconnect:
     getter:
-      FSW_QUERY_CONNECTED:
+      query_connected:
 
   query_trigger_in:
     default: 1
     setter:
-      FSW_TC_QUERY_TRIGGER_IN:
+      tc_query_trigger_in:
     getter:
-      FSW_TM_QUERY_TRIGGER_IN:
+      tm_query_trigger_in:

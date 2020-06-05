@@ -2,16 +2,18 @@
 spec: "1.0"
 devices:
   device 1:
-
     eom:
       TCPIP INSTR:
         q: "\r\n"
         r: "\n"
-
     dialogues:
       - q: "*IDN?"
         r: "Keysight Technologies, M8131A, SN XXXX"
-
+    error:
+      error_queue:
+        - q: 'SYST:ERR?'
+          default: '0, No Error'
+          command_error: '1, Command error'
     properties:
         clock_reference:
           default: 'INT'

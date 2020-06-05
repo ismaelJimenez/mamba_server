@@ -3,45 +3,43 @@ visa-sim: mock/visa/digitizer/ks_m8131a.yml
 address: TCPIP0::1.2.3.4::INSTR
 
 topics:
-  DIGITIZER_CONNECT:
-    key: '@connect'
+  connect:
     description: Establish Connection with Digitizer
 
-  DIGITIZER_DISCONNECT:
-    key: '@disconnect'
+  disconnect:
     description: Close connection with Digitizer
 
-  DIGITIZER_RAW:
+  raw:
     description: Send a msg command to the instrument
     signature: [[str], None]
     command: '{:}'
 
-  DIGITIZER_CLOCK_SRC:
+  clock_src:
     description: Sets the source of the reference frequency
     signature: [[str], None]
     command: ':TIMebase:REFClock {:}'
 
-  DIGITIZER_TC_QUERY_RAW:
+  tc_query_raw:
     description: Perform msg query to the instrument
     signature: [[str], str]
     command: '{:}'
 
-  DIGITIZER_QUERY_IDN:
+  query_idn:
     description: Query the instrument identification
     signature: [[], str]
     command: '*IDN?'
 
-  DIGITIZER_QUERY_CLOCK_SRC:
+  query_clock_src:
     description: Query the source of the reference frequency
     signature: [[], str]
     command: ':TIMebase:REFClock?'
 
-  DIGITIZER_TM_QUERY_RAW:
+  tm_query_raw:
     description: Retrieve the value of the last msg query
     signature: [[], str]
     command: '{:}'
 
-  DIGITIZER_QUERY_CONNECTED:
+  query_connected:
     description: Query the connection status to the instrument
     signature: [[], bool]
 
@@ -49,14 +47,14 @@ parameters:
   connected:
     default: 0
     setter:
-      DIGITIZER_CONNECT:
-      DIGITIZER_DISCONNECT:
+      connect:
+      disconnect:
     getter:
-      DIGITIZER_QUERY_CONNECTED:
+      query_connected:
 
   query_raw_result:
     default: ''
     setter:
-      DIGITIZER_TC_QUERY_RAW:
+      tc_query_raw:
     getter:
-      DIGITIZER_TM_QUERY_RAW:
+      tm_query_raw:
