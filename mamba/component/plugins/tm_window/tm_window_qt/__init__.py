@@ -165,6 +165,7 @@ class Plugin(PluginBase):
     def _new_window(self, perspective):
         window = QMdiSubWindow()
         self._context.rx['register_window'].on_next(window)
+        window.setWindowTitle('Parameter Getter')
 
         child = QWidget()
         providerLabel = QLabel("Provider:")
