@@ -76,9 +76,11 @@ class Driver(ComponentBase):
         ).subscribe(on_next=self._process_io_result)
 
         self._context.rx['io_service_request'].on_next(
-            ServiceRequest(id=telecommand.id,
-                           type=telecommand.type,
-                           args=telecommand.args))
+            ServiceRequest(
+                provider=self._io_services[telecommand.id]['provider'],
+                id=self._io_services[telecommand.id]['parameter_id'],
+                type=telecommand.type,
+                args=telecommand.args))
 
     def _received_tc(self, telecommand: ServiceRequest):
         """ Entry point for processing a new telecommand coming from the
@@ -87,7 +89,11 @@ class Driver(ComponentBase):
             Args:
                 telecommand: The telecommand coming from the socket translator.
         """
+        if telecommand.provider is not None:
+            telecommand.id = f'{telecommand.provider}_{telecommand.id}'
+
         self._log_dev(f'Received TC: {telecommand.id}')
+
         if (telecommand.id
                 not in self._io_services) and (telecommand.type != 'helo'):
             self._generate_error_tm(telecommand, 'Not recognized command')
@@ -115,13 +121,9 @@ class Driver(ComponentBase):
             Args:
                 signatures: The io service signatures dictionary.
         """
-        new_signatures = [key for key, value in signatures['services'].items()]
-        self._log_info(f"Received signatures: {new_signatures}")
-
-        for new_signature in new_signatures:
-            if new_signature in self._io_services:
-                raise ComponentConfigException(
-                    f"Received conflicting service key: {new_signature}")
+        self._log_info(
+            f"Received signatures from {signatures['provider']}: {str(signatures['services'])}"
+        )
 
         for key, value in signatures['services'].items():
             if not isinstance(value.get('signature'), list) or len(
@@ -131,4 +133,11 @@ class Driver(ComponentBase):
                     f'Signature of service "{key}" is invalid. Format shall'
                     f' be [[arg_1, arg_2, ...], return_type]')
 
-        self._io_services.update(signatures['services'])
+            parameter_id = f'{signatures["provider"]}_{key}'
+            if parameter_id in self._io_services:
+                raise ComponentConfigException(
+                    f"Received conflicting parameter key: {parameter_id}")
+
+            value['provider'] = signatures['provider']
+            value['parameter_id'] = key
+            self._io_services[parameter_id] = value

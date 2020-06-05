@@ -34,7 +34,7 @@ def get_config_dict(config_file):
 
 def compose_service_info(config):
     return {
-        f'{config["name"]}_{key}'.replace(' ', '_').lower(): {
+        key.replace(' ', '_').lower(): {
             'description': service_data.get('description') or '',
             'signature': service_data.get('signature') or [[], None],
             'command': service_data.get('command')

@@ -83,10 +83,13 @@ class Plugin(PluginBase):
 
     def _process_io_result(self, rx_value: ServiceResponse):
         print('IO RESULT')
+
+        parameter_text = f'{rx_value.provider} -> {rx_value.id}'
+
         for table in self._service_tables:
             for row in range(0, table.rowCount()):
                 service_id = table.item(table.visualRow(row), 0).text()
-                if service_id == rx_value.id:
+                if service_id == parameter_text:
                     table.item(table.visualRow(row),
                                2).setText(str(rx_value.value))
                     table.item(table.visualRow(row),
@@ -109,8 +112,7 @@ class Plugin(PluginBase):
                 providerCombo.currentText()].items():
             if info['signature'][
                     1] is not None and info['signature'][1] != 'None':
-                serviceCombo.addItem(service[len(providerCombo.currentText()) +
-                                             1:])
+                serviceCombo.addItem(service)
 
     def add_service(self, provider, service, services_table):
         if (service == '') or (provider == ''):
@@ -123,7 +125,11 @@ class Plugin(PluginBase):
 
         services_table.insertRow(0)
 
-        service_item = QTableWidgetItem(service)
+        service_item = QTableWidgetItem(f'{provider} -> {service}')
+        bold_font = QFont()
+        bold_font.setBold(True)
+        service_item.setFont(bold_font)
+
         service_item.setFlags(Qt.ItemIsEnabled)
 
         description_item = QTableWidgetItem(
@@ -180,6 +186,7 @@ class Plugin(PluginBase):
         providerCombo.currentTextChanged.connect(
             lambda: self.generate_service_combobox(providerCombo, serviceCombo
                                                    ))
+        self.generate_service_combobox(providerCombo, serviceCombo)
 
         addServiceButton = QPushButton("Add")
         addServiceButton.setAutoDefault(False)
@@ -205,10 +212,9 @@ class Plugin(PluginBase):
         services_table.verticalHeader().setDragDropMode(
             QAbstractItemView.InternalMove)
 
-        addServiceButton.clicked.connect(lambda: self.add_service(
-            providerCombo.currentText(
-            ), f'{providerCombo.currentText()}_{serviceCombo.currentText()}',
-            services_table))
+        addServiceButton.clicked.connect(
+            lambda: self.add_service(providerCombo.currentText(
+            ), serviceCombo.currentText(), services_table))
 
         mainLayout = QVBoxLayout()
         mainLayout.addLayout(serviceLayout)

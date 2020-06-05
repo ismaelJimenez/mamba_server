@@ -56,14 +56,15 @@ class Plugin(PluginBase):
 
         for service, info in self._io_services[
                 providerCombo.currentText()].items():
-            serviceCombo.addItem(service[len(providerCombo.currentText()) +
-                                         1:])
+            serviceCombo.addItem(service)
 
-    def call_service(self, service_id, services_table):
+    def call_service(self, provider_id, service_id, services_table):
         args = []
 
+        parameter_text = f'{provider_id} -> {service_id}'
+
         for row in range(0, services_table.rowCount()):
-            if services_table.cellWidget(row, 0).text() == service_id:
+            if services_table.cellWidget(row, 0).text() == parameter_text:
                 for param_index in range(2, 6):
                     param = services_table.item(row, param_index).text()
                     if (param == '-') or (param == ''):
@@ -72,7 +73,10 @@ class Plugin(PluginBase):
                         args.append(param)
 
         self._context.rx['tc'].on_next(
-            ServiceRequest(id=service_id, args=args, type='set'))
+            ServiceRequest(provider=provider_id,
+                           id=service_id,
+                           args=args,
+                           type='set'))
 
     def add_service(self, provider, service, services_table):
         parameters = self._io_services[provider][service]['signature'][0]
@@ -80,13 +84,13 @@ class Plugin(PluginBase):
 
         services_table.insertRow(0)
 
-        service_btn = QPushButton(service)
+        service_btn = QPushButton(f'{provider} -> {service}')
         bold_font = QFont()
         bold_font.setBold(True)
         service_btn.setFont(bold_font)
 
         service_btn.clicked.connect(
-            lambda: self.call_service(service, services_table))
+            lambda: self.call_service(provider, service, services_table))
 
         description_item = QTableWidgetItem(
             self._io_services[provider][service]['description'])
@@ -165,6 +169,7 @@ class Plugin(PluginBase):
         providerCombo.currentTextChanged.connect(
             lambda: self.generate_service_combobox(providerCombo, serviceCombo
                                                    ))
+        self.generate_service_combobox(providerCombo, serviceCombo)
 
         addServiceButton = QPushButton("Add")
         addServiceButton.setAutoDefault(False)
@@ -191,10 +196,9 @@ class Plugin(PluginBase):
         services_table.verticalHeader().setDragDropMode(
             QAbstractItemView.InternalMove)
 
-        addServiceButton.clicked.connect(lambda: self.add_service(
-            providerCombo.currentText(
-            ), f'{providerCombo.currentText()}_{serviceCombo.currentText()}',
-            services_table))
+        addServiceButton.clicked.connect(
+            lambda: self.add_service(providerCombo.currentText(
+            ), serviceCombo.currentText(), services_table))
 
         mainLayout = QVBoxLayout()
         mainLayout.addLayout(serviceLayout)

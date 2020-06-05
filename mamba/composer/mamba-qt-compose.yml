@@ -47,8 +47,8 @@ services:
 
   # IO Controllers
 
-  shutdown:
-    component: shutdown
+#  shutdown:
+#    component: shutdown
 
   signal_generator:
     component: rs_smb100b
@@ -56,8 +56,8 @@ services:
   digitizer:
     component: digitizer
 
-  tcp_socket_io_controller:
-    component: tcp_socket_io_controller
+#  tcp_socket_io_controller:
+#    component: tcp_socket_io_controller
 
   spectrum_analyzer:
     component: spectrum_analyzer

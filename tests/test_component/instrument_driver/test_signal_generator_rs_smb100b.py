@@ -82,13 +82,13 @@ class TestClass:
             'query_raw_result': ''
         }
         assert component._shared_memory_getter == {
-            'rs_smb100b_signal_gen_query_connected': 'connected',
-            'rs_smb100b_signal_gen_tm_query_raw': 'query_raw_result'
+            'query_connected': 'connected',
+            'tm_query_raw': 'query_raw_result'
         }
         assert component._shared_memory_setter == {
-            'rs_smb100b_signal_gen_connect': 'connected',
-            'rs_smb100b_signal_gen_disconnect': 'connected',
-            'rs_smb100b_signal_gen_tc_query_raw': 'query_raw_result'
+            'connect': 'connected',
+            'disconnect': 'connected',
+            'tc_query_raw': 'query_raw_result'
         }
         assert component._service_info == self.default_service_info
         assert component._inst is None
@@ -160,13 +160,13 @@ class TestClass:
             'query_raw_result': ''
         }
         assert component._shared_memory_getter == {
-            'custom_name_query_connected': 'connected',
-            'custom_name_tm_query_raw': 'query_raw_result'
+            'query_connected': 'connected',
+            'tm_query_raw': 'query_raw_result'
         }
         assert component._shared_memory_setter == {
-            'custom_name_connect': 'connected',
-            'custom_name_disconnect': 'connected',
-            'custom_name_tc_query_raw': 'query_raw_result'
+            'connect': 'connected',
+            'disconnect': 'connected',
+            'tc_query_raw': 'query_raw_result'
         }
 
         custom_service_info = compose_service_info(custom_component_config)
@@ -280,21 +280,34 @@ class TestClass:
 
         # 1 - Test that component only gets activated for implemented services
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='NOT_EXISTING', type='any', args=[]))
+            ServiceRequest(provider='rs_smb100b_signal_gen',
+                           id='NOT_EXISTING',
+                           type='any',
+                           args=[]))
+
+        assert dummy_test_class.func_1_times_called == 0
+        assert dummy_test_class.func_1_last_value is None
+
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='NOT_EXISTING',
+                           id='connect',
+                           type='any',
+                           args=[]))
 
         assert dummy_test_class.func_1_times_called == 0
         assert dummy_test_class.func_1_last_value is None
 
         # 2 - Test generic command before connection to the instrument has been established
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='rs_smb100b_signal_gen_query_idn',
+            ServiceRequest(provider='rs_smb100b_signal_gen',
+                           id='query_idn',
                            type='set',
                            args=[]))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 1
-        assert dummy_test_class.func_1_last_value.id == 'rs_smb100b_signal_gen_query_idn'
+        assert dummy_test_class.func_1_last_value.id == 'query_idn'
         assert dummy_test_class.func_1_last_value.type == 'error'
         assert dummy_test_class.func_1_last_value.value == 'Not possible to perform command before connection is established'
 
@@ -302,7 +315,8 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='rs_smb100b_signal_gen_connect',
+            ServiceRequest(provider='rs_smb100b_signal_gen',
+                           id='connect',
                            type='set',
                            args=[]))
 
@@ -310,44 +324,48 @@ class TestClass:
 
         assert component._inst is not None
         assert dummy_test_class.func_1_times_called == 2
-        assert dummy_test_class.func_1_last_value.id == 'rs_smb100b_signal_gen_connect'
+        assert dummy_test_class.func_1_last_value.id == 'connect'
         assert dummy_test_class.func_1_last_value.type == 'set'
         assert dummy_test_class.func_1_last_value.value is None
 
         # 4 - Test no system errors
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='rs_smb100b_signal_gen_query_sys_err',
+            ServiceRequest(provider='rs_smb100b_signal_gen',
+                           id='query_sys_err',
                            type='get'))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 3
-        assert dummy_test_class.func_1_last_value.id == 'rs_smb100b_signal_gen_query_sys_err'
+        assert dummy_test_class.func_1_last_value.id == 'query_sys_err'
         assert dummy_test_class.func_1_last_value.type == 'get'
         assert dummy_test_class.func_1_last_value.value == '0,_No_Error'
 
         # 5 - Test generic command
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='rs_smb100b_signal_gen_rst', type='set',
+            ServiceRequest(provider='rs_smb100b_signal_gen',
+                           id='rst',
+                           type='set',
                            args=[1]))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 4
-        assert dummy_test_class.func_1_last_value.id == 'rs_smb100b_signal_gen_rst'
+        assert dummy_test_class.func_1_last_value.id == 'rst'
         assert dummy_test_class.func_1_last_value.type == 'set'
         assert dummy_test_class.func_1_last_value.value is None
 
         # 6 - Test generic query
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='rs_smb100b_signal_gen_query_idn',
+            ServiceRequest(provider='rs_smb100b_signal_gen',
+                           id='query_idn',
                            type='get',
                            args=[]))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 5
-        assert dummy_test_class.func_1_last_value.id == 'rs_smb100b_signal_gen_query_idn'
+        assert dummy_test_class.func_1_last_value.id == 'query_idn'
         assert dummy_test_class.func_1_last_value.type == 'get'
         assert dummy_test_class.func_1_last_value.value == 'Rohde&Schwarz,SMB100B,11400.1000K02/0,4.00.033'
 
@@ -358,7 +376,8 @@ class TestClass:
         }
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='rs_smb100b_signal_gen_tc_query_raw',
+            ServiceRequest(provider='rs_smb100b_signal_gen',
+                           id='tc_query_raw',
                            type='set',
                            args=['*IDN?']))
 
@@ -371,38 +390,41 @@ class TestClass:
         }
 
         assert dummy_test_class.func_1_times_called == 6
-        assert dummy_test_class.func_1_last_value.id == 'rs_smb100b_signal_gen_tc_query_raw'
+        assert dummy_test_class.func_1_last_value.id == 'tc_query_raw'
         assert dummy_test_class.func_1_last_value.type == 'set'
         assert dummy_test_class.func_1_last_value.value is None
 
         # 8 - Test shared memory get
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='rs_smb100b_signal_gen_tm_query_raw',
+            ServiceRequest(provider='rs_smb100b_signal_gen',
+                           id='tm_query_raw',
                            type='get',
                            args=[]))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 7
-        assert dummy_test_class.func_1_last_value.id == 'rs_smb100b_signal_gen_tm_query_raw'
+        assert dummy_test_class.func_1_last_value.id == 'tm_query_raw'
         assert dummy_test_class.func_1_last_value.type == 'get'
         assert dummy_test_class.func_1_last_value.value == 'Rohde&Schwarz,SMB100B,11400.1000K02/0,4.00.033'
 
         # 9 - Test special case of msg command with multiple args
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='rs_smb100b_signal_gen_raw',
+            ServiceRequest(provider='rs_smb100b_signal_gen',
+                           id='raw',
                            type='set',
                            args=['OUTP', '1']))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 8
-        assert dummy_test_class.func_1_last_value.id == 'rs_smb100b_signal_gen_raw'
+        assert dummy_test_class.func_1_last_value.id == 'raw'
         assert dummy_test_class.func_1_last_value.type == 'set'
         assert dummy_test_class.func_1_last_value.value is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='rs_smb100b_signal_gen_tc_query_raw',
+            ServiceRequest(provider='rs_smb100b_signal_gen',
+                           id='tc_query_raw',
                            type='set',
                            args=['OUTP?']))
 
@@ -414,32 +436,35 @@ class TestClass:
         }
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='rs_smb100b_signal_gen_tm_query_raw',
+            ServiceRequest(provider='rs_smb100b_signal_gen',
+                           id='tm_query_raw',
                            type='get',
                            args=[]))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 10
-        assert dummy_test_class.func_1_last_value.id == 'rs_smb100b_signal_gen_tm_query_raw'
+        assert dummy_test_class.func_1_last_value.id == 'tm_query_raw'
         assert dummy_test_class.func_1_last_value.type == 'get'
         assert dummy_test_class.func_1_last_value.value == '1'
 
         # 10 - Test no system errors
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='rs_smb100b_signal_gen_query_sys_err',
+            ServiceRequest(provider='rs_smb100b_signal_gen',
+                           id='query_sys_err',
                            type='get'))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 11
-        assert dummy_test_class.func_1_last_value.id == 'rs_smb100b_signal_gen_query_sys_err'
+        assert dummy_test_class.func_1_last_value.id == 'query_sys_err'
         assert dummy_test_class.func_1_last_value.type == 'get'
         assert dummy_test_class.func_1_last_value.value == '0,_No_Error'
 
         # 11 - Test disconnection to the instrument
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='rs_smb100b_signal_gen_disconnect',
+            ServiceRequest(provider='rs_smb100b_signal_gen',
+                           id='disconnect',
                            type='set',
                            args=[]))
 
@@ -447,12 +472,13 @@ class TestClass:
 
         assert component._inst is None
         assert dummy_test_class.func_1_times_called == 12
-        assert dummy_test_class.func_1_last_value.id == 'rs_smb100b_signal_gen_disconnect'
+        assert dummy_test_class.func_1_last_value.id == 'disconnect'
         assert dummy_test_class.func_1_last_value.type == 'set'
         assert dummy_test_class.func_1_last_value.value is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='rs_smb100b_signal_gen_query_connected',
+            ServiceRequest(provider='rs_smb100b_signal_gen',
+                           id='query_connected',
                            type='get',
                            args=[]))
 
@@ -460,7 +486,7 @@ class TestClass:
 
         assert component._inst is None
         assert dummy_test_class.func_1_times_called == 13
-        assert dummy_test_class.func_1_last_value.id == 'rs_smb100b_signal_gen_query_connected'
+        assert dummy_test_class.func_1_last_value.id == 'query_connected'
         assert dummy_test_class.func_1_last_value.type == 'get'
         assert dummy_test_class.func_1_last_value.value == 0
 
@@ -482,14 +508,15 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='rs_smb100b_signal_gen_connect',
+            ServiceRequest(provider='rs_smb100b_signal_gen',
+                           id='connect',
                            type='set',
                            args=[]))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 1
-        assert dummy_test_class.func_1_last_value.id == 'rs_smb100b_signal_gen_connect'
+        assert dummy_test_class.func_1_last_value.id == 'connect'
         assert dummy_test_class.func_1_last_value.type == 'set'
         assert dummy_test_class.func_1_last_value.value is None
 
@@ -509,7 +536,8 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='rs_smb100b_signal_gen_disconnect',
+            ServiceRequest(provider='rs_smb100b_signal_gen',
+                           id='disconnect',
                            type='set',
                            args=[]))
 
@@ -517,7 +545,7 @@ class TestClass:
 
         assert component._inst is None
         assert dummy_test_class.func_1_times_called == 1
-        assert dummy_test_class.func_1_last_value.id == 'rs_smb100b_signal_gen_disconnect'
+        assert dummy_test_class.func_1_last_value.id == 'disconnect'
         assert dummy_test_class.func_1_last_value.type == 'set'
         assert dummy_test_class.func_1_last_value.value is None
 
@@ -594,7 +622,8 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='rs_smb100b_signal_gen_connect',
+            ServiceRequest(provider='rs_smb100b_signal_gen',
+                           id='connect',
                            type='set',
                            args=[]))
 
@@ -602,7 +631,7 @@ class TestClass:
 
         assert component._inst is None
         assert dummy_test_class.func_1_times_called == 1
-        assert dummy_test_class.func_1_last_value.id == 'rs_smb100b_signal_gen_connect'
+        assert dummy_test_class.func_1_last_value.id == 'connect'
         assert dummy_test_class.func_1_last_value.type == 'error'
         assert dummy_test_class.func_1_last_value.value == 'Instrument is unreachable'
 
