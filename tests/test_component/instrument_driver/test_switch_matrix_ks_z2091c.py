@@ -287,7 +287,9 @@ class TestClass:
 
         # 2 - Test generic command before connection to the instrument has been established
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='keysight_z2091c_switch_query_idn', type='tc', args=[]))
+            ServiceRequest(id='keysight_z2091c_switch_query_idn',
+                           type='tc',
+                           args=[]))
 
         time.sleep(.1)
 
@@ -300,7 +302,9 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='keysight_z2091c_switch_connect', type='tc', args=[]))
+            ServiceRequest(id='keysight_z2091c_switch_connect',
+                           type='tc',
+                           args=[]))
 
         time.sleep(.1)
 
@@ -312,7 +316,8 @@ class TestClass:
 
         # 4 - Test no system errors
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='keysight_z2091c_switch_query_sys_err', type='tm'))
+            ServiceRequest(id='keysight_z2091c_switch_query_sys_err',
+                           type='tm'))
 
         time.sleep(.1)
 
@@ -323,7 +328,9 @@ class TestClass:
 
         # 5 - Test generic command
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='keysight_z2091c_switch_rst', type='tc', args=[1]))
+            ServiceRequest(id='keysight_z2091c_switch_rst',
+                           type='tc',
+                           args=[1]))
 
         time.sleep(.1)
 
@@ -334,7 +341,9 @@ class TestClass:
 
         # 6 - Test generic query
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='keysight_z2091c_switch_query_idn', type='tm', args=[]))
+            ServiceRequest(id='keysight_z2091c_switch_query_idn',
+                           type='tm',
+                           args=[]))
 
         time.sleep(.1)
 
@@ -370,7 +379,8 @@ class TestClass:
 
         # 8 - Test shared memory get
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='keysight_z2091c_switch_tm_query_raw', type='tm',
+            ServiceRequest(id='keysight_z2091c_switch_tm_query_raw',
+                           type='tm',
                            args=[]))
 
         time.sleep(.1)
@@ -406,7 +416,8 @@ class TestClass:
         }
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='keysight_z2091c_switch_tm_query_raw', type='tm',
+            ServiceRequest(id='keysight_z2091c_switch_tm_query_raw',
+                           type='tm',
                            args=[]))
 
         time.sleep(.1)
@@ -418,7 +429,8 @@ class TestClass:
 
         # 10 - Test no system errors
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='keysight_z2091c_switch_query_sys_err', type='tm'))
+            ServiceRequest(id='keysight_z2091c_switch_query_sys_err',
+                           type='tm'))
 
         time.sleep(.1)
 
@@ -429,7 +441,9 @@ class TestClass:
 
         # 11 - Test disconnection to the instrument
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='keysight_z2091c_switch_disconnect', type='tc', args=[]))
+            ServiceRequest(id='keysight_z2091c_switch_disconnect',
+                           type='tc',
+                           args=[]))
 
         time.sleep(.1)
 
@@ -470,7 +484,9 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='keysight_z2091c_switch_connect', type='tc', args=[]))
+            ServiceRequest(id='keysight_z2091c_switch_connect',
+                           type='tc',
+                           args=[]))
 
         time.sleep(.1)
 
@@ -495,7 +511,9 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='keysight_z2091c_switch_disconnect', type='tc', args=[]))
+            ServiceRequest(id='keysight_z2091c_switch_disconnect',
+                           type='tc',
+                           args=[]))
 
         time.sleep(.1)
 
@@ -578,7 +596,9 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(id='keysight_z2091c_switch_connect', type='tc', args=[]))
+            ServiceRequest(id='keysight_z2091c_switch_connect',
+                           type='tc',
+                           args=[]))
 
         time.sleep(.1)
 
