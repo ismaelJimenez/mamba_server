@@ -72,7 +72,7 @@ class Plugin(PluginBase):
                         args.append(param)
 
         self._context.rx['tc'].on_next(
-            ServiceRequest(id=service_id, args=args, type='tc'))
+            ServiceRequest(id=service_id, args=args, type='set'))
 
     def add_service(self, provider, service, services_table):
         parameters = self._io_services[provider][service]['signature'][0]

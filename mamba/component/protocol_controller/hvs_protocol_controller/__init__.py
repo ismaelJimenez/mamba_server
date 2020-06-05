@@ -93,9 +93,9 @@ class Driver(ComponentBase):
             self._generate_error_tm(telecommand, 'Not recognized command')
             return
 
-        if telecommand.type in ['helo', 'tc_meta', 'tm_meta']:
+        if telecommand.type in ['helo', 'set_meta', 'get_meta']:
             self._generate_tm(telecommand)
-        elif telecommand.type in ['tc', 'tm']:
+        elif telecommand.type in ['set', 'get']:
             self._generate_io_service_request(telecommand)
         else:
             self._generate_error_tm(telecommand, 'Not recognized command type')

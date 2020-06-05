@@ -288,7 +288,7 @@ class TestClass:
         # 2 - Test generic command before connection to the instrument has been established
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(id='keysight_z2091c_switch_query_idn',
-                           type='tc',
+                           type='set',
                            args=[]))
 
         time.sleep(.1)
@@ -303,7 +303,7 @@ class TestClass:
 
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(id='keysight_z2091c_switch_connect',
-                           type='tc',
+                           type='set',
                            args=[]))
 
         time.sleep(.1)
@@ -311,45 +311,45 @@ class TestClass:
         assert component._inst is not None
         assert dummy_test_class.func_1_times_called == 2
         assert dummy_test_class.func_1_last_value.id == 'keysight_z2091c_switch_connect'
-        assert dummy_test_class.func_1_last_value.type == 'tc'
+        assert dummy_test_class.func_1_last_value.type == 'set'
         assert dummy_test_class.func_1_last_value.value is None
 
         # 4 - Test no system errors
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(id='keysight_z2091c_switch_query_sys_err',
-                           type='tm'))
+                           type='get'))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 3
         assert dummy_test_class.func_1_last_value.id == 'keysight_z2091c_switch_query_sys_err'
-        assert dummy_test_class.func_1_last_value.type == 'tm'
+        assert dummy_test_class.func_1_last_value.type == 'get'
         assert dummy_test_class.func_1_last_value.value == '0,_No_Error'
 
         # 5 - Test generic command
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(id='keysight_z2091c_switch_rst',
-                           type='tc',
+                           type='set',
                            args=[1]))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 4
         assert dummy_test_class.func_1_last_value.id == 'keysight_z2091c_switch_rst'
-        assert dummy_test_class.func_1_last_value.type == 'tc'
+        assert dummy_test_class.func_1_last_value.type == 'set'
         assert dummy_test_class.func_1_last_value.value is None
 
         # 6 - Test generic query
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(id='keysight_z2091c_switch_query_idn',
-                           type='tm',
+                           type='get',
                            args=[]))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 5
         assert dummy_test_class.func_1_last_value.id == 'keysight_z2091c_switch_query_idn'
-        assert dummy_test_class.func_1_last_value.type == 'tm'
+        assert dummy_test_class.func_1_last_value.type == 'get'
         assert dummy_test_class.func_1_last_value.value == 'Keysight_Technologies,Z2091C-001,US56400131,1.1.6450.15113'
 
         # 7 - Test shared memory set
@@ -360,7 +360,7 @@ class TestClass:
 
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(id='keysight_z2091c_switch_tc_query_raw',
-                           type='tc',
+                           type='set',
                            args=['*IDN?']))
 
         time.sleep(.1)
@@ -374,38 +374,38 @@ class TestClass:
 
         assert dummy_test_class.func_1_times_called == 6
         assert dummy_test_class.func_1_last_value.id == 'keysight_z2091c_switch_tc_query_raw'
-        assert dummy_test_class.func_1_last_value.type == 'tc'
+        assert dummy_test_class.func_1_last_value.type == 'set'
         assert dummy_test_class.func_1_last_value.value is None
 
         # 8 - Test shared memory get
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(id='keysight_z2091c_switch_tm_query_raw',
-                           type='tm',
+                           type='get',
                            args=[]))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 7
         assert dummy_test_class.func_1_last_value.id == 'keysight_z2091c_switch_tm_query_raw'
-        assert dummy_test_class.func_1_last_value.type == 'tm'
+        assert dummy_test_class.func_1_last_value.type == 'get'
         assert dummy_test_class.func_1_last_value.value == 'Keysight_Technologies,Z2091C-001,US56400131,1.1.6450.15113'
 
         # 9 - Test special case of msg command with multiple args
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(id='keysight_z2091c_switch_raw',
-                           type='tc',
+                           type='set',
                            args=['CONF:DIG:WIDTH', 'WORD,', '(@2001)']))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 8
         assert dummy_test_class.func_1_last_value.id == 'keysight_z2091c_switch_raw'
-        assert dummy_test_class.func_1_last_value.type == 'tc'
+        assert dummy_test_class.func_1_last_value.type == 'set'
         assert dummy_test_class.func_1_last_value.value is None
 
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(id='keysight_z2091c_switch_tc_query_raw',
-                           type='tc',
+                           type='set',
                            args=['CONF:DIG:WIDTH?', '(@2001)']))
 
         time.sleep(.1)
@@ -417,32 +417,32 @@ class TestClass:
 
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(id='keysight_z2091c_switch_tm_query_raw',
-                           type='tm',
+                           type='get',
                            args=[]))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 10
         assert dummy_test_class.func_1_last_value.id == 'keysight_z2091c_switch_tm_query_raw'
-        assert dummy_test_class.func_1_last_value.type == 'tm'
+        assert dummy_test_class.func_1_last_value.type == 'get'
         assert dummy_test_class.func_1_last_value.value == 'WORD'
 
         # 10 - Test no system errors
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(id='keysight_z2091c_switch_query_sys_err',
-                           type='tm'))
+                           type='get'))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 11
         assert dummy_test_class.func_1_last_value.id == 'keysight_z2091c_switch_query_sys_err'
-        assert dummy_test_class.func_1_last_value.type == 'tm'
+        assert dummy_test_class.func_1_last_value.type == 'get'
         assert dummy_test_class.func_1_last_value.value == '0,_No_Error'
 
         # 11 - Test disconnection to the instrument
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(id='keysight_z2091c_switch_disconnect',
-                           type='tc',
+                           type='set',
                            args=[]))
 
         time.sleep(.1)
@@ -450,12 +450,12 @@ class TestClass:
         assert component._inst is None
         assert dummy_test_class.func_1_times_called == 12
         assert dummy_test_class.func_1_last_value.id == 'keysight_z2091c_switch_disconnect'
-        assert dummy_test_class.func_1_last_value.type == 'tc'
+        assert dummy_test_class.func_1_last_value.type == 'set'
         assert dummy_test_class.func_1_last_value.value is None
 
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(id='keysight_z2091c_switch_query_connected',
-                           type='tm',
+                           type='get',
                            args=[]))
 
         time.sleep(.1)
@@ -463,7 +463,7 @@ class TestClass:
         assert component._inst is None
         assert dummy_test_class.func_1_times_called == 13
         assert dummy_test_class.func_1_last_value.id == 'keysight_z2091c_switch_query_connected'
-        assert dummy_test_class.func_1_last_value.type == 'tm'
+        assert dummy_test_class.func_1_last_value.type == 'get'
         assert dummy_test_class.func_1_last_value.value == 0
 
     def test_connection_visa_sim_wrong_instrument_address(self):
@@ -485,14 +485,14 @@ class TestClass:
 
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(id='keysight_z2091c_switch_connect',
-                           type='tc',
+                           type='set',
                            args=[]))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 1
         assert dummy_test_class.func_1_last_value.id == 'keysight_z2091c_switch_connect'
-        assert dummy_test_class.func_1_last_value.type == 'tc'
+        assert dummy_test_class.func_1_last_value.type == 'set'
         assert dummy_test_class.func_1_last_value.value is None
 
     def test_disconnection_w_no_connection(self):
@@ -512,7 +512,7 @@ class TestClass:
 
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(id='keysight_z2091c_switch_disconnect',
-                           type='tc',
+                           type='set',
                            args=[]))
 
         time.sleep(.1)
@@ -520,7 +520,7 @@ class TestClass:
         assert component._inst is None
         assert dummy_test_class.func_1_times_called == 1
         assert dummy_test_class.func_1_last_value.id == 'keysight_z2091c_switch_disconnect'
-        assert dummy_test_class.func_1_last_value.type == 'tc'
+        assert dummy_test_class.func_1_last_value.type == 'set'
         assert dummy_test_class.func_1_last_value.value is None
 
     def test_service_invalid_signature(self):
@@ -597,7 +597,7 @@ class TestClass:
 
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(id='keysight_z2091c_switch_connect',
-                           type='tc',
+                           type='set',
                            args=[]))
 
         time.sleep(.1)
