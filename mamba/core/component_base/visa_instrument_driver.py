@@ -22,6 +22,11 @@ class Instrument:
                 'Missing address in Instrument Configuration')
 
         self.visa_sim = inst_config.get('visa_sim')
+        self.encoding = inst_config.get('encoding') or 'ascii'
+        self.terminator_write = inst_config.get('terminator',
+                                                {}).get('write') or '\r\n'
+        self.terminator_read = inst_config.get('terminator',
+                                               {}).get('read') or '\n'
 
 
 class VisaInstrumentDriver(ComponentBase):
@@ -45,9 +50,6 @@ class VisaInstrumentDriver(ComponentBase):
         self._service_info: Dict[str, dict] = {}
         self._inst = None
         self._simulation_file = None
-        self._eom_write = '\r\n'
-        self._eom_read = '\n'
-        self._device_encoding = 'ascii'
 
     def _register_observers(self) -> None:
         """ Entry point for registering component observers """
@@ -91,21 +93,6 @@ class VisaInstrumentDriver(ComponentBase):
 
         self._topics_format_validation()
         self._visa_sim_file_validation()
-
-        try:
-            self._eom_write = self._configuration['device']['eom']['write']
-        except KeyError:
-            pass
-
-        try:
-            self._eom_read = self._configuration['device']['eom']['read']
-        except KeyError:
-            pass
-
-        try:
-            self._device_encoding = self._configuration['device']['encoding']
-        except KeyError:
-            pass
 
         for key, service_data in self._configuration['topics'].items():
             # Create new service signature dictionary
@@ -166,10 +153,10 @@ class VisaInstrumentDriver(ComponentBase):
             self._inst = pyvisa.ResourceManager(
                 f"{self._simulation_file}@sim").open_resource(
                     self._instrument.address,
-                    read_termination=self._eom_read,
-                    write_termination=self._eom_write)
+                    read_termination=self._instrument.terminator_read,
+                    write_termination=self._instrument.terminator_write)
 
-            self._inst.encoding = self._device_encoding
+            self._inst.encoding = self._instrument.encoding
         else:
             try:
                 self._inst = pyvisa.ResourceManager().open_resource(

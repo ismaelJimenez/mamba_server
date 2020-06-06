@@ -3,12 +3,9 @@ name: Keysight 34980a Switch
 instrument:
   visa_sim: mock/visa/switch_matrix/ks_34980a.yml
   address: TCPIP0::1.2.3.4::INSTR
-
-device:
   encoding: utf-8
-  eom:
+  terminator:
     write: "\n"
-    read: "\n"
 
 topics:
   connect:

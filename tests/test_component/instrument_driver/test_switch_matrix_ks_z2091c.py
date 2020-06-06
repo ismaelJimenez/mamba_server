@@ -64,9 +64,12 @@ class TestClass:
         assert component._service_info == {}
         assert component._inst is None
         assert component._simulation_file is None
-        assert component._eom_write == '\r\n'
-        assert component._eom_read == '\n'
-        assert component._device_encoding == 'ascii'
+
+        assert component._instrument.address == 'TCPIP0::1.2.3.4::INSTR'
+        assert component._instrument.visa_sim == 'mock/visa/switch_matrix/ks_z2091c.yml'
+        assert component._instrument.encoding == 'ascii'
+        assert component._instrument.terminator_write == '\r\n'
+        assert component._instrument.terminator_read == '\n'
 
     def test_w_default_context_component_initialization(self):
         """ Test component initialization behaviour with default context """
@@ -93,9 +96,12 @@ class TestClass:
         assert component._service_info == self.default_service_info
         assert component._inst is None
         assert 'ks_z2091c.yml' in component._simulation_file
-        assert component._eom_write == '\r\n'
-        assert component._eom_read == '\n'
-        assert component._device_encoding == 'ascii'
+
+        assert component._instrument.address == 'TCPIP0::1.2.3.4::INSTR'
+        assert component._instrument.visa_sim == 'mock/visa/switch_matrix/ks_z2091c.yml'
+        assert component._instrument.encoding == 'ascii'
+        assert component._instrument.terminator_write == '\r\n'
+        assert component._instrument.terminator_read == '\n'
 
     def test_visa_sim_local_from_project_folder(self):
         """ Test component creation behaviour with default context """
