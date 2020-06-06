@@ -78,7 +78,9 @@ topics:
 
 parameters:
   connected:
-    default: 0
+    # Set parameter initial value upon instrument initialization.
+    initial_value: 0
+
     setter:
       PS_CONNECT:
       PS_DISCONNECT:

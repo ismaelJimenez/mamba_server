@@ -96,7 +96,9 @@ topics:
 
 parameters:
   connected:
-    default: 0
+    # Set parameter initial value upon instrument initialization.
+    initial_value: 0
+
     setter:
       connect:
       disconnect:
@@ -104,7 +106,9 @@ parameters:
       query_connected:
 
   query_raw_result:
-    default: ''
+    # Set parameter initial value upon instrument initialization.
+    initial_value: ''
+
     setter:
       tc_query_raw:
     getter:

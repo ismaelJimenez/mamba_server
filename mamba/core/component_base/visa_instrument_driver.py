@@ -126,7 +126,7 @@ class VisaInstrumentDriver(ComponentBase):
         if 'parameters' in self._configuration:
             for key, service_data in self._configuration['parameters'].items():
                 # Initialize shared memory with given value, if any
-                self._shared_memory[key] = service_data.get('default')
+                self._shared_memory[key] = service_data.get('initial_value')
 
                 # Compose dict assigning each getter with his memory slot
                 if 'getter' in service_data:

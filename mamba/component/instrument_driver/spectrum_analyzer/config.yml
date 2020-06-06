@@ -40,7 +40,9 @@ topics:
 
 parameters:
   connected:
-    default: 0
+    # Set parameter initial value upon instrument initialization.
+    initial_value: 0
+
     setter:
       connect:
       disconnect:
@@ -48,7 +50,9 @@ parameters:
       query_connected:
 
   query_trigger_in:
-    default: 1
+    # Set parameter initial value upon instrument initialization.
+    initial_value: 1
+
     setter:
       tc_query_trigger_in:
     getter:
