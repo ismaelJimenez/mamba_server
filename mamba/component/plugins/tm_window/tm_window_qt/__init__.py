@@ -15,7 +15,8 @@ from PySide2.QtGui import QIcon, QCursor, QFont
 
 from mamba.component.plugins import PluginBase
 from mamba.component.gui.msg import RunAction
-from mamba.core.msg import Empty, ServiceResponse, ParameterInfo, ParameterType, ServiceRequest
+from mamba.core.msg import Empty, ServiceResponse, ParameterInfo, \
+    ParameterType, ServiceRequest
 
 
 class CustomTable(QTableWidget):

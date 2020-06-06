@@ -11,7 +11,8 @@ import tkinter as tk
 
 from mamba.component.plugins import PluginBase
 from mamba.component.gui.msg import RunAction
-from mamba.core.msg import Empty, ServiceResponse, ParameterInfo, ParameterType, ServiceRequest
+from mamba.core.msg import Empty, ServiceResponse, ParameterInfo, \
+    ParameterType, ServiceRequest
 
 from tkinter import Frame, N, S, W, E, Button
 from tkinter.ttk import Treeview
