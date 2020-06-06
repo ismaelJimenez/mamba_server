@@ -85,6 +85,7 @@ class TestClass:
             'raw_query': ''
         }
         assert component._shared_memory_getter == {
+            'connected': 'connected',
             'query_connected': 'connected',
             'tm_query_raw': 'raw_query'
         }
@@ -173,6 +174,7 @@ class TestClass:
             'raw_query': ''
         }
         assert component._shared_memory_getter == {
+            'connected': 'connected',
             'query_connected': 'connected',
             'tm_query_raw': 'raw_query'
         }

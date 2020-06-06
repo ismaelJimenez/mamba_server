@@ -15,7 +15,7 @@ from PySide2.QtGui import QIcon, QCursor, QFont
 
 from mamba.component.plugins import PluginBase
 from mamba.component.gui.msg import RunAction
-from mamba.core.msg import Empty, ServiceResponse, ParameterInfo, ParameterType
+from mamba.core.msg import Empty, ServiceResponse, ParameterInfo, ParameterType, ServiceRequest
 
 
 class CustomTable(QTableWidget):
@@ -92,7 +92,7 @@ class Plugin(PluginBase):
 
         for table in self._service_tables:
             for row in range(0, table.rowCount()):
-                service_id = table.item(table.visualRow(row), 0).text()
+                service_id = table.cellWidget(row, 0).text()
                 if service_id == parameter_text:
                     table.item(table.visualRow(row),
                                2).setText(str(rx_value.value))
@@ -116,6 +116,13 @@ class Plugin(PluginBase):
             if parameter_info.type == ParameterType.Get:
                 serviceCombo.addItem(parameter_info.id)
 
+    def call_service(self, provider_id, service_id, services_table):
+        self._context.rx['tc'].on_next(
+            ServiceRequest(provider=provider_id,
+                           id=service_id,
+                           args=[],
+                           type='get'))
+
     def add_service(self, provider, service, services_table):
         parameter_info = \
             [parameter_info for parameter_info in self._io_services[provider]
@@ -133,12 +140,13 @@ class Plugin(PluginBase):
 
         services_table.insertRow(0)
 
-        service_item = QTableWidgetItem(parameter_text)
+        service_btn = QPushButton(f'{provider} -> {service}')
         bold_font = QFont()
         bold_font.setBold(True)
-        service_item.setFont(bold_font)
+        service_btn.setFont(bold_font)
 
-        service_item.setFlags(Qt.ItemIsEnabled)
+        service_btn.clicked.connect(
+            lambda: self.call_service(provider, service, services_table))
 
         description_item = QTableWidgetItem(parameter_info.description)
         description_item.setFlags(Qt.ItemIsEnabled)
@@ -158,7 +166,7 @@ class Plugin(PluginBase):
         font = QFont()
         font.setBold(True)
 
-        services_table.setItem(0, 0, service_item)
+        services_table.setCellWidget(0, 0, service_btn)
         services_table.setItem(0, 1, description_item)
         services_table.setItem(0, 2, measured_value)
         services_table.item(0, 2).setBackground(Qt.black)

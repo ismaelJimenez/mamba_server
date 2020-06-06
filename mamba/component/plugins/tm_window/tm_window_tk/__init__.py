@@ -11,15 +11,16 @@ import tkinter as tk
 
 from mamba.component.plugins import PluginBase
 from mamba.component.gui.msg import RunAction
-from mamba.core.msg import Empty, ServiceResponse, ParameterInfo, ParameterType
+from mamba.core.msg import Empty, ServiceResponse, ParameterInfo, ParameterType, ServiceRequest
 
 from tkinter import Frame, N, S, W, E, Button
 from tkinter.ttk import Treeview
 
 
 class App(Frame):
-    def __init__(self, parent, _io_services):
+    def __init__(self, parent, _io_services, rx):
         Frame.__init__(self, parent)
+        self._rx = rx
         self.CreateUI(parent, _io_services)
         self.grid(sticky=(N, S, W, E))
         parent.grid_rowconfigure(0, weight=1)
@@ -92,8 +93,37 @@ class App(Frame):
         tv.configure(yscrollcommand=scrollbar.set)
         scrollbar.grid(row=1, column=7, sticky='ns')
 
+        self.buttons_frame = Frame(self)
+        self.buttons_frame.grid(row=2)
+
+        self.call_button = Button(self.buttons_frame,
+                                  text='Call',
+                                  command=self.call)
+
+        self.call_button.grid(row=0, column=1, columnspan=5)
+
+        self.remove_button = Button(self.buttons_frame,
+                                    text='Remove',
+                                    command=self.remove_item)
+
+        self.remove_button.grid(row=0, column=6)
+
         self.grid_rowconfigure(1, weight=1)
         self.grid_columnconfigure(0, weight=1)
+
+    def call(self):
+        id = self.treeview.item(self.treeview.selection()[0],
+                                "text").split(' -> ')
+
+        self._rx['tc'].on_next(
+            ServiceRequest(provider=id[0], id=id[1], args=[], type='get'))
+
+    def remove_item(self):
+        selected_items = self.treeview.selection()
+        for selected_item in selected_items:
+            self.observed_services.pop(
+                self.treeview.item(selected_item)['text'], None)
+            self.treeview.delete(selected_item)
 
     def _add_button(self, _io_services):
         provider = self.providerCombo.get()
@@ -275,7 +305,7 @@ class Plugin(PluginBase):
         app = tk.Tk()
         app.protocol("WM_DELETE_WINDOW", lambda: self.close(app))
         app.title(self._configuration['name'])
-        self.log_table = App(app, self._io_services)
+        self.log_table = App(app, self._io_services, self._context.rx)
 
         self._io_result_subs = self._context.rx['io_result'].subscribe(
             on_next=self.log_table._process_io_result)

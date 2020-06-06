@@ -121,9 +121,19 @@ class VisaInstrumentDriver(ComponentBase):
                 # Initialize shared memory with given value, if any
                 self._shared_memory[key] = parameter_info.get('initial_value')
 
-                # if 'get' in parameter_info:
-                #
-                #
+                if 'get' in parameter_info:
+                    service_dict = {
+                        'description': parameter_info.get('description') or '',
+                        'signature': [[], parameter_info.get('type')],
+                        'command': (parameter_info.get('get')
+                                    or {}).get('command'),
+                        'type': 'get',
+                    }
+
+                    # Add new service to the component services dictionary
+                    self._service_info[(key.lower(), 'get')] = service_dict
+
+                    self._shared_memory_getter[key.lower()] = key
 
                 # Compose dict assigning each getter with his memory slot
                 if 'getter' in parameter_info:

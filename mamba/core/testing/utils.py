@@ -35,7 +35,7 @@ def get_config_dict(config_file):
 
 
 def compose_service_info(config):
-    return {(key.replace(' ', '_').lower(), service_data.get('type')): {
+    service_info = {(key.replace(' ', '_').lower(), service_data.get('type')): {
         'description': service_data.get('description') or '',
         'signature': service_data.get('signature') or [[], None],
         'command': service_data.get('command'),
@@ -43,6 +43,17 @@ def compose_service_info(config):
     }
             for key, service_data in config['topics'].items()}
 
+    for key, parameter_info in config['parameters'].items():
+        if 'get' in parameter_info:
+            service_info[(key.replace(' ', '_').lower(), 'get')] = {
+                'description': parameter_info.get('description') or '',
+                'signature': [[], parameter_info.get('type')],
+                'command': (parameter_info.get('get')
+            or {}).get('command'),
+                'type': 'get'
+            }
+
+    return service_info
 
 def get_provider_params_info(config_info, service_info):
     return [
