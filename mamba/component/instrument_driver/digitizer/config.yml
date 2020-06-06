@@ -5,14 +5,6 @@ instrument:
   address: TCPIP0::1.2.3.4::INSTR
 
 topics:
-  connect:
-    description: Establish Connection with Digitizer
-    type: set
-
-  disconnect:
-    description: Close connection with Digitizer
-    type: set
-
   raw:
     description: Send a msg command to the instrument
     signature: [[str], None]
@@ -49,21 +41,30 @@ topics:
     command: '{:}'
     type: get
 
-  query_connected:
-    description: Query the connection status to the instrument
-    signature: [[], bool]
-    type: get
-
 parameters:
   connected:
+    # Set parameter type.
+    type: int
+
     # Set parameter initial value upon instrument initialization.
     initial_value: 0
 
-    setter:
-      connect:
-      disconnect:
-    getter:
-      query_connected:
+    # Set parameter description.
+    description: Connection status to instrument
+
+    # Parameter setter configuration.
+    set:
+      # Alias allows to access parameter under another name.
+      # Connect is an special ID, to command connect/disconnect from the equipment.
+      alias: connect
+      # Setter function signature.
+      signature:
+        - connect:
+            type: int
+            valid: [0, 1]
+
+    # Parameter getter configuration.
+    get:
 
   query_raw_result:
     # Set parameter initial value upon instrument initialization.

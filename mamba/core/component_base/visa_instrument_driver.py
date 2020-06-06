@@ -122,18 +122,46 @@ class VisaInstrumentDriver(ComponentBase):
                 self._shared_memory[key] = parameter_info.get('initial_value')
 
                 if 'get' in parameter_info:
+                    getter = parameter_info.get('get') or {}
+
                     service_dict = {
                         'description': parameter_info.get('description') or '',
                         'signature': [[], parameter_info.get('type')],
-                        'command': (parameter_info.get('get')
-                                    or {}).get('command'),
+                        'command': getter.get('command'),
                         'type': 'get',
                     }
 
-                    # Add new service to the component services dictionary
-                    self._service_info[(key.lower(), 'get')] = service_dict
+                    getter_key = getter.get('alias') or key
+                    getter_id = getter_key.lower()
 
-                    self._shared_memory_getter[key.lower()] = key
+                    # Add new service to the component services dictionary
+                    self._service_info[(getter_id, 'get')] = service_dict
+                    self._shared_memory_getter[getter_id] = key
+
+                if 'set' in parameter_info:
+                    setter = parameter_info.get('set') or {}
+
+                    service_dict = {
+                        'description': parameter_info.get('description') or '',
+                        'signature': [setter.get('signature'), None],
+                        'command': setter.get('command'),
+                        'type': 'set',
+                    }
+
+                    if not isinstance(service_dict['signature'], list) or len(
+                            service_dict['signature']) != 2 or not isinstance(
+                                service_dict['signature'][0], list):
+                        raise ComponentConfigException(
+                            f'Signature of service {self._name} : "{key}" is'
+                            f' invalid. Format shall be [[arg_1, arg_2, ...],'
+                            f' return_type]')
+
+                    setter_key = setter.get('alias') or key
+                    setter_id = setter_key.lower()
+
+                    # Add new service to the component services dictionary
+                    self._service_info[(setter_id, 'set')] = service_dict
+                    self._shared_memory_setter[setter_id] = key
 
                 # Compose dict assigning each getter with his memory slot
                 if 'getter' in parameter_info:
@@ -222,9 +250,14 @@ class VisaInstrumentDriver(ComponentBase):
         self._service_preprocessing(service_request, result)
 
         if service_request.id == 'connect':
-            self._visa_connect(result)
-        elif service_request.id == 'disconnect':
-            self._visa_disconnect(result)
+            if len(service_request.args) == 1:
+                if service_request.args[0] == '1':
+                    self._visa_connect(result)
+                elif service_request.args[0] == '0':
+                    self._visa_disconnect(result)
+            else:
+                result.type = 'error'
+                result.value = 'Wrong number of arguments'
         elif service_request.id in self._shared_memory_getter:
             result.value = self._shared_memory[self._shared_memory_getter[
                 service_request.id]]

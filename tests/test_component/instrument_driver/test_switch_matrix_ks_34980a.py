@@ -85,12 +85,11 @@ class TestClass:
             'query_raw_result': ''
         }
         assert component._shared_memory_getter == {
-            'query_connected': 'connected',
+            'connected': 'connected',
             'tm_query_raw': 'query_raw_result'
         }
         assert component._shared_memory_setter == {
             'connect': 'connected',
-            'disconnect': 'connected',
             'tc_query_raw': 'query_raw_result'
         }
         assert component._service_info == self.default_service_info
@@ -173,12 +172,11 @@ class TestClass:
             'query_raw_result': ''
         }
         assert component._shared_memory_getter == {
-            'query_connected': 'connected',
+            'connected': 'connected',
             'tm_query_raw': 'query_raw_result'
         }
         assert component._shared_memory_setter == {
             'connect': 'connected',
-            'disconnect': 'connected',
             'tc_query_raw': 'query_raw_result'
         }
 
@@ -353,7 +351,7 @@ class TestClass:
             ServiceRequest(provider='keysight_34980a_switch',
                            id='connect',
                            type='set',
-                           args=[]))
+                           args=['1']))
 
         time.sleep(.1)
 
@@ -500,21 +498,21 @@ class TestClass:
         # 11 - Test disconnection to the instrument
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(provider='keysight_34980a_switch',
-                           id='disconnect',
+                           id='connect',
                            type='set',
-                           args=[]))
+                           args=['0']))
 
         time.sleep(.1)
 
         assert component._inst is None
         assert dummy_test_class.func_1_times_called == 12
-        assert dummy_test_class.func_1_last_value.id == 'disconnect'
+        assert dummy_test_class.func_1_last_value.id == 'connect'
         assert dummy_test_class.func_1_last_value.type == 'set'
         assert dummy_test_class.func_1_last_value.value is None
 
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(provider='keysight_34980a_switch',
-                           id='query_connected',
+                           id='connected',
                            type='get',
                            args=[]))
 
@@ -522,7 +520,7 @@ class TestClass:
 
         assert component._inst is None
         assert dummy_test_class.func_1_times_called == 13
-        assert dummy_test_class.func_1_last_value.id == 'query_connected'
+        assert dummy_test_class.func_1_last_value.id == 'connected'
         assert dummy_test_class.func_1_last_value.type == 'get'
         assert dummy_test_class.func_1_last_value.value == 0
 
@@ -547,7 +545,7 @@ class TestClass:
             ServiceRequest(provider='keysight_34980a_switch',
                            id='connect',
                            type='set',
-                           args=[]))
+                           args=['1']))
 
         time.sleep(.1)
 
@@ -573,15 +571,15 @@ class TestClass:
 
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(provider='keysight_34980a_switch',
-                           id='disconnect',
+                           id='connect',
                            type='set',
-                           args=[]))
+                           args=['0']))
 
         time.sleep(.1)
 
         assert component._inst is None
         assert dummy_test_class.func_1_times_called == 1
-        assert dummy_test_class.func_1_last_value.id == 'disconnect'
+        assert dummy_test_class.func_1_last_value.id == 'connect'
         assert dummy_test_class.func_1_last_value.type == 'set'
         assert dummy_test_class.func_1_last_value.value is None
 
@@ -669,7 +667,7 @@ class TestClass:
             ServiceRequest(provider='keysight_34980a_switch',
                            id='connect',
                            type='set',
-                           args=[]))
+                           args=['1']))
 
         time.sleep(.1)
 

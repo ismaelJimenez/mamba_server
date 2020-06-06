@@ -106,7 +106,7 @@ class Plugin(PluginBase):
             param_1 = QTableWidgetItem("")
             param_1.setTextAlignment(Qt.AlignCenter)
 
-            param_1.setToolTip(param)
+            param_1.setToolTip(str(param))
         else:
             param_1 = QTableWidgetItem("-")
             param_1.setTextAlignment(Qt.AlignCenter)
@@ -118,7 +118,7 @@ class Plugin(PluginBase):
             param_2 = QTableWidgetItem("")
             param_2.setTextAlignment(Qt.AlignCenter)
 
-            param_2.setToolTip(param)
+            param_2.setToolTip(str(param))
         else:
             param_2 = QTableWidgetItem("-")
             param_2.setTextAlignment(Qt.AlignCenter)
@@ -130,7 +130,7 @@ class Plugin(PluginBase):
             param_3 = QTableWidgetItem("")
             param_3.setTextAlignment(Qt.AlignCenter)
 
-            param_3.setToolTip(param)
+            param_3.setToolTip(str(param))
         else:
             param_3 = QTableWidgetItem("-")
             param_3.setTextAlignment(Qt.AlignCenter)
@@ -142,7 +142,7 @@ class Plugin(PluginBase):
             param_4 = QTableWidgetItem("")
             param_4.setTextAlignment(Qt.AlignCenter)
 
-            param_4.setToolTip(param)
+            param_4.setToolTip(str(param))
         else:
             param_4 = QTableWidgetItem("-")
             param_4.setTextAlignment(Qt.AlignCenter)

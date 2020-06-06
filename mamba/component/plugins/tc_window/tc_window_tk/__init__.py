@@ -203,7 +203,9 @@ class App(Frame):
         else:
             result[3] = '-'
 
-        self.observed_services[id] = result
+        id_split = id.split(' -> ')
+
+        self.observed_services[(id_split[0], id_split[1])] = result
 
         listOfEntriesInTreeView = self.treeview.get_children()
 
@@ -231,8 +233,10 @@ class App(Frame):
     def remove_item(self):
         selected_items = self.treeview.selection()
         for selected_item in selected_items:
-            self.observed_services.pop(
-                self.treeview.item(selected_item)['text'], None)
+            id = self.treeview.item(self.treeview.selection()[0],
+                                    "text").split(' -> ')
+
+            self.observed_services.pop((id[0], id[1]), None)
             self.treeview.delete(selected_item)
 
     def _add_button(self, _io_services):
@@ -428,17 +432,13 @@ class Plugin(PluginBase):
 
     def closeEvent(self, services_table):
         for row in range(0, services_table.rowCount()):
-            service_id = services_table.item(services_table.visualRow(row),
-                                             0).text()
+            id = services_table.item(services_table.visualRow(row),
+                                     0).text().split(' -> ')
 
-            self._observed_services[services_table.item(
-                services_table.visualRow(row), 0).text()] -= 1
+            self._observed_services[(id[0], id[1])] -= 1
 
-            if self._observed_services[services_table.item(
-                    services_table.visualRow(row), 0).text()] == 0:
-                self._observed_services.pop(
-                    services_table.item(services_table.visualRow(row),
-                                        0).text(), None)
+            if self._observed_services[(id[0], id[1])] == 0:
+                self._observed_services.pop((id[0], id[1]), None)
 
             self._service_tables.remove(services_table)
             self._observer_modified.on_next(None)

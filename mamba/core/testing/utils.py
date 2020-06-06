@@ -35,25 +35,38 @@ def get_config_dict(config_file):
 
 
 def compose_service_info(config):
-    service_info = {(key.replace(' ', '_').lower(), service_data.get('type')): {
-        'description': service_data.get('description') or '',
-        'signature': service_data.get('signature') or [[], None],
-        'command': service_data.get('command'),
-        'type': service_data.get('type')
-    }
-            for key, service_data in config['topics'].items()}
+    service_info = {(key.replace(' ', '_').lower(), service_data.get('type')):
+                    {
+                        'description': service_data.get('description') or '',
+                        'signature': service_data.get('signature')
+                        or [[], None],
+                        'command': service_data.get('command'),
+                        'type': service_data.get('type')
+                    }
+                    for key, service_data in config['topics'].items()}
 
     for key, parameter_info in config['parameters'].items():
         if 'get' in parameter_info:
             service_info[(key.replace(' ', '_').lower(), 'get')] = {
                 'description': parameter_info.get('description') or '',
                 'signature': [[], parameter_info.get('type')],
-                'command': (parameter_info.get('get')
-            or {}).get('command'),
+                'command': (parameter_info.get('get') or {}).get('command'),
                 'type': 'get'
+            }
+        if 'set' in parameter_info:
+            setter = parameter_info.get('set') or {}
+            setter_key = setter.get('alias') or key
+            setter_id = setter_key.replace(' ', '_').lower()
+
+            service_info[(setter_id, 'set')] = {
+                'description': parameter_info.get('description') or '',
+                'signature': [setter.get('signature'), None],
+                'command': setter.get('command'),
+                'type': 'set',
             }
 
     return service_info
+
 
 def get_provider_params_info(config_info, service_info):
     return [
