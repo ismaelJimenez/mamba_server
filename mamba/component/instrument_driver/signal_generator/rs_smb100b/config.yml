@@ -58,7 +58,7 @@ topics:
     description: Perform msg query to the instrument
     signature: [[str], str]
     command: '{:}'
-    type: get
+    type: set
 
   query_idn:
     description: Query the instrument identification
@@ -129,6 +129,9 @@ parameters:
       disconnect:
     getter:
       query_connected:
+
+    # Parameter getter configuration.
+    get:
 
   raw_query:
     # Set parameter type.

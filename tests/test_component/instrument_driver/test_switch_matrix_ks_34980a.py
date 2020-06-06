@@ -145,7 +145,8 @@ class TestClass:
                     'CUSTOM_TOPIC': {
                         'command': 'CUSTOM_SCPI {:}',
                         'description': 'Custom command description',
-                        'signature': [['str'], None]
+                        'signature': [['str'], None],
+                        'type': 'set'
                     }
                 }
             })
@@ -158,7 +159,8 @@ class TestClass:
             'CUSTOM_TOPIC': {
                 'command': 'CUSTOM_SCPI {:}',
                 'description': 'Custom command description',
-                'signature': [['str'], None]
+                'signature': [['str'], None],
+                'type': 'set'
             }
         })
 
@@ -279,7 +281,8 @@ class TestClass:
             'CUSTOM_TOPIC': {
                 'command': 'CUSTOM_SCPI {:}',
                 'description': 'Custom command description',
-                'signature': [['str'], None]
+                'signature': [['str'], None],
+                'type': 'set'
             }
         }
         topics.update(custom_component_config['topics'])
@@ -333,7 +336,7 @@ class TestClass:
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(provider='keysight_34980a_switch',
                            id='query_idn',
-                           type='set',
+                           type='get',
                            args=[]))
 
         time.sleep(.1)
@@ -593,7 +596,9 @@ class TestClass:
                                              'description':
                                              'Custom command description'
                                              'frequency',
-                                             'signature': ['String']
+                                             'signature': ['String'],
+                                             'type':
+                                             'set'
                                          }
                                      }
                                  }).initialize()
@@ -611,7 +616,9 @@ class TestClass:
                                              'description':
                                              'Custom command description'
                                              'frequency',
-                                             'signature': ['String', str]
+                                             'signature': ['String', str],
+                                             'type':
+                                             'set'
                                          }
                                      }
                                  }).initialize()
@@ -630,7 +637,9 @@ class TestClass:
                                              'Custom command description'
                                              'frequency',
                                              'signature':
-                                             'String'
+                                             'String',
+                                             'type':
+                                             'set'
                                          }
                                      }
                                  }).initialize()

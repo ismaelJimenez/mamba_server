@@ -47,7 +47,7 @@ class VisaInstrumentDriver(ComponentBase):
         self._shared_memory: Dict[str, Union[str, int, float]] = {}
         self._shared_memory_getter: Dict[str, str] = {}
         self._shared_memory_setter: Dict[str, str] = {}
-        self._service_info: Dict[str, dict] = {}
+        self._service_info: Dict[tuple, dict] = {}
         self._inst = None
         self._simulation_file = None
 
@@ -94,13 +94,13 @@ class VisaInstrumentDriver(ComponentBase):
         self._topics_format_validation()
         self._visa_sim_file_validation()
 
-        for key, service_data in self._configuration['topics'].items():
+        for key, parameter_info in self._configuration['topics'].items():
             # Create new service signature dictionary
             service_dict = {
-                'description': service_data.get('description') or '',
-                'signature': service_data.get('signature') or [[], None],
-                'command': service_data.get('command'),
-                'type': service_data.get('type') or 'set',
+                'description': parameter_info.get('description') or '',
+                'signature': parameter_info.get('signature') or [[], None],
+                'command': parameter_info.get('command'),
+                'type': parameter_info.get('type') or 'set',
             }
 
             if not isinstance(service_dict['signature'], list) or len(
@@ -111,44 +111,50 @@ class VisaInstrumentDriver(ComponentBase):
                     f' be [[arg_1, arg_2, ...], return_type]')
 
             # Add new service to the component services dictionary
-            self._service_info[key.lower()] = service_dict
+            self._service_info[(key.lower(),
+                                service_dict['type'])] = service_dict
+
+        # Compose shared memory data dictionaries
+        if 'parameters' in self._configuration:
+            for key, parameter_info in self._configuration['parameters'].items(
+            ):
+                # Initialize shared memory with given value, if any
+                self._shared_memory[key] = parameter_info.get('initial_value')
+
+                # if 'get' in parameter_info:
+                #
+                #
+
+                # Compose dict assigning each getter with his memory slot
+                if 'getter' in parameter_info:
+                    for getter, value in parameter_info['getter'].items():
+                        self._shared_memory_getter[getter.lower()] = key
+
+                # Compose dict assigning each setter with his memory slot
+                if 'setter' in parameter_info:
+                    for setter, value in parameter_info['setter'].items():
+                        self._shared_memory_setter[setter.lower()] = key
 
         # Compose services signature to be published
         parameter_info = [
             ParameterInfo(provider=self._name,
-                          param_id=key,
+                          param_id=key[0],
                           param_type=ParameterType.Set
-                          if value['type'] == 'set' else ParameterType.Get,
+                          if key[1] == 'set' else ParameterType.Get,
                           signature=value['signature'],
                           description=value['description'])
             for key, value in self._service_info.items()
         ]
-
-        # Compose shared memory data dictionaries
-        if 'parameters' in self._configuration:
-            for key, service_data in self._configuration['parameters'].items():
-                # Initialize shared memory with given value, if any
-                self._shared_memory[key] = service_data.get('initial_value')
-
-                # Compose dict assigning each getter with his memory slot
-                if 'getter' in service_data:
-                    for getter, value in service_data['getter'].items():
-                        self._shared_memory_getter[getter.lower()] = key
-
-                # Compose dict assigning each setter with his memory slot
-                if 'setter' in service_data:
-                    for setter, value in service_data['setter'].items():
-                        self._shared_memory_setter[setter.lower()] = key
 
         # Publish services signature
         self._context.rx['io_service_signature'].on_next(parameter_info)
 
         # Subscribe to the services request
         self._context.rx['io_service_request'].pipe(
-            op.filter(lambda value: isinstance(value, ServiceRequest) and
-                      (value.provider == self._name) and
-                      (value.id in self._service_info))).subscribe(
-                          on_next=self._run_command)
+            op.filter(lambda value: isinstance(value, ServiceRequest) and (
+                value.provider == self._name) and (
+                    (value.id, value.type) in self._service_info))).subscribe(
+                        on_next=self._run_command)
 
     def _visa_connect(self, result: ServiceResponse) -> None:
         if self._instrument.visa_sim:
@@ -212,23 +218,28 @@ class VisaInstrumentDriver(ComponentBase):
         elif service_request.id in self._shared_memory_getter:
             result.value = self._shared_memory[self._shared_memory_getter[
                 service_request.id]]
-        elif self._service_info[service_request.id].get('command') is None:
+        elif self._service_info[(service_request.id,
+                                 service_request.type)].get('command') is None:
             pass
         elif self._inst is None:
             result.type = 'error'
             result.value = 'Not possible to perform command before ' \
                            'connection is established'
-        elif self._service_info[service_request.id]['signature'][
-                1] is not None and self._service_info[
-                    service_request.id]['signature'][1] != 'None':
+        elif self._service_info[(
+                service_request.id, service_request.type
+        )]['signature'][1] is not None and self._service_info[
+            (service_request.id,
+             service_request.type)]['signature'][1] != 'None':
             try:
-                if (len(self._service_info[service_request.id]['signature'][0])
+                if (len(self._service_info[(
+                        service_request.id,
+                        service_request.type)]['signature'][0])
                         == 1) and (len(service_request.args) > 1):
                     service_request.args = [' '.join(service_request.args)]
 
-                value = self._inst.query(
-                    self._service_info[service_request.id]['command'].format(
-                        *service_request.args)).replace(' ', '_')
+                value = self._inst.query(self._service_info[(
+                    service_request.id, service_request.type
+                )]['command'].format(*service_request.args)).replace(' ', '_')
 
                 if service_request.id in self._shared_memory_setter:
                     self._shared_memory[self._shared_memory_setter[
@@ -243,11 +254,14 @@ class VisaInstrumentDriver(ComponentBase):
                 result.value = 'Query timeout'
         else:
             try:
-                if (len(self._service_info[service_request.id]['signature'][0])
+                if (len(self._service_info[(
+                        service_request.id,
+                        service_request.type)]['signature'][0])
                         == 1) and (len(service_request.args) > 1):
                     service_request.args = [' '.join(service_request.args)]
 
-                self._inst.write(self._service_info[service_request.id]
+                self._inst.write(self._service_info[(service_request.id,
+                                                     service_request.type)]
                                  ['command'].format(*service_request.args))
             except OSError:
                 result.type = 'error'

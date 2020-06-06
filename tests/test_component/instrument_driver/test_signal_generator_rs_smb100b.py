@@ -145,7 +145,8 @@ class TestClass:
                     'CUSTOM_TOPIC': {
                         'command': 'CUSTOM_SCPI {:}',
                         'description': 'Custom command description',
-                        'signature': [['str'], None]
+                        'signature': [['str'], None],
+                        'type': 'set'
                     }
                 }
             })
@@ -158,7 +159,8 @@ class TestClass:
             'CUSTOM_TOPIC': {
                 'command': 'CUSTOM_SCPI {:}',
                 'description': 'Custom command description',
-                'signature': [['str'], None]
+                'signature': [['str'], None],
+                'type': 'set'
             }
         })
 
@@ -262,7 +264,8 @@ class TestClass:
                     'CUSTOM_TOPIC': {
                         'command': 'CUSTOM_SCPI {:}',
                         'description': 'Custom command description',
-                        'signature': [['str'], None]
+                        'signature': [['str'], None],
+                        'type': 'set'
                     }
                 }
             })
@@ -279,7 +282,8 @@ class TestClass:
             'CUSTOM_TOPIC': {
                 'command': 'CUSTOM_SCPI {:}',
                 'description': 'Custom command description',
-                'signature': [['str'], None]
+                'signature': [['str'], None],
+                'type': 'set'
             }
         }
         topics.update(custom_component_config['topics'])
@@ -333,7 +337,7 @@ class TestClass:
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(provider='rs_smb100b_signal_gen',
                            id='query_idn',
-                           type='set',
+                           type='get',
                            args=[]))
 
         time.sleep(.1)
@@ -402,10 +406,7 @@ class TestClass:
         assert dummy_test_class.func_1_last_value.value == 'Rohde&Schwarz,SMB100B,11400.1000K02/0,4.00.033'
 
         # 7 - Test shared memory set
-        assert component._shared_memory == {
-            'connected': 1,
-            'raw_query': ''
-        }
+        assert component._shared_memory == {'connected': 1, 'raw_query': ''}
 
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(provider='rs_smb100b_signal_gen',
@@ -417,8 +418,7 @@ class TestClass:
 
         assert component._shared_memory == {
             'connected': 1,
-            'raw_query':
-            'Rohde&Schwarz,SMB100B,11400.1000K02/0,4.00.033'
+            'raw_query': 'Rohde&Schwarz,SMB100B,11400.1000K02/0,4.00.033'
         }
 
         assert dummy_test_class.func_1_times_called == 6
@@ -462,10 +462,7 @@ class TestClass:
 
         time.sleep(.1)
 
-        assert component._shared_memory == {
-            'connected': 1,
-            'raw_query': '1'
-        }
+        assert component._shared_memory == {'connected': 1, 'raw_query': '1'}
 
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(provider='rs_smb100b_signal_gen',

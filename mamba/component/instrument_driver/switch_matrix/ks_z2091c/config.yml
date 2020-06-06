@@ -34,7 +34,7 @@ topics:
     description: Perform msg query to the instrument
     signature: [[str], str]
     command: '{:}'
-    type: get
+    type: set
 
   tm_query_raw:
     description: Retrieve the value of the last msg query
