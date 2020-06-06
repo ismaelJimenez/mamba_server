@@ -115,8 +115,14 @@ topics:
 
 parameters:
   connected:
+    # Set parameter type.
+    type: int
+
     # Set parameter initial value upon instrument initialization.
     initial_value: 0
+
+    # Set parameter description.
+    description: Connection status to instrument
 
     setter:
       connect:
@@ -124,9 +130,15 @@ parameters:
     getter:
       query_connected:
 
-  query_raw_result:
+  raw_query:
+    # Set parameter type.
+    type: str
+
     # Set parameter initial value upon instrument initialization.
     initial_value: ''
+
+    # Set parameter description.
+    description: Raw query to intrument
 
     setter:
       tc_query_raw:

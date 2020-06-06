@@ -82,16 +82,16 @@ class TestClass:
         # Test custom variables default values
         assert component._shared_memory == {
             'connected': False,
-            'query_raw_result': ''
+            'raw_query': ''
         }
         assert component._shared_memory_getter == {
             'query_connected': 'connected',
-            'tm_query_raw': 'query_raw_result'
+            'tm_query_raw': 'raw_query'
         }
         assert component._shared_memory_setter == {
             'connect': 'connected',
             'disconnect': 'connected',
-            'tc_query_raw': 'query_raw_result'
+            'tc_query_raw': 'raw_query'
         }
         assert component._service_info == self.default_service_info
         assert component._inst is None
@@ -168,16 +168,16 @@ class TestClass:
         # Test custom variables default values
         assert component._shared_memory == {
             'connected': False,
-            'query_raw_result': ''
+            'raw_query': ''
         }
         assert component._shared_memory_getter == {
             'query_connected': 'connected',
-            'tm_query_raw': 'query_raw_result'
+            'tm_query_raw': 'raw_query'
         }
         assert component._shared_memory_setter == {
             'connect': 'connected',
             'disconnect': 'connected',
-            'tc_query_raw': 'query_raw_result'
+            'tc_query_raw': 'raw_query'
         }
 
         custom_service_info = compose_service_info(custom_component_config)
@@ -222,7 +222,7 @@ class TestClass:
 
         assert component._shared_memory == {
             'connected': False,
-            'query_raw_result': '',
+            'raw_query': '',
             'new_param': None,
         }
 
@@ -404,7 +404,7 @@ class TestClass:
         # 7 - Test shared memory set
         assert component._shared_memory == {
             'connected': 1,
-            'query_raw_result': ''
+            'raw_query': ''
         }
 
         self.context.rx['io_service_request'].on_next(
@@ -417,7 +417,7 @@ class TestClass:
 
         assert component._shared_memory == {
             'connected': 1,
-            'query_raw_result':
+            'raw_query':
             'Rohde&Schwarz,SMB100B,11400.1000K02/0,4.00.033'
         }
 
@@ -464,7 +464,7 @@ class TestClass:
 
         assert component._shared_memory == {
             'connected': 1,
-            'query_raw_result': '1'
+            'raw_query': '1'
         }
 
         self.context.rx['io_service_request'].on_next(
