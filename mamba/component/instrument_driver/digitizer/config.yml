@@ -7,43 +7,52 @@ instrument:
 topics:
   connect:
     description: Establish Connection with Digitizer
+    type: set
 
   disconnect:
     description: Close connection with Digitizer
+    type: set
 
   raw:
     description: Send a msg command to the instrument
     signature: [[str], None]
     command: '{:}'
+    type: set
 
   clock_src:
     description: Sets the source of the reference frequency
     signature: [[str], None]
     command: ':TIMebase:REFClock {:}'
+    type: set
 
   tc_query_raw:
     description: Perform msg query to the instrument
     signature: [[str], str]
     command: '{:}'
+    type: set
 
   query_idn:
     description: Query the instrument identification
     signature: [[], str]
     command: '*IDN?'
+    type: get
 
   query_clock_src:
     description: Query the source of the reference frequency
     signature: [[], str]
     command: ':TIMebase:REFClock?'
+    type: get
 
   tm_query_raw:
     description: Retrieve the value of the last msg query
     signature: [[], str]
     command: '{:}'
+    type: get
 
   query_connected:
     description: Query the connection status to the instrument
     signature: [[], bool]
+    type: get
 
 parameters:
   connected:

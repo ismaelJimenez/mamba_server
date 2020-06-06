@@ -8,46 +8,57 @@ topics:
   AMP_CONNECT:
     key: '@connect'
     description: Establish Connection with Amplifier
+    type: set
 
   AMP_DISCONNECT:
     key: '@disconnect'
     description: Close connection with Amplifier
+    type: set
 
   AMP_TC_1_AMP':
     signature: [[str], None]
     command: 'ROUT1:PATH {:}'
+    type: set
 
   AMP_TC_2_AMP':
     signature: [[str], None]
     command: 'ROUT2:PATH {:}'
+    type: set
 
   AMP_TC_1_OUTP':
     signature: [[str], None]
     command: 'OUTP1 {:}'
+    type: set
 
   AMP_TC_2_OUTP':
     signature: [[str], None]
     command: 'OUTP2 {:}'
+    type: set
 
   AMP_TC_1_COUP':
     signature: [[str], None]
     command: 'INP1:COUP {:}'
+    type: set
 
   AMP_TC_2_COUP':
     signature: [[str], None]
     command: 'INP2:COUP {:}'
+    type: set
 
   AMP_TC_1_IMP':
     signature: [[str], None]
     command: 'INP1:IMP {:}'
+    type: set
 
   AMP_TC_2_IMP':
     signature: [[str], None]
     command: 'INP2:IMP {:}'
+    type: set
 
   AMP_QUERY_CONNECTED:
     description: Query the connection status to the instrument
     signature: [[], bool]
+    type: get
 
 parameters:
   connected:

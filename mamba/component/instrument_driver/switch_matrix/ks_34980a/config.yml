@@ -10,156 +10,188 @@ instrument:
 topics:
   connect:
     description: Establish Connection with Switch Matrix
+    type: set
 
   disconnect:
     description: Close connection with Switch Matrix
+    type: set
 
   raw:
     description: Send a msg command to the instrument
     signature: [[str], None]
     command: '{:}'
+    type: set
 
   rst:
     description: Clear status
     command: '*CLS'
+    type: set
 
   rout_close:
     description: Close channel
     signature: [[channel_id], None]
     command: 'ROUT:CLOS {:}'
+    type: set
 
   rout_open:
     description: Open channel
     signature: [[channel_id], None]
     command: 'ROUT:OPEN {:}'
+    type: set
 
   rout_open_all:
     description: Open all channels
     signature: [[slot_id], None]
     command: 'ROUT:OPEN:ALL {:}'
+    type: set
 
   init:
     description: Initiate the scan
     command: 'INIT'
+    type: set
 
   conf_volt:
     description: Configure channel for DC voltage measurements
     signature: [[str], None]
     command: 'CONF:VOLT:DC {:}'
+    type: set
 
   conf_scan:
     description: Configure scan list
     signature: [[str], None]
     command: 'ROUT:SCAN {:}'
+    type: set
 
   trace_on:
     description: Enable channel trace output mode
     signature: [[channel_id], None]
     command: 'SOUR:FUNC:ENAB ON, {:}'
+    type: set
 
   trace_off:
     description: Disable channel trace output mode
     signature: [[channel_id], None]
     command: 'SOUR:FUNC:ENAB OFF, {:}'
+    type: set
 
   outp_on:
     description: Enable channel output
     signature: [[channel_id], None]
     command: 'OUTP:STAT ON, {:}'
+    type: set
 
   outp_off:
     description: Disable channel output
     signature: [[channel_id], None]
     command: 'OUTP:STAT OFF, {:}'
+    type: set
 
   volt_offs:
     description: Configure channel voltage offset
     signature: [[channel_id], None]
     command: 'SOUR:FUNC:VOLT:OFFS {:}'
+    type: set
 
   volt_gain:
     description: Configure channel voltage gain
     signature: [[channel_id], None]
     command: 'SOUR:FUNC:VOLT:GAIN {:}'
+    type: set
 
   trace_ncyc:
     description: Configure channel trace cycle count
     signature: [[channel_id], None]
     command: 'SOUR:FUNC:TRAC:NCYC {:}'
+    type: set
 
   trace_func:
     description: Configure channel trace function
     signature: [[config], None]
     command: 'TRAC:FUNC {:}'
+    type: set
 
   trace:
     description: Apply trace to channel
     signature: [[channel_id], None]
     command: 'SOUR:FUNC:TRAC {:}'
+    type: set
 
   freq:
     description: Configure channel frequency
     signature: [[channel_id], None]
     command: 'SOUR:FUNC:FREQ {:}'
+    type: set
 
   query_sys_err:
     description: Query the error queue for the oldest item and removes it from the queue
     signature: [[], str]
     command: 'SYST:ERR?'
+    type: get
 
   tc_query_raw:
     description: Perform msg query to the instrument
     signature: [[str], str]
     command: '{:}'
+    type: get
 
   query_idn:
     description: Query the instrument identification
     signature: [[], str]
     command: '*IDN?'
+    type: get
 
   query_rout_close:
     description: Query close state of the channel
     signature: [[channel_id], bool]
     command: 'ROUT:CLOS? {:}'
+    type: get
 
   query_rout_open:
     description: Query open state of the channel
     signature: [[channel_id], bool]
     command: 'ROUT:OPEN? {:}'
+    type: get
 
   query_fetch:
     description: Query stored readings from memory
     signature: [[], str]
     command: 'FETCh?'
+    type: get
 
   query_volt_meas:
     description: Query open state of the channel
     signature: [[str], volt]
     command: 'MEASure:VOLTage:DC? {:}'
+    type: get
 
   query_channel_res:
     description: Query channel resistance
     signature: [[str], ohm]
     command: 'MEAS:RES? {:}'
+    type: get
 
   query_trace:
     description: Query the trace output mode
     signature: [[channel_id], None]
     command: 'SOUR:FUNC:ENAB? {:}'
+    type: get
 
   tm_query_raw:
     description: Retrieve the value of the last msg query
     signature: [[], str]
     command: '{:}'
+    type: get
 
   query_freq:
     description: Query channel frequency
     signature: [[channel_id], None]
     command: 'SOUR:FUNC:FREQ? {:}'
+    type: get
 
   query_connected:
     description: Query the connection status to the instrument
     signature: [[], bool]
+    type: get
 
 parameters:
   connected:

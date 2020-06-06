@@ -8,73 +8,88 @@ topics:
   PS_CONNECT:
     key: '@connect'
     description: Establish Connection with Power Supply
+    type: set
 
   PS_DISCONNECT:
     key: '@disconnect'
     description: Close connection with Power Supply
+    type: set
 
   PS_RESET:
     description: reset Power Supply
     command: '*RST'
+    type: set
 
   PS_SET_CURR:
     description: Set the current for the Power Supply
     signature: [[str], None]
     command: 'CURR {:}'
+    type: set
 
   PS_SET_VOLT:
     description: Set the voltage for the Power Supply
     signature: [[str], None]
     command: 'VOLT {:}'
+    type: set
 
   PS_SET_OVP:
     description: Set the over-voltage for the Power Supply
     signature: [[str], None]
     command: 'VOLT:PROT:LEV {:}'
+    type: set
 
   PS_SET_OUTPUT_ON:
     description: Set the output to ON on the
     signature: [[], None]
     command: 'OUTP ON'
+    type: set
 
   PS_SET_OUTPUT_OFF:
     description: Set the output to OFF on the
     signature: [[], None]
     command: 'OUTP OFF'
+    type: set
 
   PS_QUERY_IDN:
     description: Query the instrument identification
     signature: [[], str]
     command: '*IDN?'
+    type: get
 
   PS_QUERY_VOLT_SETTING:
     description: Query the Power Supply Voltage Settings
     signature: [[], str]
     command: 'VOLT?'
+    type: get
 
   PS_QUERY_CURR_SETTING:
     description: Query the Power Supply Current Settings
     signature: [[], str]
     command: 'CURR?'
+    type: get
 
   PS_QUERY_CURRENT:
     description: Query the Power Supply Current
     signature: [[], str]
     command: 'MEAS:CURR?'
+    type: get
 
   PS_QUERY_VOLTAGE:
     description: Query the Power Supply Voltage
     signature: [[], str]
     command: 'MEAS:VOLT?'
+    type: get
 
   PS_QUERY_OUTPUT_STATE:
     description: Query the Power Supply Output Voltage State
     signature: [[], str]
     command: 'OUTP?'
+    type: get
 
   PS_QUERY_CONNECTED:
     description: Query the connection status to the instrument
     signature: [[], bool]
+    type: get
 
 parameters:
   connected:

@@ -11,7 +11,7 @@ import tkinter as tk
 
 from mamba.component.plugins import PluginBase
 from mamba.component.gui.msg import RunAction
-from mamba.core.msg import Empty, ServiceResponse, ParameterInfo
+from mamba.core.msg import Empty, ServiceResponse, ParameterInfo, ParameterType
 
 from tkinter import Frame, N, S, W, E, Button
 from tkinter.ttk import Treeview
@@ -31,8 +31,7 @@ class App(Frame):
         self.serviceCombo['values'] = ()
 
         for parameter_info in _io_services[self.providerCombo.get()]:
-            if parameter_info.signature[
-                    1] is not None and parameter_info.signature[1] != 'None':
+            if parameter_info.type == ParameterType.Get:
                 self.serviceCombo['values'] = (*self.serviceCombo['values'],
                                                parameter_info.id)
 

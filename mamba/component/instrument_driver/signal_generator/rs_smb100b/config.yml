@@ -7,92 +7,111 @@ instrument:
 topics:
   connect:
     description: Establish Connection with SMB
+    type: set
 
   disconnect:
     description: Close connection with SMB
+    type: set
 
   rst:
     description: Clear the output buffer
     command: '*CLS'
+    type: set
 
   raw:
     description: Send a msg command to the instrument
     signature: [[str], None]
     command: '{:}'
+    type: set
 
   freq_mode:
     description: Set the frequency mode for generating the RF output signal
     signature: [[str], None]
     command: 'FREQuency:MODE {:}'
+    type: set
 
   out_power:
     description: Set the RF output signal
     signature: [[str], None]
     command: 'OUTP {:}'
+    type: set
 
   cw_freq:
     description: Sets the frequency of the RF output signal
     signature: [[int], None]
     command: 'FREQuency:CW {:}'
+    type: set
 
   clock_src:
     description: Sets the source of the reference frequency
     signature: [[str], None]
     command: 'SOURce:ROSCillator:SOURce {:}'
+    type: set
 
   power_level:
     description: Sets the RF level applied to the device under tests
     signature: [[float], None]
     command: 'POWer {:}'
+    type: set
 
   tc_query_raw:
     description: Perform msg query to the instrument
     signature: [[str], str]
     command: '{:}'
+    type: get
 
   query_idn:
     description: Query the instrument identification
     signature: [[], str]
     command: '*IDN?'
+    type: get
 
   query_out_power:
     description: Query the RF output signal
     signature: [[], int]
     command: 'OUTP?'
+    type: get
 
   query_freq_mode:
     description: Query the frequency mode for generating the RF output signal
     signature: [[], str]
     command: 'FREQuency:MODE?'
+    type: get
 
   query_cw_freq:
     description: Query the frequency of the RF output signal
     signature: [[], int]
     command: 'FREQuency:CW?'
+    type: get
 
   query_clock_src:
     description: Query the source of the reference frequency
     signature: [[], str]
     command: 'SOURce:ROSCillator:SOURce?'
+    type: get
 
   query_power_level:
     description: Query the RF level applied to the device under tests
     signature: [[], float]
     command: 'POWer?'
+    type: get
 
   query_sys_err:
     description: Query the error queue for the oldest item and removes it from the queue
     signature: [[], str]
     command: 'SYST:ERR?'
+    type: get
 
   tm_query_raw:
     description: Retrieve the value of the last msg query
     signature: [[], str]
     command: '{:}'
+    type: get
 
   query_connected:
     description: Query the connection status to the instrument
     signature: [[], bool]
+    type: get
 
 parameters:
   connected:

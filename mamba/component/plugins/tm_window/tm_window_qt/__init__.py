@@ -113,7 +113,8 @@ class Plugin(PluginBase):
         serviceCombo.clear()
 
         for parameter_info in self._io_services[providerCombo.currentText()]:
-            serviceCombo.addItem(parameter_info.id)
+            if parameter_info.type == ParameterType.Get:
+                serviceCombo.addItem(parameter_info.id)
 
     def add_service(self, provider, service, services_table):
         parameter_info = \

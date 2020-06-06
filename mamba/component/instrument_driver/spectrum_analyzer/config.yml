@@ -7,36 +7,44 @@ instrument:
 topics:
   connect:
     description: Establish Connection with Digitizer
+    type: set
 
   disconnect:
     description: Close connection with Digitizer
+    type: set
 
   raw:
     description: Send a msg command to the instrument
     signature: [[str], None]
     command: '{:}'
+    type: set
 
   trigger_out:
     description: Sets the source of the reference frequency
     signature: [[], None]
     command: 'OUTP:TRIG2:PULS:IMM'
+    type: set
 
   query_idn:
     description: Query the instrument identification
     signature: [[], str]
     command: '*IDN?'
+    type: get
 
   tc_query_trigger_in:
     description: Query the connection status to the instrument
     signature: [[int], bool]
+    type: set
 
   tm_query_trigger_in:
     description: Query the instrument identification
     signature: [[], bool]
+    type: get
 
   query_connected:
     description: Query the connection status to the instrument
     signature: [[], bool]
+    type: get
 
 parameters:
   connected:

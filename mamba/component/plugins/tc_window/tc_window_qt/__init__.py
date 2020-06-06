@@ -55,7 +55,8 @@ class Plugin(PluginBase):
         serviceCombo.clear()
 
         for parameter_info in self._io_services[providerCombo.currentText()]:
-            serviceCombo.addItem(parameter_info.id)
+            if parameter_info.type == ParameterType.Set:
+                serviceCombo.addItem(parameter_info.id)
 
     def call_service(self, provider_id, service_id, services_table):
         args = []

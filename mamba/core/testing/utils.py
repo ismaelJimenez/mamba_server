@@ -39,7 +39,8 @@ def compose_service_info(config):
         key.replace(' ', '_').lower(): {
             'description': service_data.get('description') or '',
             'signature': service_data.get('signature') or [[], None],
-            'command': service_data.get('command')
+            'command': service_data.get('command'),
+            'type': service_data.get('type') or 'set'
         }
         for key, service_data in config['topics'].items()
     }
@@ -49,7 +50,8 @@ def get_provider_params_info(config_info, service_info):
     return [
         ParameterInfo(provider=config_info['name'].replace(' ', '_').lower(),
                       param_id=key,
-                      param_type=ParameterType.Set,
+                      param_type=ParameterType.Set
+                      if value['type'] == 'set' else ParameterType.Get,
                       signature=value['signature'],
                       description=value['description'])
         for key, value in service_info.items()

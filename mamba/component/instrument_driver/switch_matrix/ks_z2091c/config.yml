@@ -7,42 +7,51 @@ instrument:
 topics:
   connect:
     description: Establish Connection with Switch Matrix
+    type: set
 
   disconnect:
     description: Close connection with Switch Matrix
+    type: set
 
   raw:
     description: Send a msg command to the instrument
     signature: [[str], None]
     command: '{:}'
+    type: set
 
   rst:
     description: Clear status
     command: '*CLS'
+    type: set
 
   query_sys_err:
     description: Query reads and clears one error.
     signature: [[], str]
     command: 'SYST:ERR?'
+    type: get
 
   tc_query_raw:
     description: Perform msg query to the instrument
     signature: [[str], str]
     command: '{:}'
+    type: get
 
   tm_query_raw:
     description: Retrieve the value of the last msg query
     signature: [[], str]
     command: '{:}'
+    type: get
 
   query_idn:
     description: Query the instrument identification
     signature: [[], str]
     command: '*IDN?'
+    type: get
 
   query_connected:
     description: Query the connection status to the instrument
     signature: [[], bool]
+    type: get
 
 parameters:
   connected:

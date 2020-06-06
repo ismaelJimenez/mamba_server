@@ -33,8 +33,9 @@ class App(Frame):
         self.serviceCombo['values'] = ()
 
         for parameter_info in _io_services[self.providerCombo.get()]:
-            self.serviceCombo['values'] = (*self.serviceCombo['values'],
-                                           parameter_info.id)
+            if parameter_info.type == ParameterType.Set:
+                self.serviceCombo['values'] = (*self.serviceCombo['values'],
+                                               parameter_info.id)
 
     def CreateUI(self, parent, _io_services):
         label1 = tk.Label(self, text="Provider:")

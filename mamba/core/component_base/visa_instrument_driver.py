@@ -99,7 +99,8 @@ class VisaInstrumentDriver(ComponentBase):
             service_dict = {
                 'description': service_data.get('description') or '',
                 'signature': service_data.get('signature') or [[], None],
-                'command': service_data.get('command')
+                'command': service_data.get('command'),
+                'type': service_data.get('type') or 'set',
             }
 
             if not isinstance(service_dict['signature'], list) or len(
@@ -116,7 +117,8 @@ class VisaInstrumentDriver(ComponentBase):
         parameter_info = [
             ParameterInfo(provider=self._name,
                           param_id=key,
-                          param_type=ParameterType.Set,
+                          param_type=ParameterType.Set
+                          if value['type'] == 'set' else ParameterType.Get,
                           signature=value['signature'],
                           description=value['description'])
             for key, value in self._service_info.items()
