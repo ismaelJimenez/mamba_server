@@ -8,7 +8,7 @@ from rx import operators as op
 from PySide2.QtWidgets import QApplication, QMainWindow, QWidget, \
     QMenu, QAction, QSplashScreen, QMdiArea, QMdiSubWindow, QMenuBar
 from PySide2.QtCore import QTimer, Qt
-from PySide2.QtGui import QPixmap, QGuiApplication, QKeySequence
+from PySide2.QtGui import QPixmap, QGuiApplication, QKeySequence, QIcon
 
 from mamba.core.context import Context
 from mamba.core.component_base import MainWindow
@@ -48,6 +48,10 @@ class MainWindowQt(MainWindow):
         """
         self._app: QMainWindow = QMainWindow()
         self._app.setWindowTitle(self._configuration['title'])
+        self._app.setWindowIcon(
+            QIcon(
+                os.path.join(self._context.get('mamba_dir'), 'artwork',
+                             'mamba_icon.png')))
 
         self._app.mdiArea = QMdiArea()
         self._app.mdiArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
