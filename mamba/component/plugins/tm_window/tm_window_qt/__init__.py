@@ -2,6 +2,7 @@
 
 import os
 import time
+from typing import List, Dict
 
 from rx import operators as op
 from rx.subject import Subject
@@ -14,7 +15,7 @@ from PySide2.QtGui import QIcon, QCursor, QFont
 
 from mamba.component.plugins import PluginBase
 from mamba.component.gui.msg import RunAction
-from mamba.core.msg import Empty, ServiceResponse
+from mamba.core.msg import Empty, ServiceResponse, ParameterInfo, ParameterType
 
 
 class CustomTable(QTableWidget):
@@ -33,13 +34,17 @@ class CustomTable(QTableWidget):
                 action = menu.exec_(QCursor.pos())
 
                 if action == remove_action:
-                    self.parent._observed_services[self.itemAt(it.row(),
-                                                               0).text()] -= 1
 
-                    if self.parent._observed_services[self.itemAt(
-                            it.row(), 0).text()] == 0:
-                        self.parent._observed_services.pop(
-                            self.itemAt(it.row(), 0).text(), None)
+                    param_text = self.itemAt(it.row(), 0).text().split(' -> ')
+                    service = param_text[1]
+                    provider = param_text[0]
+
+                    self.parent._observed_services[(provider, service)] -= 1
+
+                    if self.parent._observed_services[(provider,
+                                                       service)] == 0:
+                        self.parent._observed_services.pop((provider, service),
+                                                           None)
                         self.parent._observer_modified.on_next(None)
 
                     self.removeRow(it.row())
@@ -52,7 +57,7 @@ class Plugin(PluginBase):
     def __init__(self, context, local_config=None):
         # Define custom variables
         self._app = None
-        self._io_services = {}
+        self._io_services: Dict[str, List[ParameterInfo]] = {}
         self._service_tables = []
         self._observed_services = {}
 
@@ -65,9 +70,8 @@ class Plugin(PluginBase):
         super()._register_observers()
 
         # Register to the topic provided by the io_controller services
-        self._context.rx['io_service_signature'].pipe(
-            op.filter(lambda value: isinstance(value, dict))).subscribe(
-                on_next=self._io_service_signature)
+        self._context.rx['io_service_signature'].subscribe(
+            on_next=self._io_service_signature)
 
         self._observer_modified.subscribe(
             on_next=self._process_observer_modification)
@@ -78,8 +82,8 @@ class Plugin(PluginBase):
 
         self._io_result_subs = self._context.rx['io_result'].pipe(
             op.filter(lambda value: isinstance(value, ServiceResponse) and
-                      value.id in self._observed_services)).subscribe(
-                          on_next=self._process_io_result)
+                      (value.provider, value.id) in self._observed_services)
+        ).subscribe(on_next=self._process_io_result)
 
     def _process_io_result(self, rx_value: ServiceResponse):
         print('IO RESULT')
@@ -108,32 +112,33 @@ class Plugin(PluginBase):
     def generate_service_combobox(self, providerCombo, serviceCombo):
         serviceCombo.clear()
 
-        for service, info in self._io_services[
-                providerCombo.currentText()].items():
-            if info['signature'][
-                    1] is not None and info['signature'][1] != 'None':
-                serviceCombo.addItem(service)
+        for parameter_info in self._io_services[providerCombo.currentText()]:
+            serviceCombo.addItem(parameter_info.id)
 
     def add_service(self, provider, service, services_table):
+        parameter_info = \
+        [parameter_info for parameter_info in self._io_services[provider] if parameter_info.id == service][0]
+
+        parameter_text = f'{provider} -> {service}'
+
         if (service == '') or (provider == ''):
             return
 
         for row in range(0, services_table.rowCount()
                          ):  # Do not allow 2 services with same name
-            if services_table.item(row, 0).text() == service:
+            if services_table.item(row, 0).text() == parameter_text:
                 return
 
         services_table.insertRow(0)
 
-        service_item = QTableWidgetItem(f'{provider} -> {service}')
+        service_item = QTableWidgetItem(parameter_text)
         bold_font = QFont()
         bold_font.setBold(True)
         service_item.setFont(bold_font)
 
         service_item.setFlags(Qt.ItemIsEnabled)
 
-        description_item = QTableWidgetItem(
-            self._io_services[provider][service]['description'])
+        description_item = QTableWidgetItem(parameter_info.description)
         description_item.setFlags(Qt.ItemIsEnabled)
 
         measured_value = QTableWidgetItem("N/A")
@@ -162,11 +167,11 @@ class Plugin(PluginBase):
         services_table.item(0, 4).setFont(font)
         services_table.item(0, 4).setForeground(Qt.darkGray)
 
-        if self._observed_services.get(service) is None:
-            self._observed_services[service] = 1
+        if self._observed_services.get((provider, service)) is None:
+            self._observed_services[(provider, service)] = 1
             self._observer_modified.on_next(None)
         else:
-            self._observed_services[service] += 1
+            self._observed_services[(provider, service)] += 1
 
     def _new_window(self, perspective):
         window = QMdiSubWindow()
@@ -276,29 +281,26 @@ class Plugin(PluginBase):
 
     def closeEvent(self, services_table):
         for row in range(0, services_table.rowCount()):
-            service_id = services_table.item(services_table.visualRow(row),
-                                             0).text()
+            param_text = services_table.item(services_table.visualRow(row),
+                                             0).text().split(' -> ')
+            service = param_text[1]
+            provider = param_text[0]
 
-            self._observed_services[services_table.item(
-                services_table.visualRow(row), 0).text()] -= 1
+            self._observed_services[(provider, service)] -= 1
 
-            if self._observed_services[services_table.item(
-                    services_table.visualRow(row), 0).text()] == 0:
-                self._observed_services.pop(
-                    services_table.item(services_table.visualRow(row),
-                                        0).text(), None)
+            if self._observed_services[(provider, service)] == 0:
+                self._observed_services.pop((provider, service), None)
 
             self._service_tables.remove(services_table)
             self._observer_modified.on_next(None)
 
-    def _io_service_signature(self, signatures: dict):
+    def _io_service_signature(self, parameters_info: List[ParameterInfo]):
         """ Entry point for processing the service signatures.
 
             Args:
                 signatures: The io service signatures dictionary.
         """
-        self._io_services.update(
-            {signatures['provider']: signatures['services']})
+        self._io_services[parameters_info[0].provider] = parameters_info
 
     def initialize(self):
         super().initialize()

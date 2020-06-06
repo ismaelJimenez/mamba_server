@@ -6,7 +6,7 @@ from tempfile import NamedTemporaryFile
 
 from rx import operators as op
 
-from mamba.core.testing.utils import compose_service_info, get_config_dict, CallbackTestClass, get_io_service_signature
+from mamba.core.testing.utils import compose_service_info, get_config_dict, CallbackTestClass, get_provider_params_info
 from mamba.core.context import Context
 from mamba.component.instrument_driver.signal_generator import SignalGeneratorSmb100b
 from mamba.core.exceptions import ComponentConfigException
@@ -218,9 +218,8 @@ class TestClass:
         dummy_test_class = CallbackTestClass()
 
         # Subscribe to the topic that shall be published
-        self.context.rx['io_service_signature'].pipe(
-            op.filter(lambda value: isinstance(value, dict))).subscribe(
-                dummy_test_class.test_func_1)
+        self.context.rx['io_service_signature'].subscribe(
+            dummy_test_class.test_func_1)
 
         component = SignalGeneratorSmb100b(self.context)
         component.initialize()
@@ -228,8 +227,16 @@ class TestClass:
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 1
-        assert dummy_test_class.func_1_last_value == get_io_service_signature(
-            self.default_component_config, self.default_service_info)
+
+        received_params_info = str([
+            str(parameter_info)
+            for parameter_info in dummy_test_class.func_1_last_value
+        ])
+        expected_params_info = str([
+            str(parameter_info) for parameter_info in get_provider_params_info(
+                self.default_component_config, self.default_service_info)
+        ])
+        assert received_params_info == expected_params_info
 
         component = SignalGeneratorSmb100b(
             self.context,
@@ -253,18 +260,28 @@ class TestClass:
         custom_component_config = copy.deepcopy(self.default_component_config)
         custom_component_config['name'] = 'custom_name'
         custom_component_config['visa-sim'] = None
-        custom_component_config['topics'].update({
+        topics = {
             'CUSTOM_TOPIC': {
                 'command': 'CUSTOM_SCPI {:}',
                 'description': 'Custom command description',
                 'signature': [['str'], None]
             }
-        })
+        }
+        topics.update(custom_component_config['topics'])
+        custom_component_config['topics'] = topics
 
         custom_service_info = compose_service_info(custom_component_config)
 
-        assert dummy_test_class.func_1_last_value == get_io_service_signature(
-            custom_component_config, custom_service_info)
+        received_params_info = str([
+            str(parameter_info)
+            for parameter_info in dummy_test_class.func_1_last_value
+        ])
+        expected_params_info = str([
+            str(parameter_info) for parameter_info in get_provider_params_info(
+                custom_component_config, custom_service_info)
+        ])
+
+        assert received_params_info == expected_params_info
 
     def test_io_service_request_observer(self):
         """ Test component io_service_request observer """

@@ -3,6 +3,7 @@
 import os
 
 from rx import operators as op
+from typing import List, Dict
 
 from PySide2.QtWidgets import QLabel, QWidget, QApplication, QComboBox, \
     QHBoxLayout, QMdiSubWindow, QPushButton, QTableWidget, QMenu, QVBoxLayout,\
@@ -12,7 +13,7 @@ from PySide2.QtGui import QIcon, QCursor, QFont
 
 from mamba.component.plugins import PluginBase
 from mamba.component.gui.msg import RunAction
-from mamba.core.msg import Empty, ServiceRequest
+from mamba.core.msg import Empty, ServiceRequest, ParameterInfo, ParameterType
 
 
 class CustomTable(QTableWidget):
@@ -39,7 +40,7 @@ class Plugin(PluginBase):
     def __init__(self, context, local_config=None):
         # Define custom variables
         self._app = None
-        self._io_services = {}
+        self._io_services: Dict[str, List[ParameterInfo]] = {}
 
         super().__init__(os.path.dirname(__file__), context, local_config)
 
@@ -47,16 +48,14 @@ class Plugin(PluginBase):
         super()._register_observers()
 
         # Register to the topic provided by the io_controller services
-        self._context.rx['io_service_signature'].pipe(
-            op.filter(lambda value: isinstance(value, dict))).subscribe(
-                on_next=self._io_service_signature)
+        self._context.rx['io_service_signature'].subscribe(
+            on_next=self._io_service_signature)
 
     def generate_service_combobox(self, providerCombo, serviceCombo):
         serviceCombo.clear()
 
-        for service, info in self._io_services[
-                providerCombo.currentText()].items():
-            serviceCombo.addItem(service)
+        for parameter_info in self._io_services[providerCombo.currentText()]:
+            serviceCombo.addItem(parameter_info.id)
 
     def call_service(self, provider_id, service_id, services_table):
         args = []
@@ -79,7 +78,12 @@ class Plugin(PluginBase):
                            type='set'))
 
     def add_service(self, provider, service, services_table):
-        parameters = self._io_services[provider][service]['signature'][0]
+        parameter_info = [
+            parameter_info for parameter_info in self._io_services[provider]
+            if parameter_info.id == service
+        ][0]
+
+        parameters = parameter_info.signature[0]
         num_params = len(parameters)
 
         services_table.insertRow(0)
@@ -92,8 +96,7 @@ class Plugin(PluginBase):
         service_btn.clicked.connect(
             lambda: self.call_service(provider, service, services_table))
 
-        description_item = QTableWidgetItem(
-            self._io_services[provider][service]['description'])
+        description_item = QTableWidgetItem(parameter_info.description)
         description_item.setFlags(Qt.ItemIsEnabled)
 
         if num_params > 0:
@@ -215,9 +218,16 @@ class Plugin(PluginBase):
             window.resize(perspective['width'], perspective['height'])
 
             for service_id in reversed(perspective['services']):
-                for provider, services in self._io_services.items():
-                    if service_id in services:
-                        self.add_service(provider, service_id, services_table)
+                param_id_split = service_id.split(' -> ')
+                provider = param_id_split[0]
+                param_id = param_id_split[1]
+
+                if provider in self._io_services:
+                    if len([
+                            param for param in self._io_services[provider]
+                            if param.id == param_id
+                    ]) > 0:
+                        self.add_service(provider, param_id, services_table)
                         break
         else:
             window.adjustSize()
@@ -257,14 +267,13 @@ class Plugin(PluginBase):
 
         self._context.rx['component_perspective'].on_next(perspective)
 
-    def _io_service_signature(self, signatures: dict):
+    def _io_service_signature(self, parameters_info: List[ParameterInfo]):
         """ Entry point for processing the service signatures.
 
             Args:
                 signatures: The io service signatures dictionary.
         """
-        self._io_services.update(
-            {signatures['provider']: signatures['services']})
+        self._io_services[parameters_info[0].provider] = parameters_info
 
     def initialize(self):
         super().initialize()

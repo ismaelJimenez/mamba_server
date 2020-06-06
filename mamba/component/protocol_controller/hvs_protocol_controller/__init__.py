@@ -1,9 +1,10 @@
 import os
 
 from rx import operators as op
+from typing import List, Dict
 
 from mamba.core.msg import ServiceRequest, ServiceResponse,\
-    ServiceRequest
+    ServiceRequest, ParameterInfo, ParameterType
 from mamba.component import ComponentBase
 from mamba.core.exceptions import ComponentConfigException
 
@@ -17,7 +18,7 @@ class Driver(ComponentBase):
         self._register_observers()
 
         # Define custom variables
-        self._io_services = {}
+        self._provider_params: Dict[str, ParameterInfo] = {}
         self._io_result_subs = None
 
     def _register_observers(self):
@@ -29,9 +30,8 @@ class Driver(ComponentBase):
         ).subscribe(on_next=self._received_tc)
 
         # Register to the topic provided by the io_controller services
-        self._context.rx['io_service_signature'].pipe(
-            op.filter(lambda value: isinstance(value, dict))).subscribe(
-                on_next=self._io_service_signature)
+        self._context.rx['io_service_signature'].subscribe(
+            on_next=self._io_service_signature)
 
     def _generate_tm(self, telecommand: ServiceRequest):
         """ Entry point for generating response telemetry
@@ -43,11 +43,11 @@ class Driver(ComponentBase):
         result = ServiceResponse(id=telecommand.id, type=telecommand.type)
 
         if 'meta' in telecommand.type:
-            io_service = self._io_services[telecommand.id]
+            io_service = self._provider_params[telecommand.id]
 
             result.value = {
-                'signature': io_service["signature"],
-                'description': io_service["description"]
+                'signature': io_service.signature,
+                'description': io_service.description
             }
 
         self._context.rx['tm'].on_next(result)
@@ -77,8 +77,8 @@ class Driver(ComponentBase):
 
         self._context.rx['io_service_request'].on_next(
             ServiceRequest(
-                provider=self._io_services[telecommand.id]['provider'],
-                id=self._io_services[telecommand.id]['parameter_id'],
+                provider=self._provider_params[telecommand.id].provider,
+                id=self._provider_params[telecommand.id].id,
                 type=telecommand.type,
                 args=telecommand.args))
 
@@ -95,7 +95,7 @@ class Driver(ComponentBase):
         self._log_dev(f'Received TC: {telecommand.id}')
 
         if (telecommand.id
-                not in self._io_services) and (telecommand.type != 'helo'):
+                not in self._provider_params) and (telecommand.type != 'helo'):
             self._generate_error_tm(telecommand, 'Not recognized command')
             return
 
@@ -115,29 +115,29 @@ class Driver(ComponentBase):
         self._io_result_subs.dispose()
         self._context.rx['tm'].on_next(rx_result)
 
-    def _io_service_signature(self, signatures: dict):
+    def _io_service_signature(self, parameters_info: List[ParameterInfo]):
         """ Entry point for processing the service signatures.
 
             Args:
                 signatures: The io service signatures dictionary.
         """
         self._log_info(
-            f"Received signatures from {signatures['provider']}: {str(signatures['services'])}"
-        )
+            f"Received signatures from {parameters_info[0].provider}: "
+            f"{[str(parameter_info) for parameter_info in parameters_info]}")
 
-        for key, value in signatures['services'].items():
-            if not isinstance(value.get('signature'), list) or len(
-                    value.get('signature')) != 2 or not isinstance(
-                        value.get('signature')[0], list):
+        for parameter_info in parameters_info:
+            if not isinstance(parameter_info.signature, list) or len(
+                    parameter_info.signature) != 2 or not isinstance(
+                        parameter_info.signature[0], list):
                 raise ComponentConfigException(
-                    f'Signature of service "{key}" is invalid. Format shall'
+                    f'Signature of service {parameter_info.provider} -> '
+                    f'"{parameter_info.id}" is invalid. Format shall'
                     f' be [[arg_1, arg_2, ...], return_type]')
 
-            parameter_id = f'{signatures["provider"]}_{key}'
-            if parameter_id in self._io_services:
-                raise ComponentConfigException(
-                    f"Received conflicting parameter key: {parameter_id}")
+            hvs_parameter_id = f'{parameter_info.provider}_{parameter_info.id}'
 
-            value['provider'] = signatures['provider']
-            value['parameter_id'] = key
-            self._io_services[parameter_id] = value
+            if hvs_parameter_id in self._provider_params:
+                raise ComponentConfigException(
+                    f"Received conflicting parameter key: {hvs_parameter_id}")
+
+            self._provider_params[hvs_parameter_id] = parameter_info

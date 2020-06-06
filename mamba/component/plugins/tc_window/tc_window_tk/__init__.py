@@ -2,6 +2,7 @@
 
 import os
 import time
+from typing import List, Dict
 
 from rx import operators as op
 from rx.subject import Subject
@@ -11,7 +12,7 @@ import tkinter as tk
 from mamba.component.plugins import PluginBase
 from mamba.component.gui.msg import RunAction
 from mamba.core.msg import Empty, \
-    ServiceResponse, ServiceRequest
+    ServiceResponse, ServiceRequest, ParameterInfo, ParameterType
 
 from tkinter import Frame, N, S, W, E, Button, Toplevel, END
 from tkinter.ttk import Treeview
@@ -31,10 +32,9 @@ class App(Frame):
     def selected_new_provider(self, _io_services):
         self.serviceCombo['values'] = ()
 
-        for service, info in _io_services[self.providerCombo.get()].items():
-            self.serviceCombo['values'] = (
-                *self.serviceCombo['values'],
-                service[len(self.providerCombo.get()) + 1:])
+        for parameter_info in _io_services[self.providerCombo.get()]:
+            self.serviceCombo['values'] = (*self.serviceCombo['values'],
+                                           parameter_info.id)
 
     def CreateUI(self, parent, _io_services):
         label1 = tk.Label(self, text="Provider:")
@@ -119,8 +119,12 @@ class App(Frame):
         self.grid_columnconfigure(0, weight=1)
 
     def OnDoubleClick(self, event):
-        parameters = self.observed_services[self.treeview.item(
-            self.treeview.selection()[0], "text")]
+        param_text = self.treeview.item(self.treeview.selection()[0],
+                                        "text").split(' -> ')
+        provider = param_text[0]
+        service = param_text[1]
+
+        parameters = self.observed_services[(provider, service)]
         num_parameter = 4 - parameters.count('-')
 
         if num_parameter == 0:
@@ -216,13 +220,12 @@ class App(Frame):
         self.item_dialog.destroy()
 
     def call(self):
-        id = self.treeview.item(self.treeview.selection()[0], "text")
-        args = [n for n in self.observed_services[id] if n != '-']
+        id = self.treeview.item(self.treeview.selection()[0],
+                                "text").split(' -> ')
+        args = [n for n in self.observed_services[(id[0], id[1])] if n != '-']
 
-        print(id)
-        print(args)
-
-        self._rx['tc'].on_next(ServiceRequest(id=id, args=args, type='tc'))
+        self._rx['tc'].on_next(
+            ServiceRequest(provider=id[0], id=id[1], args=args, type='set'))
 
     def remove_item(self):
         selected_items = self.treeview.selection()
@@ -233,25 +236,30 @@ class App(Frame):
 
     def _add_button(self, _io_services):
         provider = self.providerCombo.get()
-        service = f'{provider}_{self.serviceCombo.get()}'
+        service = self.serviceCombo.get()
 
-        parameters = _io_services[provider][service]['signature'][0]
+        parameter_info = [
+            parameter_info for parameter_info in _io_services[provider]
+            if parameter_info.id == service
+        ][0]
+
+        parameters = parameter_info.signature[0]
         num_params = len(parameters)
 
         if (service == '') or (provider == ''):
             return
 
-        if service in self.observed_services:
+        if (provider, service) in self.observed_services:
             return
         else:
             args = [''] * num_params + ['-'] * (4 - num_params)
-            self.observed_services[service] = args
+            self.observed_services[(provider, service)] = args
 
-        description_item = _io_services[provider][service]['description']
+        description_item = parameter_info.description
 
         self.treeview.insert('',
                              0,
-                             text=service,
+                             text=f'{provider} -> {service}',
                              values=(description_item, args[0], args[1],
                                      args[2], args[3]))
         #    log.message, str(log.level),
@@ -264,15 +272,12 @@ class App(Frame):
         print(self.debugCheckBox.get())
 
     def _process_io_result(self, rx_value: ServiceResponse):
-        if rx_value.id in self.observed_services:
+        if (rx_value.provider, rx_value.id) in self.observed_services:
             for children in self.treeview.get_children():
                 child = self.treeview.item(children)
                 if child['text'] == rx_value.id:
                     child['measure'] = str(rx_value.value)
                     child['stamp'] = str(time.time())
-
-    def new_log(self, log):
-        pass
 
 
 class Plugin(PluginBase):
@@ -280,7 +285,7 @@ class Plugin(PluginBase):
     def __init__(self, context, local_config=None):
         # Define custom variables
         self._app = None
-        self._io_services = {}
+        self._io_services: Dict[str, List[ParameterInfo]] = {}
         self._service_tables = []
         self._observed_services = {}
 
@@ -295,9 +300,8 @@ class Plugin(PluginBase):
         super(Plugin, self)._register_observers()
 
         # Register to the topic provided by the io_controller services
-        self._context.rx['io_service_signature'].pipe(
-            op.filter(lambda value: isinstance(value, dict))).subscribe(
-                on_next=self._io_service_signature)
+        self._context.rx['io_service_signature'].subscribe(
+            on_next=self._io_service_signature)
 
         self._observer_modified.subscribe(
             on_next=self._process_observer_modification)
@@ -308,8 +312,8 @@ class Plugin(PluginBase):
 
         self._io_result_subs = self._context.rx['io_result'].pipe(
             op.filter(lambda value: isinstance(value, ServiceResponse) and
-                      value.id in self._observed_services)).subscribe(
-                          on_next=self.log_table._process_io_result)
+                      (value.provider, value.id) in self._observed_services)
+        ).subscribe(on_next=self.log_table._process_io_result)
 
     def _process_io_result(self, rx_value: ServiceResponse):
         print('IO RESULT')
@@ -438,14 +442,13 @@ class Plugin(PluginBase):
             self._service_tables.remove(services_table)
             self._observer_modified.on_next(None)
 
-    def _io_service_signature(self, signatures: dict):
+    def _io_service_signature(self, parameters_info: List[ParameterInfo]):
         """ Entry point for processing the service signatures.
 
             Args:
                 signatures: The io service signatures dictionary.
         """
-        self._io_services.update(
-            {signatures['provider']: signatures['services']})
+        self._io_services[parameters_info[0].provider] = parameters_info
 
     def initialize(self):
         super(Plugin, self).initialize()

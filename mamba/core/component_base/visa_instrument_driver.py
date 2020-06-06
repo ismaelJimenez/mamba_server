@@ -9,7 +9,7 @@ from mamba.core.context import Context
 from mamba.component import ComponentBase
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.msg import ServiceRequest, \
-    ServiceResponse, Empty
+    ServiceResponse, Empty, ParameterInfo, ParameterType
 from mamba.core.utils import path_from_string
 
 
@@ -114,15 +114,14 @@ class VisaInstrumentDriver(ComponentBase):
             self._service_info[key.lower()] = service_dict
 
         # Compose services signature to be published
-        services_sig = {
-            key: {
-                'description': value['description'],
-                'signature': value['signature']
-            }
+        parameter_info = [
+            ParameterInfo(provider=self._name,
+                          param_id=key,
+                          param_type=ParameterType.Set,
+                          signature=value['signature'],
+                          description=value['description'])
             for key, value in self._service_info.items()
-        }
-
-        io_signatures = {'provider': self._name, 'services': services_sig}
+        ]
 
         # Compose shared memory data dictionaries
         if 'parameters' in self._configuration:
@@ -141,7 +140,7 @@ class VisaInstrumentDriver(ComponentBase):
                         self._shared_memory_setter[setter.lower()] = key
 
         # Publish services signature
-        self._context.rx['io_service_signature'].on_next(io_signatures)
+        self._context.rx['io_service_signature'].on_next(parameter_info)
 
         # Subscribe to the services request
         self._context.rx['io_service_request'].pipe(

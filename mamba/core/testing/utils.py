@@ -9,6 +9,8 @@ import yaml
 
 from typing import Optional, Any
 
+from mamba.core.msg import ParameterInfo, ParameterType
+
 
 class CallbackTestClass:
     """ Common class to test Subject callbacks """
@@ -43,19 +45,15 @@ def compose_service_info(config):
     }
 
 
-def get_io_service_signature(config_info, service_info):
-    services_sig = {
-        key: {
-            'description': value['description'],
-            'signature': value['signature']
-        }
+def get_provider_params_info(config_info, service_info):
+    return [
+        ParameterInfo(provider=config_info['name'].replace(' ', '_').lower(),
+                      param_id=key,
+                      param_type=ParameterType.Set,
+                      signature=value['signature'],
+                      description=value['description'])
         for key, value in service_info.items()
-    }
-
-    return {
-        'provider': config_info['name'].replace(' ', '_').lower(),
-        'services': services_sig
-    }
+    ]
 
 
 def get_testenv():
