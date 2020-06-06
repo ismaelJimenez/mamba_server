@@ -13,6 +13,17 @@ from mamba.core.msg import ServiceRequest, \
 from mamba.core.utils import path_from_string
 
 
+class Instrument:
+    def __init__(self, inst_config):
+        if inst_config.get('address') is not None:
+            self.address = inst_config.get('address')
+        else:
+            raise ComponentConfigException(
+                'Missing address in Instrument Configuration')
+
+        self.visa_sim = inst_config.get('visa_sim')
+
+
 class VisaInstrumentDriver(ComponentBase):
     """ VISA controller base class """
     def __init__(self,
@@ -21,6 +32,8 @@ class VisaInstrumentDriver(ComponentBase):
                  local_config: Optional[dict] = None) -> None:
         super(VisaInstrumentDriver, self).__init__(config_folder, context,
                                                    local_config)
+
+        self._instrument = Instrument(self._configuration.get('instrument'))
 
         # Initialize observers
         self._register_observers()
@@ -55,16 +68,15 @@ class VisaInstrumentDriver(ComponentBase):
             self._inst = None
 
     def _visa_sim_file_validation(self) -> None:
-        if self._configuration.get('visa-sim') is not None:
-            if os.path.exists(self._configuration['visa-sim']):
-                self._simulation_file = self._configuration['visa-sim']
+        if self._instrument.visa_sim is not None:
+            if os.path.exists(self._instrument.visa_sim):
+                self._simulation_file = self._instrument.visa_sim
             elif os.path.exists(
-                    os.path.join(
-                        self._context.get('mamba_dir'),
-                        path_from_string(self._configuration['visa-sim']))):
+                    os.path.join(self._context.get('mamba_dir'),
+                                 path_from_string(self._instrument.visa_sim))):
                 self._simulation_file = os.path.join(
                     self._context.get('mamba_dir'),
-                    path_from_string(self._configuration['visa-sim']))
+                    path_from_string(self._instrument.visa_sim))
             else:
                 raise ComponentConfigException(
                     'Visa-sim file has not been found')
@@ -150,10 +162,10 @@ class VisaInstrumentDriver(ComponentBase):
                           on_next=self._run_command)
 
     def _visa_connect(self, result: ServiceResponse) -> None:
-        if self._configuration.get('visa-sim'):
+        if self._instrument.visa_sim:
             self._inst = pyvisa.ResourceManager(
                 f"{self._simulation_file}@sim").open_resource(
-                    self._configuration['address'],
+                    self._instrument.address,
                     read_termination=self._eom_read,
                     write_termination=self._eom_write)
 
@@ -161,7 +173,7 @@ class VisaInstrumentDriver(ComponentBase):
         else:
             try:
                 self._inst = pyvisa.ResourceManager().open_resource(
-                    self._configuration['address'], read_termination='\n')
+                    self._instrument.address, read_termination='\n')
             except (OSError, pyvisa.errors.VisaIOError):
                 result.type = 'error'
                 result.value = 'Instrument is unreachable'

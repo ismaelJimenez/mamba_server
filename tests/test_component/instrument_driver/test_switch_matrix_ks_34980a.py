@@ -107,7 +107,10 @@ class TestClass:
         os.chdir(temp_file_folder)
 
         component = SwitchMatrixKs34980a(
-            self.context, local_config={'visa-sim': temp_file_name})
+            self.context,
+            local_config={'instrument': {
+                'visa_sim': temp_file_name
+            }})
         component.initialize()
 
         assert temp_file_name in component._simulation_file
@@ -129,7 +132,9 @@ class TestClass:
             self.context,
             local_config={
                 'name': 'custom_name',
-                'visa-sim': None,
+                'instrument': {
+                    'visa_sim': None
+                },
                 'topics': {
                     'CUSTOM_TOPIC': {
                         'command': 'CUSTOM_SCPI {:}',
@@ -142,7 +147,7 @@ class TestClass:
 
         custom_component_config = copy.deepcopy(self.default_component_config)
         custom_component_config['name'] = 'custom_name'
-        custom_component_config['visa-sim'] = None
+        custom_component_config['instrument']['visa_sim'] = None
         custom_component_config['topics'].update({
             'CUSTOM_TOPIC': {
                 'command': 'CUSTOM_SCPI {:}',
@@ -196,7 +201,9 @@ class TestClass:
         with pytest.raises(ComponentConfigException) as excinfo:
             SwitchMatrixKs34980a(self.context,
                                  local_config={
-                                     'visa-sim': 'non-existing'
+                                     'instrument': {
+                                         'visa_sim': 'non-existing'
+                                     }
                                  }).initialize()
         assert "Visa-sim file has not been found" in str(excinfo.value)
 
@@ -242,7 +249,9 @@ class TestClass:
             self.context,
             local_config={
                 'name': 'custom_name',
-                'visa-sim': None,
+                'instrument': {
+                    'visa_sim': None
+                },
                 'topics': {
                     'CUSTOM_TOPIC': {
                         'command': 'CUSTOM_SCPI {:}',
@@ -259,7 +268,7 @@ class TestClass:
 
         custom_component_config = copy.deepcopy(self.default_component_config)
         custom_component_config['name'] = 'custom_name'
-        custom_component_config['visa-sim'] = None
+        custom_component_config['instrument']['visa_sim'] = None
         topics = {
             'CUSTOM_TOPIC': {
                 'command': 'CUSTOM_SCPI {:}',
@@ -633,8 +642,10 @@ class TestClass:
                     dummy_test_class.test_func_1)
 
         # Test real connection to missing instrument
-        component = SwitchMatrixKs34980a(self.context,
-                                         local_config={'visa-sim': None})
+        component = SwitchMatrixKs34980a(
+            self.context, local_config={'instrument': {
+                'visa_sim': None
+            }})
         component.initialize()
 
         assert component._inst is None

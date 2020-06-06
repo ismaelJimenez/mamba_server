@@ -1,6 +1,8 @@
 name: Keysight Z2091C Switch
-visa-sim: mock/visa/switch_matrix/ks_z2091c.yml
-address: TCPIP0::1.2.3.4::INSTR
+
+instrument:
+  visa_sim: mock/visa/switch_matrix/ks_z2091c.yml
+  address: TCPIP0::1.2.3.4::INSTR
 
 topics:
   connect:

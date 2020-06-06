@@ -1,6 +1,8 @@
 name: ks_33502a
-visa-sim:
-address: TCPIP0::192.168.0.245::INSTR
+
+instrument:
+  visa_sim: mock/visa/amplifier/ks_33502a.yml
+  address: TCPIP0::1.2.3.4::INSTR
 
 topics:
   AMP_CONNECT:

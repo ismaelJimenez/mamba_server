@@ -1,6 +1,8 @@
 name: spectrum_analyzer
-visa-sim: mock/visa/spectrum_analyzer/rs_fsw.yml
-address: TCPIP0::1.2.3.4::INSTR
+
+instrument:
+  visa_sim: mock/visa/spectrum_analyzer/rs_fsw.yml
+  address: TCPIP0::1.2.3.4::INSTR
 
 topics:
   connect:

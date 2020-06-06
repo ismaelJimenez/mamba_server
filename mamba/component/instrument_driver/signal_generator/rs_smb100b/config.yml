@@ -1,6 +1,8 @@
 name: RS SMB100b Signal Gen
-visa-sim: mock/visa/signal_generator/rs_smb100b.yml
-address: TCPIP0::1.2.3.4::INSTR
+
+instrument:
+  visa_sim: mock/visa/signal_generator/rs_smb100b.yml
+  address: TCPIP0::1.2.3.4::INSTR
 
 topics:
   connect:

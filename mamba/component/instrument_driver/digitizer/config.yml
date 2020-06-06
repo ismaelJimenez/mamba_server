@@ -1,6 +1,8 @@
 name: m8131a
-visa-sim: mock/visa/digitizer/ks_m8131a.yml
-address: TCPIP0::1.2.3.4::INSTR
+
+instrument:
+  visa_sim: mock/visa/digitizer/ks_m8131a.yml
+  address: TCPIP0::1.2.3.4::INSTR
 
 topics:
   connect:

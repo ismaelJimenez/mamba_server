@@ -1,6 +1,8 @@
 name: n5747a
-visa-sim:
-address: TCPIP0::192.168.0.243::INSTR
+
+instrument:
+  visa-sim: mock/visa/power_supply/ks_n5700.yml
+  address: TCPIP0::1.2.3.4::INSTR
 
 topics:
   PS_CONNECT:
