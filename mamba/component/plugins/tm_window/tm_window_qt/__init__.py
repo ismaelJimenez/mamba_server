@@ -117,7 +117,8 @@ class Plugin(PluginBase):
 
     def add_service(self, provider, service, services_table):
         parameter_info = \
-        [parameter_info for parameter_info in self._io_services[provider] if parameter_info.id == service][0]
+            [parameter_info for parameter_info in self._io_services[provider]
+             if parameter_info.id == service][0]
 
         parameter_text = f'{provider} -> {service}'
 

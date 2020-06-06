@@ -21,4 +21,5 @@ class ParameterInfo:
         self.description = description
 
     def __str__(self):
-        return f'[id: {self.id}, type: {self.type}, signature: {self.signature}]'
+        return f'[id: {self.id}, type: {self.type}, ' \
+               f'signature: {self.signature}]'
