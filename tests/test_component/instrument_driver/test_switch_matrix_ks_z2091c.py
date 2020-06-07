@@ -82,12 +82,10 @@ class TestClass:
         # Test custom variables default values
         assert component._shared_memory == {
             'connected': False,
-            'idn': None,
             'raw_query': ''
         }
         assert component._shared_memory_getter == {
             'connected': 'connected',
-            'idn': 'idn',
             'raw_query': 'raw_query'
         }
         assert component._shared_memory_setter == {
@@ -171,12 +169,10 @@ class TestClass:
         # Test custom variables default values
         assert component._shared_memory == {
             'connected': False,
-            'idn': None,
             'raw_query': ''
         }
         assert component._shared_memory_getter == {
             'connected': 'connected',
-            'idn': 'idn',
             'raw_query': 'raw_query'
         }
         assert component._shared_memory_setter == {
@@ -196,9 +192,9 @@ class TestClass:
         with pytest.raises(ComponentConfigException) as excinfo:
             SwitchMatrixKsZ2091c(self.context,
                                  local_config={
-                                     'topics': 'wrong'
+                                     'parameters': 'wrong'
                                  }).initialize()
-        assert "Topics configuration: wrong format" in str(excinfo.value)
+        assert "Parameters configuration: wrong format" in str(excinfo.value)
 
         # In case no new topics are given, use the default ones
         component = SwitchMatrixKsZ2091c(self.context,
@@ -226,9 +222,7 @@ class TestClass:
 
         assert component._shared_memory == {
             'connected': False,
-            'idn': None,
-            'raw_query': '',
-            'new_param': None,
+            'raw_query': ''
         }
 
     def test_io_signature_publication(self):
@@ -409,11 +403,7 @@ class TestClass:
         assert dummy_test_class.func_1_last_value.value == 'Keysight_Technologies,Z2091C-001,US56400131,1.1.6450.15113'
 
         # 7 - Test shared memory set
-        assert component._shared_memory == {
-            'connected': 1,
-            'idn': None,
-            'raw_query': ''
-        }
+        assert component._shared_memory == {'connected': 1, 'raw_query': ''}
 
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(provider='keysight_z2091c_switch',
@@ -426,8 +416,6 @@ class TestClass:
         assert component._shared_memory == {
             'connected':
             1,
-            'idn':
-            None,
             'raw_query':
             'Keysight_Technologies,Z2091C-001,US56400131,1.1.6450.15113'
         }
@@ -475,7 +463,6 @@ class TestClass:
 
         assert component._shared_memory == {
             'connected': 1,
-            'idn': None,
             'raw_query': 'WORD'
         }
 

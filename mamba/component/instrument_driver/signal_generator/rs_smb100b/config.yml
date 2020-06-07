@@ -4,84 +4,6 @@ instrument:
   visa_sim: mock/visa/signal_generator/rs_smb100b.yml
   address: TCPIP0::1.2.3.4::INSTR
 
-topics:
-  rst:
-    description: Clear the output buffer
-    instrument_command: '*CLS'
-    type: set
-
-  raw:
-    description: Send a msg command to the instrument
-    signature: [[str], None]
-    instrument_command: '{:}'
-    type: set
-
-  freq_mode:
-    description: Set the frequency mode for generating the RF output signal
-    signature: [[str], None]
-    instrument_command: 'FREQuency:MODE {:}'
-    type: set
-
-  out_power:
-    description: Set the RF output signal
-    signature: [[str], None]
-    instrument_command: 'OUTP {:}'
-    type: set
-
-  cw_freq:
-    description: Sets the frequency of the RF output signal
-    signature: [[int], None]
-    instrument_command: 'FREQuency:CW {:}'
-    type: set
-
-  clock_src:
-    description: Sets the source of the reference frequency
-    signature: [[str], None]
-    instrument_command: 'SOURce:ROSCillator:SOURce {:}'
-    type: set
-
-  power_level:
-    description: Sets the RF level applied to the device under tests
-    signature: [[float], None]
-    instrument_command: 'POWer {:}'
-    type: set
-
-  query_out_power:
-    description: Query the RF output signal
-    signature: [[], int]
-    instrument_command: 'OUTP?'
-    type: get
-
-  query_freq_mode:
-    description: Query the frequency mode for generating the RF output signal
-    signature: [[], str]
-    instrument_command: 'FREQuency:MODE?'
-    type: get
-
-  query_cw_freq:
-    description: Query the frequency of the RF output signal
-    signature: [[], int]
-    instrument_command: 'FREQuency:CW?'
-    type: get
-
-  query_clock_src:
-    description: Query the source of the reference frequency
-    signature: [[], str]
-    instrument_command: 'SOURce:ROSCillator:SOURce?'
-    type: get
-
-  query_power_level:
-    description: Query the RF level applied to the device under tests
-    signature: [[], float]
-    instrument_command: 'POWer?'
-    type: get
-
-  query_sys_err:
-    description: Query the error queue for the oldest item and removes it from the queue
-    signature: [[], str]
-    instrument_command: 'SYST:ERR?'
-    type: get
-
 parameters:
   connected:
     # Set parameter type.
@@ -126,6 +48,15 @@ parameters:
     # Parameter getter configuration.
     get:
 
+  raw_write:
+    # Set parameter description.
+    description: Raw write to intrument
+
+    # Parameter setter configuration.
+    set:
+      signature: [raw_write: {type: str}]
+      instrument_command: [write: '{:}']
+
   idn:
     # Set parameter type.
     type: str
@@ -137,3 +68,124 @@ parameters:
     get:
       instrument_command:
         - query: '*IDN?'
+
+  clear:
+    # Set parameter description.
+    description: Clear status
+
+    # Parameter setter configuration.
+    set:
+      instrument_command: [write: '*CLS']
+
+  sys_err:
+    # Set parameter type.
+    type: str
+
+    # Set parameter description.
+    description: Oldest error in queue
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: 'SYST:ERR?'
+
+  power_level:
+    # Set parameter type.
+    type: float
+
+    # Set parameter description.
+    description: RF level applied to the device under tests
+
+    # Parameter setter configuration.
+    set:
+      signature: [amplitude: {type: float}]
+      instrument_command:
+        - write: 'POWer {:}'
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: 'POWer?'
+
+  frequency_mode:
+    # Set parameter type.
+    type: str
+
+    # Set parameter description.
+    description: Frequency mode for generating the RF output signal
+
+    # Parameter setter configuration.
+    set:
+      signature:
+        - mode:
+            type: str
+            valid: ['CW', 'FIXed', 'SWEep', 'LIST']
+
+      instrument_command:
+        - write: 'FREQuency:MODE {:}'
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: 'FREQuency:MODE?'
+
+  output_power:
+    # Set parameter type.
+    type: int
+
+    # Set parameter description.
+    description: RF output signal active status
+
+    # Parameter setter configuration.
+    set:
+      signature:
+        - state:
+            type: int
+            valid: [0, 1]
+
+      instrument_command:
+        - write: 'OUTP {:}'
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: 'OUTP?'
+
+  cw_frequency:
+    # Set parameter type.
+    type: float
+
+    # Set parameter description.
+    description: RF output CW frequency
+
+    # Parameter setter configuration.
+    set:
+      signature: [fixed: {type: float}]
+      instrument_command:
+        - write: 'FREQuency:CW {:}'
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: 'FREQuency:CW?'
+
+  clock_source:
+    # Set parameter type.
+    type: str
+
+    # Set parameter description.
+    description: Source of the reference frequency
+
+    # Parameter setter configuration.
+    set:
+      signature:
+        - state:
+            type: str
+            valid: ['INTernal', 'EXTernal']
+      instrument_command:
+        - write: 'SOURce:ROSCillator:SOURce {:}'
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: 'SOURce:ROSCillator:SOURce?'

@@ -83,18 +83,19 @@ class VisaInstrumentDriver(ComponentBase):
                 raise ComponentConfigException(
                     'Visa-sim file has not been found')
 
-    def _topics_format_validation(self) -> None:
-        if not isinstance(self._configuration.get('topics'), dict):
+    def _parameters_format_validation(self) -> None:
+        if not isinstance(self._configuration.get('parameters'), dict):
             raise ComponentConfigException(
-                'Topics configuration: wrong format')
+                'Parameters configuration: wrong format')
 
     def initialize(self) -> None:
         """ Entry point for component initialization """
 
-        self._topics_format_validation()
+        self._parameters_format_validation()
         self._visa_sim_file_validation()
 
-        for key, parameter_info in self._configuration['topics'].items():
+        for key, parameter_info in self._configuration.get('topics',
+                                                           {}).items():
             # Create new service signature dictionary
             service_dict = {
                 'description': parameter_info.get('description') or '',
@@ -103,9 +104,9 @@ class VisaInstrumentDriver(ComponentBase):
                 'type': ParameterType[parameter_info.get('type') or 'set'],
             }
 
-            if not isinstance(service_dict['signature'], list) or len(
-                    service_dict['signature']) != 2 or not isinstance(
-                        service_dict['signature'][0], list):
+            if (not isinstance(service_dict['signature'], list)
+                    or len(service_dict['signature']) != 2
+                    or not isinstance(service_dict['signature'][0], list)):
                 raise ComponentConfigException(
                     f'Signature of service "{key}" is invalid. Format shall'
                     f' be [[arg_1, arg_2, ...], return_type]')
@@ -118,9 +119,6 @@ class VisaInstrumentDriver(ComponentBase):
         if 'parameters' in self._configuration:
             for key, parameter_info in self._configuration['parameters'].items(
             ):
-                # Initialize shared memory with given value, if any
-                self._shared_memory[key] = parameter_info.get('initial_value')
-
                 if 'get' in parameter_info:
                     getter = parameter_info.get('get') or {}
 
@@ -134,24 +132,20 @@ class VisaInstrumentDriver(ComponentBase):
                     getter_key = getter.get('alias') or key
                     getter_id = getter_key.lower()
 
-                    # Add new service to the component services dictionary
                     self._service_info[(getter_id,
                                         ParameterType.get)] = service_dict
-                    self._shared_memory_getter[getter_id] = key
 
                 if 'set' in parameter_info:
                     setter = parameter_info.get('set') or {}
 
                     service_dict = {
                         'description': parameter_info.get('description') or '',
-                        'signature': [setter.get('signature'), None],
+                        'signature': [setter.get('signature') or [], None],
                         'instrument_command': setter.get('instrument_command'),
                         'type': ParameterType.set,
                     }
 
-                    if not isinstance(service_dict['signature'], list) or len(
-                            service_dict['signature']) != 2 or not isinstance(
-                                service_dict['signature'][0], list):
+                    if not isinstance(service_dict['signature'][0], list):
                         raise ComponentConfigException(
                             f'Signature of service {self._name} : "{key}" is'
                             f' invalid. Format shall be [[arg_1, arg_2, ...],'
@@ -163,6 +157,16 @@ class VisaInstrumentDriver(ComponentBase):
                     # Add new service to the component services dictionary
                     self._service_info[(setter_id,
                                         ParameterType.set)] = service_dict
+
+                # Enable memory only if get is enabled, and get value is
+                # not directly retrieved from instrument
+                if ('get' in parameter_info and
+                        (parameter_info['get'] or {}).get(
+                            'instrument_command') is None):
+                    # Initialize shared memory with given value, if any
+                    self._shared_memory[key] = parameter_info.get(
+                        'initial_value')
+                    self._shared_memory_getter[getter_id] = key
                     self._shared_memory_setter[setter_id] = key
 
                 # Compose dict assigning each getter with his memory slot
@@ -287,11 +291,17 @@ class VisaInstrumentDriver(ComponentBase):
                 cmd_type = list(inst_cmd.keys())[0]
                 cmd = list(inst_cmd.values())[0]
 
-                if (len(self._service_info[(
-                        service_request.id,
-                        service_request.type)]['signature'][0])
-                        == 1) and (len(service_request.args) > 1):
+                param_sig = self._service_info[(
+                    service_request.id, service_request.type)]['signature'][0]
+
+                if (len(param_sig) == 1) and (len(service_request.args) > 1):
                     service_request.args = [' '.join(service_request.args)]
+                elif len(param_sig) != len(service_request.args):
+                    result.type = ParameterType.error
+                    result.value = 'Wrong number or arguments for ' \
+                                   f'{service_request.id}.\n Expected: ' \
+                                   f'{param_sig};\n Received: ' \
+                                   f'{service_request.args}'
 
                 try:
                     if cmd_type == 'query':

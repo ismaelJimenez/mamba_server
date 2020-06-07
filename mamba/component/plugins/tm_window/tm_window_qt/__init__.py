@@ -82,7 +82,7 @@ class Plugin(PluginBase):
             self._io_result_subs.dispose()
 
         self._io_result_subs = self._context.rx['io_result'].pipe(
-            op.filter(lambda value: isinstance(value, ServiceResponse) and
+            op.filter(lambda value: value.type == ParameterType.get and
                       (value.provider, value.id) in self._observed_services)
         ).subscribe(on_next=self._process_io_result)
 

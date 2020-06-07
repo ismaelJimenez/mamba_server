@@ -46,7 +46,7 @@ def compose_service_info(config):
                          'type':
                          ParameterType[service_data.get('type')]
                      }
-                    for key, service_data in config['topics'].items()}
+                    for key, service_data in config.get('topics', {}).items()}
 
     for key, parameter_info in config['parameters'].items():
         if 'get' in parameter_info:
@@ -68,7 +68,7 @@ def compose_service_info(config):
 
             service_info[(setter_id, ParameterType['set'])] = {
                 'description': parameter_info.get('description') or '',
-                'signature': [setter.get('signature'), None],
+                'signature': [setter.get('signature') or [], None],
                 'instrument_command': setter.get('instrument_command'),
                 'type': ParameterType['set'],
             }

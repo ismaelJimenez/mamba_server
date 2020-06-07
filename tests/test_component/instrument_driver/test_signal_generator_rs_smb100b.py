@@ -82,12 +82,10 @@ class TestClass:
         # Test custom variables default values
         assert component._shared_memory == {
             'connected': False,
-            'idn': None,
             'raw_query': ''
         }
         assert component._shared_memory_getter == {
             'connected': 'connected',
-            'idn': 'idn',
             'raw_query': 'raw_query'
         }
         assert component._shared_memory_setter == {
@@ -142,12 +140,19 @@ class TestClass:
                 'instrument': {
                     'visa_sim': None
                 },
-                'topics': {
-                    'CUSTOM_TOPIC': {
-                        'command': 'CUSTOM_SCPI {:}',
-                        'description': 'Custom command description',
-                        'signature': [['str'], None],
-                        'type': 'set'
+                'parameters': {
+                    'new_param': {
+                        'description': 'New parameter description',
+                        'set': {
+                            'signature': [{
+                                'param_1': {
+                                    type: str
+                                }
+                            }],
+                            'instrument_command': [{
+                                'write': '{:}'
+                            }]
+                        },
                     }
                 }
             })
@@ -156,14 +161,19 @@ class TestClass:
         custom_component_config = copy.deepcopy(self.default_component_config)
         custom_component_config['name'] = 'custom_name'
         custom_component_config['instrument']['visa_sim'] = None
-        custom_component_config['topics'].update({
-            'CUSTOM_TOPIC': {
-                'command': 'CUSTOM_SCPI {:}',
-                'description': 'Custom command description',
-                'signature': [['str'], None],
-                'type': 'set'
-            }
-        })
+        custom_component_config['parameters']['new_param'] = {
+            'description': 'New parameter description',
+            'set': {
+                'signature': [{
+                    'param_1': {
+                        type: str
+                    }
+                }],
+                'instrument_command': [{
+                    'write': '{:}'
+                }]
+            },
+        }
 
         # Test default configuration load
         assert component._configuration == custom_component_config
@@ -171,12 +181,10 @@ class TestClass:
         # Test custom variables default values
         assert component._shared_memory == {
             'connected': False,
-            'idn': None,
             'raw_query': ''
         }
         assert component._shared_memory_getter == {
             'connected': 'connected',
-            'idn': 'idn',
             'raw_query': 'raw_query'
         }
         assert component._shared_memory_setter == {
@@ -196,13 +204,13 @@ class TestClass:
         with pytest.raises(ComponentConfigException) as excinfo:
             SignalGeneratorSmb100b(self.context,
                                    local_config={
-                                       'topics': 'wrong'
+                                       'parameters': 'wrong'
                                    }).initialize()
-        assert "Topics configuration: wrong format" in str(excinfo.value)
+        assert 'Parameters configuration: wrong format' in str(excinfo.value)
 
         # In case no new topics are given, use the default ones
         component = SignalGeneratorSmb100b(self.context,
-                                           local_config={'topics': {}})
+                                           local_config={'parameters': {}})
         component.initialize()
 
         assert component._configuration == self.default_component_config
@@ -224,12 +232,7 @@ class TestClass:
             }})
         component.initialize()
 
-        assert component._shared_memory == {
-            'connected': 0,
-            'idn': None,
-            'raw_query': '',
-            'new_param': None,
-        }
+        assert component._shared_memory == {'connected': 0, 'raw_query': ''}
 
     def test_io_signature_publication(self):
         """ Test component io_signature observable """
@@ -263,12 +266,19 @@ class TestClass:
                 'instrument': {
                     'visa_sim': None
                 },
-                'topics': {
-                    'CUSTOM_TOPIC': {
-                        'command': 'CUSTOM_SCPI {:}',
-                        'description': 'Custom command description',
-                        'signature': [['str'], None],
-                        'type': 'set'
+                'parameters': {
+                    'new_param': {
+                        'description': 'New parameter description',
+                        'set': {
+                            'signature': [{
+                                'param_1': {
+                                    type: str
+                                }
+                            }],
+                            'instrument_command': [{
+                                'write': '{:}'
+                            }]
+                        },
                     }
                 }
             })
@@ -281,16 +291,24 @@ class TestClass:
         custom_component_config = copy.deepcopy(self.default_component_config)
         custom_component_config['name'] = 'custom_name'
         custom_component_config['instrument']['visa_sim'] = None
-        topics = {
-            'CUSTOM_TOPIC': {
-                'command': 'CUSTOM_SCPI {:}',
-                'description': 'Custom command description',
-                'signature': [['str'], None],
-                'type': 'set'
+        parameters = {
+            'new_param': {
+                'description': 'New parameter description',
+                'set': {
+                    'signature': [{
+                        'param_1': {
+                            type: str
+                        }
+                    }],
+                    'instrument_command': [{
+                        'write': '{:}'
+                    }]
+                },
             }
         }
-        topics.update(custom_component_config['topics'])
-        custom_component_config['topics'] = topics
+
+        parameters.update(custom_component_config['parameters'])
+        custom_component_config['parameters'] = parameters
 
         custom_service_info = compose_service_info(custom_component_config)
 
@@ -370,27 +388,27 @@ class TestClass:
         # 4 - Test no system errors
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(provider='rs_smb100b_signal_gen',
-                           id='query_sys_err',
+                           id='sys_err',
                            type=ParameterType.get))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 3
-        assert dummy_test_class.func_1_last_value.id == 'query_sys_err'
+        assert dummy_test_class.func_1_last_value.id == 'sys_err'
         assert dummy_test_class.func_1_last_value.type == ParameterType.get
         assert dummy_test_class.func_1_last_value.value == '0,_No_Error'
 
         # 5 - Test generic command
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(provider='rs_smb100b_signal_gen',
-                           id='rst',
+                           id='clear',
                            type=ParameterType.set,
-                           args=[1]))
+                           args=[]))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 4
-        assert dummy_test_class.func_1_last_value.id == 'rst'
+        assert dummy_test_class.func_1_last_value.id == 'clear'
         assert dummy_test_class.func_1_last_value.type == ParameterType.set
         assert dummy_test_class.func_1_last_value.value is None
 
@@ -409,11 +427,7 @@ class TestClass:
         assert dummy_test_class.func_1_last_value.value == 'Rohde&Schwarz,SMB100B,11400.1000K02/0,4.00.033'
 
         # 7 - Test shared memory set
-        assert component._shared_memory == {
-            'connected': 1,
-            'idn': None,
-            'raw_query': ''
-        }
+        assert component._shared_memory == {'connected': 1, 'raw_query': ''}
 
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(provider='rs_smb100b_signal_gen',
@@ -425,7 +439,6 @@ class TestClass:
 
         assert component._shared_memory == {
             'connected': 1,
-            'idn': None,
             'raw_query': 'Rohde&Schwarz,SMB100B,11400.1000K02/0,4.00.033'
         }
 
@@ -451,14 +464,14 @@ class TestClass:
         # 9 - Test special case of msg command with multiple args
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(provider='rs_smb100b_signal_gen',
-                           id='raw',
+                           id='raw_write',
                            type=ParameterType.set,
                            args=['OUTP', '1']))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 8
-        assert dummy_test_class.func_1_last_value.id == 'raw'
+        assert dummy_test_class.func_1_last_value.id == 'raw_write'
         assert dummy_test_class.func_1_last_value.type == ParameterType.set
         assert dummy_test_class.func_1_last_value.value is None
 
@@ -470,11 +483,7 @@ class TestClass:
 
         time.sleep(.1)
 
-        assert component._shared_memory == {
-            'connected': 1,
-            'idn': None,
-            'raw_query': '1'
-        }
+        assert component._shared_memory == {'connected': 1, 'raw_query': '1'}
 
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(provider='rs_smb100b_signal_gen',
@@ -492,13 +501,13 @@ class TestClass:
         # 10 - Test no system errors
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(provider='rs_smb100b_signal_gen',
-                           id='query_sys_err',
+                           id='sys_err',
                            type=ParameterType.get))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 11
-        assert dummy_test_class.func_1_last_value.id == 'query_sys_err'
+        assert dummy_test_class.func_1_last_value.id == 'sys_err'
         assert dummy_test_class.func_1_last_value.type == ParameterType.get
         assert dummy_test_class.func_1_last_value.value == '0,_No_Error'
 
@@ -594,56 +603,23 @@ class TestClass:
         with pytest.raises(ComponentConfigException) as excinfo:
             SignalGeneratorSmb100b(self.context,
                                    local_config={
-                                       'topics': {
-                                           'CUSTOM_TOPIC': {
-                                               'command':
-                                               'SOURce:CUSTOM_SCPI {:}',
+                                       'parameters': {
+                                           'new_param': {
                                                'description':
-                                               'Custom command description'
-                                               'frequency',
-                                               'signature': ['String']
+                                               'New parameter description',
+                                               'set': {
+                                                   'signature':
+                                                   'wrong',
+                                                   'instrument_command': [{
+                                                       'write':
+                                                       '{:}'
+                                                   }]
+                                               },
                                            }
                                        }
                                    }).initialize()
 
-        assert 'Signature of service "CUSTOM_TOPIC" is invalid. Format shall' \
-               ' be [[arg_1, arg_2, ...], return_type]' in str(excinfo.value)
-
-        with pytest.raises(ComponentConfigException) as excinfo:
-            SignalGeneratorSmb100b(self.context,
-                                   local_config={
-                                       'topics': {
-                                           'CUSTOM_TOPIC': {
-                                               'command':
-                                               'SOURce:CUSTOM_SCPI {:}',
-                                               'description':
-                                               'Custom command description'
-                                               'frequency',
-                                               'signature': ['String', str]
-                                           }
-                                       }
-                                   }).initialize()
-
-        assert 'Signature of service "CUSTOM_TOPIC" is invalid. Format shall' \
-               ' be [[arg_1, arg_2, ...], return_type]' in str(excinfo.value)
-
-        with pytest.raises(ComponentConfigException) as excinfo:
-            SignalGeneratorSmb100b(self.context,
-                                   local_config={
-                                       'topics': {
-                                           'CUSTOM_TOPIC': {
-                                               'command':
-                                               'SOURce:CUSTOM_SCPI {:}',
-                                               'description':
-                                               'Custom command description'
-                                               'frequency',
-                                               'signature':
-                                               'String'
-                                           }
-                                       }
-                                   }).initialize()
-
-        assert 'Signature of service "CUSTOM_TOPIC" is invalid. Format shall' \
+        assert 'Signature of service rs_smb100b_signal_gen : "new_param" is invalid. Format shall' \
                ' be [[arg_1, arg_2, ...], return_type]' in str(excinfo.value)
 
     def test_connection_cases_normal_fail(self):
