@@ -208,7 +208,7 @@ class TestClass:
                                    }).initialize()
         assert 'Parameters configuration: wrong format' in str(excinfo.value)
 
-        # In case no new topics are given, use the default ones
+        # In case no new parameters are given, use the default ones
         component = SignalGeneratorSmb100b(self.context,
                                            local_config={'parameters': {}})
         component.initialize()

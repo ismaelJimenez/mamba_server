@@ -4,24 +4,6 @@ instrument:
   visa_sim: mock/visa/switch_matrix/ks_z2091c.yml
   address: TCPIP0::1.2.3.4::INSTR
 
-topics:
-  raw:
-    description: Send a msg command to the instrument
-    signature: [[str], None]
-    instrument_command: '{:}'
-    type: set
-
-  rst:
-    description: Clear status
-    instrument_command: '*CLS'
-    type: set
-
-  query_sys_err:
-    description: Query reads and clears one error.
-    signature: [[], str]
-    instrument_command: 'SYST:ERR?'
-    type: get
-
 parameters:
   connected:
     # Set parameter type.
@@ -66,6 +48,15 @@ parameters:
     # Parameter getter configuration.
     get:
 
+  raw_write:
+    # Set parameter description.
+    description: Raw write to intrument
+
+    # Parameter setter configuration.
+    set:
+      signature: [raw_write: {type: str}]
+      instrument_command: [write: '{:}']
+
   idn:
     # Set parameter type.
     type: str
@@ -77,3 +68,23 @@ parameters:
     get:
       instrument_command:
         - query: '*IDN?'
+
+  clear:
+    # Set parameter description.
+    description: Clear status
+
+    # Parameter setter configuration.
+    set:
+      instrument_command: [write: '*CLS']
+
+  sys_err:
+    # Set parameter type.
+    type: str
+
+    # Set parameter description.
+    description: Oldest error in queue
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: 'SYST:ERR?'
