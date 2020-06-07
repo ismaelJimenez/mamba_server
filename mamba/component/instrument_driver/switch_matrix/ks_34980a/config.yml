@@ -199,9 +199,7 @@ parameters:
 
     # Parameter setter configuration.
     set:
-      signature:
-        - raw_query:
-            type: str
+      signature: [raw_query: {type: str}]
       instrument_command:
         - query: '{:}'
 
