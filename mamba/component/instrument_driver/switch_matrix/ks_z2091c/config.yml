@@ -22,12 +22,6 @@ topics:
     instrument_command: 'SYST:ERR?'
     type: get
 
-  query_idn:
-    description: Query the instrument identification
-    signature: [[], str]
-    instrument_command: '*IDN?'
-    type: get
-
 parameters:
   connected:
     # Set parameter type.
@@ -73,3 +67,15 @@ parameters:
 
     # Parameter getter configuration.
     get:
+
+  idn:
+    # Set parameter type.
+    type: str
+
+    # Set parameter description.
+    description: Instrument identification
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: '*IDN?'

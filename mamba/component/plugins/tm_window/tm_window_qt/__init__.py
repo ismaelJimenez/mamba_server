@@ -135,7 +135,7 @@ class Plugin(PluginBase):
 
         for row in range(0, services_table.rowCount()
                          ):  # Do not allow 2 services with same name
-            if services_table.item(row, 0).text() == parameter_text:
+            if services_table.cellWidget(row, 0).text() == parameter_text:
                 return
 
         services_table.insertRow(0)

@@ -260,8 +260,11 @@ class VisaInstrumentDriver(ComponentBase):
             else:
                 result.type = ParameterType.error
                 result.value = 'Wrong number of arguments'
-        elif (service_request.type == ParameterType.get) and \
-                (service_request.id in self._shared_memory_getter):
+        elif (service_request.type == ParameterType.get) and (
+                service_request.id
+                in self._shared_memory_getter) and self._service_info[
+                    (service_request.id,
+                     service_request.type)].get('instrument_command') is None:
             result.value = self._shared_memory[self._shared_memory_getter[
                 service_request.id]]
         elif self._service_info[(service_request.id, service_request.type

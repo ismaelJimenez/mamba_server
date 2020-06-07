@@ -17,12 +17,6 @@ topics:
     instrument_command: ':TIMebase:REFClock {:}'
     type: set
 
-  query_idn:
-    description: Query the instrument identification
-    signature: [[], str]
-    instrument_command: '*IDN?'
-    type: get
-
   query_clock_src:
     description: Query the source of the reference frequency
     signature: [[], str]
@@ -74,3 +68,15 @@ parameters:
 
     # Parameter getter configuration.
     get:
+
+  idn:
+    # Set parameter type.
+    type: str
+
+    # Set parameter description.
+    description: Instrument identification
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: '*IDN?'

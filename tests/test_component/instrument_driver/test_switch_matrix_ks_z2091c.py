@@ -82,10 +82,12 @@ class TestClass:
         # Test custom variables default values
         assert component._shared_memory == {
             'connected': False,
+            'idn': None,
             'raw_query': ''
         }
         assert component._shared_memory_getter == {
             'connected': 'connected',
+            'idn': 'idn',
             'raw_query': 'raw_query'
         }
         assert component._shared_memory_setter == {
@@ -169,10 +171,12 @@ class TestClass:
         # Test custom variables default values
         assert component._shared_memory == {
             'connected': False,
+            'idn': None,
             'raw_query': ''
         }
         assert component._shared_memory_getter == {
             'connected': 'connected',
+            'idn': 'idn',
             'raw_query': 'raw_query'
         }
         assert component._shared_memory_setter == {
@@ -222,6 +226,7 @@ class TestClass:
 
         assert component._shared_memory == {
             'connected': False,
+            'idn': None,
             'raw_query': '',
             'new_param': None,
         }
@@ -334,14 +339,14 @@ class TestClass:
         # 2 - Test generic command before connection to the instrument has been established
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(provider='keysight_z2091c_switch',
-                           id='query_idn',
+                           id='idn',
                            type=ParameterType.get,
                            args=[]))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 1
-        assert dummy_test_class.func_1_last_value.id == 'query_idn'
+        assert dummy_test_class.func_1_last_value.id == 'idn'
         assert dummy_test_class.func_1_last_value.type == ParameterType.error
         assert dummy_test_class.func_1_last_value.value == 'Not possible to perform command before connection is established'
 
@@ -392,19 +397,23 @@ class TestClass:
         # 6 - Test generic query
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(provider='keysight_z2091c_switch',
-                           id='query_idn',
+                           id='idn',
                            type=ParameterType.get,
                            args=[]))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 5
-        assert dummy_test_class.func_1_last_value.id == 'query_idn'
+        assert dummy_test_class.func_1_last_value.id == 'idn'
         assert dummy_test_class.func_1_last_value.type == ParameterType.get
         assert dummy_test_class.func_1_last_value.value == 'Keysight_Technologies,Z2091C-001,US56400131,1.1.6450.15113'
 
         # 7 - Test shared memory set
-        assert component._shared_memory == {'connected': 1, 'raw_query': ''}
+        assert component._shared_memory == {
+            'connected': 1,
+            'idn': None,
+            'raw_query': ''
+        }
 
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(provider='keysight_z2091c_switch',
@@ -417,6 +426,8 @@ class TestClass:
         assert component._shared_memory == {
             'connected':
             1,
+            'idn':
+            None,
             'raw_query':
             'Keysight_Technologies,Z2091C-001,US56400131,1.1.6450.15113'
         }
@@ -464,6 +475,7 @@ class TestClass:
 
         assert component._shared_memory == {
             'connected': 1,
+            'idn': None,
             'raw_query': 'WORD'
         }
 
