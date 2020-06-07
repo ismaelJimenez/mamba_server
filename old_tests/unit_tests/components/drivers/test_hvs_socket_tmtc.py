@@ -3,7 +3,7 @@ import os
 
 from mamba.core.context import Context
 from mamba.component.drivers.socket_tmtc.hvs_socket_tmtc import Driver
-from mamba.core.msg import Raw, ServiceResponse, ServiceRequest
+from mamba.core.msg import Raw, ServiceResponse, ServiceRequest, ParameterType
 
 
 class DummyTestClass:
@@ -211,7 +211,7 @@ class TestClass:
 
         # Send single TM - 6. Error
         self.context.rx['tm'].on_next(
-            ServiceResponse(id='test', type='error', value='error msg'))
+            ServiceResponse(id='test', type=ParameterType.error, value='error msg'))
 
         assert dummy_test_class.times_called == 6
         assert isinstance(dummy_test_class.last_value, Raw)

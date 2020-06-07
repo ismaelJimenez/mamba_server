@@ -114,15 +114,14 @@ class Plugin(PluginBase):
         serviceCombo.clear()
 
         for parameter_info in self._io_services[providerCombo.currentText()]:
-            if parameter_info.type == ParameterType.Get:
-                serviceCombo.addItem(parameter_info.id)
+            serviceCombo.addItem(parameter_info.id)
 
     def call_service(self, provider_id, service_id, services_table):
         self._context.rx['tc'].on_next(
             ServiceRequest(provider=provider_id,
                            id=service_id,
                            args=[],
-                           type='get'))
+                           type=ParameterType.get))
 
     def add_service(self, provider, service, services_table):
         parameter_info = \
@@ -311,7 +310,10 @@ class Plugin(PluginBase):
             Args:
                 signatures: The io service signatures dictionary.
         """
-        self._io_services[parameters_info[0].provider] = parameters_info
+        self._io_services[parameters_info[0].provider] = [
+            param for param in parameters_info
+            if param.type == ParameterType.get
+        ]
 
     def initialize(self):
         super().initialize()

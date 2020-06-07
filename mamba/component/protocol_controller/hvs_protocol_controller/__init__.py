@@ -14,11 +14,11 @@ class Driver(ComponentBase):
         super(Driver, self).__init__(os.path.dirname(__file__), context,
                                      local_config)
 
-        # Initialize observers
+        # Initialize observersParameterType
         self._register_observers()
 
         # Define custom variables
-        self._provider_params: Dict[str, ParameterInfo] = {}
+        self._provider_params: Dict[tuple, ParameterInfo] = {}
         self._io_result_subs = None
 
     def _register_observers(self):
@@ -33,7 +33,8 @@ class Driver(ComponentBase):
         self._context.rx['io_service_signature'].subscribe(
             on_next=self._io_service_signature)
 
-    def _generate_tm(self, telecommand: ServiceRequest):
+    def _generate_tm(self, telecommand: ServiceRequest,
+                     param_type: ParameterType):
         """ Entry point for generating response telemetry
 
             Args:
@@ -42,8 +43,10 @@ class Driver(ComponentBase):
 
         result = ServiceResponse(id=telecommand.id, type=telecommand.type)
 
-        if 'meta' in telecommand.type:
-            io_service = self._provider_params[telecommand.id]
+        if param_type in [ParameterType.get, ParameterType.set]:
+            io_service = self._provider_params[(telecommand.id, param_type)]
+
+            result.provider = io_service.provider
 
             result.value = {
                 'signature': io_service.signature,
@@ -61,7 +64,9 @@ class Driver(ComponentBase):
         """
 
         self._context.rx['tm'].on_next(
-            ServiceResponse(id=telecommand.id, type='error', value=message))
+            ServiceResponse(id=telecommand.id,
+                            type=ParameterType.error,
+                            value=message))
 
     def _generate_io_service_request(self, telecommand: ServiceRequest):
         """ Entry point for generating a IO Service request to fulfill
@@ -77,8 +82,10 @@ class Driver(ComponentBase):
 
         self._context.rx['io_service_request'].on_next(
             ServiceRequest(
-                provider=self._provider_params[telecommand.id].provider,
-                id=self._provider_params[telecommand.id].id,
+                provider=self._provider_params[(telecommand.id,
+                                                telecommand.type)].provider,
+                id=self._provider_params[(telecommand.id,
+                                          telecommand.type)].id,
                 type=telecommand.type,
                 args=telecommand.args))
 
@@ -94,14 +101,24 @@ class Driver(ComponentBase):
 
         self._log_dev(f'Received TC: {telecommand.id}')
 
-        if (telecommand.id
-                not in self._provider_params) and (telecommand.type != 'helo'):
+        if telecommand.type == ParameterType.get_meta:
+            param_type = ParameterType.get
+        elif telecommand.type == ParameterType.set_meta:
+            param_type = ParameterType.set
+        else:
+            param_type = telecommand.type
+
+        if ((telecommand.type != ParameterType.helo)
+                and (telecommand.id, param_type) not in self._provider_params):
             self._generate_error_tm(telecommand, 'Not recognized command')
             return
 
-        if telecommand.type in ['helo', 'set_meta', 'get_meta']:
-            self._generate_tm(telecommand)
-        elif telecommand.type in ['set', 'get']:
+        if telecommand.type in [
+                ParameterType.helo, ParameterType.set_meta,
+                ParameterType.get_meta
+        ]:
+            self._generate_tm(telecommand, param_type)
+        elif telecommand.type in [ParameterType.get, ParameterType.set]:
             self._generate_io_service_request(telecommand)
         else:
             self._generate_error_tm(telecommand, 'Not recognized command type')
@@ -136,8 +153,10 @@ class Driver(ComponentBase):
 
             hvs_parameter_id = f'{parameter_info.provider}_{parameter_info.id}'
 
-            if hvs_parameter_id in self._provider_params:
+            if (hvs_parameter_id,
+                    parameter_info.type) in self._provider_params:
                 raise ComponentConfigException(
                     f"Received conflicting parameter key: {hvs_parameter_id}")
 
-            self._provider_params[hvs_parameter_id] = parameter_info
+            self._provider_params[(hvs_parameter_id,
+                                   parameter_info.type)] = parameter_info

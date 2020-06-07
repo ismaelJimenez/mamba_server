@@ -7,7 +7,7 @@ from mamba.component.drivers.socket_tmtc.hvs_socket_tmtc import Driver as HvsSoc
 from mamba.component.protocol_controller.hvs_protocol_controller import Driver as HvsProtocolCtrl
 from mamba.component.io_controller.rf_signal_generator import RfSignalGenerator
 from mamba.component.drivers.socket_server import Driver as SocketServer
-from mamba.core.msg import ServiceResponse, ServiceRequest
+from mamba.core.msg import ServiceResponse, ServiceRequest, ParameterType
 
 
 def client_tc(ip, port, message):
@@ -217,7 +217,7 @@ class TestClass:
 
             # Send single TM - 6. Error
             self.context.rx['tm'].on_next(
-                ServiceResponse(id='test', type='error', value='error msg'))
+                ServiceResponse(id='test', type=ParameterType.error, value='error msg'))
 
             assert str(sock.recv(1024),
                        'ascii') == '> ERROR test error msg\r\n'

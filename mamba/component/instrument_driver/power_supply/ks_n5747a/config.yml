@@ -5,99 +5,98 @@ instrument:
   address: TCPIP0::1.2.3.4::INSTR
 
 topics:
-  PS_CONNECT:
-    key: '@connect'
-    description: Establish Connection with Power Supply
-    type: set
-
-  PS_DISCONNECT:
-    key: '@disconnect'
-    description: Close connection with Power Supply
-    type: set
-
   PS_RESET:
     description: reset Power Supply
-    command: '*RST'
+    instrument_command: '*RST'
     type: set
 
   PS_SET_CURR:
     description: Set the current for the Power Supply
     signature: [[str], None]
-    command: 'CURR {:}'
+    instrument_command: 'CURR {:}'
     type: set
 
   PS_SET_VOLT:
     description: Set the voltage for the Power Supply
     signature: [[str], None]
-    command: 'VOLT {:}'
+    instrument_command: 'VOLT {:}'
     type: set
 
   PS_SET_OVP:
     description: Set the over-voltage for the Power Supply
     signature: [[str], None]
-    command: 'VOLT:PROT:LEV {:}'
+    instrument_command: 'VOLT:PROT:LEV {:}'
     type: set
 
   PS_SET_OUTPUT_ON:
     description: Set the output to ON on the
     signature: [[], None]
-    command: 'OUTP ON'
+    instrument_command: 'OUTP ON'
     type: set
 
   PS_SET_OUTPUT_OFF:
     description: Set the output to OFF on the
     signature: [[], None]
-    command: 'OUTP OFF'
+    instrument_command: 'OUTP OFF'
     type: set
 
   PS_QUERY_IDN:
     description: Query the instrument identification
     signature: [[], str]
-    command: '*IDN?'
+    instrument_command: '*IDN?'
     type: get
 
   PS_QUERY_VOLT_SETTING:
     description: Query the Power Supply Voltage Settings
     signature: [[], str]
-    command: 'VOLT?'
+    instrument_command: 'VOLT?'
     type: get
 
   PS_QUERY_CURR_SETTING:
     description: Query the Power Supply Current Settings
     signature: [[], str]
-    command: 'CURR?'
+    instrument_command: 'CURR?'
     type: get
 
   PS_QUERY_CURRENT:
     description: Query the Power Supply Current
     signature: [[], str]
-    command: 'MEAS:CURR?'
+    instrument_command: 'MEAS:CURR?'
     type: get
 
   PS_QUERY_VOLTAGE:
     description: Query the Power Supply Voltage
     signature: [[], str]
-    command: 'MEAS:VOLT?'
+    instrument_command: 'MEAS:VOLT?'
     type: get
 
   PS_QUERY_OUTPUT_STATE:
     description: Query the Power Supply Output Voltage State
     signature: [[], str]
-    command: 'OUTP?'
-    type: get
-
-  PS_QUERY_CONNECTED:
-    description: Query the connection status to the instrument
-    signature: [[], bool]
+    instrument_command: 'OUTP?'
     type: get
 
 parameters:
   connected:
+    # Set parameter type.
+    type: int
+
     # Set parameter initial value upon instrument initialization.
     initial_value: 0
 
-    setter:
-      PS_CONNECT:
-      PS_DISCONNECT:
-    getter:
-      PS_QUERY_CONNECTED:
+    # Set parameter description.
+    description: Connection status to instrument
+
+    # Parameter setter configuration.
+    set:
+      # Alias allows to access parameter under another name.
+      # Connect is an special ID, to command connect/disconnect from the equipment.
+      alias: connect
+      # Setter function signature.
+      signature:
+        - connect:
+            type: int
+            valid: [0, 1]
+
+    # Parameter getter configuration.
+    get:

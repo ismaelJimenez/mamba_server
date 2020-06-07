@@ -5,68 +5,67 @@ instrument:
   address: TCPIP0::1.2.3.4::INSTR
 
 topics:
-  AMP_CONNECT:
-    key: '@connect'
-    description: Establish Connection with Amplifier
-    type: set
-
-  AMP_DISCONNECT:
-    key: '@disconnect'
-    description: Close connection with Amplifier
-    type: set
-
   AMP_TC_1_AMP':
     signature: [[str], None]
-    command: 'ROUT1:PATH {:}'
+    instrument_command: 'ROUT1:PATH {:}'
     type: set
 
   AMP_TC_2_AMP':
     signature: [[str], None]
-    command: 'ROUT2:PATH {:}'
+    instrument_command: 'ROUT2:PATH {:}'
     type: set
 
   AMP_TC_1_OUTP':
     signature: [[str], None]
-    command: 'OUTP1 {:}'
+    instrument_command: 'OUTP1 {:}'
     type: set
 
   AMP_TC_2_OUTP':
     signature: [[str], None]
-    command: 'OUTP2 {:}'
+    instrument_command: 'OUTP2 {:}'
     type: set
 
   AMP_TC_1_COUP':
     signature: [[str], None]
-    command: 'INP1:COUP {:}'
+    instrument_command: 'INP1:COUP {:}'
     type: set
 
   AMP_TC_2_COUP':
     signature: [[str], None]
-    command: 'INP2:COUP {:}'
+    instrument_command: 'INP2:COUP {:}'
     type: set
 
   AMP_TC_1_IMP':
     signature: [[str], None]
-    command: 'INP1:IMP {:}'
+    instrument_command: 'INP1:IMP {:}'
     type: set
 
   AMP_TC_2_IMP':
     signature: [[str], None]
-    command: 'INP2:IMP {:}'
+    instrument_command: 'INP2:IMP {:}'
     type: set
-
-  AMP_QUERY_CONNECTED:
-    description: Query the connection status to the instrument
-    signature: [[], bool]
-    type: get
 
 parameters:
   connected:
+    # Set parameter type.
+    type: int
+
     # Set parameter initial value upon instrument initialization.
     initial_value: 0
 
-    setter:
-      AMP_CONNECT:
-      AMP_DISCONNECT:
-    getter:
-      AMP_QUERY_CONNECTED:
+    # Set parameter description.
+    description: Connection status to instrument
+
+    # Parameter setter configuration.
+    set:
+      # Alias allows to access parameter under another name.
+      # Connect is an special ID, to command connect/disconnect from the equipment.
+      alias: connect
+      # Setter function signature.
+      signature:
+        - connect:
+            type: int
+            valid: [0, 1]
+
+    # Parameter getter configuration.
+    get:

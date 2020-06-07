@@ -8,19 +8,19 @@ topics:
   raw:
     description: Send a msg command to the instrument
     signature: [[str], None]
-    command: '{:}'
+    instrument_command: '{:}'
     type: set
 
   trigger_out:
     description: Sets the source of the reference frequency
     signature: [[], None]
-    command: 'OUTP:TRIG2:PULS:IMM'
+    instrument_command: 'OUTP:TRIG2:PULS:IMM'
     type: set
 
   query_idn:
     description: Query the instrument identification
     signature: [[], str]
-    command: '*IDN?'
+    instrument_command: '*IDN?'
     type: get
 
   tc_query_trigger_in:

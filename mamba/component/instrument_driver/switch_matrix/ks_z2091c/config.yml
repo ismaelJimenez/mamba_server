@@ -8,36 +8,24 @@ topics:
   raw:
     description: Send a msg command to the instrument
     signature: [[str], None]
-    command: '{:}'
+    instrument_command: '{:}'
     type: set
 
   rst:
     description: Clear status
-    command: '*CLS'
+    instrument_command: '*CLS'
     type: set
 
   query_sys_err:
     description: Query reads and clears one error.
     signature: [[], str]
-    command: 'SYST:ERR?'
-    type: get
-
-  tc_query_raw:
-    description: Perform msg query to the instrument
-    signature: [[str], str]
-    command: '{:}'
-    type: set
-
-  tm_query_raw:
-    description: Retrieve the value of the last msg query
-    signature: [[], str]
-    command: '{:}'
+    instrument_command: 'SYST:ERR?'
     type: get
 
   query_idn:
     description: Query the instrument identification
     signature: [[], str]
-    command: '*IDN?'
+    instrument_command: '*IDN?'
     type: get
 
 parameters:
@@ -65,11 +53,23 @@ parameters:
     # Parameter getter configuration.
     get:
 
-  query_raw_result:
+  raw_query:
+    # Set parameter type.
+    type: str
+
     # Set parameter initial value upon instrument initialization.
     initial_value: ''
 
-    setter:
-      tc_query_raw:
-    getter:
-      tm_query_raw:
+    # Set parameter description.
+    description: Raw query to intrument
+
+    # Parameter setter configuration.
+    set:
+      signature:
+        - raw_query:
+            type: str
+      instrument_command:
+        - query: '{:}'
+
+    # Parameter getter configuration.
+    get:

@@ -3,8 +3,12 @@ import enum
 
 
 class ParameterType(enum.Enum):
-    Get = 0
-    Set = 1
+    get = 0
+    set = 1
+    get_meta = 2
+    set_meta = 3
+    helo = 4
+    error = 5
 
 
 class ParameterInfo:

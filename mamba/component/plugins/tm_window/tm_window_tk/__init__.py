@@ -33,9 +33,8 @@ class App(Frame):
         self.serviceCombo['values'] = ()
 
         for parameter_info in _io_services[self.providerCombo.get()]:
-            if parameter_info.type == ParameterType.Get:
-                self.serviceCombo['values'] = (*self.serviceCombo['values'],
-                                               parameter_info.id)
+            self.serviceCombo['values'] = (*self.serviceCombo['values'],
+                                           parameter_info.id)
 
     def CreateUI(self, parent, _io_services):
         label1 = tk.Label(self, text="Provider:")
@@ -117,7 +116,10 @@ class App(Frame):
                                 "text").split(' -> ')
 
         self._rx['tc'].on_next(
-            ServiceRequest(provider=id[0], id=id[1], args=[], type='get'))
+            ServiceRequest(provider=id[0],
+                           id=id[1],
+                           args=[],
+                           type=ParameterType.get))
 
     def remove_item(self):
         selected_items = self.treeview.selection()
@@ -355,7 +357,10 @@ class Plugin(PluginBase):
             Args:
                 signatures: The io service signatures dictionary.
         """
-        self._io_services[parameters_info[0].provider] = parameters_info
+        self._io_services[parameters_info[0].provider] = [
+            param for param in parameters_info
+            if param.type == ParameterType.get
+        ]
 
     def initialize(self):
         super(Plugin, self).initialize()

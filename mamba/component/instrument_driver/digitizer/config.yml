@@ -8,37 +8,25 @@ topics:
   raw:
     description: Send a msg command to the instrument
     signature: [[str], None]
-    command: '{:}'
+    instrument_command: '{:}'
     type: set
 
   clock_src:
     description: Sets the source of the reference frequency
     signature: [[str], None]
-    command: ':TIMebase:REFClock {:}'
-    type: set
-
-  tc_query_raw:
-    description: Perform msg query to the instrument
-    signature: [[str], str]
-    command: '{:}'
+    instrument_command: ':TIMebase:REFClock {:}'
     type: set
 
   query_idn:
     description: Query the instrument identification
     signature: [[], str]
-    command: '*IDN?'
+    instrument_command: '*IDN?'
     type: get
 
   query_clock_src:
     description: Query the source of the reference frequency
     signature: [[], str]
-    command: ':TIMebase:REFClock?'
-    type: get
-
-  tm_query_raw:
-    description: Retrieve the value of the last msg query
-    signature: [[], str]
-    command: '{:}'
+    instrument_command: ':TIMebase:REFClock?'
     type: get
 
 parameters:
@@ -66,11 +54,23 @@ parameters:
     # Parameter getter configuration.
     get:
 
-  query_raw_result:
+  raw_query:
+    # Set parameter type.
+    type: str
+
     # Set parameter initial value upon instrument initialization.
     initial_value: ''
 
-    setter:
-      tc_query_raw:
-    getter:
-      tm_query_raw:
+    # Set parameter description.
+    description: Raw query to intrument
+
+    # Parameter setter configuration.
+    set:
+      signature:
+        - raw_query:
+            type: str
+      instrument_command:
+        - query: '{:}'
+
+    # Parameter getter configuration.
+    get:

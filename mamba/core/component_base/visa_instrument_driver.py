@@ -99,8 +99,8 @@ class VisaInstrumentDriver(ComponentBase):
             service_dict = {
                 'description': parameter_info.get('description') or '',
                 'signature': parameter_info.get('signature') or [[], None],
-                'command': parameter_info.get('command'),
-                'type': parameter_info.get('type') or 'set',
+                'instrument_command': parameter_info.get('instrument_command'),
+                'type': ParameterType[parameter_info.get('type') or 'set'],
             }
 
             if not isinstance(service_dict['signature'], list) or len(
@@ -127,15 +127,16 @@ class VisaInstrumentDriver(ComponentBase):
                     service_dict = {
                         'description': parameter_info.get('description') or '',
                         'signature': [[], parameter_info.get('type')],
-                        'command': getter.get('command'),
-                        'type': 'get',
+                        'instrument_command': getter.get('instrument_command'),
+                        'type': ParameterType.get,
                     }
 
                     getter_key = getter.get('alias') or key
                     getter_id = getter_key.lower()
 
                     # Add new service to the component services dictionary
-                    self._service_info[(getter_id, 'get')] = service_dict
+                    self._service_info[(getter_id,
+                                        ParameterType.get)] = service_dict
                     self._shared_memory_getter[getter_id] = key
 
                 if 'set' in parameter_info:
@@ -144,8 +145,8 @@ class VisaInstrumentDriver(ComponentBase):
                     service_dict = {
                         'description': parameter_info.get('description') or '',
                         'signature': [setter.get('signature'), None],
-                        'command': setter.get('command'),
-                        'type': 'set',
+                        'instrument_command': setter.get('instrument_command'),
+                        'type': ParameterType.set,
                     }
 
                     if not isinstance(service_dict['signature'], list) or len(
@@ -160,7 +161,8 @@ class VisaInstrumentDriver(ComponentBase):
                     setter_id = setter_key.lower()
 
                     # Add new service to the component services dictionary
-                    self._service_info[(setter_id, 'set')] = service_dict
+                    self._service_info[(setter_id,
+                                        ParameterType.set)] = service_dict
                     self._shared_memory_setter[setter_id] = key
 
                 # Compose dict assigning each getter with his memory slot
@@ -177,8 +179,7 @@ class VisaInstrumentDriver(ComponentBase):
         parameter_info = [
             ParameterInfo(provider=self._name,
                           param_id=key[0],
-                          param_type=ParameterType.Set
-                          if key[1] == 'set' else ParameterType.Get,
+                          param_type=key[1],
                           signature=value['signature'],
                           description=value['description'])
             for key, value in self._service_info.items()
@@ -208,7 +209,7 @@ class VisaInstrumentDriver(ComponentBase):
                 self._inst = pyvisa.ResourceManager().open_resource(
                     self._instrument.address, read_termination='\n')
             except (OSError, pyvisa.errors.VisaIOError):
-                result.type = 'error'
+                result.type = ParameterType.error
                 result.value = 'Instrument is unreachable'
 
         if self._inst is not None:
@@ -232,8 +233,9 @@ class VisaInstrumentDriver(ComponentBase):
         """Perform preprocessing of the services.
 
         Note: This step is useful in case a merge of multiple arguments into
-        one unique argument is needed. If the 'command' argument is not
-        defined for the service, then no further processing will be done.
+        one unique argument is needed. If the 'instrument_command' argument
+        is not defined for the service, then no further processing will be
+        done.
 
         Args:
             service_request: The current service request.
@@ -256,18 +258,61 @@ class VisaInstrumentDriver(ComponentBase):
                 elif service_request.args[0] == '0':
                     self._visa_disconnect(result)
             else:
-                result.type = 'error'
+                result.type = ParameterType.error
                 result.value = 'Wrong number of arguments'
-        elif service_request.id in self._shared_memory_getter:
+        elif (service_request.type == ParameterType.get) and \
+                (service_request.id in self._shared_memory_getter):
             result.value = self._shared_memory[self._shared_memory_getter[
                 service_request.id]]
-        elif self._service_info[(service_request.id,
-                                 service_request.type)].get('command') is None:
+        elif self._service_info[(service_request.id, service_request.type
+                                 )].get('instrument_command') is None:
             pass
         elif self._inst is None:
-            result.type = 'error'
+            result.type = ParameterType.error
             result.value = 'Not possible to perform command before ' \
                            'connection is established'
+        elif isinstance(
+                self._service_info[(
+                    service_request.id,
+                    service_request.type)]['instrument_command'],
+                list):  # Handle new format
+            inst_commands = self._service_info[(
+                service_request.id,
+                service_request.type)]['instrument_command']
+
+            for inst_cmd in inst_commands:
+                cmd_type = list(inst_cmd.keys())[0]
+                cmd = list(inst_cmd.values())[0]
+
+                if (len(self._service_info[(
+                        service_request.id,
+                        service_request.type)]['signature'][0])
+                        == 1) and (len(service_request.args) > 1):
+                    service_request.args = [' '.join(service_request.args)]
+
+                try:
+                    if cmd_type == 'query':
+                        value = self._inst.query(
+                            cmd.format(*service_request.args)).replace(
+                                ' ', '_')
+
+                        if service_request.type == ParameterType.set:
+                            self._shared_memory[self._shared_memory_setter[
+                                service_request.id]] = value
+                        else:
+                            result.value = value
+
+                    elif cmd_type == 'write':
+                        self._inst.write(cmd.format(*service_request.args))
+
+                except OSError:
+                    result.type = ParameterType.error
+                    result.value = 'Not possible to communicate to the' \
+                                   ' instrument'
+                except pyvisa.errors.VisaIOError:
+                    result.type = ParameterType.error
+                    result.value = 'Query timeout'
+
         elif self._service_info[(
                 service_request.id, service_request.type
         )]['signature'][1] is not None and self._service_info[
@@ -281,8 +326,9 @@ class VisaInstrumentDriver(ComponentBase):
                     service_request.args = [' '.join(service_request.args)]
 
                 value = self._inst.query(self._service_info[(
-                    service_request.id, service_request.type
-                )]['command'].format(*service_request.args)).replace(' ', '_')
+                    service_request.id,
+                    service_request.type)]['instrument_command'].format(
+                        *service_request.args)).replace(' ', '_')
 
                 if service_request.id in self._shared_memory_setter:
                     self._shared_memory[self._shared_memory_setter[
@@ -290,10 +336,10 @@ class VisaInstrumentDriver(ComponentBase):
                 else:
                     result.value = value
             except OSError:
-                result.type = 'error'
+                result.type = ParameterType.error
                 result.value = 'Not possible to communicate to the instrument'
             except pyvisa.errors.VisaIOError:
-                result.type = 'error'
+                result.type = ParameterType.error
                 result.value = 'Query timeout'
         else:
             try:
@@ -303,14 +349,15 @@ class VisaInstrumentDriver(ComponentBase):
                         == 1) and (len(service_request.args) > 1):
                     service_request.args = [' '.join(service_request.args)]
 
-                self._inst.write(self._service_info[(service_request.id,
-                                                     service_request.type)]
-                                 ['command'].format(*service_request.args))
+                self._inst.write(
+                    self._service_info[(service_request.id,
+                                        service_request.type)]
+                    ['instrument_command'].format(*service_request.args))
             except OSError:
-                result.type = 'error'
+                result.type = ParameterType.error
                 result.value = 'Not possible to communicate to the instrument'
             except pyvisa.errors.VisaIOError:
-                result.type = 'error'
+                result.type = ParameterType.error
                 result.value = 'Write timeout'
 
         self._context.rx['io_result'].on_next(result)

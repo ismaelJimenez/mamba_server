@@ -5,7 +5,7 @@ import threading
 import pyvisa
 
 from mamba.core.msg import ServiceRequest,\
-    ServiceResponse
+    ServiceResponse, ParameterType
 from mamba.core.component_base import VisaInstrumentDriver
 
 
@@ -59,4 +59,4 @@ class SpectrumAnalyzer(VisaInstrumentDriver):
         if service_request.id == 'FSW_TM_QUERY_TRIGGER_IN':
             if self._shared_memory[self._shared_memory_getter[
                     service_request.id]] == 'timedout':
-                result.type = 'error'
+                result.type = ParameterType.error
