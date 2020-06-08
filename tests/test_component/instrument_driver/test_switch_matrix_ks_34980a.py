@@ -81,16 +81,25 @@ class TestClass:
 
         # Test custom variables default values
         assert component._shared_memory == {
+            'channel_frequency_config_get': '',
             'connected': False,
-            'raw_query': ''
+            'measure_dc_voltage': 0.0,
+            'raw_query': '',
+            'resistance_measure': 0.0
         }
         assert component._shared_memory_getter == {
+            'channel_frequency_config_get': 'channel_frequency_config_get',
             'connected': 'connected',
-            'raw_query': 'raw_query'
+            'measure_dc_voltage': 'measure_dc_voltage',
+            'raw_query': 'raw_query',
+            'resistance_measure': 'resistance_measure'
         }
         assert component._shared_memory_setter == {
+            'channel_frequency_config_get': 'channel_frequency_config_get',
             'connect': 'connected',
-            'raw_query': 'raw_query'
+            'measure_dc_voltage': 'measure_dc_voltage',
+            'raw_query': 'raw_query',
+            'resistance_measure': 'resistance_measure'
         }
         assert component._service_info == self.default_service_info
         assert component._inst is None
@@ -140,12 +149,19 @@ class TestClass:
                 'instrument': {
                     'visa_sim': None
                 },
-                'topics': {
-                    'CUSTOM_TOPIC': {
-                        'command': 'CUSTOM_SCPI {:}',
-                        'description': 'Custom command description',
-                        'signature': [['str'], None],
-                        'type': 'set'
+                'parameters': {
+                    'new_param': {
+                        'description': 'New parameter description',
+                        'set': {
+                            'signature': [{
+                                'param_1': {
+                                    type: str
+                                }
+                            }],
+                            'instrument_command': [{
+                                'write': '{:}'
+                            }]
+                        },
                     }
                 }
             })
@@ -154,30 +170,44 @@ class TestClass:
         custom_component_config = copy.deepcopy(self.default_component_config)
         custom_component_config['name'] = 'custom_name'
         custom_component_config['instrument']['visa_sim'] = None
-        custom_component_config['topics'].update({
-            'CUSTOM_TOPIC': {
-                'command': 'CUSTOM_SCPI {:}',
-                'description': 'Custom command description',
-                'signature': [['str'], None],
-                'type': 'set'
-            }
-        })
+        custom_component_config['parameters']['new_param'] = {
+            'description': 'New parameter description',
+            'set': {
+                'signature': [{
+                    'param_1': {
+                        type: str
+                    }
+                }],
+                'instrument_command': [{
+                    'write': '{:}'
+                }]
+            },
+        }
 
         # Test default configuration load
         assert component._configuration == custom_component_config
 
         # Test custom variables default values
         assert component._shared_memory == {
+            'channel_frequency_config_get': '',
             'connected': False,
-            'raw_query': ''
+            'measure_dc_voltage': 0.0,
+            'raw_query': '',
+            'resistance_measure': 0.0
         }
         assert component._shared_memory_getter == {
+            'channel_frequency_config_get': 'channel_frequency_config_get',
             'connected': 'connected',
-            'raw_query': 'raw_query'
+            'measure_dc_voltage': 'measure_dc_voltage',
+            'raw_query': 'raw_query',
+            'resistance_measure': 'resistance_measure'
         }
         assert component._shared_memory_setter == {
+            'channel_frequency_config_get': 'channel_frequency_config_get',
             'connect': 'connected',
-            'raw_query': 'raw_query'
+            'measure_dc_voltage': 'measure_dc_voltage',
+            'raw_query': 'raw_query',
+            'resistance_measure': 'resistance_measure'
         }
 
         custom_service_info = compose_service_info(custom_component_config)
@@ -198,7 +228,7 @@ class TestClass:
 
         # In case no new topics are given, use the default ones
         component = SwitchMatrixKs34980a(self.context,
-                                         local_config={'topics': {}})
+                                         local_config={'parameters': {}})
         component.initialize()
 
         assert component._configuration == self.default_component_config
@@ -221,8 +251,11 @@ class TestClass:
         component.initialize()
 
         assert component._shared_memory == {
+            'channel_frequency_config_get': '',
             'connected': False,
-            'raw_query': ''
+            'measure_dc_voltage': 0.0,
+            'raw_query': '',
+            'resistance_measure': 0.0
         }
 
     def test_io_signature_publication(self):
@@ -257,11 +290,19 @@ class TestClass:
                 'instrument': {
                     'visa_sim': None
                 },
-                'topics': {
-                    'CUSTOM_TOPIC': {
-                        'command': 'CUSTOM_SCPI {:}',
-                        'description': 'Custom command description',
-                        'signature': [['str'], None]
+                'parameters': {
+                    'new_param': {
+                        'description': 'New parameter description',
+                        'set': {
+                            'signature': [{
+                                'param_1': {
+                                    type: str
+                                }
+                            }],
+                            'instrument_command': [{
+                                'write': '{:}'
+                            }]
+                        },
                     }
                 }
             })
@@ -274,16 +315,23 @@ class TestClass:
         custom_component_config = copy.deepcopy(self.default_component_config)
         custom_component_config['name'] = 'custom_name'
         custom_component_config['instrument']['visa_sim'] = None
-        topics = {
-            'CUSTOM_TOPIC': {
-                'command': 'CUSTOM_SCPI {:}',
-                'description': 'Custom command description',
-                'signature': [['str'], None],
-                'type': 'set'
+        parameters = {
+            'new_param': {
+                'description': 'New parameter description',
+                'set': {
+                    'signature': [{
+                        'param_1': {
+                            type: str
+                        }
+                    }],
+                    'instrument_command': [{
+                        'write': '{:}'
+                    }]
+                },
             }
         }
-        topics.update(custom_component_config['topics'])
-        custom_component_config['topics'] = topics
+        parameters.update(custom_component_config['parameters'])
+        custom_component_config['parameters'] = parameters
 
         custom_service_info = compose_service_info(custom_component_config)
 
@@ -312,7 +360,7 @@ class TestClass:
 
         # 1 - Test that component only gets activated for implemented services
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_switch',
+            ServiceRequest(provider='keysight_34980a_multifunction_switch',
                            id='NOT_EXISTING',
                            type='any',
                            args=[]))
@@ -331,7 +379,7 @@ class TestClass:
 
         # 2 - Test generic command before connection to the instrument has been established
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_switch',
+            ServiceRequest(provider='keysight_34980a_multifunction_switch',
                            id='idn',
                            type=ParameterType.get,
                            args=[]))
@@ -347,7 +395,7 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_switch',
+            ServiceRequest(provider='keysight_34980a_multifunction_switch',
                            id='connect',
                            type=ParameterType.set,
                            args=['1']))
@@ -362,34 +410,34 @@ class TestClass:
 
         # 4 - Test no system errors
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_switch',
-                           id='query_sys_err',
+            ServiceRequest(provider='keysight_34980a_multifunction_switch',
+                           id='sys_err',
                            type=ParameterType.get))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 3
-        assert dummy_test_class.func_1_last_value.id == 'query_sys_err'
+        assert dummy_test_class.func_1_last_value.id == 'sys_err'
         assert dummy_test_class.func_1_last_value.type == ParameterType.get
         assert dummy_test_class.func_1_last_value.value == '0,_No_Error'
 
         # 5 - Test generic command
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_switch',
-                           id='rst',
+            ServiceRequest(provider='keysight_34980a_multifunction_switch',
+                           id='clear',
                            type=ParameterType.set,
-                           args=[1]))
+                           args=[]))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 4
-        assert dummy_test_class.func_1_last_value.id == 'rst'
+        assert dummy_test_class.func_1_last_value.id == 'clear'
         assert dummy_test_class.func_1_last_value.type == ParameterType.set
         assert dummy_test_class.func_1_last_value.value is None
 
         # 6 - Test generic query
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_switch',
+            ServiceRequest(provider='keysight_34980a_multifunction_switch',
                            id='idn',
                            type=ParameterType.get,
                            args=[]))
@@ -402,10 +450,16 @@ class TestClass:
         assert dummy_test_class.func_1_last_value.value == 'AGILENT_TECHNOLOGIES,34980A,12345,1.11–2.22–3.33–4.44'
 
         # 7 - Test shared memory set
-        assert component._shared_memory == {'connected': 1, 'raw_query': ''}
+        assert component._shared_memory == {
+            'channel_frequency_config_get': '',
+            'connected': 1,
+            'measure_dc_voltage': 0.0,
+            'raw_query': '',
+            'resistance_measure': 0.0
+        }
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_switch',
+            ServiceRequest(provider='keysight_34980a_multifunction_switch',
                            id='raw_query',
                            type=ParameterType.set,
                            args=['*IDN?']))
@@ -413,9 +467,12 @@ class TestClass:
         time.sleep(.1)
 
         assert component._shared_memory == {
+            'channel_frequency_config_get': '',
             'connected': 1,
+            'measure_dc_voltage': 0.0,
             'raw_query':
-            'AGILENT_TECHNOLOGIES,34980A,12345,1.11–2.22–3.33–4.44'
+            'AGILENT_TECHNOLOGIES,34980A,12345,1.11–2.22–3.33–4.44',
+            'resistance_measure': 0.0
         }
 
         assert dummy_test_class.func_1_times_called == 6
@@ -425,7 +482,7 @@ class TestClass:
 
         # 8 - Test shared memory get
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_switch',
+            ServiceRequest(provider='keysight_34980a_multifunction_switch',
                            id='raw_query',
                            type=ParameterType.get,
                            args=[]))
@@ -439,30 +496,36 @@ class TestClass:
 
         # 9 - Test special case of msg command with multiple args
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_switch',
-                           id='raw',
+            ServiceRequest(provider='keysight_34980a_multifunction_switch',
+                           id='raw_write',
                            type=ParameterType.set,
                            args=['CONF:VOLT:DC', '10,0.003,(@4009)']))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 8
-        assert dummy_test_class.func_1_last_value.id == 'raw'
+        assert dummy_test_class.func_1_last_value.id == 'raw_write'
         assert dummy_test_class.func_1_last_value.type == ParameterType.set
         assert dummy_test_class.func_1_last_value.value is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_switch',
+            ServiceRequest(provider='keysight_34980a_multifunction_switch',
                            id='raw_query',
                            type=ParameterType.set,
                            args=['MEAS:VOLT:DC?', '1,0.001,(@4009)']))
 
         time.sleep(.1)
 
-        assert component._shared_memory == {'connected': 1, 'raw_query': '10'}
+        assert component._shared_memory == {
+            'channel_frequency_config_get': '',
+            'connected': 1,
+            'measure_dc_voltage': 0.0,
+            'raw_query': '10',
+            'resistance_measure': 0.0
+        }
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_switch',
+            ServiceRequest(provider='keysight_34980a_multifunction_switch',
                            id='raw_query',
                            type=ParameterType.get,
                            args=[]))
@@ -476,20 +539,20 @@ class TestClass:
 
         # 10 - Test no system errors
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_switch',
-                           id='query_sys_err',
+            ServiceRequest(provider='keysight_34980a_multifunction_switch',
+                           id='sys_err',
                            type=ParameterType.get))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 11
-        assert dummy_test_class.func_1_last_value.id == 'query_sys_err'
+        assert dummy_test_class.func_1_last_value.id == 'sys_err'
         assert dummy_test_class.func_1_last_value.type == ParameterType.get
         assert dummy_test_class.func_1_last_value.value == '0,_No_Error'
 
         # 11 - Test disconnection to the instrument
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_switch',
+            ServiceRequest(provider='keysight_34980a_multifunction_switch',
                            id='connect',
                            type=ParameterType.set,
                            args=['0']))
@@ -503,7 +566,7 @@ class TestClass:
         assert dummy_test_class.func_1_last_value.value is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_switch',
+            ServiceRequest(provider='keysight_34980a_multifunction_switch',
                            id='connected',
                            type=ParameterType.get,
                            args=[]))
@@ -534,7 +597,7 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_switch',
+            ServiceRequest(provider='keysight_34980a_multifunction_switch',
                            id='connect',
                            type=ParameterType.set,
                            args=['1']))
@@ -562,7 +625,7 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_switch',
+            ServiceRequest(provider='keysight_34980a_multifunction_switch',
                            id='connect',
                            type=ParameterType.set,
                            args=['0']))
@@ -575,67 +638,95 @@ class TestClass:
         assert dummy_test_class.func_1_last_value.type == ParameterType.set
         assert dummy_test_class.func_1_last_value.value is None
 
-    def test_service_invalid_signature(self):
+    def test_service_invalid_info(self):
         with pytest.raises(ComponentConfigException) as excinfo:
             SwitchMatrixKs34980a(self.context,
                                  local_config={
-                                     'topics': {
-                                         'CUSTOM_TOPIC': {
-                                             'command':
-                                             'SOURce:CUSTOM_SCPI {:}',
+                                     'parameters': {
+                                         'new_param': {
+                                             'type': 'str',
                                              'description':
-                                             'Custom command description'
-                                             'frequency',
-                                             'signature': ['String'],
-                                             'type':
-                                             'set'
+                                             'New parameter description',
+                                             'set': {
+                                                 'signature':
+                                                 'wrong',
+                                                 'instrument_command': [{
+                                                     'write':
+                                                     '{:}'
+                                                 }]
+                                             },
                                          }
                                      }
                                  }).initialize()
 
-        assert 'Signature of service "CUSTOM_TOPIC" is invalid. Format shall' \
+        assert 'Signature of service keysight_34980a_multifunction_switch : "new_param" is invalid. Format shall' \
                ' be [[arg_1, arg_2, ...], return_type]' in str(excinfo.value)
 
         with pytest.raises(ComponentConfigException) as excinfo:
             SwitchMatrixKs34980a(self.context,
                                  local_config={
-                                     'topics': {
-                                         'CUSTOM_TOPIC': {
-                                             'command':
-                                             'SOURce:CUSTOM_SCPI {:}',
+                                     'parameters': {
+                                         'new_param': {
+                                             'type': 'str',
                                              'description':
-                                             'Custom command description'
-                                             'frequency',
-                                             'signature': ['String', str],
-                                             'type':
-                                             'set'
+                                             'New parameter description',
+                                             'get': {
+                                                 'signature': [{
+                                                     'arg': {
+                                                         'type': 'str'
+                                                     }
+                                                 }],
+                                                 'instrument_command': [{
+                                                     'write':
+                                                     '{:}'
+                                                 }]
+                                             },
                                          }
                                      }
                                  }).initialize()
 
-        assert 'Signature of service "CUSTOM_TOPIC" is invalid. Format shall' \
-               ' be [[arg_1, arg_2, ...], return_type]' in str(excinfo.value)
+        assert '"new_param" Signature for GET is still not allowed' in str(
+            excinfo.value)
 
         with pytest.raises(ComponentConfigException) as excinfo:
             SwitchMatrixKs34980a(self.context,
                                  local_config={
-                                     'topics': {
-                                         'CUSTOM_TOPIC': {
-                                             'command':
-                                             'SOURce:CUSTOM_SCPI {:}',
+                                     'parameters': {
+                                         'new_param': {
+                                             'type': 'str',
                                              'description':
-                                             'Custom command description'
-                                             'frequency',
-                                             'signature':
-                                             'String',
-                                             'type':
-                                             'set'
+                                             'New parameter description',
+                                             'get': {
+                                                 'instrument_command': [{
+                                                     'write':
+                                                     '{:}'
+                                                 }]
+                                             },
                                          }
                                      }
                                  }).initialize()
 
-        assert 'Signature of service "CUSTOM_TOPIC" is invalid. Format shall' \
-               ' be [[arg_1, arg_2, ...], return_type]' in str(excinfo.value)
+        assert '"new_param" Command for GET does not have a Query' in str(
+            excinfo.value)
+
+        with pytest.raises(ComponentConfigException) as excinfo:
+            SwitchMatrixKs34980a(self.context,
+                                 local_config={
+                                     'parameters': {
+                                         'new_param': {
+                                             'description':
+                                             'New parameter description',
+                                             'get': {
+                                                 'instrument_command': [{
+                                                     'write':
+                                                     '{:}'
+                                                 }]
+                                             },
+                                         }
+                                     }
+                                 }).initialize()
+
+        assert '"new_param" parameter type is missing' in str(excinfo.value)
 
     def test_connection_cases_normal_fail(self):
         dummy_test_class = CallbackTestClass()
@@ -656,7 +747,7 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_switch',
+            ServiceRequest(provider='keysight_34980a_multifunction_switch',
                            id='connect',
                            type=ParameterType.set,
                            args=['1']))

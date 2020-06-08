@@ -1,7 +1,7 @@
-name: Keysight Z2091C Smart Switch Matrix
+name: R&S FSW Signal and Spectrum Analyzer
 
 instrument:
-  visa_sim: mock/visa/switch_matrix/ks_z2091c.yml
+  visa_sim: mock/visa/spectrum_analyzer/rs_fsw.yml
   address: TCPIP0::1.2.3.4::INSTR
 
 parameters:
@@ -96,3 +96,29 @@ parameters:
     get:
       instrument_command:
         - query: 'SYST:ERR?'
+
+  trigger_out:
+    # Set parameter description.
+    description: Trigger Out Pulse
+
+    # Parameter setter configuration.
+    set:
+      instrument_command:
+        - write: 'OUTP:TRIG2:PULS:IMM'
+
+  trigger_in:
+    # Set parameter type.
+    type: int
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: 0
+
+    # Set parameter description.
+    description: Trigger Input
+
+    # Parameter setter configuration.
+    set:
+      signature: [timeout: {type: int, range: seconds}]
+
+    get:
+

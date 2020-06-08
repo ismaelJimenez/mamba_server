@@ -29,7 +29,7 @@ class TestClass:
 
     def test_dialogues(self):
         assert self.visa_inst.query(
-            '*IDN?') == 'Keysight Technologies, N5700, SN XXXX, FW YYYY'
+            '*IDN?') == 'Keysight Technologies,5700A,12345,A.11.22,A.33.44'
 
     def test_properties(self):
         self.visa_inst.write('*RST')

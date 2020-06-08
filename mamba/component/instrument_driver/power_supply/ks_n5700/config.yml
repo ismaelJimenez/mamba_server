@@ -1,7 +1,7 @@
-name: Keysight 33502A 2-Channel Isolated Amplifier
+name: Keysight Series N5700 DC Power Supply
 
 instrument:
-  visa_sim: mock/visa/amplifier/ks_33502a.yml
+  visa_sim: mock/visa/power_supply/ks_n5700.yml
   address: TCPIP0::1.2.3.4::INSTR
 
 parameters:
@@ -77,6 +77,14 @@ parameters:
     set:
       instrument_command: [write: '*CLS']
 
+  reset:
+    # Set parameter description.
+    description: Reset
+
+    # Parameter setter configuration.
+    set:
+      instrument_command: [write: '*RST']
+
   sys_err:
     # Set parameter type.
     type: str
@@ -89,56 +97,50 @@ parameters:
       instrument_command:
         - query: 'SYST:ERR?'
 
-  channel_1_gain:
+  output_current_setting:
     # Set parameter type.
-    type: str
+    type: float
 
     # Set parameter description.
-    description: Gain of channel 1
+    description: Output current setting
 
     # Parameter setter configuration.
     set:
       # Setter function signature.
-      signature:
-        - gain:
-            type: str
-            valid: ['DIRect', 'AMPLifier']
+      signature: [amperes: {type: float}]
       instrument_command:
-        - write: 'ROUT1:PATH {:}'
+        - write: 'CURR {:}'
 
     # Parameter getter configuration.
     get:
       instrument_command:
-        - query: 'ROUT1:PATH?'
+        - query: 'CURR?'
 
-  channel_2_gain:
+  output_voltage_setting:
     # Set parameter type.
-    type: str
+    type: float
 
     # Set parameter description.
-    description: Gain of channel 2
+    description: Output voltage setting
 
     # Parameter setter configuration.
     set:
       # Setter function signature.
-      signature:
-        - gain:
-            type: str
-            valid: ['DIRect', 'AMPLifier']
+      signature: [volts: {type: float}]
       instrument_command:
-        - write: 'ROUT2:PATH {:}'
+        - write: 'VOLT {:}'
 
     # Parameter getter configuration.
     get:
       instrument_command:
-        - query: 'ROUT2:PATH?'
+        - query: 'VOLT?'
 
-  channel_1_state:
+  output_state:
     # Set parameter type.
     type: int
 
     # Set parameter description.
-    description: Channel 1 ON/OFF state
+    description: Output enabled status
 
     # Parameter setter configuration.
     set:
@@ -148,119 +150,52 @@ parameters:
             type: int
             valid: [0, 1]
       instrument_command:
-        - write: 'OUTP1 {:}'
+        - write: 'OUTP {:}'
 
     # Parameter getter configuration.
     get:
       instrument_command:
-        - query: 'OUTP1:STATe?'
+        - query: 'OUTP?'
 
-  channel_2_state:
+  over_voltage_setting:
     # Set parameter type.
-    type: int
+    type: float
 
     # Set parameter description.
-    description: Channel 2 ON/OFF state
+    description: Over-voltage trip point
 
     # Parameter setter configuration.
     set:
       # Setter function signature.
-      signature:
-        - state:
-            type: int
-            valid: [0, 1]
+      signature: [volts: {type: float}]
       instrument_command:
-        - write: 'OUTP2 {:}'
+        - write: 'VOLT:PROT:LEV {:}'
 
     # Parameter getter configuration.
     get:
       instrument_command:
-        - query: 'OUTP2:STATe?'
+        - query: 'VOLT:PROT:LEV?'
 
-  channel_1_coupling:
+  measure_output_current:
     # Set parameter type.
-    type: str
+    type: float
 
     # Set parameter description.
-    description: Channel 1 coupling
-
-    # Parameter setter configuration.
-    set:
-      # Setter function signature.
-      signature:
-        - coupling:
-            type: str
-            valid: ['AC', 'DC']
-      instrument_command:
-        - write: 'INP1:COUP {:}'
+    description: Measured output current
 
     # Parameter getter configuration.
     get:
       instrument_command:
-        - query: 'INP1:COUP?'
+        - query: 'MEAS:CURR?'
 
-  channel_2_coupling:
+  measure_output_voltage:
     # Set parameter type.
-    type: str
+    type: float
 
     # Set parameter description.
-    description: Channel 2 coupling
-
-    # Parameter setter configuration.
-    set:
-      # Setter function signature.
-      signature:
-        - coupling:
-            type: str
-            valid: ['AC', 'DC']
-      instrument_command:
-        - write: 'INP2:COUP {:}'
+    description: Measured output voltage
 
     # Parameter getter configuration.
     get:
       instrument_command:
-        - query: 'INP2:COUP?'
-
-  channel_1_impedance:
-    # Set parameter type.
-    type: str
-
-    # Set parameter description.
-    description: Channel 1 impedance
-
-    # Parameter setter configuration.
-    set:
-      # Setter function signature.
-      signature:
-        - impedance:
-            type: int
-            valid: [50, 1000000]
-      instrument_command:
-        - write: 'INP1:IMP {:}'
-
-    # Parameter getter configuration.
-    get:
-      instrument_command:
-        - query: 'INP1:IMP?'
-
-  channel_2_impedance:
-    # Set parameter type.
-    type: str
-
-    # Set parameter description.
-    description: Channel 2 impedance
-
-    # Parameter setter configuration.
-    set:
-      # Setter function signature.
-      signature:
-        - impedance:
-            type: int
-            valid: [50, 1000000]
-      instrument_command:
-        - write: 'INP2:IMP {:}'
-
-    # Parameter getter configuration.
-    get:
-      instrument_command:
-        - query: 'INP2:IMP?'
+        - query: 'MEAS:VOLT?'

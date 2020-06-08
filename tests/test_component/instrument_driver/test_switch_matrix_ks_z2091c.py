@@ -339,7 +339,7 @@ class TestClass:
 
         # 1 - Test that component only gets activated for implemented services
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_z2091c_switch',
+            ServiceRequest(provider='keysight_z2091c_smart_switch_matrix',
                            id='NOT_EXISTING',
                            type='any',
                            args=[]))
@@ -358,7 +358,7 @@ class TestClass:
 
         # 2 - Test generic command before connection to the instrument has been established
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_z2091c_switch',
+            ServiceRequest(provider='keysight_z2091c_smart_switch_matrix',
                            id='idn',
                            type=ParameterType.get,
                            args=[]))
@@ -374,7 +374,7 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_z2091c_switch',
+            ServiceRequest(provider='keysight_z2091c_smart_switch_matrix',
                            id='connect',
                            type=ParameterType.set,
                            args=['1']))
@@ -389,7 +389,7 @@ class TestClass:
 
         # 4 - Test no system errors
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_z2091c_switch',
+            ServiceRequest(provider='keysight_z2091c_smart_switch_matrix',
                            id='sys_err',
                            type=ParameterType.get))
 
@@ -402,7 +402,7 @@ class TestClass:
 
         # 5 - Test generic command
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_z2091c_switch',
+            ServiceRequest(provider='keysight_z2091c_smart_switch_matrix',
                            id='clear',
                            type=ParameterType.set,
                            args=[]))
@@ -416,7 +416,7 @@ class TestClass:
 
         # 6 - Test generic query
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_z2091c_switch',
+            ServiceRequest(provider='keysight_z2091c_smart_switch_matrix',
                            id='idn',
                            type=ParameterType.get,
                            args=[]))
@@ -432,7 +432,7 @@ class TestClass:
         assert component._shared_memory == {'connected': 1, 'raw_query': ''}
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_z2091c_switch',
+            ServiceRequest(provider='keysight_z2091c_smart_switch_matrix',
                            id='raw_query',
                            type=ParameterType.set,
                            args=['*IDN?']))
@@ -453,7 +453,7 @@ class TestClass:
 
         # 8 - Test shared memory get
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_z2091c_switch',
+            ServiceRequest(provider='keysight_z2091c_smart_switch_matrix',
                            id='raw_query',
                            type=ParameterType.get,
                            args=[]))
@@ -467,7 +467,7 @@ class TestClass:
 
         # 9 - Test special case of msg command with multiple args
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_z2091c_switch',
+            ServiceRequest(provider='keysight_z2091c_smart_switch_matrix',
                            id='raw_write',
                            type=ParameterType.set,
                            args=['CONF:DIG:WIDTH', 'WORD,', '(@2001)']))
@@ -480,7 +480,7 @@ class TestClass:
         assert dummy_test_class.func_1_last_value.value is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_z2091c_switch',
+            ServiceRequest(provider='keysight_z2091c_smart_switch_matrix',
                            id='raw_query',
                            type=ParameterType.set,
                            args=['CONF:DIG:WIDTH?', '(@2001)']))
@@ -493,7 +493,7 @@ class TestClass:
         }
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_z2091c_switch',
+            ServiceRequest(provider='keysight_z2091c_smart_switch_matrix',
                            id='raw_query',
                            type=ParameterType.get,
                            args=[]))
@@ -507,7 +507,7 @@ class TestClass:
 
         # 10 - Test no system errors
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_z2091c_switch',
+            ServiceRequest(provider='keysight_z2091c_smart_switch_matrix',
                            id='sys_err',
                            type=ParameterType.get))
 
@@ -520,7 +520,7 @@ class TestClass:
 
         # 11 - Test disconnection to the instrument
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_z2091c_switch',
+            ServiceRequest(provider='keysight_z2091c_smart_switch_matrix',
                            id='connect',
                            type=ParameterType.set,
                            args=['0']))
@@ -534,7 +534,7 @@ class TestClass:
         assert dummy_test_class.func_1_last_value.value is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_z2091c_switch',
+            ServiceRequest(provider='keysight_z2091c_smart_switch_matrix',
                            id='connected',
                            type=ParameterType.get,
                            args=[]))
@@ -565,7 +565,7 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_z2091c_switch',
+            ServiceRequest(provider='keysight_z2091c_smart_switch_matrix',
                            id='connect',
                            type=ParameterType.set,
                            args=['1']))
@@ -593,7 +593,7 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_z2091c_switch',
+            ServiceRequest(provider='keysight_z2091c_smart_switch_matrix',
                            id='connect',
                            type=ParameterType.set,
                            args=['0']))
@@ -606,28 +606,95 @@ class TestClass:
         assert dummy_test_class.func_1_last_value.type == ParameterType.set
         assert dummy_test_class.func_1_last_value.value is None
 
-    def test_service_invalid_signature(self):
+    def test_service_invalid_info(self):
         with pytest.raises(ComponentConfigException) as excinfo:
             SwitchMatrixKsZ2091c(self.context,
                                  local_config={
                                      'parameters': {
                                          'new_param': {
+                                             'type': 'str',
                                              'description':
-                                                 'New parameter description',
+                                             'New parameter description',
                                              'set': {
                                                  'signature':
-                                                     'wrong',
+                                                 'wrong',
                                                  'instrument_command': [{
                                                      'write':
-                                                         '{:}'
+                                                     '{:}'
                                                  }]
                                              },
                                          }
                                      }
                                  }).initialize()
 
-        assert 'Signature of service keysight_z2091c_switch : "new_param" is invalid. Format shall' \
+        assert '"new_param" is invalid. Format shall' \
                ' be [[arg_1, arg_2, ...], return_type]' in str(excinfo.value)
+
+        with pytest.raises(ComponentConfigException) as excinfo:
+            SwitchMatrixKsZ2091c(self.context,
+                                 local_config={
+                                     'parameters': {
+                                         'new_param': {
+                                             'type': 'str',
+                                             'description':
+                                             'New parameter description',
+                                             'get': {
+                                                 'signature': [{
+                                                     'arg': {
+                                                         'type': 'str'
+                                                     }
+                                                 }],
+                                                 'instrument_command': [{
+                                                     'write':
+                                                     '{:}'
+                                                 }]
+                                             },
+                                         }
+                                     }
+                                 }).initialize()
+
+        assert '"new_param" Signature for GET is still not allowed' in str(
+            excinfo.value)
+
+        with pytest.raises(ComponentConfigException) as excinfo:
+            SwitchMatrixKsZ2091c(self.context,
+                                 local_config={
+                                     'parameters': {
+                                         'new_param': {
+                                             'type': 'str',
+                                             'description':
+                                             'New parameter description',
+                                             'get': {
+                                                 'instrument_command': [{
+                                                     'write':
+                                                     '{:}'
+                                                 }]
+                                             },
+                                         }
+                                     }
+                                 }).initialize()
+
+        assert '"new_param" Command for GET does not have a Query' in str(
+            excinfo.value)
+
+        with pytest.raises(ComponentConfigException) as excinfo:
+            SwitchMatrixKsZ2091c(self.context,
+                                 local_config={
+                                     'parameters': {
+                                         'new_param': {
+                                             'description':
+                                             'New parameter description',
+                                             'get': {
+                                                 'instrument_command': [{
+                                                     'write':
+                                                     '{:}'
+                                                 }]
+                                             },
+                                         }
+                                     }
+                                 }).initialize()
+
+        assert '"new_param" parameter type is missing' in str(excinfo.value)
 
     def test_connection_cases_normal_fail(self):
         dummy_test_class = CallbackTestClass()
@@ -648,7 +715,7 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_z2091c_switch',
+            ServiceRequest(provider='keysight_z2091c_smart_switch_matrix',
                            id='connect',
                            type=ParameterType.set,
                            args=['1']))

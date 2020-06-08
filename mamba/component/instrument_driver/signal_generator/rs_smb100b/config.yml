@@ -1,4 +1,4 @@
-name: RS SMB100b Signal Gen
+name: R&S SMB100B RF Signal Generator
 
 instrument:
   visa_sim: mock/visa/signal_generator/rs_smb100b.yml
@@ -76,6 +76,14 @@ parameters:
     # Parameter setter configuration.
     set:
       instrument_command: [write: '*CLS']
+
+  reset:
+    # Set parameter description.
+    description: Reset
+
+    # Parameter setter configuration.
+    set:
+      instrument_command: [write: '*RST']
 
   sys_err:
     # Set parameter type.

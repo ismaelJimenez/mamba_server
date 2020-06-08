@@ -9,9 +9,10 @@ devices:
     dialogues:
       - q: "*IDN?"
         r: "Rohde&Schwarz,FSW-26,1312.8000K26/100005,1.30"
+      - q: "*CLS"
     error:
       error_queue:
-        - q: ':SYST:ERR?'
+        - q: 'SYST:ERR?'
           default: '0, No Error'
           command_error: '1, Command error'
     properties:

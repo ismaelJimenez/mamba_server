@@ -9,6 +9,7 @@ devices:
     dialogues:
       - q: "*IDN?"
         r: "Keysight Technologies, M8131A, SN XXXX"
+      - q: "*CLS"
     error:
       error_queue:
         - q: 'SYST:ERR?'

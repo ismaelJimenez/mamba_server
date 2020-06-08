@@ -13,6 +13,23 @@ from mamba.core.msg import ServiceRequest, \
 from mamba.core.utils import path_from_string
 
 
+def parameters_format_validation(parameters) -> None:
+    if not isinstance(parameters, dict):
+        raise ComponentConfigException(
+            'Parameters configuration: wrong format')
+
+
+def get_visa_sim_file(sim_path, mamba_dir) -> str:
+    if sim_path is not None:
+        if os.path.exists(sim_path):
+            return sim_path
+        elif os.path.exists(os.path.join(mamba_dir,
+                                         path_from_string(sim_path))):
+            return os.path.join(mamba_dir, path_from_string(sim_path))
+        else:
+            raise ComponentConfigException('Visa-sim file has not been found')
+
+
 class Instrument:
     def __init__(self, inst_config):
         if inst_config.get('address') is not None:
@@ -83,37 +100,12 @@ class VisaInstrumentDriver(ComponentBase):
                 raise ComponentConfigException(
                     'Visa-sim file has not been found')
 
-    def _parameters_format_validation(self) -> None:
-        if not isinstance(self._configuration.get('parameters'), dict):
-            raise ComponentConfigException(
-                'Parameters configuration: wrong format')
-
     def initialize(self) -> None:
         """ Entry point for component initialization """
 
-        self._parameters_format_validation()
-        self._visa_sim_file_validation()
-
-        for key, parameter_info in self._configuration.get('topics',
-                                                           {}).items():
-            # Create new service signature dictionary
-            service_dict = {
-                'description': parameter_info.get('description') or '',
-                'signature': parameter_info.get('signature') or [[], None],
-                'instrument_command': parameter_info.get('instrument_command'),
-                'type': ParameterType[parameter_info.get('type') or 'set'],
-            }
-
-            if (not isinstance(service_dict['signature'], list)
-                    or len(service_dict['signature']) != 2
-                    or not isinstance(service_dict['signature'][0], list)):
-                raise ComponentConfigException(
-                    f'Signature of service "{key}" is invalid. Format shall'
-                    f' be [[arg_1, arg_2, ...], return_type]')
-
-            # Add new service to the component services dictionary
-            self._service_info[(key.lower(),
-                                service_dict['type'])] = service_dict
+        parameters_format_validation(self._configuration.get('parameters'))
+        self._simulation_file = get_visa_sim_file(
+            self._instrument.visa_sim, self._context.get('mamba_dir'))
 
         # Compose shared memory data dictionaries
         if 'parameters' in self._configuration:
@@ -121,6 +113,29 @@ class VisaInstrumentDriver(ComponentBase):
             ):
                 if 'get' in parameter_info:
                     getter = parameter_info.get('get') or {}
+
+                    if parameter_info.get('type') is None:
+                        raise ComponentConfigException(
+                            f'In service {self._name} : "{key}" '
+                            f'parameter type is missing.')
+
+                    if getter.get('signature') is not None:
+                        raise ComponentConfigException(
+                            f'In service {self._name} : "{key}" Signature '
+                            f'for GET is still not allowed. Consider'
+                            f'creating a new parameter for this.')
+
+                    if getter.get('instrument_command') is not None:
+                        is_query = False
+                        for cmd in getter.get('instrument_command'):
+                            if list(cmd.keys())[0] == 'query':
+                                is_query = True
+                                break
+                        if not is_query:
+                            raise ComponentConfigException(
+                                f'In service {self._name} : "{key}" Command'
+                                f' for GET does not have a Query. Consider'
+                                f' removing the command or adding a query')
 
                     service_dict = {
                         'description': parameter_info.get('description') or '',
@@ -160,24 +175,14 @@ class VisaInstrumentDriver(ComponentBase):
 
                 # Enable memory only if get is enabled, and get value is
                 # not directly retrieved from instrument
-                if ('get' in parameter_info and
-                        (parameter_info['get'] or {}).get(
-                            'instrument_command') is None):
+                if ('get' in parameter_info
+                        and (parameter_info['get']
+                             or {}).get('instrument_command') is None):
                     # Initialize shared memory with given value, if any
                     self._shared_memory[key] = parameter_info.get(
                         'initial_value')
                     self._shared_memory_getter[getter_id] = key
                     self._shared_memory_setter[setter_id] = key
-
-                # Compose dict assigning each getter with his memory slot
-                if 'getter' in parameter_info:
-                    for getter, value in parameter_info['getter'].items():
-                        self._shared_memory_getter[getter.lower()] = key
-
-                # Compose dict assigning each setter with his memory slot
-                if 'setter' in parameter_info:
-                    for setter, value in parameter_info['setter'].items():
-                        self._shared_memory_setter[setter.lower()] = key
 
         # Compose services signature to be published
         parameter_info = [
@@ -287,21 +292,21 @@ class VisaInstrumentDriver(ComponentBase):
                 service_request.id,
                 service_request.type)]['instrument_command']
 
+            param_sig = self._service_info[(
+                service_request.id, service_request.type)]['signature'][0]
+
+            if (len(param_sig) == 1) and (len(service_request.args) > 1):
+                service_request.args = [' '.join(service_request.args)]
+            elif len(param_sig) != len(service_request.args):
+                result.type = ParameterType.error
+                result.value = 'Wrong number or arguments for ' \
+                               f'{service_request.id}.\n Expected: ' \
+                               f'{param_sig};\n Received: ' \
+                               f'{service_request.args}'
+
             for inst_cmd in inst_commands:
                 cmd_type = list(inst_cmd.keys())[0]
                 cmd = list(inst_cmd.values())[0]
-
-                param_sig = self._service_info[(
-                    service_request.id, service_request.type)]['signature'][0]
-
-                if (len(param_sig) == 1) and (len(service_request.args) > 1):
-                    service_request.args = [' '.join(service_request.args)]
-                elif len(param_sig) != len(service_request.args):
-                    result.type = ParameterType.error
-                    result.value = 'Wrong number or arguments for ' \
-                                   f'{service_request.id}.\n Expected: ' \
-                                   f'{param_sig};\n Received: ' \
-                                   f'{service_request.args}'
 
                 try:
                     if cmd_type == 'query':
@@ -325,52 +330,5 @@ class VisaInstrumentDriver(ComponentBase):
                 except pyvisa.errors.VisaIOError:
                     result.type = ParameterType.error
                     result.value = 'Query timeout'
-
-        elif self._service_info[(
-                service_request.id, service_request.type
-        )]['signature'][1] is not None and self._service_info[
-            (service_request.id,
-             service_request.type)]['signature'][1] != 'None':
-            try:
-                if (len(self._service_info[(
-                        service_request.id,
-                        service_request.type)]['signature'][0])
-                        == 1) and (len(service_request.args) > 1):
-                    service_request.args = [' '.join(service_request.args)]
-
-                value = self._inst.query(self._service_info[(
-                    service_request.id,
-                    service_request.type)]['instrument_command'].format(
-                        *service_request.args)).replace(' ', '_')
-
-                if service_request.id in self._shared_memory_setter:
-                    self._shared_memory[self._shared_memory_setter[
-                        service_request.id]] = value
-                else:
-                    result.value = value
-            except OSError:
-                result.type = ParameterType.error
-                result.value = 'Not possible to communicate to the instrument'
-            except pyvisa.errors.VisaIOError:
-                result.type = ParameterType.error
-                result.value = 'Query timeout'
-        else:
-            try:
-                if (len(self._service_info[(
-                        service_request.id,
-                        service_request.type)]['signature'][0])
-                        == 1) and (len(service_request.args) > 1):
-                    service_request.args = [' '.join(service_request.args)]
-
-                self._inst.write(
-                    self._service_info[(service_request.id,
-                                        service_request.type)]
-                    ['instrument_command'].format(*service_request.args))
-            except OSError:
-                result.type = ParameterType.error
-                result.value = 'Not possible to communicate to the instrument'
-            except pyvisa.errors.VisaIOError:
-                result.type = ParameterType.error
-                result.value = 'Write timeout'
 
         self._context.rx['io_result'].on_next(result)

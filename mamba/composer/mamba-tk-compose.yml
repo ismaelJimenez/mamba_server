@@ -54,13 +54,13 @@ services:
     component: rs_smb100b
 
   digitizer:
-    component: digitizer
+    component: ks_m8131a
 
 #  tcp_socket_io_controller:
 #    component: tcp_socket_io_controller
 
   spectrum_analyzer:
-    component: spectrum_analyzer
+    component: rs_fsw
 
   # Mocks
 

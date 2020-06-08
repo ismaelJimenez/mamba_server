@@ -1,4 +1,4 @@
-name: Keysight 34980a Switch
+name: Keysight 34980A Multifunction Switch
 
 instrument:
   visa_sim: mock/visa/switch_matrix/ks_34980a.yml
@@ -6,161 +6,6 @@ instrument:
   encoding: utf-8
   terminator:
     write: "\n"
-
-topics:
-  raw:
-    description: Send a msg command to the instrument
-    signature: [[str], None]
-    instrument_command: '{:}'
-    type: set
-
-  rst:
-    description: Clear status
-    instrument_command: '*CLS'
-    type: set
-
-  rout_close:
-    description: Close channel
-    signature: [[channel_id], None]
-    instrument_command: 'ROUT:CLOS {:}'
-    type: set
-
-  rout_open:
-    description: Open channel
-    signature: [[channel_id], None]
-    instrument_command: 'ROUT:OPEN {:}'
-    type: set
-
-  rout_open_all:
-    description: Open all channels
-    signature: [[slot_id], None]
-    instrument_command: 'ROUT:OPEN:ALL {:}'
-    type: set
-
-  init:
-    description: Initiate the scan
-    instrument_command: 'INIT'
-    type: set
-
-  conf_volt:
-    description: Configure channel for DC voltage measurements
-    signature: [[str], None]
-    instrument_command: 'CONF:VOLT:DC {:}'
-    type: set
-
-  conf_scan:
-    description: Configure scan list
-    signature: [[str], None]
-    instrument_command: 'ROUT:SCAN {:}'
-    type: set
-
-  trace_on:
-    description: Enable channel trace output mode
-    signature: [[channel_id], None]
-    instrument_command: 'SOUR:FUNC:ENAB ON, {:}'
-    type: set
-
-  trace_off:
-    description: Disable channel trace output mode
-    signature: [[channel_id], None]
-    instrument_command: 'SOUR:FUNC:ENAB OFF, {:}'
-    type: set
-
-  outp_on:
-    description: Enable channel output
-    signature: [[channel_id], None]
-    instrument_command: 'OUTP:STAT ON, {:}'
-    type: set
-
-  outp_off:
-    description: Disable channel output
-    signature: [[channel_id], None]
-    instrument_command: 'OUTP:STAT OFF, {:}'
-    type: set
-
-  volt_offs:
-    description: Configure channel voltage offset
-    signature: [[channel_id], None]
-    instrument_command: 'SOUR:FUNC:VOLT:OFFS {:}'
-    type: set
-
-  volt_gain:
-    description: Configure channel voltage gain
-    signature: [[channel_id], None]
-    instrument_command: 'SOUR:FUNC:VOLT:GAIN {:}'
-    type: set
-
-  trace_ncyc:
-    description: Configure channel trace cycle count
-    signature: [[channel_id], None]
-    instrument_command: 'SOUR:FUNC:TRAC:NCYC {:}'
-    type: set
-
-  trace_func:
-    description: Configure channel trace function
-    signature: [[config], None]
-    instrument_command: 'TRAC:FUNC {:}'
-    type: set
-
-  trace:
-    description: Apply trace to channel
-    signature: [[channel_id], None]
-    instrument_command: 'SOUR:FUNC:TRAC {:}'
-    type: set
-
-  freq:
-    description: Configure channel frequency
-    signature: [[channel_id], None]
-    instrument_command: 'SOUR:FUNC:FREQ {:}'
-    type: set
-
-  query_sys_err:
-    description: Query the error queue for the oldest item and removes it from the queue
-    signature: [[], str]
-    instrument_command: 'SYST:ERR?'
-    type: get
-
-  query_rout_close:
-    description: Query close state of the channel
-    signature: [[channel_id], bool]
-    instrument_command: 'ROUT:CLOS? {:}'
-    type: get
-
-  query_rout_open:
-    description: Query open state of the channel
-    signature: [[channel_id], bool]
-    instrument_command: 'ROUT:OPEN? {:}'
-    type: get
-
-  query_fetch:
-    description: Query stored readings from memory
-    signature: [[], str]
-    instrument_command: 'FETCh?'
-    type: get
-
-  query_volt_meas:
-    description: Query open state of the channel
-    signature: [[str], volt]
-    instrument_command: 'MEASure:VOLTage:DC? {:}'
-    type: get
-
-  query_channel_res:
-    description: Query channel resistance
-    signature: [[str], ohm]
-    instrument_command: 'MEAS:RES? {:}'
-    type: get
-
-  query_trace:
-    description: Query the trace output mode
-    signature: [[channel_id], None]
-    instrument_command: 'SOUR:FUNC:ENAB? {:}'
-    type: get
-
-  query_freq:
-    description: Query channel frequency
-    signature: [[channel_id], None]
-    instrument_command: 'SOUR:FUNC:FREQ? {:}'
-    type: get
 
 parameters:
   connected:
@@ -186,6 +31,15 @@ parameters:
 
     # Parameter getter configuration.
     get:
+
+  raw_write:
+    # Set parameter description.
+    description: Raw write to intrument
+
+    # Parameter setter configuration.
+    set:
+      signature: [raw_write: {type: str}]
+      instrument_command: [write: '{:}']
 
   raw_query:
     # Set parameter type.
@@ -217,3 +71,298 @@ parameters:
     get:
       instrument_command:
         - query: '*IDN?'
+
+  clear:
+    # Set parameter description.
+    description: Clear status
+
+    # Parameter setter configuration.
+    set:
+      instrument_command: [write: '*CLS']
+
+  reset:
+    # Set parameter description.
+    description: Reset
+
+    # Parameter setter configuration.
+    set:
+      instrument_command: [write: '*RST']
+
+  sys_err:
+    # Set parameter type.
+    type: str
+
+    # Set parameter description.
+    description: Oldest error in queue
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: 'SYST:ERR?'
+
+  channel_close:
+    # Set parameter type.
+    type: int
+
+    # Set parameter description.
+    description: Channel close state
+
+    # Parameter setter configuration.
+    set:
+      signature: [channel_id: {type: str}]
+      instrument_command:
+        - write: 'ROUT:CLOS {:}'
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: 'ROUT:CLOS? {:}'
+
+  channel_open:
+    # Set parameter type.
+    type: int
+
+    # Set parameter description.
+    description: Channel open state
+
+    # Parameter setter configuration.
+    set:
+      signature: [channel_id: {type: str}]
+      instrument_command:
+        - write: 'ROUT:OPEN {:}'
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: 'ROUT:OPEN? {:}'
+
+  channel_open_all:
+    # Set parameter description.
+    description: Open all slot channel
+
+    # Parameter setter configuration.
+    set:
+      signature: [slot_id: {type: str}]
+      instrument_command:
+        - write: 'ROUT:OPEN:ALL {:}'
+
+  dc_voltage_measure:
+    # Set parameter description.
+    description: Instrument configuration for dc voltage measurements
+
+    # Parameter setter configuration.
+    set:
+      signature: [channel_id: {type: str}]
+      instrument_command:
+        - write: 'CONF:VOLT:DC {:}'
+
+  resistance_measure:
+    # Set parameter type.
+    type: float
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: 0.0
+
+    # Set parameter description.
+    description: 2-wire resistance measurements
+
+    # Parameter setter configuration.
+    set:
+      signature: [channel_id: {type: str}]
+      instrument_command:
+        - query: 'MEAS:RES? {:}'
+
+    # Parameter getter configuration.
+    get:
+
+  route_scan_config:
+    # Set parameter type.
+    type: str
+
+    # Set parameter description.
+    description: Scan list configuration
+
+    # Parameter setter configuration.
+    set:
+      signature: [scan_list: {type: str}]
+      instrument_command:
+        - query: 'ROUT:SCAN {:}'
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: 'ROUT:SCAN?'
+
+  channel_frequency_config_set:
+    # Set parameter description.
+    description: Set channel frequency configuration
+
+    # Parameter setter configuration.
+    set:
+      signature:
+        - frequency: {type: float}
+        - channel_id: {type: str}
+      instrument_command:
+        - write: 'SOUR:FUNC:FREQ {0},{1}'
+
+  channel_frequency_config_get:
+    # Set parameter type.
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: ''
+
+    # Set parameter description.
+    description: Get channel frequency configuration
+
+    # Parameter setter configuration.
+    set:
+      signature: [channel_id: {type: str}]
+      instrument_command:
+        - query: 'SOUR:FUNC:FREQ? {:}'
+
+    # Parameter getter configuration.
+    get:
+
+  channel_trace_output_mode:
+    # Set parameter type.
+    type: int
+
+    # Set parameter description.
+    description: Set channel trace output mode
+
+    # Parameter setter configuration.
+    set:
+      signature:
+        - mode:
+            type: int
+            valid: [0, 1]
+        - channel_id: {type: str}
+      instrument_command:
+        - write: 'SOUR:FUNC:ENAB {0}, {1}'
+
+  measure_dc_voltage:
+    # Set parameter type.
+    type: float
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: 0.0
+
+    # Set parameter description.
+    description: Measure DC voltage
+
+    # Parameter setter configuration.
+    set:
+      signature: [channel_id: {type: str}]
+      instrument_command:
+        - query: 'MEASure:VOLTage:DC? {:}'
+
+    # Parameter getter configuration.
+    get:
+
+  channel_output_status:
+    # Set parameter description.
+    description: Channel output status
+
+    # Parameter setter configuration.
+    set:
+      signature:
+        - status:
+            type: int
+            valid: [0, 1]
+        - channel_id: {type: str}
+      instrument_command:
+        - write: 'OUTP:STAT {0}, {1}'
+
+  init:
+    # Set parameter description.
+    description: State of the triggering system
+
+    # Parameter setter configuration.
+    set:
+      instrument_command:
+        - write: 'INIT'
+
+  voltage_offset:
+    # Set parameter description.
+    description: Channel voltage offset for scaled traced outputs
+
+    # Parameter setter configuration.
+    set:
+      signature:
+        - offset: {type: float}
+        - channel_id: {type: str}
+      instrument_command:
+        - write: 'SOUR:FUNC:VOLT:OFFS {0},{1}'
+
+  voltage_gain:
+    # Set parameter description.
+    description: Channel voltage gain for scaled traced outputs
+
+    # Parameter setter configuration.
+    set:
+      signature:
+        - gain: {type: float}
+        - channel_id: {type: str}
+      instrument_command:
+        - write: 'SOUR:FUNC:VOLT:OFFS {0},{1}'
+
+  trace_cycle_number:
+    # Set parameter description.
+    description: Channel trace cycles number
+
+    # Parameter setter configuration.
+    set:
+      signature:
+        - count:
+            type: int
+            range: [0, 254]
+        - channel_id: {type: str}
+      instrument_command:
+        - write: 'SOUR:FUNC:TRAC:NCYC {0},{1}'
+
+  trace_function:
+    # Set parameter description.
+    description: Trace data generation
+
+    # Parameter setter configuration.
+    set:
+      signature:
+        - slot:
+            type: int
+            range: [1, 8]
+        - type:
+            type: str
+            valid: ['RAMP', 'SINusoid', 'SQUare', 'TRIangle']
+        - name:
+            type: str
+        - points:
+            type: int
+            range: [8, 512000]
+      instrument_command:
+        - write: 'TRAC:FUNC {0}, {1}, {2}, {3}'
+
+  channel_trace_name:
+    # Set parameter description.
+    description: Channel trace name
+
+    # Parameter setter configuration.
+    set:
+      signature:
+        - name: {type: str}
+        - channel_id: {type: str}
+      instrument_command:
+        - write: 'SOUR:FUNC:TRAC {0}, {1}'
+
+  output_buffer:
+    # Set parameter type.
+    type: str
+
+    # Set parameter description.
+    description: Output buffer memory
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: 'FETCh?'
+

@@ -1,4 +1,4 @@
-""" Amplifier Keysight 33502A 2-Channel Isolated Amplifier Controller"""
+""" Keysight Series N5700 DC Power Supply Controller"""
 from typing import Optional
 import os
 
@@ -6,9 +6,8 @@ from mamba.core.context import Context
 from mamba.core.component_base import VisaInstrumentDriver
 
 
-class AmplifierKs33502a(VisaInstrumentDriver):
-    """ Amplifier Keysight 33502A 2-Channel Isolated Amplifier
-        Controller class """
+class PowerSupplyKsN5700(VisaInstrumentDriver):
+    """ Keysight Series N5700 DC Power Supply Controller class """
     def __init__(self,
                  context: Context,
                  local_config: Optional[dict] = None) -> None:

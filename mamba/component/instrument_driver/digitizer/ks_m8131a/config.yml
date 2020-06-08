@@ -1,27 +1,8 @@
-name: m8131a
+name: Keysight m8131a Digitizer
 
 instrument:
   visa_sim: mock/visa/digitizer/ks_m8131a.yml
   address: TCPIP0::1.2.3.4::INSTR
-
-topics:
-  raw:
-    description: Send a msg command to the instrument
-    signature: [[str], None]
-    instrument_command: '{:}'
-    type: set
-
-  clock_src:
-    description: Sets the source of the reference frequency
-    signature: [[str], None]
-    instrument_command: ':TIMebase:REFClock {:}'
-    type: set
-
-  query_clock_src:
-    description: Query the source of the reference frequency
-    signature: [[], str]
-    instrument_command: ':TIMebase:REFClock?'
-    type: get
 
 parameters:
   connected:
@@ -69,6 +50,15 @@ parameters:
     # Parameter getter configuration.
     get:
 
+  raw_write:
+    # Set parameter description.
+    description: Raw write to intrument
+
+    # Parameter setter configuration.
+    set:
+      signature: [raw_write: {type: str}]
+      instrument_command: [write: '{:}']
+
   idn:
     # Set parameter type.
     type: str
@@ -80,3 +70,52 @@ parameters:
     get:
       instrument_command:
         - query: '*IDN?'
+
+  clear:
+    # Set parameter description.
+    description: Clear status
+
+    # Parameter setter configuration.
+    set:
+      instrument_command: [write: '*CLS']
+
+  reset:
+    # Set parameter description.
+    description: Reset
+
+    # Parameter setter configuration.
+    set:
+      instrument_command: [write: '*RST']
+
+  sys_err:
+    # Set parameter type.
+    type: str
+
+    # Set parameter description.
+    description: Oldest error in queue
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: 'SYST:ERR?'
+
+  clock_source:
+    # Set parameter type.
+    type: str
+
+    # Set parameter description.
+    description: Reference clock source of the digitizer
+
+    # Parameter setter configuration.
+    set:
+      signature:
+        - source:
+            type: str
+            valid: ['INTernal', 'E010', 'E100']
+      instrument_command:
+        - write: ':TIMebase:REFClock {:}'
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: ':TIMebase:REFClock?'

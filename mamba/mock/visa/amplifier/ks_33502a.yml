@@ -11,6 +11,13 @@ devices:
     dialogues:
       - q: "*IDN?"
         r: "Agilent Technologies,33502A,MY12345678,1.00-01-01-01"
+      - q: "*CLS"
+
+    error:
+      error_queue:
+        - q: 'SYST:ERR?'
+          default: '0, No Error'
+          command_error: '1, Command error'
 
     properties:
       channel_1_gain:
