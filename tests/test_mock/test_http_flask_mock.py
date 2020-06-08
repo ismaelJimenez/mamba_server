@@ -65,7 +65,10 @@ class TestClass:
         self.mock._close()
 
     def test_error_handling(self):
-        self.mock = FlaskServerMock(Context(), local_config={'port': 5001})
+        self.mock = FlaskServerMock(
+            Context(), local_config={'instrument': {
+                'port': 5001
+            }})
         self.mock.initialize()
 
         time.sleep(.1)

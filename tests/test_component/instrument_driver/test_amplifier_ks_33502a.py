@@ -61,7 +61,7 @@ class TestClass:
         assert component._shared_memory == {}
         assert component._shared_memory_getter == {}
         assert component._shared_memory_setter == {}
-        assert component._service_info == {}
+        assert component._parameter_info == {}
         assert component._inst is None
         assert component._simulation_file is None
 
@@ -92,7 +92,7 @@ class TestClass:
             'connect': 'connected',
             'raw_query': 'raw_query'
         }
-        assert component._service_info == self.default_service_info
+        assert component._parameter_info == self.default_service_info
         assert component._inst is None
         assert 'ks_33502a.yml' in component._simulation_file
 
@@ -194,7 +194,7 @@ class TestClass:
         }
 
         custom_service_info = compose_service_info(custom_component_config)
-        assert component._service_info == custom_service_info
+        assert component._parameter_info == custom_service_info
         assert component._inst is None
         assert component._simulation_file is None
 

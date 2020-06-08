@@ -20,54 +20,59 @@ class TestClass:
             # Receive data from the server and shut down
             received = str(sock.recv(1024), "utf-8")
 
-            assert received == 'tm_1 1\ntm_2 2\ntm_3 3\n'
+            assert received == 'telemetry_1 1\ntelemetry_2 2\ntelemetry_3 3\n'
 
             time.sleep(2)
 
             # Receive data from the server and shut down
             received = str(sock.recv(1024), "utf-8")
 
-            assert received == 'tm_1 1\ntm_2 2\ntm_3 3\n'
+            assert received == 'telemetry_1 1\ntelemetry_2 2\ntelemetry_3 3\n'
 
             time.sleep(4)
 
             # Receive data from the server and shut down
             received = str(sock.recv(1024), "utf-8")
 
-            assert received == 'tm_1 1\ntm_2 2\ntm_3 3\ntm_1 1\ntm_2 2\n' \
-                               'tm_3 3\n'
+            assert received == 'telemetry_1 1\ntelemetry_2 2\ntelemetry_3 3\ntelemetry_1 1\ntelemetry_2 2\n' \
+                               'telemetry_3 3\n'
 
             # Create a socket (SOCK_STREAM means a TCP socket)
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock_tc:
                 # Connect to server and send data
                 sock_tc.connect(("localhost", 8081))
 
-                sock_tc.sendall(bytes('tm_1 5\r\n', "utf-8"))
+                sock_tc.sendall(bytes('telemetry_1 5\r\n', "utf-8"))
 
                 time.sleep(2)
 
                 # Receive data from the server and shut down
                 received = str(sock.recv(1024), "utf-8")
 
-                assert received == 'tm_1 5\ntm_2 2\ntm_3 3\n'
+                assert received == 'telemetry_1 5\ntelemetry_2 2\ntelemetry_3 3\n'
 
-                sock_tc.sendall(bytes('tm_2 6\r\ntm_3 7\r\n', "utf-8"))
+                sock_tc.sendall(
+                    bytes('telemetry_2 6\r\ntelemetry_3 7\r\n', "utf-8"))
 
                 time.sleep(2)
 
                 # Receive data from the server and shut down
                 received = str(sock.recv(1024), "utf-8")
 
-                assert received == 'tm_1 5\ntm_2 6\ntm_3 7\n'
+                assert received == 'telemetry_1 5\ntelemetry_2 6\ntelemetry_3 7\n'
 
         self.mock._close()
 
     def test_error_handling(self):
-        self.mock = CyclicTcpMock(Context(),
-                                  local_config={
-                                      'tm_port': 8083,
-                                      'tc_port': 8084
-                                  })
+        self.mock = CyclicTcpMock(
+            Context(),
+            local_config={'instrument': {
+                'port': {
+                    'tc': 8084,
+                    'tm': 8083
+                }
+            }})
+
         self.mock.initialize()
         # Create a socket (SOCK_STREAM means a TCP socket)
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
@@ -79,31 +84,32 @@ class TestClass:
             # Receive data from the server and shut down
             received = str(sock.recv(1024), "utf-8")
 
-            assert received == 'tm_1 1\ntm_2 2\ntm_3 3\n'
+            assert received == 'telemetry_1 1\ntelemetry_2 2\ntelemetry_3 3\n'
 
             # Create a socket (SOCK_STREAM means a TCP socket)
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock_tc:
                 # Connect to server and send data
                 sock_tc.connect(("localhost", 8084))
 
-                sock_tc.sendall(bytes('tm_1 5\n',
+                sock_tc.sendall(bytes('telemetry_1 5\n',
                                       "utf-8"))  # Command with wrong ending
 
                 time.sleep(2)
 
-                assert received == 'tm_1 1\ntm_2 2\ntm_3 3\n'
+                assert received == 'telemetry_1 1\ntelemetry_2 2\ntelemetry_3 3\n'
 
-                sock_tc.sendall(bytes('tm_1\r\n', "utf-8"))  # Command wo param
+                sock_tc.sendall(bytes('telemetry_1\r\n',
+                                      "utf-8"))  # Command wo param
 
                 time.sleep(2)
 
-                assert received == 'tm_1 1\ntm_2 2\ntm_3 3\n'
+                assert received == 'telemetry_1 1\ntelemetry_2 2\ntelemetry_3 3\n'
 
-                sock_tc.sendall(bytes('tm_4 4\r\n',
+                sock_tc.sendall(bytes('telemetry_4 4\r\n',
                                       "utf-8"))  # Not existing TM
 
                 time.sleep(2)
 
-                assert received == 'tm_1 1\ntm_2 2\ntm_3 3\n'
+                assert received == 'telemetry_1 1\ntelemetry_2 2\ntelemetry_3 3\n'
 
         self.mock._close()

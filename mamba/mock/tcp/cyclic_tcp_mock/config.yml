@@ -1,25 +1,36 @@
-# Component name
-
-name: cyclic_tcp_mock
+name: Cyclic TCP Server Mock
 
 # Component network configuration
 
-host: 0.0.0.0
-tc_port: 8081
-tm_port: 8082
+instrument:
+  address: 0.0.0.0
+  port:
+    tc: 8081
+    tm: 8082
+  terminator:
+    write: "\n"
+    read: "\r\n"
 
 # Component TMTC
 
-device:
-    eom:
-      TCPIP INSTR:
-        q: "\r\n"
-        r: "\n"
+parameters:
+  telemetry_1:
+    # Set parameter type.
+    type: int
 
-    properties:
-        tm_1:
-          default: 1
-        tm_2:
-          default: '2'
-        tm_3:
-          default: 3
+    # Set parameter initial value upon instrument initialization.
+    initial_value: 1
+
+  telemetry_2:
+    # Set parameter type.
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: '2'
+
+  telemetry_3:
+    # Set parameter type.
+    type: int
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: 3

@@ -1,4 +1,4 @@
-""" Component for simulating socket TMTC equipment """
+""" Component for simulating cyclic TCP server equipment """
 
 import os
 import threading
@@ -6,33 +6,17 @@ import socketserver
 import time
 from typing import Optional
 
-from rx import operators as op
-
-from mamba.component import ComponentBase
 from mamba.core.msg import Empty
-from mamba.core.exceptions import ComponentConfigException
 from mamba.core.context import Context
-from mamba.core.utils import get_properties_dict
+from mamba.core.component_base import InstrumentDriver
 
 
-class CyclicTcpMock(ComponentBase):
+class CyclicTcpMock(InstrumentDriver):
     """ Cyclic TCP Server Mock """
     def __init__(self,
                  context: Context,
                  local_config: Optional[dict] = None) -> None:
         super().__init__(os.path.dirname(__file__), context, local_config)
-
-        # Component configuration
-        try:
-            self.eom_q = self._configuration['device']['eom']['TCPIP INSTR'][
-                'q']
-            self.eom_r = self._configuration['device']['eom']['TCPIP INSTR'][
-                'r']
-        except KeyError:
-            self.eom_q = "\r\n"
-            self.eom_r = "\n"
-
-        self.dict = get_properties_dict(self._configuration)
 
         self._tm_server: Optional[ThreadedCyclicTmServer] = None
         self._tm_server_thread: Optional[threading.Thread] = None
@@ -41,25 +25,30 @@ class CyclicTcpMock(ComponentBase):
 
         self._app_running = True
 
-        # Initialize observers
-        self._register_observers()
+    def _close(self, rx_value: Optional[Empty] = None) -> None:
+        """ Entry point for closing the component """
+        if self._tm_server is not None:
+            self._tm_server.do_run = False
+            self._tm_server.shutdown()
+        if self._tc_server is not None:
+            self._tc_server.do_run = False
+            self._tc_server.shutdown()
 
-    def _register_observers(self) -> None:
-        # Quit topic is published to command App finalization
-        self._context.rx['quit'].pipe(
-            op.filter(lambda value: isinstance(value, Empty))).subscribe(
-                on_next=self._close)
+        if self._tm_server_thread is not None:
+            self._tm_server_thread.join()
+        if self._tc_server_thread is not None:
+            self._tc_server_thread.join()
 
     def initialize(self) -> None:
-        if not all(key in self._configuration
-                   for key in ['host', 'tc_port', 'tm_port']):
-            raise ComponentConfigException(
-                "Missing required elements in component configuration")
+        """ Entry point for component initialization """
+        # Compose shared memory data dictionaries
+        for key, parameter_info in self._configuration['parameters'].items():
+            self._shared_memory[key] = parameter_info.get('initial_value')
 
         # Create the TM socket server, binding to host and port
         socketserver.TCPServer.allow_reuse_address = True
         self._tm_server = ThreadedCyclicTmServer(
-            (self._configuration['host'], self._configuration['tm_port']),
+            (self._instrument.address, self._instrument.tm_port),
             ThreadedCyclicTmHandler, self)
 
         # Start a thread with the server -- that thread will then start one
@@ -75,7 +64,7 @@ class CyclicTcpMock(ComponentBase):
 
         # Create the TC socket server, binding to host and port
         self._tc_server = ThreadedTcServer(
-            (self._configuration['host'], self._configuration['tc_port']),
+            (self._instrument.address, self._instrument.tc_port),
             ThreadedTcHandler, self)
 
         # Start a thread with the server -- that thread will then start one
@@ -88,20 +77,6 @@ class CyclicTcpMock(ComponentBase):
         self._tc_server_thread.start()
         self._log_info(f'TC Server running in thread: '
                        f'{self._tc_server_thread.name}')
-
-    def _close(self, rx_value: Optional[Empty] = None) -> None:
-        """ Entry point for closing the component """
-        if self._tm_server is not None:
-            self._tm_server.do_run = False
-            self._tm_server.shutdown()
-        if self._tc_server is not None:
-            self._tc_server.do_run = False
-            self._tc_server.shutdown()
-
-        if self._tm_server_thread is not None:
-            self._tm_server_thread.join()
-        if self._tc_server_thread is not None:
-            self._tc_server_thread.join()
 
 
 class ThreadedCyclicTmHandler(socketserver.BaseRequestHandler):
@@ -136,8 +111,8 @@ class ThreadedCyclicTmServer(socketserver.ThreadingMixIn,
         super().__init__(server_address, request_handler_class)
         self.log_dev = parent._log_dev
         self.log_info = parent._log_info
-        self.telemetries = parent.dict
-        self.eom = parent.eom_r
+        self.telemetries = parent._shared_memory
+        self.eom = parent._instrument.terminator_write
 
         self.do_run = True
 
@@ -174,7 +149,7 @@ class ThreadedTcServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
         super().__init__(server_address, request_handler_class)
         self.log_dev = parent._log_dev
         self.log_info = parent._log_info
-        self.telemetries = parent.dict
-        self.eom = parent.eom_q
+        self.telemetries = parent._shared_memory
+        self.eom = parent._instrument.terminator_read
 
         self.do_run = True

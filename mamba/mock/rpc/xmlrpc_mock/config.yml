@@ -1,19 +1,31 @@
-# Component name
-
-name: xmlrpc_mock
+name: XMLRPC Mock
 
 # Component network configuration
 
-host: 0.0.0.0
-port: 8090
+instrument:
+  address: 0.0.0.0
+  port: 8090
 
 # Component TMTC
 
-device:
-    properties:
-        tm_1:
-          default: 1
-        tm_2:
-          default: '2'
-        tm_3:
-          default: 3
+parameters:
+  telemetry_1:
+    # Set parameter type.
+    type: int
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: 1
+
+  telemetry_2:
+    # Set parameter type.
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: '2'
+
+  telemetry_3:
+    # Set parameter type.
+    type: int
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: 3

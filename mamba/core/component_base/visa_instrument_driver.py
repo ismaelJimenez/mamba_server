@@ -1,4 +1,4 @@
-""" VISA controller base """
+""" VISA Instrument driver controller base """
 from typing import Optional, Dict, Union
 import os
 import pyvisa
@@ -6,17 +6,11 @@ import pyvisa
 from rx import operators as op
 
 from mamba.core.context import Context
-from mamba.component import ComponentBase
+from mamba.core.component_base import InstrumentDriver
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.msg import ServiceRequest, \
     ServiceResponse, Empty, ParameterInfo, ParameterType
 from mamba.core.utils import path_from_string
-
-
-def parameters_format_validation(parameters) -> None:
-    if not isinstance(parameters, dict):
-        raise ComponentConfigException(
-            'Parameters configuration: wrong format')
 
 
 def get_visa_sim_file(sim_path, mamba_dir) -> str:
@@ -30,51 +24,16 @@ def get_visa_sim_file(sim_path, mamba_dir) -> str:
             raise ComponentConfigException('Visa-sim file has not been found')
 
 
-class Instrument:
-    def __init__(self, inst_config):
-        if inst_config.get('address') is not None:
-            self.address = inst_config.get('address')
-        else:
-            raise ComponentConfigException(
-                'Missing address in Instrument Configuration')
-
-        self.visa_sim = inst_config.get('visa_sim')
-        self.encoding = inst_config.get('encoding') or 'ascii'
-        self.terminator_write = inst_config.get('terminator',
-                                                {}).get('write') or '\r\n'
-        self.terminator_read = inst_config.get('terminator',
-                                               {}).get('read') or '\n'
-
-
-class VisaInstrumentDriver(ComponentBase):
-    """ VISA controller base class """
+class VisaInstrumentDriver(InstrumentDriver):
+    """ VISA Instrument driver controller class """
     def __init__(self,
                  config_folder: str,
                  context: Context,
                  local_config: Optional[dict] = None) -> None:
-        super(VisaInstrumentDriver, self).__init__(config_folder, context,
-                                                   local_config)
+        super().__init__(config_folder, context, local_config)
 
-        self._instrument = Instrument(self._configuration.get('instrument'))
-
-        # Initialize observers
-        self._register_observers()
-
-        # Defined custom variables
-        self._shared_memory: Dict[str, Union[str, int, float]] = {}
-        self._shared_memory_getter: Dict[str, str] = {}
-        self._shared_memory_setter: Dict[str, str] = {}
-        self._service_info: Dict[tuple, dict] = {}
         self._inst = None
         self._simulation_file = None
-
-    def _register_observers(self) -> None:
-        """ Entry point for registering component observers """
-
-        # Quit is sent to command App finalization
-        self._context.rx['quit'].pipe(
-            op.filter(lambda value: isinstance(value, Empty))).subscribe(
-                on_next=self._close)
 
     def _close(self, rx_value: Empty) -> None:
         """ Entry point for closing application
@@ -103,106 +62,10 @@ class VisaInstrumentDriver(ComponentBase):
     def initialize(self) -> None:
         """ Entry point for component initialization """
 
-        parameters_format_validation(self._configuration.get('parameters'))
+        super().initialize()
+
         self._simulation_file = get_visa_sim_file(
             self._instrument.visa_sim, self._context.get('mamba_dir'))
-
-        # Compose shared memory data dictionaries
-        if 'parameters' in self._configuration:
-            for key, parameter_info in self._configuration['parameters'].items(
-            ):
-                if 'get' in parameter_info:
-                    getter = parameter_info.get('get') or {}
-
-                    if parameter_info.get('type') is None:
-                        raise ComponentConfigException(
-                            f'In service {self._name} : "{key}" '
-                            f'parameter type is missing.')
-
-                    if getter.get('signature') is not None:
-                        raise ComponentConfigException(
-                            f'In service {self._name} : "{key}" Signature '
-                            f'for GET is still not allowed. Consider'
-                            f'creating a new parameter for this.')
-
-                    if getter.get('instrument_command') is not None:
-                        is_query = False
-                        for cmd in getter.get('instrument_command'):
-                            if list(cmd.keys())[0] == 'query':
-                                is_query = True
-                                break
-                        if not is_query:
-                            raise ComponentConfigException(
-                                f'In service {self._name} : "{key}" Command'
-                                f' for GET does not have a Query. Consider'
-                                f' removing the command or adding a query')
-
-                    service_dict = {
-                        'description': parameter_info.get('description') or '',
-                        'signature': [[], parameter_info.get('type')],
-                        'instrument_command': getter.get('instrument_command'),
-                        'type': ParameterType.get,
-                    }
-
-                    getter_key = getter.get('alias') or key
-                    getter_id = getter_key.lower()
-
-                    self._service_info[(getter_id,
-                                        ParameterType.get)] = service_dict
-
-                if 'set' in parameter_info:
-                    setter = parameter_info.get('set') or {}
-
-                    service_dict = {
-                        'description': parameter_info.get('description') or '',
-                        'signature': [setter.get('signature') or [], None],
-                        'instrument_command': setter.get('instrument_command'),
-                        'type': ParameterType.set,
-                    }
-
-                    if not isinstance(service_dict['signature'][0], list):
-                        raise ComponentConfigException(
-                            f'Signature of service {self._name} : "{key}" is'
-                            f' invalid. Format shall be [[arg_1, arg_2, ...],'
-                            f' return_type]')
-
-                    setter_key = setter.get('alias') or key
-                    setter_id = setter_key.lower()
-
-                    # Add new service to the component services dictionary
-                    self._service_info[(setter_id,
-                                        ParameterType.set)] = service_dict
-
-                # Enable memory only if get is enabled, and get value is
-                # not directly retrieved from instrument
-                if ('get' in parameter_info
-                        and (parameter_info['get']
-                             or {}).get('instrument_command') is None):
-                    # Initialize shared memory with given value, if any
-                    self._shared_memory[key] = parameter_info.get(
-                        'initial_value')
-                    self._shared_memory_getter[getter_id] = key
-                    self._shared_memory_setter[setter_id] = key
-
-        # Compose services signature to be published
-        parameter_info = [
-            ParameterInfo(provider=self._name,
-                          param_id=key[0],
-                          param_type=key[1],
-                          signature=value['signature'],
-                          description=value['description'])
-            for key, value in self._service_info.items()
-        ]
-
-        # Publish services signature
-        self._context.rx['io_service_signature'].on_next(parameter_info)
-
-        # Subscribe to the services request
-        self._context.rx['io_service_request'].pipe(
-            op.filter(lambda value: isinstance(value, ServiceRequest) and (
-                value.provider == self._name) and (
-                    (value.id, value.type) in self._service_info))).subscribe(
-                        on_next=self._run_command)
 
     def _visa_connect(self, result: ServiceResponse) -> None:
         if self._instrument.visa_sim:
@@ -271,28 +134,28 @@ class VisaInstrumentDriver(ComponentBase):
                 result.value = 'Wrong number of arguments'
         elif (service_request.type == ParameterType.get) and (
                 service_request.id
-                in self._shared_memory_getter) and self._service_info[
+                in self._shared_memory_getter) and self._parameter_info[
                     (service_request.id,
                      service_request.type)].get('instrument_command') is None:
             result.value = self._shared_memory[self._shared_memory_getter[
                 service_request.id]]
-        elif self._service_info[(service_request.id, service_request.type
-                                 )].get('instrument_command') is None:
+        elif self._parameter_info[(service_request.id, service_request.type
+                                   )].get('instrument_command') is None:
             pass
         elif self._inst is None:
             result.type = ParameterType.error
             result.value = 'Not possible to perform command before ' \
                            'connection is established'
         elif isinstance(
-                self._service_info[(
+                self._parameter_info[(
                     service_request.id,
                     service_request.type)]['instrument_command'],
                 list):  # Handle new format
-            inst_commands = self._service_info[(
+            inst_commands = self._parameter_info[(
                 service_request.id,
                 service_request.type)]['instrument_command']
 
-            param_sig = self._service_info[(
+            param_sig = self._parameter_info[(
                 service_request.id, service_request.type)]['signature'][0]
 
             if (len(param_sig) == 1) and (len(service_request.args) > 1):

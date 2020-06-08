@@ -1,18 +1,30 @@
-# Component name
-
-name: flask_server_mock
+name: Flask Server Mock
 
 # Component network configuration
-
-port: 5000
+instrument:
+  address: 0.0.0.0
+  port: 5000
 
 # Component TMTC
 
-device:
-    properties:
-        property_1:
-          default: 1
-        property_2:
-          default: '2'
-        property_3:
-          default: 3
+parameters:
+  property_1:
+    # Set parameter type.
+    type: int
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: 1
+
+  property_2:
+    # Set parameter type.
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: '2'
+
+  property_3:
+    # Set parameter type.
+    type: int
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: 3

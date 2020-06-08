@@ -8,7 +8,7 @@ from typing import Optional, Dict, Union
 from flask import Flask, request, make_response, jsonify, abort
 from rx import operators as op
 
-from mamba.component import ComponentBase
+from mamba.core.component_base import InstrumentDriver
 from mamba.core.msg import Empty
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.context import Context
@@ -60,38 +60,27 @@ def shutdown():
     return 'Server shutting down...'
 
 
-class FlaskServerMock(ComponentBase):
+class FlaskServerMock(InstrumentDriver):
     """ Flask Server Mock """
     def __init__(self,
                  context: Context,
                  local_config: Optional[dict] = None) -> None:
-        global params_dict
         super().__init__(os.path.dirname(__file__), context, local_config)
-
-        # Component configuration
-        params_dict = get_properties_dict(self._configuration)
 
         self._flask_server_thread: Optional[threading.Thread] = None
 
-        # Initialize observers
-        self._register_observers()
-
-    def _register_observers(self) -> None:
-        # Quit topic is published to command App finalization
-        self._context.rx['quit'].pipe(
-            op.filter(lambda value: isinstance(value, Empty))).subscribe(
-                on_next=self._close)
-
     def initialize(self) -> None:
         global app
-        if not all(key in self._configuration for key in ['port']):
-            raise ComponentConfigException(
-                "Missing required elements in component configuration")
+        global params_dict
+
+        # Component configuration
+        for key, parameter_info in self._configuration['parameters'].items():
+            params_dict[key] = parameter_info.get('initial_value')
 
         # Start a thread with the server -- that thread will then start one
         # more thread for each request
         self._flask_server_thread = threading.Thread(
-            target=lambda: app.run(port=self._configuration['port']))
+            target=lambda: app.run(port=self._instrument.port))
 
         # Exit the server thread when the main thread terminates
         self._flask_server_thread.daemon = True
@@ -102,6 +91,6 @@ class FlaskServerMock(ComponentBase):
     def _close(self, rx_value: Optional[Empty] = None) -> None:
         """ Entry point for closing the component """
         if self._flask_server_thread is not None:
-            conn = http.client.HTTPConnection('localhost',
-                                              self._configuration['port'])
+            conn = http.client.HTTPConnection(self._instrument.address,
+                                              self._instrument.port)
             conn.request("POST", "/shutdown")
