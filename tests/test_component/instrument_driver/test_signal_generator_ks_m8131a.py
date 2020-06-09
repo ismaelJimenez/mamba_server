@@ -554,7 +554,9 @@ class TestClass:
         # Test simulated normal connection to the instrument
         component = DigitizerKsm8131A(
             self.context,
-            local_config={'resource-name': 'TCPIP0::4.3.2.1::INSTR'})
+            local_config={'instrument': {
+                'address': 'TCPIP0::4.3.2.1::INSTR'
+            }})
         component.initialize()
 
         assert component._inst is None

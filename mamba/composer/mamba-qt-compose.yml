@@ -56,8 +56,8 @@ services:
   digitizer:
     component: ks_m8131a
 
-#  tcp_socket_io_controller:
-#    component: tcp_socket_io_controller
+#  cyclic_tcp_tm:
+#    component: cyclic_tcp_telemetry
 
   spectrum_analyzer:
     component: rs_fsw
@@ -65,7 +65,19 @@ services:
   switch_matrix:
     component: ks_34980a
 
+  single_port_tcp_controller:
+    component: single_port_tcp
+
+  two_ports_tcp_controller:
+    component: two_ports_tcp
+
   # Mocks
+
+  single_port_tcp_server_mock:
+    component: single_port_tcp_mock
+
+  two_ports_tcp_server_mock:
+    component: two_ports_tcp_mock
 
   cyclic_tcp_server_mock:
     component: cyclic_tcp_mock

@@ -611,7 +611,9 @@ class TestClass:
         # Test simulated normal connection to the instrument
         component = AmplifierKs33502a(
             self.context,
-            local_config={'resource-name': 'TCPIP0::4.3.2.1::INSTR'})
+            local_config={'instrument': {
+                'address': 'TCPIP0::4.3.2.1::INSTR'
+            }})
         component.initialize()
 
         assert component._inst is None

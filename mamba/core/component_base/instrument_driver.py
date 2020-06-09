@@ -7,7 +7,7 @@ from mamba.core.context import Context
 from mamba.component import ComponentBase
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.msg import ServiceRequest, Empty, \
-    ParameterInfo, ParameterType
+    ParameterInfo, ParameterType, ServiceResponse
 
 
 class Instrument:
@@ -24,6 +24,10 @@ class Instrument:
                                                 {}).get('write') or '\r\n'
         self.terminator_read = inst_config.get('terminator',
                                                {}).get('read') or '\n'
+
+        self.tc_port = None
+        self.tm_port = None
+        self.port = None
 
         if isinstance(inst_config.get('port'), dict):
             self.tc_port = inst_config.get('port', {}).get('tc')
@@ -123,6 +127,7 @@ class InstrumentDriver(ComponentBase):
         self._shared_memory_getter: Dict[str, str] = {}
         self._shared_memory_setter: Dict[str, str] = {}
         self._parameter_info: Dict[tuple, dict] = {}
+        self._inst = None
 
         # Initialize observers
         self._register_observers()
@@ -186,3 +191,95 @@ class InstrumentDriver(ComponentBase):
                 value.provider == self._name) and ((
                     value.id, value.type) in self._parameter_info))).subscribe(
                         on_next=self._run_command)
+
+    def _service_preprocessing(self, service_request: ServiceRequest,
+                               result: ServiceResponse) -> None:
+        """Perform preprocessing of the services.
+
+        Note: This step is useful in case a merge of multiple arguments into
+        one unique argument is needed. If the 'instrument_command' argument
+        is not defined for the service, then no further processing will be
+        done.
+
+        Args:
+            service_request: The current service request.
+            result: The result to be published.
+        """
+
+    def _instrument_connect(self, result: ServiceResponse) -> None:
+        raise NotImplementedError
+
+    def _instrument_disconnect(self, result: ServiceResponse) -> None:
+        raise NotImplementedError
+
+    def _process_inst_command(self, cmd_type: str, cmd: str,
+                              service_request: ServiceRequest,
+                              result: ServiceResponse) -> None:
+        raise NotImplementedError
+
+    def _run_command(self, service_request: ServiceRequest) -> None:
+        self._log_dev(f"Received service request: {service_request.id}")
+
+        result = ServiceResponse(provider=self._name,
+                                 id=service_request.id,
+                                 type=service_request.type)
+
+        self._service_preprocessing(service_request, result)
+
+        if service_request.id == 'connect':
+            if len(service_request.args) == 1:
+                if service_request.args[0] == '1':
+                    self._instrument_connect(result)
+                    if result.id in self._shared_memory_setter:
+                        self._shared_memory[self._shared_memory_setter[
+                            result.id]] = 1
+                elif service_request.args[0] == '0':
+                    self._instrument_disconnect(result)
+                    if result.id in self._shared_memory_setter:
+                        self._shared_memory[self._shared_memory_setter[
+                            result.id]] = 0
+            else:
+                result.type = ParameterType.error
+                result.value = 'Wrong number of arguments'
+                self._log_error(result.value)
+        elif (service_request.type == ParameterType.get) and (
+                service_request.id
+                in self._shared_memory_getter) and self._parameter_info[
+                    (service_request.id,
+                     service_request.type)].get('instrument_command') is None:
+            result.value = self._shared_memory[self._shared_memory_getter[
+                service_request.id]]
+        elif self._parameter_info[(service_request.id, service_request.type
+                                   )].get('instrument_command') is None:
+            pass
+        elif self._inst is None:
+            result.type = ParameterType.error
+            result.value = 'Not possible to perform command before ' \
+                           'connection is established'
+            self._log_error(result.value)
+        else:
+            inst_commands = self._parameter_info[(
+                service_request.id,
+                service_request.type)]['instrument_command']
+
+            param_sig = self._parameter_info[(
+                service_request.id, service_request.type)]['signature'][0]
+
+            if (len(param_sig) == 1) and (len(service_request.args) > 1):
+                service_request.args = [' '.join(service_request.args)]
+            elif len(param_sig) != len(service_request.args):
+                result.type = ParameterType.error
+                result.value = 'Wrong number or arguments for ' \
+                               f'{service_request.id}.\n Expected: ' \
+                               f'{param_sig};\n Received: ' \
+                               f'{service_request.args}'
+                self._log_error(result.value)
+
+            for inst_cmd in inst_commands:
+                cmd_type = list(inst_cmd.keys())[0]
+                cmd = list(inst_cmd.values())[0]
+
+                self._process_inst_command(cmd_type, cmd, service_request,
+                                           result)
+
+        self._context.rx['io_result'].on_next(result)

@@ -36,7 +36,8 @@ class CustomTable(QTableWidget):
 
                 if action == remove_action:
 
-                    param_text = self.itemAt(it.row(), 0).text().split(' -> ')
+                    param_text = self.cellWidget(it.row(),
+                                                 0).text().split(' -> ')
                     service = param_text[1]
                     provider = param_text[0]
 
