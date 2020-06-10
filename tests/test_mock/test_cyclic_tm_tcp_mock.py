@@ -76,8 +76,8 @@ class TestClass:
             Context(),
             local_config={'instrument': {
                 'port': {
-                    'tc': 8093,
-                    'tm': 8094
+                    'tc': 9401,
+                    'tm': 9402
                 }
             }})
 
@@ -85,12 +85,12 @@ class TestClass:
         # Create a socket (SOCK_STREAM means a TCP socket)
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
             # Connect to server and send data
-            sock.connect(("localhost", 8093))
+            sock.connect(("localhost", 9401))
 
             # Create a socket (SOCK_STREAM means a TCP socket)
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock_tm:
                 # Connect to server and send data
-                sock_tm.connect(("localhost", 8094))
+                sock_tm.connect(("localhost", 9402))
 
                 sock.sendall(bytes('SYST:ERR?\r\n', "utf-8"))
 
