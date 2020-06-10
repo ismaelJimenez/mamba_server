@@ -24,8 +24,16 @@ class MockXMLRPCServer(SimpleXMLRPCServer):
         self.register_introspection_functions()
         self._tm_dict = tm_dict
 
+        def raw_write(tm):
+            cmd = tm.split(' ')
+            if len(cmd) > 1:
+                self._tm_dict[cmd[0]] = cmd[1]
+            return 0
+
+        self.register_function(raw_write, 'write')
+
         self.register_function(lambda tm: self._tm_dict.get(tm) or 'key-error',
-                               'get_tm')
+                               'query')
 
 
 class XmlRpcMock(InstrumentDriver):

@@ -7,18 +7,26 @@ from mamba.mock.tcp.two_ports_tcp_mock import TwoPortsTcpMock
 
 class TestClass:
     def test_tmtc(self):
-        self.mock = TwoPortsTcpMock(Context())
+        self.mock = TwoPortsTcpMock(
+            Context(),
+            local_config={'instrument': {
+                'port': {
+                    'tc': 8910,
+                    'tm': 8911
+                }
+            }})
+
         self.mock.initialize()
 
         # Create a socket (SOCK_STREAM means a TCP socket)
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock_tc:
             # Connect to server and send data
-            sock_tc.connect(("localhost", 8086))
+            sock_tc.connect(("localhost", 8910))
 
             # Create a socket (SOCK_STREAM means a TCP socket)
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock_tm:
                 # Connect to server and send data
-                sock_tm.connect(("localhost", 8087))
+                sock_tm.connect(("localhost", 8911))
 
                 sock_tc.sendall(
                     bytes('PARAMETER_1?\r\nPARAMETER_2?\r\nPARAMETER_3?\r\n',
@@ -59,7 +67,7 @@ class TestClass:
                 with socket.socket(socket.AF_INET,
                                    socket.SOCK_STREAM) as sock_2_tc:
                     # Connect to server and send data
-                    sock_2_tc.connect(("localhost", 8086))
+                    sock_2_tc.connect(("localhost", 8910))
 
                     sock_2_tc.sendall(
                         bytes(

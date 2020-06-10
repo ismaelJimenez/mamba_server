@@ -91,8 +91,7 @@ class ThreadedTcpHandler(socketserver.BaseRequestHandler):
                         self.request.sendall(
                             bytes(
                                 f'{self.server.telemetries[key]}'
-                                f'{self.server.eom_w}',
-                                self.server.encoding))
+                                f'{self.server.eom_w}', self.server.encoding))
                         if key == 'syst_err':
                             self.server.telemetries['syst_err'] = '0,_No_Error'
                     else:

@@ -1,6 +1,6 @@
 """ TCP Instrument driver controller base """
 from typing import Optional
-import socket
+import xmlrpc
 
 from mamba.core.context import Context
 from mamba.core.exceptions import ComponentConfigException
@@ -9,20 +9,7 @@ from mamba.core.msg import ServiceRequest, \
     ServiceResponse, ParameterType, Empty
 
 
-def tcp_raw_write(sock, message, eom_w, encoding) -> None:
-    sock.sendall(bytes(f'{message}{eom_w}', encoding))
-
-
-def tcp_raw_query(sock, message, eom_w, eom_r, encoding) -> str:
-    sock.sendall(bytes(f'{message}{eom_w}', encoding))
-    return str(sock.recv(1024), encoding)[:-len(eom_r)]
-
-
-def tcp_raw_read(sock, eom_r, encoding) -> str:
-    return str(sock.recv(1024), encoding)[:-len(eom_r)]
-
-
-class TcpInstrumentDriver(InstrumentDriver):
+class XmlRpcInstrumentDriver(InstrumentDriver):
     """ VISA Instrument driver controller class """
     def __init__(self,
                  config_folder: str,
@@ -35,11 +22,12 @@ class TcpInstrumentDriver(InstrumentDriver):
             raise ComponentConfigException(
                 'Missing port in Instrument Configuration')
 
-    def _instrument_connect(self, result: ServiceResponse) -> None:
+    def _instrument_connect(self,
+                            result: Optional[ServiceResponse] = None) -> None:
         try:
-            self._inst = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self._inst.connect(
-                (self._instrument.address, self._instrument.port))
+            server_addr = f'http://{self._instrument.address}:' \
+                          f'{self._instrument.port}'
+            self._inst = xmlrpc.client.ServerProxy(server_addr)
         except ConnectionRefusedError:
             error = 'Instrument is unreachable'
             if result is not None:
@@ -51,7 +39,6 @@ class TcpInstrumentDriver(InstrumentDriver):
                                result: Optional[ServiceResponse] = None
                                ) -> None:
         if self._inst is not None:
-            self._inst.close()
             self._inst = None
 
     def _process_inst_command(self, cmd_type: str, cmd: str,
@@ -59,11 +46,7 @@ class TcpInstrumentDriver(InstrumentDriver):
                               result: ServiceResponse) -> None:
         try:
             if cmd_type == 'query':
-                value = tcp_raw_query(self._inst,
-                                      cmd.format(*service_request.args),
-                                      self._instrument.terminator_write,
-                                      self._instrument.terminator_read,
-                                      self._instrument.encoding)
+                value = self._inst.query(cmd.format(*service_request.args))
 
                 if service_request.type == ParameterType.set:
                     self._shared_memory[self._shared_memory_setter[
@@ -72,9 +55,7 @@ class TcpInstrumentDriver(InstrumentDriver):
                     result.value = value
 
             elif cmd_type == 'write':
-                tcp_raw_write(self._inst, cmd.format(*service_request.args),
-                              self._instrument.terminator_write,
-                              self._instrument.encoding)
+                self._inst.write(cmd.format(*service_request.args))
 
         except ConnectionRefusedError:
             result.type = ParameterType.error

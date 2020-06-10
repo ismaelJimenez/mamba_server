@@ -7,13 +7,13 @@ from rx import operators as op
 
 from mamba.core.testing.utils import compose_service_info, get_config_dict, CallbackTestClass, get_provider_params_info
 from mamba.core.context import Context
-from mamba.mock.tcp.single_port_tcp_mock import SinglePortTcpMock
-from mamba.component.instrument_driver.tcp.single_port_tcp import SinglePortTcpController
+from mamba.mock.tcp.cyclic_tm_tcp_mock import CyclicTmTcpMock
+from mamba.component.instrument_driver.tcp.cyclic_telemetry_tcp import CyclicTmTcpController
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.msg import Empty, ServiceRequest, ServiceResponse, ParameterType
 
 component_path = os.path.join('component', 'instrument_driver', 'tcp',
-                              'single_port_tcp')
+                              'cyclic_telemetry_tcp')
 
 
 class TestClass:
@@ -46,13 +46,13 @@ class TestClass:
     def test_wo_context(self):
         """ Test component behaviour without required context """
         with pytest.raises(TypeError) as excinfo:
-            SinglePortTcpController()
+            CyclicTmTcpController()
 
         assert "missing 1 required positional argument" in str(excinfo.value)
 
     def test_w_default_context_component_creation(self):
         """ Test component creation behaviour with default context """
-        component = SinglePortTcpController(self.context)
+        component = CyclicTmTcpController(self.context)
 
         # Test default configuration load
         assert component._configuration == self.default_component_config
@@ -63,16 +63,21 @@ class TestClass:
         assert component._shared_memory_setter == {}
         assert component._parameter_info == {}
         assert component._inst is None
+        assert component._inst_cyclic_tm is None
+        assert component._inst_cyclic_tm_thread is None
+        assert component._cyclic_tm_mapping == {}
 
         assert component._instrument.address == '0.0.0.0'
-        assert component._instrument.port == 8085
+        assert component._instrument.port is None
+        assert component._instrument.tc_port == 8091
+        assert component._instrument.tm_port == 8092
         assert component._instrument.encoding == 'utf-8'
         assert component._instrument.terminator_write == '\r\n'
         assert component._instrument.terminator_read == '\n'
 
     def test_w_default_context_component_initialization(self):
         """ Test component initialization behaviour with default context """
-        component = SinglePortTcpController(self.context)
+        component = CyclicTmTcpController(self.context)
         component.initialize()
 
         # Test default configuration load
@@ -90,21 +95,30 @@ class TestClass:
         }
         assert component._parameter_info == self.default_service_info
         assert component._inst is None
+        assert component._inst_cyclic_tm is None
+        assert component._inst_cyclic_tm_thread is None
+        assert component._cyclic_tm_mapping == {
+            'parameter_1': 'PARAMETER_1 {:}',
+            'parameter_2': 'PARAMETER_2 {:}',
+            'parameter_3': 'PARAMETER_3 {:}'
+        }
 
         assert component._instrument.address == '0.0.0.0'
-        assert component._instrument.port == 8085
+        assert component._instrument.port is None
+        assert component._instrument.tc_port == 8091
+        assert component._instrument.tm_port == 8092
         assert component._instrument.encoding == 'utf-8'
         assert component._instrument.terminator_write == '\r\n'
         assert component._instrument.terminator_read == '\n'
 
     def test_w_custom_context(self):
         """ Test component creation behaviour with default context """
-        component = SinglePortTcpController(
+        component = CyclicTmTcpController(
             self.context,
             local_config={
                 'name': 'custom_name',
                 'instrument': {
-                    'port': 8078
+                    'port': 9000
                 },
                 'parameters': {
                     'new_param': {
@@ -126,7 +140,7 @@ class TestClass:
 
         custom_component_config = copy.deepcopy(self.default_component_config)
         custom_component_config['name'] = 'custom_name'
-        custom_component_config['instrument']['port'] = 8078
+        custom_component_config['instrument']['port'] = 9000
         custom_component_config['parameters']['new_param'] = {
             'description': 'New parameter description',
             'set': {
@@ -158,48 +172,55 @@ class TestClass:
         custom_service_info = compose_service_info(custom_component_config)
         assert component._parameter_info == custom_service_info
         assert component._inst is None
+        assert component._inst_cyclic_tm is None
+        assert component._inst_cyclic_tm_thread is None
+        assert component._cyclic_tm_mapping == {
+            'parameter_1': 'PARAMETER_1 {:}',
+            'parameter_2': 'PARAMETER_2 {:}',
+            'parameter_3': 'PARAMETER_3 {:}'
+        }
 
     def test_w_wrong_custom_context(self):
         """ Test component creation behaviour with default context """
 
         # Test with wrong topics dictionary
         with pytest.raises(ComponentConfigException) as excinfo:
-            SinglePortTcpController(self.context,
-                                    local_config={
-                                        'parameters': 'wrong'
-                                    }).initialize()
+            CyclicTmTcpController(self.context,
+                                  local_config={
+                                      'parameters': 'wrong'
+                                  }).initialize()
         assert 'Parameters configuration: wrong format' in str(excinfo.value)
 
         # In case no new parameters are given, use the default ones
-        component = SinglePortTcpController(self.context,
-                                            local_config={'parameters': {}})
+        component = CyclicTmTcpController(self.context,
+                                          local_config={'parameters': {}})
         component.initialize()
 
         assert component._configuration == self.default_component_config
 
         # Test with missing address
         with pytest.raises(ComponentConfigException) as excinfo:
-            SinglePortTcpController(self.context,
-                                    local_config={
-                                        'instrument': {
-                                            'address': None
-                                        }
-                                    }).initialize()
+            CyclicTmTcpController(self.context,
+                                  local_config={
+                                      'instrument': {
+                                          'address': None
+                                      }
+                                  }).initialize()
         assert "Missing address in Instrument Configuration" in str(
             excinfo.value)
 
         # Test with missing port
         with pytest.raises(ComponentConfigException) as excinfo:
-            SinglePortTcpController(self.context,
-                                    local_config={
-                                        'instrument': {
-                                            'port': None
-                                        }
-                                    }).initialize()
+            CyclicTmTcpController(self.context,
+                                  local_config={
+                                      'instrument': {
+                                          'port': None
+                                      }
+                                  }).initialize()
         assert "Missing port in Instrument Configuration" in str(excinfo.value)
 
         # Test case properties do not have a getter, setter or default
-        component = SinglePortTcpController(
+        component = CyclicTmTcpController(
             self.context, local_config={'parameters': {
                 'new_param': {}
             }})
@@ -215,7 +236,7 @@ class TestClass:
         self.context.rx['io_service_signature'].subscribe(
             dummy_test_class.test_func_1)
 
-        component = SinglePortTcpController(self.context)
+        component = CyclicTmTcpController(self.context)
         component.initialize()
 
         time.sleep(.1)
@@ -232,7 +253,7 @@ class TestClass:
         ])
         assert received_params_info == expected_params_info
 
-        component = SinglePortTcpController(
+        component = CyclicTmTcpController(
             self.context,
             local_config={
                 'name': 'custom_name',
@@ -299,23 +320,29 @@ class TestClass:
     def test_io_service_request_observer(self):
         """ Test component io_service_request observer """
         # Start Mock
-        mock = SinglePortTcpMock(self.context)
+        mock = CyclicTmTcpMock(self.context)
         mock.initialize()
 
         # Start Test
-        component = SinglePortTcpController(self.context)
+        component = CyclicTmTcpController(self.context)
         component.initialize()
         dummy_test_class = CallbackTestClass()
 
         # Subscribe to the topic that shall be published
         self.context.rx['io_result'].pipe(
-            op.filter(
-                lambda value: isinstance(value, ServiceResponse))).subscribe(
-                    dummy_test_class.test_func_1)
+            op.filter(lambda value: isinstance(value, ServiceResponse) and
+                      value.id != 'parameter_1' and value.id != 'parameter_2'
+                      and value.id != 'parameter_3')).subscribe(
+                          dummy_test_class.test_func_1)
+
+        self.context.rx['io_result'].pipe(
+            op.filter(lambda value: value.id == 'parameter_1' or value.id ==
+                      'parameter_2' or value.id == 'parameter_3')).subscribe(
+                          dummy_test_class.test_func_2)
 
         # 1 - Test that component only gets activated for implemented services
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
+            ServiceRequest(provider='cyclic_telemetry_tcp_controller',
                            id='NOT_EXISTING',
                            type='any',
                            args=[]))
@@ -334,7 +361,7 @@ class TestClass:
 
         # 2 - Test generic command before connection to the instrument has been established
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
+            ServiceRequest(provider='cyclic_telemetry_tcp_controller',
                            id='idn',
                            type=ParameterType.get,
                            args=[]))
@@ -342,6 +369,7 @@ class TestClass:
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 1
+        assert dummy_test_class.func_2_times_called == 0
         assert dummy_test_class.func_1_last_value.id == 'idn'
         assert dummy_test_class.func_1_last_value.type == ParameterType.error
         assert dummy_test_class.func_1_last_value.value == 'Not possible to perform command before connection is established'
@@ -350,7 +378,7 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
+            ServiceRequest(provider='cyclic_telemetry_tcp_controller',
                            id='connect',
                            type=ParameterType.set,
                            args=['1']))
@@ -363,9 +391,16 @@ class TestClass:
         assert dummy_test_class.func_1_last_value.type == ParameterType.set
         assert dummy_test_class.func_1_last_value.value is None
 
+        assert component._inst_cyclic_tm is not None
+        assert component._inst_cyclic_tm_thread is not None
+        assert dummy_test_class.func_2_times_called == 3
+        assert dummy_test_class.func_2_last_value.id == 'parameter_3'
+        assert dummy_test_class.func_2_last_value.type == ParameterType.get
+        assert dummy_test_class.func_2_last_value.value == '3'
+
         # 4 - Test no system errors
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
+            ServiceRequest(provider='cyclic_telemetry_tcp_controller',
                            id='sys_err',
                            type=ParameterType.get))
 
@@ -378,7 +413,7 @@ class TestClass:
 
         # 5 - Test generic command
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
+            ServiceRequest(provider='cyclic_telemetry_tcp_controller',
                            id='clear',
                            type=ParameterType.set,
                            args=[]))
@@ -392,7 +427,7 @@ class TestClass:
 
         # 6 - Test generic query
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
+            ServiceRequest(provider='cyclic_telemetry_tcp_controller',
                            id='idn',
                            type=ParameterType.get,
                            args=[]))
@@ -402,13 +437,19 @@ class TestClass:
         assert dummy_test_class.func_1_times_called == 5
         assert dummy_test_class.func_1_last_value.id == 'idn'
         assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == 'Mamba Framework,Single Port TCP Mock,1.0'
+        assert dummy_test_class.func_1_last_value.value == 'Mamba Framework,Cyclic Telemetry TCP Mock,1.0'
 
         # 7 - Test shared memory set
-        assert component._shared_memory == {'connected': 1, 'raw_query': ''}
+        assert component._shared_memory == {
+            'connected': 1,
+            'raw_query': '',
+            'parameter_1': '1',
+            'parameter_2': '2',
+            'parameter_3': '3'
+        }
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
+            ServiceRequest(provider='cyclic_telemetry_tcp_controller',
                            id='raw_query',
                            type=ParameterType.set,
                            args=['*IDN?']))
@@ -417,7 +458,10 @@ class TestClass:
 
         assert component._shared_memory == {
             'connected': 1,
-            'raw_query': 'Mamba Framework,Single Port TCP Mock,1.0'
+            'raw_query': 'Mamba Framework,Cyclic Telemetry TCP Mock,1.0',
+            'parameter_1': '1',
+            'parameter_2': '2',
+            'parameter_3': '3'
         }
 
         assert dummy_test_class.func_1_times_called == 6
@@ -427,7 +471,7 @@ class TestClass:
 
         # 8 - Test shared memory get
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
+            ServiceRequest(provider='cyclic_telemetry_tcp_controller',
                            id='raw_query',
                            type=ParameterType.get,
                            args=[]))
@@ -437,77 +481,51 @@ class TestClass:
         assert dummy_test_class.func_1_times_called == 7
         assert dummy_test_class.func_1_last_value.id == 'raw_query'
         assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == 'Mamba Framework,Single Port TCP Mock,1.0'
+        assert dummy_test_class.func_1_last_value.value == 'Mamba Framework,Cyclic Telemetry TCP Mock,1.0'
 
         # 9 - Test special case of msg command with multiple args
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
-                           id='parameter_1',
-                           type=ParameterType.get,
-                           args=[]))
-
-        time.sleep(.1)
-
-        assert dummy_test_class.func_1_times_called == 8
-        assert dummy_test_class.func_1_last_value.id == 'parameter_1'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == '1'
-
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
-                           id='parameter_1',
+            ServiceRequest(provider='cyclic_telemetry_tcp_controller',
+                           id='parameter_3',
                            type=ParameterType.set,
-                           args=['2']))
+                           args=['30']))
 
-        time.sleep(.1)
+        time.sleep(5.1)
 
-        assert dummy_test_class.func_1_times_called == 9
-        assert dummy_test_class.func_1_last_value.id == 'parameter_1'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.set
-        assert dummy_test_class.func_1_last_value.value is None
+        assert dummy_test_class.func_2_times_called == 7
+        assert dummy_test_class.func_2_last_value.id == 'parameter_3'
+        assert dummy_test_class.func_2_last_value.type == ParameterType.get
+        assert dummy_test_class.func_2_last_value.value == '30'
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
+            ServiceRequest(provider='cyclic_telemetry_tcp_controller',
                            id='raw_write',
                            type=ParameterType.set,
-                           args=['PARAMETER_1', '10']))
+                           args=['PARAMETER_3', '40']))
 
-        time.sleep(.1)
+        time.sleep(5.1)
 
-        assert dummy_test_class.func_1_times_called == 10
-        assert dummy_test_class.func_1_last_value.id == 'raw_write'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.set
-        assert dummy_test_class.func_1_last_value.value is None
-
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
-                           id='parameter_1',
-                           type=ParameterType.get,
-                           args=[]))
-
-        time.sleep(.1)
-
-        assert dummy_test_class.func_1_times_called == 11
-        assert dummy_test_class.func_1_last_value.id == 'parameter_1'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == '10'
+        assert dummy_test_class.func_2_times_called == 10
+        assert dummy_test_class.func_2_last_value.id == 'parameter_3'
+        assert dummy_test_class.func_2_last_value.type == ParameterType.get
+        assert dummy_test_class.func_2_last_value.value == '40'
 
         # 10 - Test no system errors
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
+            ServiceRequest(provider='cyclic_telemetry_tcp_controller',
                            id='sys_err',
                            type=ParameterType.get))
 
         time.sleep(.1)
 
-        assert dummy_test_class.func_1_times_called == 12
+        assert dummy_test_class.func_1_times_called == 9
         assert dummy_test_class.func_1_last_value.id == 'sys_err'
         assert dummy_test_class.func_1_last_value.type == ParameterType.get
         assert dummy_test_class.func_1_last_value.value == '0,_No_Error'
 
         # 11 - Test disconnection to the instrument
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
+            ServiceRequest(provider='cyclic_telemetry_tcp_controller',
                            id='connect',
                            type=ParameterType.set,
                            args=['0']))
@@ -515,13 +533,13 @@ class TestClass:
         time.sleep(.1)
 
         assert component._inst is None
-        assert dummy_test_class.func_1_times_called == 13
+        assert dummy_test_class.func_1_times_called == 10
         assert dummy_test_class.func_1_last_value.id == 'connect'
         assert dummy_test_class.func_1_last_value.type == ParameterType.set
         assert dummy_test_class.func_1_last_value.value is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
+            ServiceRequest(provider='cyclic_telemetry_tcp_controller',
                            id='connected',
                            type=ParameterType.get,
                            args=[]))
@@ -529,7 +547,7 @@ class TestClass:
         time.sleep(.1)
 
         assert component._inst is None
-        assert dummy_test_class.func_1_times_called == 14
+        assert dummy_test_class.func_1_times_called == 11
         assert dummy_test_class.func_1_last_value.id == 'connected'
         assert dummy_test_class.func_1_last_value.type == ParameterType.get
         assert dummy_test_class.func_1_last_value.value == 0
@@ -548,16 +566,20 @@ class TestClass:
                     dummy_test_class.test_func_1)
 
         # Test simulated normal connection to the instrument
-        component = SinglePortTcpController(
-            self.context, local_config={'instrument': {
-                'port': 8095
+        component = CyclicTmTcpController(
+            self.context,
+            local_config={'instrument': {
+                'port': {
+                    'tc': 1000,
+                    'tm': 1001
+                }
             }})
         component.initialize()
 
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
+            ServiceRequest(provider='cyclic_telemetry_tcp_controller',
                            id='connect',
                            type=ParameterType.set,
                            args=['1']))
@@ -579,13 +601,13 @@ class TestClass:
                     dummy_test_class.test_func_1)
 
         # Test real connection to missing instrument
-        component = SinglePortTcpController(self.context)
+        component = CyclicTmTcpController(self.context)
         component.initialize()
 
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
+            ServiceRequest(provider='cyclic_telemetry_tcp_controller',
                            id='connect',
                            type=ParameterType.set,
                            args=['0']))
@@ -600,25 +622,38 @@ class TestClass:
 
     def test_multi_command_multi_input_parameter(self):
         # Start Mock
-        mock = SinglePortTcpMock(self.context,
-                                 local_config={'instrument': {
-                                     'port': 8096
-                                 }})
+        mock = CyclicTmTcpMock(
+            self.context,
+            local_config={'instrument': {
+                'port': {
+                    'tc': 6000,
+                    'tm': 6001
+                }
+            }})
         mock.initialize()
 
         dummy_test_class = CallbackTestClass()
 
         # Subscribe to the topic that shall be published
         self.context.rx['io_result'].pipe(
-            op.filter(
-                lambda value: isinstance(value, ServiceResponse))).subscribe(
-                    dummy_test_class.test_func_1)
+            op.filter(lambda value: isinstance(value, ServiceResponse) and
+                      value.id != 'parameter_1' and value.id != 'parameter_2'
+                      and value.id != 'parameter_3')).subscribe(
+                          dummy_test_class.test_func_1)
 
-        component = SinglePortTcpController(
+        self.context.rx['io_result'].pipe(
+            op.filter(lambda value: value.id == 'parameter_1' or value.id ==
+                      'parameter_2' or value.id == 'parameter_3')).subscribe(
+                          dummy_test_class.test_func_2)
+
+        component = CyclicTmTcpController(
             self.context,
             local_config={
                 'instrument': {
-                    'port': 8096
+                    'port': {
+                        'tc': 6000,
+                        'tm': 6001
+                    }
                 },
                 'parameters': {
                     'new_param': {
@@ -637,9 +672,9 @@ class TestClass:
                             'instrument_command': [{
                                 'write': 'PARAMETER_1 {0}'
                             }, {
-                                'write': 'PARAMETER_2 {1}'
+                                'write': 'PARAMETER_3 {1}'
                             }, {
-                                'query': 'PARAMETER_1?'
+                                'query': '*IDN?'
                             }]
                         },
                         'get': None,
@@ -649,9 +684,9 @@ class TestClass:
 
         component.initialize()
 
-        # Connect to instrument and chec initial status
+        # Connect to instrument and check initial status
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
+            ServiceRequest(provider='cyclic_telemetry_tcp_controller',
                            id='connect',
                            type=ParameterType.set,
                            args=['1']))
@@ -661,75 +696,52 @@ class TestClass:
         assert component._shared_memory == {
             'connected': 1,
             'new_param': None,
-            'raw_query': ''
+            'raw_query': '',
+            'parameter_1': '1',
+            'parameter_2': '2',
+            'parameter_3': '3',
         }
 
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
-                           id='parameter_1',
-                           type=ParameterType.get,
-                           args=[]))
-
-        time.sleep(.1)
-
-        assert dummy_test_class.func_1_times_called == 2
-        assert dummy_test_class.func_1_last_value.id == 'parameter_1'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == '1'
-
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
-                           id='parameter_2',
-                           type=ParameterType.get,
-                           args=[]))
-
-        time.sleep(.1)
-
-        assert dummy_test_class.func_1_times_called == 3
-        assert dummy_test_class.func_1_last_value.id == 'parameter_2'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == '2'
+        assert component._inst_cyclic_tm is not None
+        assert component._inst_cyclic_tm_thread is not None
+        assert dummy_test_class.func_2_times_called == 3
+        assert dummy_test_class.func_2_last_value.id == 'parameter_3'
+        assert dummy_test_class.func_2_last_value.type == ParameterType.get
+        assert dummy_test_class.func_2_last_value.value == '3'
 
         # Call new parameter
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
+            ServiceRequest(provider='cyclic_telemetry_tcp_controller',
                            id='new_param',
                            type=ParameterType.set,
-                           args=['3', '4']))
+                           args=['11', '33']))
 
         time.sleep(.1)
 
         assert component._shared_memory == {
             'connected': 1,
-            'new_param': '3',
-            'raw_query': ''
+            'new_param': 'Mamba Framework,Cyclic Telemetry TCP Mock,1.0',
+            'raw_query': '',
+            'parameter_1': '1',
+            'parameter_2': '2',
+            'parameter_3': '3',
         }
 
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
-                           id='parameter_1',
-                           type=ParameterType.get,
-                           args=[]))
+        time.sleep(5)
 
-        time.sleep(.1)
+        assert component._shared_memory == {
+            'connected': 1,
+            'new_param': 'Mamba Framework,Cyclic Telemetry TCP Mock,1.0',
+            'raw_query': '',
+            'parameter_1': '11',
+            'parameter_2': '2',
+            'parameter_3': '33',
+        }
 
-        assert dummy_test_class.func_1_times_called == 5
-        assert dummy_test_class.func_1_last_value.id == 'parameter_1'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == '3'
-
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
-                           id='parameter_2',
-                           type=ParameterType.get,
-                           args=[]))
-
-        time.sleep(.1)
-
-        assert dummy_test_class.func_1_times_called == 6
-        assert dummy_test_class.func_1_last_value.id == 'parameter_2'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == '4'
+        assert dummy_test_class.func_2_times_called == 6
+        assert dummy_test_class.func_2_last_value.id == 'parameter_3'
+        assert dummy_test_class.func_2_last_value.type == ParameterType.get
+        assert dummy_test_class.func_2_last_value.value == '33'
 
         self.context.rx['quit'].on_next(Empty())
 
@@ -737,71 +749,71 @@ class TestClass:
 
     def test_service_invalid_info(self):
         with pytest.raises(ComponentConfigException) as excinfo:
-            SinglePortTcpController(self.context,
-                                    local_config={
-                                        'parameters': {
-                                            'new_param': {
-                                                'type': 'str',
-                                                'description':
-                                                'New parameter description',
-                                                'set': {
-                                                    'signature':
-                                                    'wrong',
-                                                    'instrument_command': [{
-                                                        'write':
-                                                        '{:}'
-                                                    }]
-                                                },
-                                            }
-                                        }
-                                    }).initialize()
+            CyclicTmTcpController(self.context,
+                                  local_config={
+                                      'parameters': {
+                                          'new_param': {
+                                              'type': 'str',
+                                              'description':
+                                              'New parameter description',
+                                              'set': {
+                                                  'signature':
+                                                  'wrong',
+                                                  'instrument_command': [{
+                                                      'write':
+                                                      '{:}'
+                                                  }]
+                                              },
+                                          }
+                                      }
+                                  }).initialize()
 
         assert '"new_param" is invalid. Format shall' \
                ' be [[arg_1, arg_2, ...], return_type]' in str(excinfo.value)
 
         with pytest.raises(ComponentConfigException) as excinfo:
-            SinglePortTcpController(self.context,
-                                    local_config={
-                                        'parameters': {
-                                            'new_param': {
-                                                'type': 'str',
-                                                'description':
-                                                'New parameter description',
-                                                'get': {
-                                                    'signature': [{
-                                                        'arg': {
-                                                            'type': 'str'
-                                                        }
-                                                    }],
-                                                    'instrument_command': [{
-                                                        'write':
-                                                        '{:}'
-                                                    }]
-                                                },
-                                            }
-                                        }
-                                    }).initialize()
+            CyclicTmTcpController(self.context,
+                                  local_config={
+                                      'parameters': {
+                                          'new_param': {
+                                              'type': 'str',
+                                              'description':
+                                              'New parameter description',
+                                              'get': {
+                                                  'signature': [{
+                                                      'arg': {
+                                                          'type': 'str'
+                                                      }
+                                                  }],
+                                                  'instrument_command': [{
+                                                      'write':
+                                                      '{:}'
+                                                  }]
+                                              },
+                                          }
+                                      }
+                                  }).initialize()
 
         assert '"new_param" Signature for GET is still not allowed' in str(
             excinfo.value)
 
         with pytest.raises(ComponentConfigException) as excinfo:
-            SinglePortTcpController(self.context,
-                                    local_config={
-                                        'parameters': {
-                                            'new_param': {
-                                                'type': 'str',
-                                                'description':
-                                                'New parameter description',
-                                                'get': {
-                                                    'instrument_command': [{
-                                                        'write':
-                                                        '{:}'
-                                                    }]
-                                                },
-                                            }
-                                        }
-                                    }).initialize()
+            CyclicTmTcpController(self.context,
+                                  local_config={
+                                      'parameters': {
+                                          'new_param': {
+                                              'type': 'str',
+                                              'description':
+                                              'New parameter description',
+                                              'get': {
+                                                  'instrument_command': [{
+                                                      'write':
+                                                      '{:}'
+                                                  }]
+                                              },
+                                          }
+                                      }
+                                  }).initialize()
 
         assert '"new_param" Command for GET does not have a Query' in str(
             excinfo.value)
@@ -814,7 +826,7 @@ class TestClass:
             def close(self):
                 self.called = True
 
-        component = SinglePortTcpController(self.context)
+        component = CyclicTmTcpController(self.context)
         component.initialize()
 
         # Test quit while on load window

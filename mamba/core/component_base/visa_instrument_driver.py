@@ -32,16 +32,6 @@ class VisaInstrumentDriver(InstrumentDriver):
 
         self._simulation_file = None
 
-    def _close(self, rx_value: Empty) -> None:
-        """ Entry point for closing application
-
-            Args:
-                rx_value: The value published by the subject.
-        """
-        if self._inst is not None:
-            self._inst.close()
-            self._inst = None
-
     def initialize(self) -> None:
         """ Entry point for component initialization """
         super().initialize()
@@ -49,7 +39,8 @@ class VisaInstrumentDriver(InstrumentDriver):
         self._simulation_file = get_visa_sim_file(
             self._instrument.visa_sim, self._context.get('mamba_dir'))
 
-    def _instrument_connect(self, result: ServiceResponse) -> None:
+    def _instrument_connect(self,
+                            result: Optional[ServiceResponse] = None) -> None:
         if self._instrument.visa_sim:
             self._inst = pyvisa.ResourceManager(
                 f"{self._simulation_file}@sim").open_resource(
@@ -63,20 +54,24 @@ class VisaInstrumentDriver(InstrumentDriver):
                 self._inst = pyvisa.ResourceManager().open_resource(
                     self._instrument.address, read_termination='\n')
             except (OSError, pyvisa.errors.VisaIOError):
-                result.type = ParameterType.error
-                result.value = 'Instrument is unreachable'
-                self._log_error(result.value)
+                error = 'Instrument is unreachable'
+                if result is not None:
+                    result.type = ParameterType.error
+                    result.value = error
+                self._log_error(error)
 
         if self._inst is not None:
             self._inst.timeout = 3000  # Default timeout
 
             self._log_dev("Established connection to Instrument")
 
-    def _instrument_disconnect(self, result: ServiceResponse) -> None:
+    def _instrument_disconnect(self,
+                               result: Optional[ServiceResponse] = None
+                               ) -> None:
         if self._inst is not None:
             self._inst.close()
             self._inst = None
-            if result.id in self._shared_memory_setter:
+            if result is not None and result.id in self._shared_memory_setter:
                 self._shared_memory[self._shared_memory_setter[result.id]] = 0
             self._log_dev("Closed connection to Instrument")
 

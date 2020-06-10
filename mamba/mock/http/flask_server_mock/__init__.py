@@ -24,8 +24,8 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 
-@app.route('/get', methods=['GET'])
-def get_parameter():
+@app.route('/query', methods=['GET'])
+def query_parameter():
     parameter = request.args.get('param', default='', type=str)
 
     if len(parameter) == 0 or parameter not in params_dict:
@@ -34,8 +34,8 @@ def get_parameter():
     return str(params_dict[parameter])
 
 
-@app.route('/set', methods=['PUT'])
-def set_parameter():
+@app.route('/write', methods=['PUT'])
+def write_parameter():
     parameter = request.args.get('param', default='', type=str)
     value = request.args.get('value', default='', type=str)
 

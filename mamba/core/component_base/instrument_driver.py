@@ -65,7 +65,8 @@ def get_parameters(params_dict, component_name) -> dict:
             if getter.get('instrument_command') is not None:
                 is_query = False
                 for cmd in getter.get('instrument_command'):
-                    if list(cmd.keys())[0] == 'query':
+                    cmd_type = list(cmd.keys())[0]
+                    if cmd_type == 'query' or cmd_type == 'cyclic':
                         is_query = True
                         break
                 if not is_query:
@@ -146,6 +147,7 @@ class InstrumentDriver(ComponentBase):
             Args:
                 rx_value: The value published by the subject.
         """
+        self._instrument_disconnect()
 
     def initialize(self) -> None:
         """ Entry point for component initialization """
@@ -206,11 +208,14 @@ class InstrumentDriver(ComponentBase):
             result: The result to be published.
         """
 
-    def _instrument_connect(self, result: ServiceResponse) -> None:
-        raise NotImplementedError
+    def _instrument_connect(self,
+                            result: Optional[ServiceResponse] = None) -> None:
+        pass
 
-    def _instrument_disconnect(self, result: ServiceResponse) -> None:
-        raise NotImplementedError
+    def _instrument_disconnect(self,
+                               result: Optional[ServiceResponse] = None
+                               ) -> None:
+        pass
 
     def _process_inst_command(self, cmd_type: str, cmd: str,
                               service_request: ServiceRequest,

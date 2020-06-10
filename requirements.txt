@@ -18,3 +18,4 @@ wheel
 PySide2==5.14.2.2
 yapf
 twine
+stringparser

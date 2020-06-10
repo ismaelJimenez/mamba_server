@@ -56,8 +56,8 @@ services:
   digitizer:
     component: ks_m8131a
 
-#  cyclic_tcp_tm:
-#    component: cyclic_tcp_telemetry
+  cyclic_telemetry_tcp:
+    component: cyclic_telemetry_tcp
 
   spectrum_analyzer:
     component: rs_fsw
@@ -71,6 +71,12 @@ services:
   two_ports_tcp_controller:
     component: two_ports_tcp
 
+  xmlrpc_controller:
+    component: xmlrpc_controller
+
+  http_controller:
+    component: http_controller
+
   # Mocks
 
   single_port_tcp_server_mock:
@@ -80,10 +86,10 @@ services:
     component: two_ports_tcp_mock
 
   cyclic_tcp_server_mock:
-    component: cyclic_tcp_mock
-
-  rpc_server_mock:
-    component: xmlrpc_mock
+    component: cyclic_tm_tcp_mock
 
   http_server_mock:
     component: flask_server_mock
+
+  xmlrpc_server_mock:
+    component: xmlrpc_mock

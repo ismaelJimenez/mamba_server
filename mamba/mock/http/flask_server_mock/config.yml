@@ -8,21 +8,45 @@ instrument:
 # Component TMTC
 
 parameters:
-  property_1:
+  idn:
+    # Set parameter type.
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: 'Mamba Framework,HTTP Flask Mock,1.0'
+
+    # Set parameter description.
+    description: Instrument identification
+
+  syst_err:
+    # Set parameter type.
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: '0,_No_Error'
+
+    # Set parameter description.
+    description: Oldest error in queue
+
+  cls:
+    # Set parameter description.
+    description: Clear status
+
+  parameter_1:
     # Set parameter type.
     type: int
 
     # Set parameter initial value upon instrument initialization.
     initial_value: 1
 
-  property_2:
+  parameter_2:
     # Set parameter type.
     type: str
 
     # Set parameter initial value upon instrument initialization.
     initial_value: '2'
 
-  property_3:
+  parameter_3:
     # Set parameter type.
     type: int
 
