@@ -44,21 +44,27 @@ class XmlRpcInstrumentDriver(InstrumentDriver):
     def _process_inst_command(self, cmd_type: str, cmd: str,
                               service_request: ServiceRequest,
                               result: ServiceResponse) -> None:
-        try:
-            if cmd_type == 'query':
-                value = self._inst.query(cmd.format(*service_request.args))
+        if self._inst is not None:
+            try:
+                if cmd_type == 'query':
+                    value = self._inst.query(cmd.format(*service_request.args))
 
-                if service_request.type == ParameterType.set:
-                    self._shared_memory[self._shared_memory_setter[
-                        service_request.id]] = value
-                else:
-                    result.value = value
+                    if service_request.type == ParameterType.set:
+                        self._shared_memory[self._shared_memory_setter[
+                            service_request.id]] = value
+                    else:
+                        result.value = value
 
-            elif cmd_type == 'write':
-                self._inst.write(cmd.format(*service_request.args))
+                elif cmd_type == 'write':
+                    self._inst.write(cmd.format(*service_request.args))
 
-        except ConnectionRefusedError:
+            except ConnectionRefusedError:
+                result.type = ParameterType.error
+                result.value = 'Not possible to communicate to the' \
+                               ' instrument'
+                self._log_error(result.value)
+        else:
             result.type = ParameterType.error
-            result.value = 'Not possible to communicate to the' \
-                           ' instrument'
+            result.value = 'Not possible to perform command before ' \
+                           'connection is established'
             self._log_error(result.value)

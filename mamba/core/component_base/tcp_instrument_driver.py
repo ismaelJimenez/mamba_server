@@ -35,7 +35,8 @@ class TcpInstrumentDriver(InstrumentDriver):
             raise ComponentConfigException(
                 'Missing port in Instrument Configuration')
 
-    def _instrument_connect(self, result: ServiceResponse) -> None:
+    def _instrument_connect(self,
+                            result: Optional[ServiceResponse] = None) -> None:
         try:
             self._inst = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self._inst.connect(

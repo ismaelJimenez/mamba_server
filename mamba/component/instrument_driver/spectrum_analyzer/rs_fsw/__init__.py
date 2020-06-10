@@ -35,7 +35,7 @@ class SpectrumAnalyzerRsFsw(VisaInstrumentDriver):
                  local_config: Optional[dict] = None) -> None:
         super().__init__(os.path.dirname(__file__), context, local_config)
 
-        self._trigger_in_thread = None
+        self._trigger_in_thread: Optional[threading.Thread] = None
 
     def _service_preprocessing(self, service_request: ServiceRequest,
                                result: ServiceResponse) -> None:
@@ -58,4 +58,5 @@ class SpectrumAnalyzerRsFsw(VisaInstrumentDriver):
                       self._shared_memory, self._shared_memory_setter,
                       service_request.args))
 
-            self._trigger_in_thread.start()
+            if self._trigger_in_thread is not None:
+                self._trigger_in_thread.start()

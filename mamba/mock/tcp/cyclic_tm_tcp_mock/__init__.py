@@ -3,7 +3,7 @@ import os
 import time
 import threading
 import socketserver
-from typing import Optional
+from typing import Optional, Dict
 
 from mamba.core.msg import Empty
 from mamba.core.context import Context
@@ -22,7 +22,7 @@ class CyclicTmTcpMock(InstrumentDriver):
         self._tc_server: Optional[ThreadedTcpServer] = None
         self._tc_server_thread: Optional[threading.Thread] = None
 
-        self._cyclic_tm_mapping = {}
+        self._cyclic_tm_mapping: Dict[str, str] = {}
         self._cyclic_tm_delay = self._configuration['instrument']['cyclic_tm']
 
         self._app_running = True

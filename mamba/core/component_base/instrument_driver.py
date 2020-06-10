@@ -1,5 +1,5 @@
 """ Instrument driver controller base """
-from typing import Optional, Dict, Union
+from typing import Optional, Dict, Union, Any
 
 from rx import operators as op
 
@@ -64,7 +64,7 @@ def get_parameters(params_dict, component_name) -> dict:
 
             if getter.get('instrument_command') is not None:
                 is_query = False
-                for cmd in getter.get('instrument_command'):
+                for cmd in getter.get('instrument_command', []):
                     cmd_type = list(cmd.keys())[0]
                     if cmd_type == 'query' or cmd_type == 'cyclic':
                         is_query = True
@@ -128,7 +128,7 @@ class InstrumentDriver(ComponentBase):
         self._shared_memory_getter: Dict[str, str] = {}
         self._shared_memory_setter: Dict[str, str] = {}
         self._parameter_info: Dict[tuple, dict] = {}
-        self._inst = None
+        self._inst: Optional[Any] = None
 
         # Initialize observers
         self._register_observers()

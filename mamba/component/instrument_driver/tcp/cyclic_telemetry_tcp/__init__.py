@@ -1,5 +1,5 @@
 """ Single Port TCP controller base """
-from typing import Optional
+from typing import Optional, Dict
 import os
 import socket
 import threading
@@ -49,19 +49,30 @@ class CyclicTmTcpController(TcpInstrumentDriver):
                  local_config: Optional[dict] = None) -> None:
         super().__init__(os.path.dirname(__file__), context, local_config)
 
-        self._inst_cyclic_tm = None  # self._inst will be kept for telecommands
+        # self._inst will be kept for telecommands
+
+        self._inst_cyclic_tm: Optional[socket.socket] = None
         self._inst_cyclic_tm_thread: Optional[threading.Thread] = None
 
-        self._cyclic_tm_mapping = {}
+        self._cyclic_tm_mapping: Dict[str, str] = {}
 
-    def _instrument_connect(self, result: ServiceResponse) -> None:
+    def _instrument_connect(self,
+                            result: Optional[ServiceResponse] = None) -> None:
         try:
             self._inst = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+            if self._inst is None:
+                raise ConnectionRefusedError
+
             self._inst.connect(
                 (self._instrument.address, self._instrument.tc_port))
 
             self._inst_cyclic_tm = socket.socket(socket.AF_INET,
                                                  socket.SOCK_STREAM)
+
+            if self._inst_cyclic_tm is None:
+                raise ConnectionRefusedError
+
             self._inst_cyclic_tm.connect(
                 (self._instrument.address, self._instrument.tm_port))
 
@@ -74,9 +85,11 @@ class CyclicTmTcpController(TcpInstrumentDriver):
             self._inst_cyclic_tm_thread.start()
 
         except ConnectionRefusedError:
-            result.type = ParameterType.error
-            result.value = 'Instrument is unreachable'
-            self._log_error(result.value)
+            error = 'Instrument is unreachable'
+            if result is not None:
+                result.type = ParameterType.error
+                result.value = error
+            self._log_error(error)
 
     def initialize(self) -> None:
         super().initialize()

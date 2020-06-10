@@ -25,7 +25,7 @@ class TwoPortsTcpMock(InstrumentDriver):
 
         self._app_running = True
 
-        self.tm_queue = queue.Queue()
+        self.tm_queue: queue.Queue = queue.Queue()
 
     def _close(self, rx_value: Optional[Empty] = None) -> None:
         """ Entry point for closing the component """

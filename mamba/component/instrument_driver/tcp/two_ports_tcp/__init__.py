@@ -17,21 +17,34 @@ class TwoPortsTcpController(TcpInstrumentDriver):
                  local_config: Optional[dict] = None) -> None:
         super().__init__(os.path.dirname(__file__), context, local_config)
 
-        self._inst_tm = None  # self._inst will be kept for telecommands
+        # self._inst will be kept for telecommands
 
-    def _instrument_connect(self, result: ServiceResponse) -> None:
+        self._inst_tm: Optional[socket.socket] = None
+
+    def _instrument_connect(self,
+                            result: Optional[ServiceResponse] = None) -> None:
         try:
             self._inst = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+            if self._inst is None:
+                raise ConnectionRefusedError
+
             self._inst.connect(
                 (self._instrument.address, self._instrument.tc_port))
 
             self._inst_tm = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+            if self._inst_tm is None:
+                raise ConnectionRefusedError
+
             self._inst_tm.connect(
                 (self._instrument.address, self._instrument.tm_port))
         except ConnectionRefusedError:
-            result.type = ParameterType.error
-            result.value = 'Instrument is unreachable'
-            self._log_error(result.value)
+            error = 'Instrument is unreachable'
+            if result is not None:
+                result.type = ParameterType.error
+                result.value = error
+            self._log_error(error)
 
     def _instrument_disconnect(self,
                                result: Optional[ServiceResponse] = None

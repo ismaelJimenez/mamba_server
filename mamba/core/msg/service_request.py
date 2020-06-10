@@ -1,11 +1,12 @@
 from typing import List, Any, Optional
+from mamba.core.msg.parameter_info import ParameterType
 
 
 class ServiceRequest:
     def __init__(self,
                  id: str,
+                 type: ParameterType,
                  provider: Optional[str] = None,
-                 type: str = '',
                  args: List[Any] = []) -> None:
         self.id = id
         self.provider = provider
