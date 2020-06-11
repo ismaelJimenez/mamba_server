@@ -82,15 +82,21 @@ class TestClass:
         # Test custom variables default values
         assert component._shared_memory == {
             'connected': False,
-            'raw_query': ''
+            'raw_query': '',
+            'path_define_get': None,
+            'route_close_get': None
         }
         assert component._shared_memory_getter == {
             'connected': 'connected',
-            'raw_query': 'raw_query'
+            'raw_query': 'raw_query',
+            'path_define_get': 'path_define_get',
+            'route_close_get': 'route_close_get'
         }
         assert component._shared_memory_setter == {
             'connect': 'connected',
-            'raw_query': 'raw_query'
+            'raw_query': 'raw_query',
+            'path_define_get': 'path_define_get',
+            'route_close_get': 'route_close_get'
         }
         assert component._parameter_info == self.default_service_info
         assert component._inst is None
@@ -181,15 +187,21 @@ class TestClass:
         # Test custom variables default values
         assert component._shared_memory == {
             'connected': False,
-            'raw_query': ''
+            'raw_query': '',
+            'path_define_get': None,
+            'route_close_get': None
         }
         assert component._shared_memory_getter == {
             'connected': 'connected',
-            'raw_query': 'raw_query'
+            'raw_query': 'raw_query',
+            'path_define_get': 'path_define_get',
+            'route_close_get': 'route_close_get'
         }
         assert component._shared_memory_setter == {
             'connect': 'connected',
-            'raw_query': 'raw_query'
+            'raw_query': 'raw_query',
+            'path_define_get': 'path_define_get',
+            'route_close_get': 'route_close_get'
         }
 
         custom_service_info = compose_service_info(custom_component_config)
@@ -234,7 +246,9 @@ class TestClass:
 
         assert component._shared_memory == {
             'connected': False,
-            'raw_query': ''
+            'raw_query': '',
+            'path_define_get': None,
+            'route_close_get': None
         }
 
     def test_io_signature_publication(self):
@@ -429,7 +443,10 @@ class TestClass:
         assert dummy_test_class.func_1_last_value.value == 'Keysight_Technologies,Z2091C-001,US56400131,1.1.6450.15113'
 
         # 7 - Test shared memory set
-        assert component._shared_memory == {'connected': 1, 'raw_query': ''}
+        assert component._shared_memory == {'connected': 1,
+                                            'raw_query': '',
+                                            'route_close_get': None,
+                                            'path_define_get': None}
 
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(provider='keysight_z2091c_smart_switch_matrix',
@@ -443,7 +460,9 @@ class TestClass:
             'connected':
             1,
             'raw_query':
-            'Keysight_Technologies,Z2091C-001,US56400131,1.1.6450.15113'
+            'Keysight_Technologies,Z2091C-001,US56400131,1.1.6450.15113',
+            'route_close_get': None,
+            'path_define_get': None
         }
 
         assert dummy_test_class.func_1_times_called == 6
@@ -489,7 +508,9 @@ class TestClass:
 
         assert component._shared_memory == {
             'connected': 1,
-            'raw_query': 'WORD'
+            'raw_query': 'WORD',
+            'route_close_get': None,
+            'path_define_get': None
         }
 
         self.context.rx['io_service_request'].on_next(
@@ -505,7 +526,138 @@ class TestClass:
         assert dummy_test_class.func_1_last_value.type == ParameterType.get
         assert dummy_test_class.func_1_last_value.value == 'WORD'
 
-        # 10 - Test no system errors
+        # 10 - Test specific comamnds
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='keysight_z2091c_smart_switch_matrix',
+                           id='opc',
+                           type=ParameterType.get,
+                           args=[]))
+
+        time.sleep(.1)
+
+        assert dummy_test_class.func_1_times_called == 11
+        assert dummy_test_class.func_1_last_value.id == 'opc'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.get
+        assert dummy_test_class.func_1_last_value.value == '1'
+
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='keysight_z2091c_smart_switch_matrix',
+                           id='reset',
+                           type=ParameterType.set,
+                           args=[]))
+
+        time.sleep(.1)
+
+        assert dummy_test_class.func_1_times_called == 12
+        assert dummy_test_class.func_1_last_value.id == 'reset'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.set
+        assert dummy_test_class.func_1_last_value.value is None
+
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='keysight_z2091c_smart_switch_matrix',
+                           id='route_close_set',
+                           type=ParameterType.set,
+                           args=['SW5(3), ATT2(25), 1104, MyPath2']))
+
+        time.sleep(.1)
+
+        assert dummy_test_class.func_1_times_called == 13
+        assert dummy_test_class.func_1_last_value.id == 'route_close_set'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.set
+        assert dummy_test_class.func_1_last_value.value is None
+
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='keysight_z2091c_smart_switch_matrix',
+                           id='route_close_get',
+                           type=ParameterType.set,
+                           args=['SW5(3), ATT2(25), 1104, MyPath2']))
+
+        time.sleep(.1)
+
+        assert dummy_test_class.func_1_times_called == 14
+        assert dummy_test_class.func_1_last_value.id == 'route_close_get'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.set
+        assert dummy_test_class.func_1_last_value.value is None
+
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='keysight_z2091c_smart_switch_matrix',
+                           id='route_close_get',
+                           type=ParameterType.get,
+                           args=[]))
+
+        time.sleep(.1)
+
+        assert dummy_test_class.func_1_times_called == 15
+        assert dummy_test_class.func_1_last_value.id == 'route_close_get'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.get
+        assert dummy_test_class.func_1_last_value.value == '1,0,1,1'
+
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='keysight_z2091c_smart_switch_matrix',
+                           id='path_catalog',
+                           type=ParameterType.get,
+                           args=[]))
+
+        time.sleep(.1)
+
+        assert dummy_test_class.func_1_times_called == 16
+        assert dummy_test_class.func_1_last_value.id == 'path_catalog'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.get
+        assert dummy_test_class.func_1_last_value.value == '"MYPATH1","MYPATH2"'
+
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='keysight_z2091c_smart_switch_matrix',
+                           id='path_delete',
+                           type=ParameterType.set,
+                           args=['MyPath2']))
+
+        time.sleep(.1)
+
+        assert dummy_test_class.func_1_times_called == 17
+        assert dummy_test_class.func_1_last_value.id == 'path_delete'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.set
+        assert dummy_test_class.func_1_last_value.value is None
+
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='keysight_z2091c_smart_switch_matrix',
+                           id='path_define_set',
+                           type=ParameterType.set,
+                           args=['MyPath1', 'SW1(3),SW2(1)']))
+
+        time.sleep(.1)
+
+        assert dummy_test_class.func_1_times_called == 18
+        assert dummy_test_class.func_1_last_value.id == 'path_define_set'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.set
+        assert dummy_test_class.func_1_last_value.value is None
+
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='keysight_z2091c_smart_switch_matrix',
+                           id='path_define_get',
+                           type=ParameterType.set,
+                           args=['MyPath1']))
+
+        time.sleep(.1)
+
+        assert dummy_test_class.func_1_times_called == 19
+        assert dummy_test_class.func_1_last_value.id == 'path_define_get'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.set
+        assert dummy_test_class.func_1_last_value.value is None
+
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='keysight_z2091c_smart_switch_matrix',
+                           id='path_define_get',
+                           type=ParameterType.get,
+                           args=[]))
+
+        time.sleep(.1)
+
+        assert dummy_test_class.func_1_times_called == 20
+        assert dummy_test_class.func_1_last_value.id == 'path_define_get'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.get
+        assert dummy_test_class.func_1_last_value.value == '(@SW1(3),SW2(A))'
+
+        # # 10 - Test no system errors
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(provider='keysight_z2091c_smart_switch_matrix',
                            id='sys_err',
@@ -513,7 +665,7 @@ class TestClass:
 
         time.sleep(.1)
 
-        assert dummy_test_class.func_1_times_called == 11
+        assert dummy_test_class.func_1_times_called == 21
         assert dummy_test_class.func_1_last_value.id == 'sys_err'
         assert dummy_test_class.func_1_last_value.type == ParameterType.get
         assert dummy_test_class.func_1_last_value.value == '0,_No_Error'
@@ -528,7 +680,7 @@ class TestClass:
         time.sleep(.1)
 
         assert component._inst is None
-        assert dummy_test_class.func_1_times_called == 12
+        assert dummy_test_class.func_1_times_called == 22
         assert dummy_test_class.func_1_last_value.id == 'connect'
         assert dummy_test_class.func_1_last_value.type == ParameterType.set
         assert dummy_test_class.func_1_last_value.value is None
@@ -542,7 +694,7 @@ class TestClass:
         time.sleep(.1)
 
         assert component._inst is None
-        assert dummy_test_class.func_1_times_called == 13
+        assert dummy_test_class.func_1_times_called == 23
         assert dummy_test_class.func_1_last_value.id == 'connected'
         assert dummy_test_class.func_1_last_value.type == ParameterType.get
         assert dummy_test_class.func_1_last_value.value == 0

@@ -96,3 +96,84 @@ parameters:
     get:
       instrument_command:
         - query: 'SYST:ERR?'
+
+  opc:
+    # Set parameter type.
+    type: int
+
+    # Set parameter description.
+    description: Returns "1" at the completion of the current operation
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: '*OPC?'
+
+  route_close_set:
+    # Set parameter description.
+    description: Close specified channels
+
+    # Parameter setter configuration.
+    set:
+      signature: [elem_list: {type: str}]
+      instrument_command: [write: 'ROUTe:CLOSe (@{:})']
+
+  route_close_get:
+    # Set parameter type.
+    type: str
+
+    # Set parameter description.
+    description: Query specified channels close state
+
+    # Parameter setter configuration.
+    set:
+      signature: [elem_list: {type: str}]
+      instrument_command: [query: 'ROUTe:CLOSe? (@{:})']
+
+    # Parameter getter configuration.
+    get:
+
+  path_catalog:
+    # Set parameter type.
+    type: str
+
+    # Set parameter description.
+    description: List of user-defined path names currently stored in non-volatile memory.
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: 'ROUTe:PATH:CATalog?'
+
+  path_delete:
+    # Set parameter description.
+    description: Remove path by name
+
+    # Parameter setter configuration.
+    set:
+      signature: [name: {type: str}]
+      instrument_command: [write: 'ROUT:PATH:DEL {:}']
+
+  path_define_set:
+    # Set parameter description.
+    description: Define a named path
+
+    # Parameter setter configuration.
+    set:
+      signature: [name: {type: str}, elem_list: {type: str}]
+      instrument_command: [write: 'ROUTe:PATH:DEFine {0}, (@{1})']
+
+  path_define_get:
+    # Set parameter type.
+    type: str
+
+    # Set parameter description.
+    description: Query defined named path
+
+    # Parameter setter configuration.
+    set:
+      signature: [name: {type: str}]
+      instrument_command: [query: 'ROUTe:PATH:DEFine? {:}']
+
+    # Parameter getter configuration.
+    get:

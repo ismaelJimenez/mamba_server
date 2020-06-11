@@ -10,6 +10,17 @@ devices:
       - q: "*IDN?"
         r: "Keysight Technologies,Z2091C-001,US56400131,1.1.6450.15113"
       - q: "*CLS"
+      - q: "*RST"
+      - q: "ROUTe:CLOSe (@SW5(3), ATT2(25), 1104, MyPath2)"
+      - q: 'ROUTe:CLOSe? (@SW5(3), ATT2(25), 1104, MyPath2)'
+        r: '1,0,1,1'
+      - q: "ROUTe:PATH:CATalog?"
+        r: '"MYPATH1","MYPATH2"'
+      - q: "ROUT:PATH:DEL MyPath2"
+      - q: "ROUTe:PATH:DEFine MyPath1, (@SW1(3),SW2(1))"
+      - q: "ROUTe:PATH:DEFine? MyPath1"
+        r: "(@SW1(3),SW2(A))"
+
     error:
       error_queue:
         - q: 'SYST:ERR?'
@@ -23,6 +34,12 @@ devices:
           r: '{:}'
         setter:
           q: 'CONF:DIG:WIDTH {:}, (@2001)'
+
+      command_process:
+        default: '1'
+        getter:
+          q: "*OPC?"
+          r: "{:}"
 
 resources:
   TCPIP0::1.2.3.4::INSTR:
