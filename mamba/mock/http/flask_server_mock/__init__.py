@@ -91,6 +91,10 @@ class FlaskServerMock(InstrumentDriver):
     def _close(self, rx_value: Optional[Empty] = None) -> None:
         """ Entry point for closing the component """
         if self._flask_server_thread is not None:
-            conn = http.client.HTTPConnection(self._instrument.address,
-                                              self._instrument.port)
-            conn.request("POST", "/shutdown")
+            try:
+                conn = http.client.HTTPConnection(self._instrument.address,
+                                                  self._instrument.port)
+
+                conn.request("POST", "/shutdown")
+            except OSError:
+                pass
