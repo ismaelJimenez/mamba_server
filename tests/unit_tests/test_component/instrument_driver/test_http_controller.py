@@ -19,7 +19,7 @@ component_path = os.path.join('component', 'instrument_driver', 'http',
 class TestClass:
     def setup_class(self):
         """ setup_class called once for the class """
-        self.mamba_path = os.path.join(os.path.dirname(__file__), '..', '..',
+        self.mamba_path = os.path.join(os.path.dirname(__file__), '..', '..', '..',
                                        '..', 'mamba')
 
         self.default_component_config = get_config_dict(
@@ -37,7 +37,7 @@ class TestClass:
         self.context = Context()
         self.context.set(
             'mamba_dir',
-            os.path.join(os.path.dirname(__file__), '..', '..', '..', 'mamba'))
+            os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', 'mamba'))
 
     def teardown_method(self):
         """ teardown_method called for every method """

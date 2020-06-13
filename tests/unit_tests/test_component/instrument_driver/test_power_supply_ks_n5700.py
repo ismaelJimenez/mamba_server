@@ -2,24 +2,24 @@ import os
 import pytest
 import copy
 import time
+from tempfile import NamedTemporaryFile
 
 from rx import operators as op
 
 from mamba.core.testing.utils import compose_service_info, get_config_dict, CallbackTestClass, get_provider_params_info
 from mamba.core.context import Context
-from mamba.mock.tcp.single_port_tcp_mock import SinglePortTcpMock
-from mamba.component.instrument_driver.tcp.single_port_tcp import SinglePortTcpController
+from mamba.component.instrument_driver.power_supply import PowerSupplyKsN5700
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.msg import Empty, ServiceRequest, ServiceResponse, ParameterType
 
-component_path = os.path.join('component', 'instrument_driver', 'tcp',
-                              'single_port_tcp')
+component_path = os.path.join('component', 'instrument_driver', 'power_supply',
+                              'ks_n5700')
 
 
 class TestClass:
     def setup_class(self):
         """ setup_class called once for the class """
-        self.mamba_path = os.path.join(os.path.dirname(__file__), '..', '..',
+        self.mamba_path = os.path.join(os.path.dirname(__file__), '..', '..', '..',
                                        '..', 'mamba')
 
         self.default_component_config = get_config_dict(
@@ -37,7 +37,7 @@ class TestClass:
         self.context = Context()
         self.context.set(
             'mamba_dir',
-            os.path.join(os.path.dirname(__file__), '..', '..', '..', 'mamba'))
+            os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', 'mamba'))
 
     def teardown_method(self):
         """ teardown_method called for every method """
@@ -46,13 +46,13 @@ class TestClass:
     def test_wo_context(self):
         """ Test component behaviour without required context """
         with pytest.raises(TypeError) as excinfo:
-            SinglePortTcpController()
+            PowerSupplyKsN5700()
 
         assert "missing 1 required positional argument" in str(excinfo.value)
 
     def test_w_default_context_component_creation(self):
         """ Test component creation behaviour with default context """
-        component = SinglePortTcpController(self.context)
+        component = PowerSupplyKsN5700(self.context)
 
         # Test default configuration load
         assert component._configuration == self.default_component_config
@@ -63,23 +63,27 @@ class TestClass:
         assert component._shared_memory_setter == {}
         assert component._parameter_info == {}
         assert component._inst is None
+        assert component._simulation_file is None
 
-        assert component._instrument.address == '0.0.0.0'
-        assert component._instrument.port == 8085
-        assert component._instrument.encoding == 'utf-8'
+        assert component._instrument.address == 'TCPIP0::1.2.3.4::INSTR'
+        assert component._instrument.visa_sim == 'mock/visa/power_supply/ks_n5700.yml'
+        assert component._instrument.encoding == 'ascii'
         assert component._instrument.terminator_write == '\r\n'
         assert component._instrument.terminator_read == '\n'
 
     def test_w_default_context_component_initialization(self):
         """ Test component initialization behaviour with default context """
-        component = SinglePortTcpController(self.context)
+        component = PowerSupplyKsN5700(self.context)
         component.initialize()
 
         # Test default configuration load
         assert component._configuration == self.default_component_config
 
         # Test custom variables default values
-        assert component._shared_memory == {'connected': 0, 'raw_query': ''}
+        assert component._shared_memory == {
+            'connected': False,
+            'raw_query': ''
+        }
         assert component._shared_memory_getter == {
             'connected': 'connected',
             'raw_query': 'raw_query'
@@ -90,43 +94,74 @@ class TestClass:
         }
         assert component._parameter_info == self.default_service_info
         assert component._inst is None
+        assert 'ks_n5700.yml' in component._simulation_file
 
-        assert component._instrument.address == '0.0.0.0'
-        assert component._instrument.port == 8085
-        assert component._instrument.encoding == 'utf-8'
+        assert component._instrument.address == 'TCPIP0::1.2.3.4::INSTR'
+        assert component._instrument.visa_sim == 'mock/visa/power_supply/ks_n5700.yml'
+        assert component._instrument.encoding == 'ascii'
         assert component._instrument.terminator_write == '\r\n'
         assert component._instrument.terminator_read == '\n'
 
+    def test_visa_sim_local_from_project_folder(self):
+        """ Test component creation behaviour with default context """
+        temp_file = NamedTemporaryFile(delete=False)
+
+        temp_file_folder = temp_file.name.rsplit('/', 1)[0]
+        temp_file_name = temp_file.name.rsplit('/', 1)[1]
+
+        os.chdir(temp_file_folder)
+
+        component = PowerSupplyKsN5700(
+            self.context,
+            local_config={'instrument': {
+                'visa_sim': temp_file_name
+            }})
+        component.initialize()
+
+        assert temp_file_name in component._simulation_file
+
+        temp_file.close()
+
+    def test_visa_sim_mamba_from_project_folder(self):
+        """ Test component creation behaviour with default context """
+        os.chdir('/tmp')
+
+        component = PowerSupplyKsN5700(self.context)
+        component.initialize()
+
+        assert 'ks_n5700.yml' in component._simulation_file
+
     def test_w_custom_context(self):
         """ Test component creation behaviour with default context """
-        component = SinglePortTcpController(
-            self.context,
-            local_config={
-                'name': 'custom_name',
-                'instrument': {
-                    'port': 8078
-                },
-                'parameters': {
-                    'new_param': {
-                        'description': 'New parameter description',
-                        'set': {
-                            'signature': [{
-                                'param_1': {
-                                    type: str
-                                }
-                            }],
-                            'instrument_command': [{
-                                'write': '{:}'
-                            }]
-                        },
-                    }
-                }
-            })
+        component = PowerSupplyKsN5700(self.context,
+                                       local_config={
+                                           'name': 'custom_name',
+                                           'instrument': {
+                                               'visa_sim': None
+                                           },
+                                           'parameters': {
+                                               'new_param': {
+                                                   'description':
+                                                   'New parameter description',
+                                                   'set': {
+                                                       'signature': [{
+                                                           'param_1': {
+                                                               type: str
+                                                           }
+                                                       }],
+                                                       'instrument_command': [{
+                                                           'write':
+                                                           '{:}'
+                                                       }]
+                                                   },
+                                               }
+                                           }
+                                       })
         component.initialize()
 
         custom_component_config = copy.deepcopy(self.default_component_config)
         custom_component_config['name'] = 'custom_name'
-        custom_component_config['instrument']['port'] = 8078
+        custom_component_config['instrument']['visa_sim'] = None
         custom_component_config['parameters']['new_param'] = {
             'description': 'New parameter description',
             'set': {
@@ -145,7 +180,10 @@ class TestClass:
         assert component._configuration == custom_component_config
 
         # Test custom variables default values
-        assert component._shared_memory == {'connected': 0, 'raw_query': ''}
+        assert component._shared_memory == {
+            'connected': False,
+            'raw_query': ''
+        }
         assert component._shared_memory_getter == {
             'connected': 'connected',
             'raw_query': 'raw_query'
@@ -158,48 +196,38 @@ class TestClass:
         custom_service_info = compose_service_info(custom_component_config)
         assert component._parameter_info == custom_service_info
         assert component._inst is None
+        assert component._simulation_file is None
 
     def test_w_wrong_custom_context(self):
         """ Test component creation behaviour with default context """
 
         # Test with wrong topics dictionary
         with pytest.raises(ComponentConfigException) as excinfo:
-            SinglePortTcpController(self.context,
-                                    local_config={
-                                        'parameters': 'wrong'
-                                    }).initialize()
+            PowerSupplyKsN5700(self.context,
+                               local_config={
+                                   'parameters': 'wrong'
+                               }).initialize()
         assert 'Parameters configuration: wrong format' in str(excinfo.value)
 
         # In case no new parameters are given, use the default ones
-        component = SinglePortTcpController(self.context,
-                                            local_config={'parameters': {}})
+        component = PowerSupplyKsN5700(self.context,
+                                       local_config={'parameters': {}})
         component.initialize()
 
         assert component._configuration == self.default_component_config
 
-        # Test with missing address
+        # Test with missing simulation file
         with pytest.raises(ComponentConfigException) as excinfo:
-            SinglePortTcpController(self.context,
-                                    local_config={
-                                        'instrument': {
-                                            'address': None
-                                        }
-                                    }).initialize()
-        assert "Missing address in Instrument Configuration" in str(
-            excinfo.value)
-
-        # Test with missing port
-        with pytest.raises(ComponentConfigException) as excinfo:
-            SinglePortTcpController(self.context,
-                                    local_config={
-                                        'instrument': {
-                                            'port': None
-                                        }
-                                    }).initialize()
-        assert "Missing port in Instrument Configuration" in str(excinfo.value)
+            PowerSupplyKsN5700(self.context,
+                               local_config={
+                                   'instrument': {
+                                       'visa_sim': 'non-existing'
+                                   }
+                               }).initialize()
+        assert "Visa-sim file has not been found" in str(excinfo.value)
 
         # Test case properties do not have a getter, setter or default
-        component = SinglePortTcpController(
+        component = PowerSupplyKsN5700(
             self.context, local_config={'parameters': {
                 'new_param': {}
             }})
@@ -215,7 +243,7 @@ class TestClass:
         self.context.rx['io_service_signature'].subscribe(
             dummy_test_class.test_func_1)
 
-        component = SinglePortTcpController(self.context)
+        component = PowerSupplyKsN5700(self.context)
         component.initialize()
 
         time.sleep(.1)
@@ -232,29 +260,30 @@ class TestClass:
         ])
         assert received_params_info == expected_params_info
 
-        component = SinglePortTcpController(
-            self.context,
-            local_config={
-                'name': 'custom_name',
-                'instrument': {
-                    'address': '1.2.3.4'
-                },
-                'parameters': {
-                    'new_param': {
-                        'description': 'New parameter description',
-                        'set': {
-                            'signature': [{
-                                'param_1': {
-                                    type: str
-                                }
-                            }],
-                            'instrument_command': [{
-                                'write': '{:}'
-                            }]
-                        },
-                    }
-                }
-            })
+        component = PowerSupplyKsN5700(self.context,
+                                       local_config={
+                                           'name': 'custom_name',
+                                           'instrument': {
+                                               'visa_sim': None
+                                           },
+                                           'parameters': {
+                                               'new_param': {
+                                                   'description':
+                                                   'New parameter description',
+                                                   'set': {
+                                                       'signature': [{
+                                                           'param_1': {
+                                                               type: str
+                                                           }
+                                                       }],
+                                                       'instrument_command': [{
+                                                           'write':
+                                                           '{:}'
+                                                       }]
+                                                   },
+                                               }
+                                           }
+                                       })
         component.initialize()
 
         time.sleep(.1)
@@ -263,7 +292,7 @@ class TestClass:
 
         custom_component_config = copy.deepcopy(self.default_component_config)
         custom_component_config['name'] = 'custom_name'
-        custom_component_config['instrument']['address'] = 8071
+        custom_component_config['instrument']['visa_sim'] = None
         parameters = {
             'new_param': {
                 'description': 'New parameter description',
@@ -298,12 +327,7 @@ class TestClass:
 
     def test_io_service_request_observer(self):
         """ Test component io_service_request observer """
-        # Start Mock
-        mock = SinglePortTcpMock(self.context)
-        mock.initialize()
-
-        # Start Test
-        component = SinglePortTcpController(self.context)
+        component = PowerSupplyKsN5700(self.context)
         component.initialize()
         dummy_test_class = CallbackTestClass()
 
@@ -315,7 +339,7 @@ class TestClass:
 
         # 1 - Test that component only gets activated for implemented services
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
+            ServiceRequest(provider='keysight_series_n5700_dc_power_supply',
                            id='NOT_EXISTING',
                            type='any',
                            args=[]))
@@ -334,7 +358,7 @@ class TestClass:
 
         # 2 - Test generic command before connection to the instrument has been established
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
+            ServiceRequest(provider='keysight_series_n5700_dc_power_supply',
                            id='idn',
                            type=ParameterType.get,
                            args=[]))
@@ -350,7 +374,7 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
+            ServiceRequest(provider='keysight_series_n5700_dc_power_supply',
                            id='connect',
                            type=ParameterType.set,
                            args=['1']))
@@ -365,7 +389,7 @@ class TestClass:
 
         # 4 - Test no system errors
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
+            ServiceRequest(provider='keysight_series_n5700_dc_power_supply',
                            id='sys_err',
                            type=ParameterType.get))
 
@@ -378,7 +402,7 @@ class TestClass:
 
         # 5 - Test generic command
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
+            ServiceRequest(provider='keysight_series_n5700_dc_power_supply',
                            id='clear',
                            type=ParameterType.set,
                            args=[]))
@@ -392,7 +416,7 @@ class TestClass:
 
         # 6 - Test generic query
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
+            ServiceRequest(provider='keysight_series_n5700_dc_power_supply',
                            id='idn',
                            type=ParameterType.get,
                            args=[]))
@@ -402,13 +426,13 @@ class TestClass:
         assert dummy_test_class.func_1_times_called == 5
         assert dummy_test_class.func_1_last_value.id == 'idn'
         assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == 'Mamba Framework,Single Port TCP Mock,1.0'
+        assert dummy_test_class.func_1_last_value.value == 'Keysight_Technologies,5700A,12345,A.11.22,A.33.44'
 
         # 7 - Test shared memory set
         assert component._shared_memory == {'connected': 1, 'raw_query': ''}
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
+            ServiceRequest(provider='keysight_series_n5700_dc_power_supply',
                            id='raw_query',
                            type=ParameterType.set,
                            args=['*IDN?']))
@@ -417,7 +441,7 @@ class TestClass:
 
         assert component._shared_memory == {
             'connected': 1,
-            'raw_query': 'Mamba Framework,Single Port TCP Mock,1.0'
+            'raw_query': 'Keysight_Technologies,5700A,12345,A.11.22,A.33.44'
         }
 
         assert dummy_test_class.func_1_times_called == 6
@@ -427,7 +451,7 @@ class TestClass:
 
         # 8 - Test shared memory get
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
+            ServiceRequest(provider='keysight_series_n5700_dc_power_supply',
                            id='raw_query',
                            type=ParameterType.get,
                            args=[]))
@@ -437,77 +461,101 @@ class TestClass:
         assert dummy_test_class.func_1_times_called == 7
         assert dummy_test_class.func_1_last_value.id == 'raw_query'
         assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == 'Mamba Framework,Single Port TCP Mock,1.0'
+        assert dummy_test_class.func_1_last_value.value == 'Keysight_Technologies,5700A,12345,A.11.22,A.33.44'
 
         # 9 - Test special case of msg command with multiple args
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
-                           id='parameter_1',
-                           type=ParameterType.get,
-                           args=[]))
+            ServiceRequest(provider='keysight_series_n5700_dc_power_supply',
+                           id='raw_write',
+                           type=ParameterType.set,
+                           args=['CURR', '2']))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 8
-        assert dummy_test_class.func_1_last_value.id == 'parameter_1'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == '1'
-
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
-                           id='parameter_1',
-                           type=ParameterType.set,
-                           args=['2']))
-
-        time.sleep(.1)
-
-        assert dummy_test_class.func_1_times_called == 9
-        assert dummy_test_class.func_1_last_value.id == 'parameter_1'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.set
-        assert dummy_test_class.func_1_last_value.value is None
-
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
-                           id='raw_write',
-                           type=ParameterType.set,
-                           args=['PARAMETER_1', '10']))
-
-        time.sleep(.1)
-
-        assert dummy_test_class.func_1_times_called == 10
         assert dummy_test_class.func_1_last_value.id == 'raw_write'
         assert dummy_test_class.func_1_last_value.type == ParameterType.set
         assert dummy_test_class.func_1_last_value.value is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
-                           id='parameter_1',
+            ServiceRequest(provider='keysight_series_n5700_dc_power_supply',
+                           id='raw_query',
+                           type=ParameterType.set,
+                           args=['CURR?']))
+
+        time.sleep(.1)
+
+        assert component._shared_memory == {'connected': 1, 'raw_query': '2'}
+
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='keysight_series_n5700_dc_power_supply',
+                           id='raw_query',
+                           type=ParameterType.get,
+                           args=[]))
+
+        time.sleep(.1)
+
+        assert dummy_test_class.func_1_times_called == 10
+        assert dummy_test_class.func_1_last_value.id == 'raw_query'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.get
+        assert dummy_test_class.func_1_last_value.value == '2'
+
+        # 10 - Specific parameters
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='keysight_series_n5700_dc_power_supply',
+                           id='output_voltage_setting',
                            type=ParameterType.get,
                            args=[]))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 11
-        assert dummy_test_class.func_1_last_value.id == 'parameter_1'
+        assert dummy_test_class.func_1_last_value.id == 'output_voltage_setting'
         assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == '10'
+        assert dummy_test_class.func_1_last_value.value == '0'
 
-        # 10 - Test no system errors
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
+            ServiceRequest(provider='keysight_series_n5700_dc_power_supply',
+                           id='output_voltage_setting',
+                           type=ParameterType.set,
+                           args=[5.2]))
+
+        time.sleep(.1)
+
+        assert dummy_test_class.func_1_times_called == 12
+        assert dummy_test_class.func_1_last_value.id == 'output_voltage_setting'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.set
+        assert dummy_test_class.func_1_last_value.value is None
+
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='keysight_series_n5700_dc_power_supply',
+                           id='output_voltage_setting',
+                           type=ParameterType.get,
+                           args=[]))
+
+        time.sleep(.1)
+
+        assert dummy_test_class.func_1_times_called == 13
+        assert dummy_test_class.func_1_last_value.id == 'output_voltage_setting'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.get
+        assert dummy_test_class.func_1_last_value.value == '5.2'
+
+        # 11 - Test no system errors
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='keysight_series_n5700_dc_power_supply',
                            id='sys_err',
                            type=ParameterType.get))
 
         time.sleep(.1)
 
-        assert dummy_test_class.func_1_times_called == 12
+        assert dummy_test_class.func_1_times_called == 14
         assert dummy_test_class.func_1_last_value.id == 'sys_err'
         assert dummy_test_class.func_1_last_value.type == ParameterType.get
         assert dummy_test_class.func_1_last_value.value == '0,_No_Error'
 
-        # 11 - Test disconnection to the instrument
+        # 12 - Test disconnection to the instrument
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
+            ServiceRequest(provider='keysight_series_n5700_dc_power_supply',
                            id='connect',
                            type=ParameterType.set,
                            args=['0']))
@@ -515,13 +563,13 @@ class TestClass:
         time.sleep(.1)
 
         assert component._inst is None
-        assert dummy_test_class.func_1_times_called == 13
+        assert dummy_test_class.func_1_times_called == 15
         assert dummy_test_class.func_1_last_value.id == 'connect'
         assert dummy_test_class.func_1_last_value.type == ParameterType.set
         assert dummy_test_class.func_1_last_value.value is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
+            ServiceRequest(provider='keysight_series_n5700_dc_power_supply',
                            id='connected',
                            type=ParameterType.get,
                            args=[]))
@@ -529,16 +577,12 @@ class TestClass:
         time.sleep(.1)
 
         assert component._inst is None
-        assert dummy_test_class.func_1_times_called == 14
+        assert dummy_test_class.func_1_times_called == 16
         assert dummy_test_class.func_1_last_value.id == 'connected'
         assert dummy_test_class.func_1_last_value.type == ParameterType.get
         assert dummy_test_class.func_1_last_value.value == 0
 
-        self.context.rx['quit'].on_next(Empty())
-
-        time.sleep(1)
-
-    def test_connection_wrong_instrument_address(self):
+    def test_connection_visa_sim_wrong_instrument_address(self):
         dummy_test_class = CallbackTestClass()
 
         # Subscribe to the topic that shall be published
@@ -548,26 +592,27 @@ class TestClass:
                     dummy_test_class.test_func_1)
 
         # Test simulated normal connection to the instrument
-        component = SinglePortTcpController(
-            self.context, local_config={'instrument': {
-                'port': 8095
+        component = PowerSupplyKsN5700(
+            self.context,
+            local_config={'instrument': {
+                'address': 'TCPIP0::4.3.2.1::INSTR'
             }})
         component.initialize()
 
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
+            ServiceRequest(provider='keysight_series_n5700_dc_power_supply',
                            id='connect',
                            type=ParameterType.set,
                            args=['1']))
 
-        time.sleep(1)
+        time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 1
         assert dummy_test_class.func_1_last_value.id == 'connect'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.error
-        assert dummy_test_class.func_1_last_value.value == 'Instrument is unreachable'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.set
+        assert dummy_test_class.func_1_last_value.value is None
 
     def test_disconnection_w_no_connection(self):
         dummy_test_class = CallbackTestClass()
@@ -579,13 +624,13 @@ class TestClass:
                     dummy_test_class.test_func_1)
 
         # Test real connection to missing instrument
-        component = SinglePortTcpController(self.context)
+        component = PowerSupplyKsN5700(self.context)
         component.initialize()
 
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
+            ServiceRequest(provider='keysight_series_n5700_dc_power_supply',
                            id='connect',
                            type=ParameterType.set,
                            args=['0']))
@@ -598,14 +643,78 @@ class TestClass:
         assert dummy_test_class.func_1_last_value.type == ParameterType.set
         assert dummy_test_class.func_1_last_value.value is None
 
-    def test_multi_command_multi_input_parameter(self):
-        # Start Mock
-        mock = SinglePortTcpMock(self.context,
-                                 local_config={'instrument': {
-                                     'port': 8096
-                                 }})
-        mock.initialize()
+    def test_service_invalid_info(self):
+        with pytest.raises(ComponentConfigException) as excinfo:
+            PowerSupplyKsN5700(self.context,
+                               local_config={
+                                   'parameters': {
+                                       'new_param': {
+                                           'type': 'str',
+                                           'description':
+                                           'New parameter description',
+                                           'set': {
+                                               'signature':
+                                               'wrong',
+                                               'instrument_command': [{
+                                                   'write':
+                                                   '{:}'
+                                               }]
+                                           },
+                                       }
+                                   }
+                               }).initialize()
 
+        assert '"new_param" is invalid. Format shall' \
+               ' be [[arg_1, arg_2, ...], return_type]' in str(excinfo.value)
+
+        with pytest.raises(ComponentConfigException) as excinfo:
+            PowerSupplyKsN5700(self.context,
+                               local_config={
+                                   'parameters': {
+                                       'new_param': {
+                                           'type': 'str',
+                                           'description':
+                                           'New parameter description',
+                                           'get': {
+                                               'signature': [{
+                                                   'arg': {
+                                                       'type': 'str'
+                                                   }
+                                               }],
+                                               'instrument_command': [{
+                                                   'write':
+                                                   '{:}'
+                                               }]
+                                           },
+                                       }
+                                   }
+                               }).initialize()
+
+        assert '"new_param" Signature for GET is still not allowed' in str(
+            excinfo.value)
+
+        with pytest.raises(ComponentConfigException) as excinfo:
+            PowerSupplyKsN5700(self.context,
+                               local_config={
+                                   'parameters': {
+                                       'new_param': {
+                                           'type': 'str',
+                                           'description':
+                                           'New parameter description',
+                                           'get': {
+                                               'instrument_command': [{
+                                                   'write':
+                                                   '{:}'
+                                               }]
+                                           },
+                                       }
+                                   }
+                               }).initialize()
+
+        assert '"new_param" Command for GET does not have a Query' in str(
+            excinfo.value)
+
+    def test_connection_cases_normal_fail(self):
         dummy_test_class = CallbackTestClass()
 
         # Subscribe to the topic that shall be published
@@ -614,197 +723,28 @@ class TestClass:
                 lambda value: isinstance(value, ServiceResponse))).subscribe(
                     dummy_test_class.test_func_1)
 
-        component = SinglePortTcpController(
-            self.context,
-            local_config={
-                'instrument': {
-                    'port': 8096
-                },
-                'parameters': {
-                    'new_param': {
-                        'type': 'int',
-                        'description': 'New parameter description',
-                        'set': {
-                            'signature': [{
-                                'arg_1': {
-                                    'type': 'int'
-                                }
-                            }, {
-                                'arg_2': {
-                                    'type': 'int'
-                                }
-                            }],
-                            'instrument_command': [{
-                                'write': 'PARAMETER_1 {0}'
-                            }, {
-                                'write': 'PARAMETER_2 {1}'
-                            }, {
-                                'query': 'PARAMETER_1?'
-                            }]
-                        },
-                        'get': None,
-                    }
-                }
-            })
-
+        # Test real connection to missing instrument
+        component = PowerSupplyKsN5700(
+            self.context, local_config={'instrument': {
+                'visa_sim': None
+            }})
         component.initialize()
 
-        # Connect to instrument and chec initial status
+        assert component._inst is None
+
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
+            ServiceRequest(provider='keysight_series_n5700_dc_power_supply',
                            id='connect',
                            type=ParameterType.set,
                            args=['1']))
 
         time.sleep(.1)
 
-        assert component._shared_memory == {
-            'connected': 1,
-            'new_param': None,
-            'raw_query': ''
-        }
-
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
-                           id='parameter_1',
-                           type=ParameterType.get,
-                           args=[]))
-
-        time.sleep(.1)
-
-        assert dummy_test_class.func_1_times_called == 2
-        assert dummy_test_class.func_1_last_value.id == 'parameter_1'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == '1'
-
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
-                           id='parameter_2',
-                           type=ParameterType.get,
-                           args=[]))
-
-        time.sleep(.1)
-
-        assert dummy_test_class.func_1_times_called == 3
-        assert dummy_test_class.func_1_last_value.id == 'parameter_2'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == '2'
-
-        # Call new parameter
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
-                           id='new_param',
-                           type=ParameterType.set,
-                           args=['3', '4']))
-
-        time.sleep(.1)
-
-        assert component._shared_memory == {
-            'connected': 1,
-            'new_param': '3',
-            'raw_query': ''
-        }
-
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
-                           id='parameter_1',
-                           type=ParameterType.get,
-                           args=[]))
-
-        time.sleep(.1)
-
-        assert dummy_test_class.func_1_times_called == 5
-        assert dummy_test_class.func_1_last_value.id == 'parameter_1'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == '3'
-
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='single_port_tcp_controller',
-                           id='parameter_2',
-                           type=ParameterType.get,
-                           args=[]))
-
-        time.sleep(.1)
-
-        assert dummy_test_class.func_1_times_called == 6
-        assert dummy_test_class.func_1_last_value.id == 'parameter_2'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == '4'
-
-        self.context.rx['quit'].on_next(Empty())
-
-        time.sleep(1)
-
-    def test_service_invalid_info(self):
-        with pytest.raises(ComponentConfigException) as excinfo:
-            SinglePortTcpController(self.context,
-                                    local_config={
-                                        'parameters': {
-                                            'new_param': {
-                                                'type': 'str',
-                                                'description':
-                                                'New parameter description',
-                                                'set': {
-                                                    'signature':
-                                                    'wrong',
-                                                    'instrument_command': [{
-                                                        'write':
-                                                        '{:}'
-                                                    }]
-                                                },
-                                            }
-                                        }
-                                    }).initialize()
-
-        assert '"new_param" is invalid. Format shall' \
-               ' be [[arg_1, arg_2, ...], return_type]' in str(excinfo.value)
-
-        with pytest.raises(ComponentConfigException) as excinfo:
-            SinglePortTcpController(self.context,
-                                    local_config={
-                                        'parameters': {
-                                            'new_param': {
-                                                'type': 'str',
-                                                'description':
-                                                'New parameter description',
-                                                'get': {
-                                                    'signature': [{
-                                                        'arg': {
-                                                            'type': 'str'
-                                                        }
-                                                    }],
-                                                    'instrument_command': [{
-                                                        'write':
-                                                        '{:}'
-                                                    }]
-                                                },
-                                            }
-                                        }
-                                    }).initialize()
-
-        assert '"new_param" Signature for GET is still not allowed' in str(
-            excinfo.value)
-
-        with pytest.raises(ComponentConfigException) as excinfo:
-            SinglePortTcpController(self.context,
-                                    local_config={
-                                        'parameters': {
-                                            'new_param': {
-                                                'type': 'str',
-                                                'description':
-                                                'New parameter description',
-                                                'get': {
-                                                    'instrument_command': [{
-                                                        'write':
-                                                        '{:}'
-                                                    }]
-                                                },
-                                            }
-                                        }
-                                    }).initialize()
-
-        assert '"new_param" Command for GET does not have a Query' in str(
-            excinfo.value)
+        assert component._inst is None
+        assert dummy_test_class.func_1_times_called == 1
+        assert dummy_test_class.func_1_last_value.id == 'connect'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.error
+        assert dummy_test_class.func_1_last_value.value == 'Instrument is unreachable'
 
     def test_quit_observer(self):
         """ Test component quit observer """
@@ -814,7 +754,7 @@ class TestClass:
             def close(self):
                 self.called = True
 
-        component = SinglePortTcpController(self.context)
+        component = PowerSupplyKsN5700(self.context)
         component.initialize()
 
         # Test quit while on load window

@@ -1,5 +1,4 @@
 import pytest
-import os
 
 from mamba.core.context import Context
 from mamba.core.testing.utils import CallbackTestClass
@@ -11,10 +10,6 @@ class TestClass:
     def setup_method(self):
         """ setup_method called for every method """
         self.context = Context()
-        self.context.set(
-            'mamba_dir',
-            os.path.join(os.path.dirname(__file__), '..', '..', '..', '..',
-                         'mamba'))
 
     def teardown_method(self):
         """ teardown_method called for every method """
@@ -70,8 +65,7 @@ class TestClass:
         assert dummy_test_class.func_1_last_value.args == []
 
         # Send single msg TC - 4. Tc
-        self.context.rx['raw_tc'].on_next(
-            Raw('tc test "arg_1"\r\n'))
+        self.context.rx['raw_tc'].on_next(Raw('tc test "arg_1"\r\n'))
 
         assert dummy_test_class.func_1_times_called == 4
         assert isinstance(dummy_test_class.func_1_last_value, ServiceRequest)
@@ -79,8 +73,7 @@ class TestClass:
         assert dummy_test_class.func_1_last_value.type == ParameterType.set
         assert dummy_test_class.func_1_last_value.args == ['arg_1']
 
-        self.context.rx['raw_tc'].on_next(
-            Raw('tc test "arg_1" "arg_2"\r\n'))
+        self.context.rx['raw_tc'].on_next(Raw('tc test "arg_1" "arg_2"\r\n'))
 
         assert dummy_test_class.func_1_times_called == 5
         assert isinstance(dummy_test_class.func_1_last_value, ServiceRequest)
@@ -88,8 +81,7 @@ class TestClass:
         assert dummy_test_class.func_1_last_value.type == ParameterType.set
         assert dummy_test_class.func_1_last_value.args == ['arg_1', 'arg_2']
 
-        self.context.rx['raw_tc'].on_next(
-            Raw('tc test 2.3 arg_2\r\n'))
+        self.context.rx['raw_tc'].on_next(Raw('tc test 2.3 arg_2\r\n'))
 
         assert dummy_test_class.func_1_times_called == 6
         assert isinstance(dummy_test_class.func_1_last_value, ServiceRequest)
@@ -140,7 +132,8 @@ class TestClass:
         self.context.rx['raw_tm'].subscribe(dummy_test_class.test_func_1)
 
         # Send single TM - 1. Helo
-        self.context.rx['tm'].on_next(ServiceResponse(id='test', type=ParameterType.helo))
+        self.context.rx['tm'].on_next(
+            ServiceResponse(id='test', type=ParameterType.helo))
 
         assert dummy_test_class.func_1_times_called == 1
         assert isinstance(dummy_test_class.func_1_last_value, Raw)
@@ -149,11 +142,11 @@ class TestClass:
         # Send single TM - 2. Tc_Meta
         self.context.rx['tm'].on_next(
             ServiceResponse(id='test',
-                      type=ParameterType.set_meta,
-                      value={
-                          'signature': [['str', 'int'], 'str'],
-                          'description': 'description test 1'
-                      }))
+                            type=ParameterType.set_meta,
+                            value={
+                                'signature': [['str', 'int'], 'str'],
+                                'description': 'description test 1'
+                            }))
 
         assert dummy_test_class.func_1_times_called == 2
         assert isinstance(dummy_test_class.func_1_last_value, Raw)
@@ -162,18 +155,19 @@ class TestClass:
         # Send single TM - 3. Tm_Meta
         self.context.rx['tm'].on_next(
             ServiceResponse(id='test',
-                      type=ParameterType.get_meta,
-                      value={
-                          'signature': [['str', 'int'], 'str'],
-                          'description': 'description test 1'
-                      }))
+                            type=ParameterType.get_meta,
+                            value={
+                                'signature': [['str', 'int'], 'str'],
+                                'description': 'description test 1'
+                            }))
 
         assert dummy_test_class.func_1_times_called == 3
         assert isinstance(dummy_test_class.func_1_last_value, Raw)
         assert dummy_test_class.func_1_last_value.msg == '> OK test;str;str;description test 1;7;4\r\n'
 
         # Send single TM - 4. Tc
-        self.context.rx['tm'].on_next(ServiceResponse(id='test', type=ParameterType.set))
+        self.context.rx['tm'].on_next(
+            ServiceResponse(id='test', type=ParameterType.set))
 
         assert dummy_test_class.func_1_times_called == 4
         assert isinstance(dummy_test_class.func_1_last_value, Raw)
@@ -190,17 +184,19 @@ class TestClass:
 
         # Send single TM - 6. Error
         self.context.rx['tm'].on_next(
-            ServiceResponse(id='test', type=ParameterType.error, value='error msg'))
+            ServiceResponse(id='test',
+                            type=ParameterType.error,
+                            value='error msg'))
 
         assert dummy_test_class.func_1_times_called == 6
         assert isinstance(dummy_test_class.func_1_last_value, Raw)
         assert dummy_test_class.func_1_last_value.msg == '> ERROR test error msg\r\n'
 
         # Send multiple TM
-        self.context.rx['tm'].on_next(ServiceResponse(id='test_3',
-                                                type=ParameterType.helo))
-        self.context.rx['tm'].on_next(ServiceResponse(id='test_4',
-                                                type=ParameterType.helo))
+        self.context.rx['tm'].on_next(
+            ServiceResponse(id='test_3', type=ParameterType.helo))
+        self.context.rx['tm'].on_next(
+            ServiceResponse(id='test_4', type=ParameterType.helo))
 
         assert dummy_test_class.func_1_times_called == 8
         assert isinstance(dummy_test_class.func_1_last_value, Raw)

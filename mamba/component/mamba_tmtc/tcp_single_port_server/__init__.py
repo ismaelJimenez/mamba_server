@@ -92,7 +92,7 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
 
     def send_tm(self, raw_tm: Raw):
         """ Send msg telemetry over the socket connection """
-        self.server.log_dev(                            # type: ignore
+        self.server.log_dev(  # type: ignore
             fr' <- Published socket TM: {raw_tm.msg}')
         try:
             self.request.sendall(raw_tm.msg.encode('utf-8'))

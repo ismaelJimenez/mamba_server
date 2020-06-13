@@ -3,7 +3,7 @@ import os
 from rx import operators as op
 from typing import List, Dict
 
-from mamba.core.msg import ServiceRequest, ServiceResponse,\
+from mamba.core.msg import ServiceResponse,\
     ServiceRequest, ParameterInfo, ParameterType
 from mamba.component import ComponentBase
 from mamba.core.exceptions import ComponentConfigException

@@ -49,7 +49,8 @@ class TestClass:
 
     def test_component_quit_observer(self):
         """ Test component quit observer """
-        component = TcpSingleSocketServer(self.context, local_config={'port': 8102})
+        component = TcpSingleSocketServer(self.context,
+                                          local_config={'port': 8102})
         component.initialize()
 
         # Test status before close
@@ -64,7 +65,8 @@ class TestClass:
     def test_component_socket_receive(self):
         """ Test component external interface """
         dummy_test_class = CallbackTestClass()
-        component = TcpSingleSocketServer(self.context, local_config={'port': 8101})
+        component = TcpSingleSocketServer(self.context,
+                                          local_config={'port': 8101})
         component.initialize()
 
         # Subscribe to the 'raw_tc' that shall be published
@@ -96,7 +98,8 @@ class TestClass:
 
     def test_component_socket_send(self):
         """ Test component external interface """
-        component = TcpSingleSocketServer(self.context, local_config={'port': 8100})
+        component = TcpSingleSocketServer(self.context,
+                                          local_config={'port': 8100})
         component.initialize()
 
         # Establish socket connection
