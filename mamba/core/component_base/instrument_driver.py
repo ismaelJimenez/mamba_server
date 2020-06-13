@@ -1,5 +1,5 @@
 """ Instrument driver controller base """
-from typing import Optional, Dict, Union, Any
+from typing import Optional, Dict, Union, Any, Tuple
 
 from rx import operators as op
 
@@ -11,38 +11,43 @@ from mamba.core.msg import ServiceRequest, Empty, \
 
 
 class Instrument:
-    def __init__(self, inst_config):
-        if inst_config.get('address') is not None:
-            self.address = inst_config.get('address')
+    def __init__(self, inst_config: dict) -> None:
+        instrument_address = inst_config.get('address')
+        if instrument_address is not None and isinstance(
+                instrument_address, str):
+            self.address: str = instrument_address
         else:
             raise ComponentConfigException(
                 'Missing address in Instrument Configuration')
 
-        self.visa_sim = inst_config.get('visa_sim')
-        self.encoding = inst_config.get('encoding') or 'ascii'
-        self.terminator_write = inst_config.get('terminator',
-                                                {}).get('write') or '\r\n'
-        self.terminator_read = inst_config.get('terminator',
-                                               {}).get('read') or '\n'
+        self.visa_sim: Optional[str] = inst_config.get('visa_sim')
+        self.encoding: str = inst_config.get('encoding') or 'ascii'
+        self.terminator_write: str = inst_config.get('terminator',
+                                                     {}).get('write') or '\r\n'
+        self.terminator_read: str = inst_config.get('terminator',
+                                                    {}).get('read') or '\n'
 
-        self.tc_port = None
-        self.tm_port = None
-        self.port = None
+        self.tc_port: Optional[int] = None
+        self.tm_port: Optional[int] = None
+        self.port: Optional[int] = None
 
         if isinstance(inst_config.get('port'), dict):
-            self.tc_port = inst_config.get('port', {}).get('tc')
-            self.tm_port = inst_config.get('port', {}).get('tm')
+            self.tc_port = int(inst_config.get('port', {}).get('tc'))
+            self.tm_port = int(inst_config.get('port', {}).get('tm'))
         else:
-            self.port = inst_config.get('port')
+            self.port = int(inst_config.get('port')) if inst_config.get(
+                'port') is not None else None
 
 
-def parameters_format_validation(parameters) -> None:
+def parameters_format_validation(parameters: Dict[str, dict]) -> None:
     if not isinstance(parameters, dict):
         raise ComponentConfigException(
             'Parameters configuration: wrong format')
 
 
-def get_parameters(params_dict, component_name) -> dict:
+def get_parameters(
+        params_dict: Dict[str, dict],
+        component_name: str) -> Dict[Tuple[str, ParameterType], dict]:
     parameters_format_validation(params_dict)
 
     _service_info = {}
@@ -97,7 +102,8 @@ def get_parameters(params_dict, component_name) -> dict:
                 'type': ParameterType.set,
             }
 
-            if not isinstance(service_dict['signature'][0], list):
+            if not isinstance(service_dict['signature'], list) or \
+                    not isinstance(service_dict['signature'][0], list):
                 raise ComponentConfigException(
                     f'Signature of service {component_name} : "{key}" is'
                     f' invalid. Format shall be [[arg_1, arg_2, ...],'
@@ -127,7 +133,7 @@ class InstrumentDriver(ComponentBase):
         self._shared_memory: Dict[str, Union[str, int, float]] = {}
         self._shared_memory_getter: Dict[str, str] = {}
         self._shared_memory_setter: Dict[str, str] = {}
-        self._parameter_info: Dict[tuple, dict] = {}
+        self._parameter_info: Dict[Tuple[str, ParameterType], dict] = {}
         self._inst: Optional[Any] = None
 
         # Initialize observers
@@ -137,9 +143,7 @@ class InstrumentDriver(ComponentBase):
         """ Entry point for registering component observers """
 
         # Quit is sent to command App finalization
-        self._context.rx['quit'].pipe(
-            op.filter(lambda value: isinstance(value, Empty))).subscribe(
-                on_next=self._close)
+        self._context.rx['quit'].subscribe(on_next=self._close)
 
     def _close(self, rx_value: Optional[Empty] = None) -> None:
         """ Entry point for closing application
@@ -189,10 +193,9 @@ class InstrumentDriver(ComponentBase):
 
         # Subscribe to the services request
         self._context.rx['io_service_request'].pipe(
-            op.filter(lambda value: isinstance(value, ServiceRequest) and (
-                value.provider == self._name) and ((
-                    value.id, value.type) in self._parameter_info))).subscribe(
-                        on_next=self._run_command)
+            op.filter(lambda value: value.provider == self._name and (
+                (value.id, value.type) in self._parameter_info))).subscribe(
+                    on_next=self._run_command)
 
     def _service_preprocessing(self, service_request: ServiceRequest,
                                result: ServiceResponse) -> None:

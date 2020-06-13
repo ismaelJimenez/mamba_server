@@ -443,10 +443,12 @@ class TestClass:
         assert dummy_test_class.func_1_last_value.value == 'Keysight_Technologies,Z2091C-001,US56400131,1.1.6450.15113'
 
         # 7 - Test shared memory set
-        assert component._shared_memory == {'connected': 1,
-                                            'raw_query': '',
-                                            'route_close_get': None,
-                                            'path_define_get': None}
+        assert component._shared_memory == {
+            'connected': 1,
+            'raw_query': '',
+            'route_close_get': None,
+            'path_define_get': None
+        }
 
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(provider='keysight_z2091c_smart_switch_matrix',
@@ -457,8 +459,7 @@ class TestClass:
         time.sleep(.1)
 
         assert component._shared_memory == {
-            'connected':
-            1,
+            'connected': 1,
             'raw_query':
             'Keysight_Technologies,Z2091C-001,US56400131,1.1.6450.15113',
             'route_close_get': None,

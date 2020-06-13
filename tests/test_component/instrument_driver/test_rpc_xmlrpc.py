@@ -237,7 +237,7 @@ class TestClass:
                                      local_config={
                                          'name': 'custom_name',
                                          'instrument': {
-                                             'address': 8071
+                                             'address': '1.2.3.4'
                                          },
                                          'parameters': {
                                              'new_param': {

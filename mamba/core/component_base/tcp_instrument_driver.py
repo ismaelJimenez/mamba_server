@@ -9,16 +9,18 @@ from mamba.core.msg import ServiceRequest, \
     ServiceResponse, ParameterType, Empty
 
 
-def tcp_raw_write(sock, message, eom_w, encoding) -> None:
+def tcp_raw_write(sock: socket.socket, message: str, eom_w: str,
+                  encoding: str) -> None:
     sock.sendall(bytes(f'{message}{eom_w}', encoding))
 
 
-def tcp_raw_query(sock, message, eom_w, eom_r, encoding) -> str:
+def tcp_raw_query(sock: socket.socket, message: str, eom_w: str, eom_r: str,
+                  encoding: str) -> str:
     sock.sendall(bytes(f'{message}{eom_w}', encoding))
     return str(sock.recv(1024), encoding)[:-len(eom_r)]
 
 
-def tcp_raw_read(sock, eom_r, encoding) -> str:
+def tcp_raw_read(sock: socket.socket, eom_r: str, encoding: str) -> str:
     return str(sock.recv(1024), encoding)[:-len(eom_r)]
 
 
@@ -34,6 +36,8 @@ class TcpInstrumentDriver(InstrumentDriver):
                 and self._instrument.tm_port is None):
             raise ComponentConfigException(
                 'Missing port in Instrument Configuration')
+
+        self._inst: Optional[socket.socket] = None
 
     def _instrument_connect(self,
                             result: Optional[ServiceResponse] = None) -> None:
@@ -58,27 +62,34 @@ class TcpInstrumentDriver(InstrumentDriver):
     def _process_inst_command(self, cmd_type: str, cmd: str,
                               service_request: ServiceRequest,
                               result: ServiceResponse) -> None:
-        try:
-            if cmd_type == 'query':
-                value = tcp_raw_query(self._inst,
-                                      cmd.format(*service_request.args),
-                                      self._instrument.terminator_write,
-                                      self._instrument.terminator_read,
-                                      self._instrument.encoding)
+        if self._inst is not None:
+            try:
+                if cmd_type == 'query':
+                    value = tcp_raw_query(self._inst,
+                                          cmd.format(*service_request.args),
+                                          self._instrument.terminator_write,
+                                          self._instrument.terminator_read,
+                                          self._instrument.encoding)
 
-                if service_request.type == ParameterType.set:
-                    self._shared_memory[self._shared_memory_setter[
-                        service_request.id]] = value
-                else:
-                    result.value = value
+                    if service_request.type == ParameterType.set:
+                        self._shared_memory[self._shared_memory_setter[
+                            service_request.id]] = value
+                    else:
+                        result.value = value
 
-            elif cmd_type == 'write':
-                tcp_raw_write(self._inst, cmd.format(*service_request.args),
-                              self._instrument.terminator_write,
-                              self._instrument.encoding)
+                elif cmd_type == 'write':
+                    tcp_raw_write(self._inst,
+                                  cmd.format(*service_request.args),
+                                  self._instrument.terminator_write,
+                                  self._instrument.encoding)
 
-        except ConnectionRefusedError:
+            except ConnectionRefusedError:
+                result.type = ParameterType.error
+                result.value = 'Not possible to communicate to the' \
+                               ' instrument'
+                self._log_error(result.value)
+        else:
             result.type = ParameterType.error
-            result.value = 'Not possible to communicate to the' \
-                           ' instrument'
+            result.value = 'Not possible to perform command before ' \
+                           'connection is established'
             self._log_error(result.value)

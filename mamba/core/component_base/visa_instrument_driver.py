@@ -11,7 +11,8 @@ from mamba.core.msg import ServiceRequest, Empty, \
 from mamba.core.utils import path_from_string
 
 
-def get_visa_sim_file(sim_path, mamba_dir) -> Optional[str]:
+def get_visa_sim_file(sim_path: Optional[str],
+                      mamba_dir: str) -> Optional[str]:
     sim_file = None
     if sim_path is not None:
         if os.path.exists(sim_path):

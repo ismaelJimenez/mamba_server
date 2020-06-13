@@ -32,10 +32,10 @@ services:
   logger:
     component: logger
 
-  # Networking
+  # TMTC Server
 
   socket_server:
-    component: socket_server
+    component: tcp_single_port_server
 
   # Protocol
 
