@@ -24,8 +24,7 @@ class TestClass:
         self.context = Context()
         self.context.set(
             'mamba_dir',
-            os.path.join(os.path.dirname(__file__), '..', '..',
-                         'mamba'))
+            os.path.join(os.path.dirname(__file__), '..', '..', 'mamba'))
 
     def teardown_method(self):
         """ teardown_method called for every method """
@@ -99,9 +98,7 @@ class TestClass:
             client_tc('127.0.0.1', 8080,
                       "tc r&s_smb100b_rf_signal_generator_connect 1\r\n")
             time.sleep(0.1)
-            assert str(
-                sock.recv(1024), 'ascii'
-            ) == '> OK connect\r\n'
+            assert str(sock.recv(1024), 'ascii') == '> OK connect\r\n'
 
             client_tc('127.0.0.1', 8080,
                       "tm r&s_smb100b_rf_signal_generator_connected\r\n")

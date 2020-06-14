@@ -47,8 +47,8 @@ services:
 
   # IO Controllers
 
-#  shutdown:
-#    component: shutdown
+  shutdown:
+    component: remote_shutdown
 
   signal_generator:
     component: rs_smb100b
