@@ -63,7 +63,7 @@ class TestClass:
                     sock_2_tm.connect(("localhost", 9201))
 
                     # Test cyclic telemetry reception
-                    time.sleep(5)
+                    time.sleep(.1)
                     # Receive data from the server and shut down
                     received = str(sock_2_tm.recv(1024), "utf-8")
 
