@@ -24,7 +24,8 @@ class TestClass:
         self.context = Context()
         self.context.set(
             'mamba_dir',
-            os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', 'mamba'))
+            os.path.join(os.path.dirname(__file__), '..', '..', '..', '..',
+                         'mamba'))
 
     def teardown_method(self):
         """ teardown_method called for every method """

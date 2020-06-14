@@ -40,10 +40,10 @@ services:
   # Protocol
 
   socket_translator:
-    component: hvs_socket_tmtc
+    component: hvs_protocol_translator
 
   protocol_controller:
-    component: hvs_protocol_controller
+    component: mamba_protocol_controller
 
   # IO Controllers
 

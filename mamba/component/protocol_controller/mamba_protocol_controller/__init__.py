@@ -1,18 +1,19 @@
 import os
 
-from rx import operators as op
-from typing import List, Dict
+from typing import List, Dict, Optional
 
+from mamba.core.context import Context
 from mamba.core.msg import ServiceResponse,\
     ServiceRequest, ParameterInfo, ParameterType
 from mamba.component import ComponentBase
 from mamba.core.exceptions import ComponentConfigException
 
 
-class Driver(ComponentBase):
-    def __init__(self, context, local_config=None):
-        super(Driver, self).__init__(os.path.dirname(__file__), context,
-                                     local_config)
+class MambaProtocolController(ComponentBase):
+    def __init__(self,
+                 context: Context,
+                 local_config: Optional[dict] = None) -> None:
+        super().__init__(os.path.dirname(__file__), context, local_config)
 
         # Initialize observersParameterType
         self._register_observers()
@@ -21,20 +22,18 @@ class Driver(ComponentBase):
         self._provider_params: Dict[tuple, ParameterInfo] = {}
         self._io_result_subs = None
 
-    def _register_observers(self):
+    def _register_observers(self) -> None:
         """ Entry point for registering component observers """
 
         # Register to the tc provided by the socket protocol translator service
-        self._context.rx['tc'].pipe(
-            op.filter(lambda value: isinstance(value, ServiceRequest))
-        ).subscribe(on_next=self._received_tc)
+        self._context.rx['tc'].subscribe(on_next=self._received_tc)
 
         # Register to the topic provided by the io_controller services
         self._context.rx['io_service_signature'].subscribe(
             on_next=self._io_service_signature)
 
     def _generate_tm(self, telecommand: ServiceRequest,
-                     param_type: ParameterType):
+                     param_type: ParameterType) -> None:
         """ Entry point for generating response telemetry
 
             Args:
@@ -55,7 +54,8 @@ class Driver(ComponentBase):
 
         self._context.rx['tm'].on_next(result)
 
-    def _generate_error_tm(self, telecommand: ServiceRequest, message: str):
+    def _generate_error_tm(self, telecommand: ServiceRequest,
+                           message: str) -> None:
         """ Entry point for generating error response telemetry
 
             Args:
@@ -68,7 +68,8 @@ class Driver(ComponentBase):
                             type=ParameterType.error,
                             value=message))
 
-    def _generate_io_service_request(self, telecommand: ServiceRequest):
+    def _generate_io_service_request(self,
+                                     telecommand: ServiceRequest) -> None:
         """ Entry point for generating a IO Service request to fulfill
             a request
 
@@ -76,9 +77,8 @@ class Driver(ComponentBase):
                 telecommand: The service request received.
         """
 
-        self._io_result_subs = self._context.rx['io_result'].pipe(
-            op.filter(lambda value: isinstance(value, ServiceResponse))
-        ).subscribe(on_next=self._process_io_result)
+        self._io_result_subs = self._context.rx['io_result'].subscribe(
+            on_next=self._process_io_result)
 
         self._context.rx['io_service_request'].on_next(
             ServiceRequest(
@@ -89,7 +89,7 @@ class Driver(ComponentBase):
                 type=telecommand.type,
                 args=telecommand.args))
 
-    def _received_tc(self, telecommand: ServiceRequest):
+    def _received_tc(self, telecommand: ServiceRequest) -> None:
         """ Entry point for processing a new telecommand coming from the
             socket translator.
 
@@ -123,16 +123,19 @@ class Driver(ComponentBase):
         else:
             self._generate_error_tm(telecommand, 'Not recognized command type')
 
-    def _process_io_result(self, rx_result: ServiceResponse):
+    def _process_io_result(self, rx_result: ServiceResponse) -> None:
         """ Entry point for processing the IO Service results.
 
             Args:
                 rx_result: The io service response.
         """
-        self._io_result_subs.dispose()
+        if self._io_result_subs is not None:
+            self._io_result_subs.dispose()
+
         self._context.rx['tm'].on_next(rx_result)
 
-    def _io_service_signature(self, parameters_info: List[ParameterInfo]):
+    def _io_service_signature(self,
+                              parameters_info: List[ParameterInfo]) -> None:
         """ Entry point for processing the service signatures.
 
             Args:
