@@ -124,3 +124,80 @@ class TestClass:
 
         # Close open threads
         server._close()
+
+    def test_component_tm_hvs_tmtc_socket(self):
+        """ Test component external interface """
+        server = TcpSingleSocketServer(self.context)
+        controller = HvsProtocolTranslator(self.context)
+        server.initialize()
+        controller.initialize()
+
+        # Establish socket connection
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            sock.connect(('127.0.0.1', 8080))
+            time.sleep(.1)
+
+            # Send single TM - 1. Helo
+            self.context.rx['tm'].on_next(
+                ServiceResponse(id='test', type=ParameterType.helo))
+            assert str(sock.recv(1024), 'ascii') == '> OK helo test\r\n'
+
+            # Send single TM - 2. Set_Meta
+            self.context.rx['tm'].on_next(
+                ServiceResponse(id='test',
+                                type=ParameterType.set_meta,
+                                value={
+                                    'signature': [['str', 'int'], 'str'],
+                                    'description': 'description test 1'
+                                }))
+
+            assert str(sock.recv(1024),
+                       'ascii') == '> OK test;2;description test 1\r\n'
+
+            # Send single TM - 3. Get_Meta
+            self.context.rx['tm'].on_next(
+                ServiceResponse(id='test',
+                                type=ParameterType.get_meta,
+                                value={
+                                    'signature': [['str', 'int'], 'str'],
+                                    'description': 'description test 1'
+                                }))
+
+            assert str(
+                sock.recv(1024),
+                'ascii') == '> OK test;str;str;description test 1;7;4\r\n'
+
+            # Send single TM - 4. Tc
+            self.context.rx['tm'].on_next(
+                ServiceResponse(id='test', type=ParameterType.set))
+
+            assert str(sock.recv(1024), 'ascii') == '> OK test\r\n'
+
+            # Send single TM - 5. Tm
+            self.context.rx['tm'].on_next(
+                ServiceResponse(id='test', type=ParameterType.get, value=1))
+
+            data = str(sock.recv(1024), 'ascii')
+            assert '> OK ' in data
+            assert ';1;1;0;1\r\n' in data
+
+            # Send single TM - 6. Error
+            self.context.rx['tm'].on_next(
+                ServiceResponse(id='test',
+                                type=ParameterType.error,
+                                value='error msg'))
+
+            assert str(sock.recv(1024),
+                       'ascii') == '> ERROR test error msg\r\n'
+
+            # Send multiple TM
+            self.context.rx['tm'].on_next(
+                ServiceResponse(id='test_3', type=ParameterType.helo))
+            self.context.rx['tm'].on_next(
+                ServiceResponse(id='test_4', type=ParameterType.helo))
+
+            assert str(sock.recv(1024),
+                       'ascii') == '> OK helo test_3\r\n> OK helo test_4\r\n'
+
+        # Close open threads
+        server._close()

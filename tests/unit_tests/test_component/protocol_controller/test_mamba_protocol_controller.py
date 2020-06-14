@@ -225,13 +225,26 @@ class TestClass:
         assert dummy_test_class.func_1_last_value.type == ParameterType.set
         assert dummy_test_class.func_1_last_value.args == ['a', 3]
 
+        self.context.rx['tc'].on_next(
+            ServiceRequest(provider='test_provider',
+                           id='test_param_1',
+                           type=ParameterType.set,
+                           args=['a', 3]))
+
+        assert dummy_test_class.func_1_times_called == 2
+        assert isinstance(dummy_test_class.func_1_last_value, ServiceRequest)
+        assert dummy_test_class.func_1_last_value.provider == 'test_provider'
+        assert dummy_test_class.func_1_last_value.id == 'test_param_1'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.set
+        assert dummy_test_class.func_1_last_value.args == ['a', 3]
+
         # Send single msg TC - 4. Tc - Wrong number of arguments
         self.context.rx['tc'].on_next(
             ServiceRequest(id='test_provider_test_param_1',
                            type=ParameterType.set,
                            args=['a']))
 
-        assert dummy_test_class.func_1_times_called == 2
+        assert dummy_test_class.func_1_times_called == 3
         assert isinstance(dummy_test_class.func_1_last_value, ServiceRequest)
         assert dummy_test_class.func_1_last_value.provider == 'test_provider'
         assert dummy_test_class.func_1_last_value.id == 'test_param_1'
@@ -244,7 +257,20 @@ class TestClass:
                            type=ParameterType.get,
                            args=[]))
 
-        assert dummy_test_class.func_1_times_called == 3
+        assert dummy_test_class.func_1_times_called == 4
+        assert isinstance(dummy_test_class.func_1_last_value, ServiceRequest)
+        assert dummy_test_class.func_1_last_value.provider == 'test_provider'
+        assert dummy_test_class.func_1_last_value.id == 'test_param_2'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.get
+        assert dummy_test_class.func_1_last_value.args == []
+
+        self.context.rx['tc'].on_next(
+            ServiceRequest(provider='test_provider',
+                           id='test_param_2',
+                           type=ParameterType.get,
+                           args=[]))
+
+        assert dummy_test_class.func_1_times_called == 5
         assert isinstance(dummy_test_class.func_1_last_value, ServiceRequest)
         assert dummy_test_class.func_1_last_value.provider == 'test_provider'
         assert dummy_test_class.func_1_last_value.id == 'test_param_2'
@@ -256,7 +282,7 @@ class TestClass:
                            type=ParameterType.get,
                            args=[1]))
 
-        assert dummy_test_class.func_1_times_called == 4
+        assert dummy_test_class.func_1_times_called == 6
         assert isinstance(dummy_test_class.func_1_last_value, ServiceRequest)
         assert dummy_test_class.func_1_last_value.provider == 'test_provider'
         assert dummy_test_class.func_1_last_value.id == 'test_param_2'
