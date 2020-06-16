@@ -13,7 +13,7 @@ from PySide2.QtWidgets import QLabel, QWidget, QApplication, QComboBox, \
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QIcon, QCursor, QFont
 
-from mamba.component.plugins import PluginBase
+from mamba.core.component_base import GuiPlugin
 from mamba.component.gui.msg import RunAction
 from mamba.core.msg import Empty, ServiceResponse, ParameterInfo, \
     ParameterType, ServiceRequest
@@ -54,7 +54,7 @@ class CustomTable(QTableWidget):
         QTableWidget.mousePressEvent(self, event)
 
 
-class Plugin(PluginBase):
+class Plugin(GuiPlugin):
     """ Plugin to show About message implemented in Qt5 """
     def __init__(self, context, local_config=None):
         # Define custom variables

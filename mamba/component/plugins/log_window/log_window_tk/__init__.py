@@ -8,7 +8,7 @@ import time
 
 from rx import operators as op
 
-from mamba.component.plugins import PluginBase
+from mamba.core.component_base import GuiPlugin
 from mamba.component.gui.msg import RunAction
 from mamba.core.msg import Empty, Log, LogLevel
 
@@ -97,7 +97,7 @@ class App(Frame):
             self._log_numer += 1
 
 
-class Plugin(PluginBase):
+class Plugin(GuiPlugin):
     """ Plugin to show About message implemented in TkInter """
     def __init__(self, context, local_config=None):
         # Define custom variables

@@ -4,12 +4,12 @@ import os
 from typing import Optional
 
 from mamba.core.context import Context
-from mamba.component.plugins import PluginBase
+from mamba.core.component_base import GuiPlugin
 from mamba.core.msg import Empty
 from mamba.component.gui.msg import RunAction
 
 
-class QuitComponent(PluginBase):
+class QuitComponent(GuiPlugin):
     """ Plugin to close Main Window """
     def __init__(self,
                  context: Context,

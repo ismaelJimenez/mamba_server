@@ -2,12 +2,12 @@
 
 import os
 
-from mamba.component.plugins import PluginBase
+from mamba.core.component_base import GuiPlugin
 from mamba.component.gui.msg.run_action \
     import RunAction
 
 
-class Plugin(PluginBase):
+class Plugin(GuiPlugin):
     """ Plugin to show About message implemented in Qt5 """
     def __init__(self, context, local_config=None):
         super(Plugin, self).__init__(os.path.dirname(__file__), context,

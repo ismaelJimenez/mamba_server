@@ -9,12 +9,12 @@ import json
 import tkinter as tk
 from tkinter.filedialog import asksaveasfilename
 
-from mamba.component.plugins import PluginBase
+from mamba.core.component_base import GuiPlugin
 from mamba.core.msg import Empty
 from mamba.component.gui.msg import RunAction
 
 
-class Plugin(PluginBase):
+class Plugin(GuiPlugin):
     """ Plugin to close Main Window """
     def __init__(self, context, local_config=None):
         super(Plugin, self).__init__(os.path.dirname(__file__), context,

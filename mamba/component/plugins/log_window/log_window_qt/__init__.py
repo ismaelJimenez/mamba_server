@@ -9,12 +9,12 @@ from PySide2.QtWidgets import QLabel, QWidget, QApplication, QMdiSubWindow,\
     QTableWidget, QVBoxLayout, QGroupBox, QCheckBox, QTableWidgetItem
 from PySide2.QtCore import Qt
 
-from mamba.component.plugins import PluginBase
+from mamba.core.component_base import GuiPlugin
 from mamba.component.gui.msg import RunAction
 from mamba.core.msg import Empty, Log, LogLevel
 
 
-class Plugin(PluginBase):
+class Plugin(GuiPlugin):
     """ Plugin to show About message implemented in Qt5 """
     def __init__(self, context, local_config=None):
         # Define custom variables

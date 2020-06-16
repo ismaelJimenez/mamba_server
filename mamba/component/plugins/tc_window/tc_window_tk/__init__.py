@@ -9,7 +9,7 @@ from rx.subject import Subject
 
 import tkinter as tk
 
-from mamba.component.plugins import PluginBase
+from mamba.core.component_base import GuiPlugin
 from mamba.component.gui.msg import RunAction
 from mamba.core.msg import Empty, \
     ServiceResponse, ServiceRequest, ParameterInfo, ParameterType
@@ -287,7 +287,7 @@ class App(Frame):
                     child['stamp'] = str(time.time())
 
 
-class Plugin(PluginBase):
+class Plugin(GuiPlugin):
     """ Plugin to show About message implemented in Qt5 """
     def __init__(self, context, local_config=None):
         # Define custom variables

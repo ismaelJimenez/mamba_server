@@ -1,4 +1,5 @@
 from .component import Component
+from .gui_plugin import GuiPlugin
 from .instrument_driver import InstrumentDriver
 from .http_instrument_driver import HttpInstrumentDriver
 from .main_window import MainWindow
