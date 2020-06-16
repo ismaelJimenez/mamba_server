@@ -31,8 +31,7 @@ def compose_parser(compose_file: str,
         if isinstance(compose_config,
                       dict) and compose_config.get('services') is not None:
             services = get_components(compose_config['services'],
-                                      component_folders, Component,
-                                      context)
+                                      component_folders, Component, context)
 
             for key, service in services.items():
                 if isinstance(service, Component):

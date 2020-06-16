@@ -2,39 +2,44 @@
 
 import os
 import pkgutil
+from typing import Optional, Dict
 
 import tkinter as tk
 from tkinter import messagebox
 
+from mamba.core.context import Context
 from mamba.core.component_base import GuiPlugin
 from mamba.component.gui.msg import RunAction
 
 
-class Plugin(GuiPlugin):
+class AboutComponent(GuiPlugin):
     """ Plugin to show About message implemented in TkInter """
-    def __init__(self, context, local_config=None):
-        super(Plugin, self).__init__(os.path.dirname(__file__), context,
-                                     local_config)
+    def __init__(self,
+                 context: Context,
+                 local_config: Optional[Dict[str, dict]] = None) -> None:
+        super().__init__(os.path.dirname(__file__), context, local_config)
 
         # Define custom variables
-        self._version = None
-        self._box_message = None
+        self._version: str = ''
+        self._box_message: str = ''
 
-    def initialize(self):
-        super(Plugin, self).initialize()
+    def initialize(self) -> None:
+        super().initialize()
 
         # Initialize custom variables
-        self._version = pkgutil.get_data('mamba',
-                                         'VERSION').decode('ascii').strip()
+        version = pkgutil.get_data('mamba', 'VERSION')
+
+        if version is not None:
+            self._version = version.decode('ascii').strip()
+
         self._box_message = f"Mamba Server v{self._version}"
 
-    def run(self, rx_value: RunAction):
+    def run(self, rx_value: RunAction) -> None:
         """ Entry point for running the plugin
 
             Args:
                 rx_value (RunAction): The value published by the subject.
         """
-        self._log_dev("pepe")
         app = tk.Tk()
         app.overrideredirect(1)
         app.withdraw()

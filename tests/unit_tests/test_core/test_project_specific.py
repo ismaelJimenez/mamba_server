@@ -61,8 +61,7 @@ class TestClass:
 
     def test_get_classes_from_module_components_local(self):
         # Test component load
-        classes_dict = utils.get_classes_from_module('component',
-                                                     Component)
+        classes_dict = utils.get_classes_from_module('component', Component)
         assert len(classes_dict) == 1
         assert 'plugin_1' in classes_dict
 
@@ -101,8 +100,7 @@ class TestClass:
                 'plugin_1': {
                     'component': 'about_qt'
                 }
-            }, ['mamba.component', 'component'], Component,
-            Context())
+            }, ['mamba.component', 'component'], Component, Context())
         assert len(components_dict) == 4
         assert 'about_1' in components_dict
         assert 'about' in components_dict
@@ -115,8 +113,8 @@ class TestClass:
 
         with pytest.raises(ComposeFileException) as excinfo:
             utils.get_components({'quit': {}},
-                                 ['mamba.component', 'component'],
-                                 Component, Context())
+                                 ['mamba.component', 'component'], Component,
+                                 Context())
 
         assert 'is duplicated' in str(excinfo.value)
         rmtree(join(self.proj_path, 'component', 'plugin', 'quit'))

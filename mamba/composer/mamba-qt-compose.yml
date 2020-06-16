@@ -6,7 +6,7 @@ services:
     component: main_window_qt
     title: Mamba Server App
 
-  quit:
+  Quit:
     component: quit
 
   tc_window:
@@ -24,7 +24,7 @@ services:
   save_perspective:
     component: save_perspective_qt
 
-  about_window:
+  About:
     component: about_qt
 
   # Utilities

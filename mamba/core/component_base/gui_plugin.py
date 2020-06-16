@@ -23,10 +23,9 @@ class GuiPlugin(Component):
 
     def _register_observers(self) -> None:
         self._context.rx['run_plugin'].pipe(
-            op.filter(lambda value: value.
-                      menu_title == self._configuration['menu'] and value.
-                      action_name == self._configuration['name'])).subscribe(
-                          on_next=self.run)
+            op.filter(lambda value: value.menu_title == self._configuration[
+                'menu'] and value.action_name == self._configuration['name'])
+        ).subscribe(on_next=self.run)
 
     def initialize(self) -> None:
         if not all(key in self._configuration for key in ['menu', 'name']):
