@@ -6,7 +6,7 @@ from typing import Optional
 
 from mamba.core.context import Context
 from mamba.core.utils import get_components
-from mamba.component import ComponentBase
+from mamba.core.component_base import Component
 
 from mamba.core.msg.app_status import AppStatus
 
@@ -31,11 +31,11 @@ def compose_parser(compose_file: str,
         if isinstance(compose_config,
                       dict) and compose_config.get('services') is not None:
             services = get_components(compose_config['services'],
-                                      component_folders, ComponentBase,
+                                      component_folders, Component,
                                       context)
 
             for key, service in services.items():
-                if isinstance(service, ComponentBase):
+                if isinstance(service, Component):
                     service.initialize()
 
             # Start Mamba App

@@ -5,13 +5,13 @@ import threading
 import socketserver
 from typing import Optional
 
-from mamba.component import ComponentBase
+from mamba.core.component_base import Component
 from mamba.core.context import Context
 from mamba.core.msg import Raw, Empty
 from mamba.core.exceptions import ComponentConfigException
 
 
-class TcpSingleSocketServer(ComponentBase):
+class TcpSingleSocketServer(Component):
     """ Plugin base class """
     def __init__(self,
                  context: Context,

@@ -4,11 +4,11 @@ from typing import Optional
 from rx import operators as op
 
 from mamba.core.context import Context
-from mamba.component import ComponentBase
+from mamba.core.component_base import Component
 from mamba.core.msg import ParameterInfo, ParameterType, ServiceRequest, Empty
 
 
-class RemoteShutdown(ComponentBase):
+class RemoteShutdown(Component):
     def __init__(self,
                  context: Context,
                  local_config: Optional[dict] = None) -> None:

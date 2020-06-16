@@ -4,7 +4,7 @@ from typing import Optional, Dict, Union, Any, Tuple
 from rx import operators as op
 
 from mamba.core.context import Context
-from mamba.component import ComponentBase
+from mamba.core.component_base import Component
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.msg import ServiceRequest, Empty, \
     ParameterInfo, ParameterType, ServiceResponse
@@ -118,7 +118,7 @@ def get_parameters(
     return _service_info
 
 
-class InstrumentDriver(ComponentBase):
+class InstrumentDriver(Component):
     """ VISA controller base class """
     def __init__(self,
                  config_folder: str,

@@ -5,11 +5,11 @@ from typing import List, Dict, Optional
 from mamba.core.context import Context
 from mamba.core.msg import ServiceResponse,\
     ServiceRequest, ParameterInfo, ParameterType
-from mamba.component import ComponentBase
+from mamba.core.component_base import Component
 from mamba.core.exceptions import ComponentConfigException
 
 
-class MambaProtocolController(ComponentBase):
+class MambaProtocolController(Component):
     def __init__(self,
                  context: Context,
                  local_config: Optional[dict] = None) -> None:

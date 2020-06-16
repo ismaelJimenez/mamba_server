@@ -3,7 +3,7 @@ import pytest
 from mamba.core.context import Context
 from mamba.core import utils
 from mamba.commands import MambaCommand
-from mamba.component import ComponentBase
+from mamba.core.component_base import Component
 
 from mamba.core.exceptions import ComposeFileException
 
@@ -20,34 +20,24 @@ class TestClass:
 
     def test_get_classes_from_module_commands_class_gui_plugin(self):
         components = utils.get_classes_from_module('mamba.commands',
-                                                   ComponentBase)
+                                                   Component)
         assert len(components) == 2
         assert 'main' in components
         assert 'plugin' in components
 
     def test_get_classes_from_module_components_class_gui_plugin_recursive(
             self):
-        classes_dict = utils.get_classes_from_module('mamba.component.plugins',
-                                                     ComponentBase)
-        assert len(classes_dict) == 14  # One class is the base
-        assert 'tm_window_tk' in classes_dict
-        assert 'tc_window_tk' in classes_dict
-        assert 'load_perspective_tk' in classes_dict
-        assert 'save_perspective_tk' in classes_dict
-        assert 'log_window_tk' in classes_dict
-        assert 'load_perspective_qt' in classes_dict
-        assert 'save_perspective_qt' in classes_dict
-        assert 'tm_window_qt' in classes_dict
-        assert 'tc_window_qt' in classes_dict
-        assert 'log_window_qt' in classes_dict
-        assert 'about_qt' in classes_dict
-        assert 'about_tk' in classes_dict
+        classes_dict = utils.get_classes_from_module('mamba.component.gui',
+                                                     Component)
+        assert len(classes_dict) == 3  # One class is the base
+        assert 'main_window_qt' in classes_dict
+        assert 'main_window_tk' in classes_dict
         assert 'quit' in classes_dict
 
     def test_get_classes_from_module_components_class_gui_plugin_subfolder(
             self):
         classes_dict = utils.get_classes_from_module(
-            'mamba.component.plugins.about.about_qt', ComponentBase)
+            'mamba.component.plugins.about.about_qt', Component)
         assert len(classes_dict) == 1
         assert 'about_qt' in classes_dict
 
@@ -60,7 +50,7 @@ class TestClass:
                 'quit': {
                     'component': 'quit'
                 }
-            }, ['mamba.component.plugins'], ComponentBase, Context())
+            }, ['mamba.component'], Component, Context())
         assert len(components_dict) == 2
         assert 'about' in components_dict
         assert 'quit' in components_dict
@@ -70,14 +60,14 @@ class TestClass:
             utils.get_components({
                 'about_qt': {},
                 'about_tk_fail': {}
-            }, ['mamba.component.plugins'], ComponentBase, Context())
+            }, ['mamba.component.plugins'], Component, Context())
 
         assert 'about_qt: missing component property' in str(excinfo.value)
 
         with pytest.raises(ComposeFileException) as excinfo:
             utils.get_components({'about_qt': {
                 'component': 'wrong'
-            }}, ['mamba.component.plugins'], ComponentBase, Context())
+            }}, ['mamba.component.plugins'], Component, Context())
 
         assert "about_qt: component wrong' is not a valid component " \
                "identifier" in str(excinfo.value)

@@ -3,10 +3,10 @@ import os
 from rx import operators as op
 
 from mamba.core.msg import Log
-from mamba.component import ComponentBase
+from mamba.core.component_base import Component
 
 
-class Logger(ComponentBase):
+class Logger(Component):
     def __init__(self, context, local_config=None):
         super(Logger, self).__init__(os.path.dirname(__file__), context,
                                      local_config)

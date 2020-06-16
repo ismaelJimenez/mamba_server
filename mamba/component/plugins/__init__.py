@@ -2,12 +2,12 @@
 
 from rx import operators as op
 
-from mamba.component import ComponentBase
+from mamba.core.component_base import Component
 from mamba.core.exceptions import ComponentConfigException
 from mamba.component.gui.msg import RegisterAction, RunAction
 
 
-class PluginBase(ComponentBase):
+class PluginBase(Component):
     """ Plugin base class """
     def __init__(self, config_folder, context, local_config=None):
         super(PluginBase, self).__init__(config_folder, context, local_config)

@@ -6,7 +6,7 @@ from shutil import rmtree
 
 from mamba.core.compose_parser import compose_parser
 from mamba.core import utils
-from mamba.component import ComponentBase
+from mamba.core.component_base import Component
 from mamba.core.testing.utils import get_testenv, cmd_exec
 from os.path import join, exists
 from mamba.core.context import Context
@@ -62,7 +62,7 @@ class TestClass:
     def test_get_classes_from_module_components_local(self):
         # Test component load
         classes_dict = utils.get_classes_from_module('component',
-                                                     ComponentBase)
+                                                     Component)
         assert len(classes_dict) == 1
         assert 'plugin_1' in classes_dict
 
@@ -75,7 +75,7 @@ class TestClass:
                 'quit': {
                     'component': 'quit'
                 }
-            }, ['mamba.component.plugins'], ComponentBase, Context())
+            }, ['mamba.component'], Component, Context())
         assert len(components_dict) == 2
         assert 'about' in components_dict
         assert 'quit' in components_dict
@@ -83,7 +83,7 @@ class TestClass:
         components_dict = utils.get_components(
             {'plugin_1': {
                 'component': 'about_qt'
-            }}, ['component', 'mamba.component'], ComponentBase, Context())
+            }}, ['component', 'mamba.component'], Component, Context())
         assert len(components_dict) == 1
         assert 'plugin_1' in components_dict
 
@@ -101,7 +101,7 @@ class TestClass:
                 'plugin_1': {
                     'component': 'about_qt'
                 }
-            }, ['mamba.component.plugins', 'component'], ComponentBase,
+            }, ['mamba.component', 'component'], Component,
             Context())
         assert len(components_dict) == 4
         assert 'about_1' in components_dict
@@ -115,8 +115,8 @@ class TestClass:
 
         with pytest.raises(ComposeFileException) as excinfo:
             utils.get_components({'quit': {}},
-                                 ['mamba.component.plugins', 'component'],
-                                 ComponentBase, Context())
+                                 ['mamba.component', 'component'],
+                                 Component, Context())
 
         assert 'is duplicated' in str(excinfo.value)
         rmtree(join(self.proj_path, 'component', 'plugin', 'quit'))

@@ -7,7 +7,7 @@ from typing import Callable, Optional, Dict, List, Any
 from mamba.core.typing import Menu
 from rx import operators as op
 
-from mamba.component import ComponentBase
+from mamba.core.component_base import Component
 from mamba.core.context import Context
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.utils import path_from_string
@@ -15,7 +15,7 @@ from mamba.core.msg import Empty, AppStatus
 from mamba.component.gui.msg import RegisterAction
 
 
-class MainWindow(ComponentBase):
+class MainWindow(Component):
     """ Main window base class """
     def __init__(self,
                  config_folder: str,

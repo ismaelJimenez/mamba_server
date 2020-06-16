@@ -6,10 +6,10 @@ from typing import Optional
 
 from mamba.core.context import Context
 from mamba.core.msg import Raw, ServiceRequest, ServiceResponse, ParameterType
-from mamba.component import ComponentBase
+from mamba.core.component_base import Component
 
 
-class HvsProtocolTranslator(ComponentBase):
+class HvsProtocolTranslator(Component):
     """ Socket to TMTC translator class """
     def __init__(self,
                  context: Context,
