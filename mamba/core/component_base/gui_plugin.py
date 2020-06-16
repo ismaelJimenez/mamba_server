@@ -2,6 +2,9 @@
 
 from rx import operators as op
 
+from typing import Optional
+
+from mamba.core.context import Context
 from mamba.core.component_base import Component
 from mamba.core.exceptions import ComponentConfigException
 from mamba.component.gui.msg import RegisterAction, RunAction
@@ -9,20 +12,23 @@ from mamba.component.gui.msg import RegisterAction, RunAction
 
 class GuiPlugin(Component):
     """ Plugin base class """
-    def __init__(self, config_folder, context, local_config=None):
-        super(GuiPlugin, self).__init__(config_folder, context, local_config)
+    def __init__(self,
+                 config_folder: str,
+                 context: Context,
+                 local_config: Optional[dict] = None) -> None:
+        super().__init__(config_folder, context, local_config)
 
         # Initialize observers
         self._register_observers()
 
-    def _register_observers(self):
+    def _register_observers(self) -> None:
         self._context.rx['run_plugin'].pipe(
-            op.filter(lambda value: isinstance(value, RunAction) and value.
+            op.filter(lambda value: value.
                       menu_title == self._configuration['menu'] and value.
                       action_name == self._configuration['name'])).subscribe(
                           on_next=self.run)
 
-    def initialize(self):
+    def initialize(self) -> None:
         if not all(key in self._configuration for key in ['menu', 'name']):
             raise ComponentConfigException(
                 "Missing required elements in component configuration")
@@ -35,7 +41,7 @@ class GuiPlugin(Component):
                            status_tip=self._configuration['status_tip']
                            if 'status_tip' in self._configuration else None))
 
-    def run(self, rx_value: RunAction):
+    def run(self, rx_value: RunAction) -> None:
         """ Entry point for running the plugin
 
             Args:

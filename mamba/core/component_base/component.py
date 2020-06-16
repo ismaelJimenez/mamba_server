@@ -3,6 +3,9 @@
 import os
 import yaml
 
+from typing import Optional
+
+from mamba.core.context import Context
 from mamba.core.utils import merge_dicts
 from mamba.core.msg import Log, LogLevel
 
@@ -11,9 +14,10 @@ COMPONENT_CONFIG_FILE = "config.yml"
 
 class Component:
     """ The Generic component interface """
-    def __init__(self, config_folder, context, local_config=None):
-        super(Component, self).__init__()
-
+    def __init__(self,
+                 config_folder: str,
+                 context: Context,
+                 local_config: Optional[dict] = None) -> None:
         # Retrieve component configuration
         self._context = context
 
@@ -40,5 +44,5 @@ class Component:
         self._log_error = lambda message: self._context.rx['log'].on_next(
             Log(LogLevel.Error, message, self._name))
 
-    def initialize(self):
+    def initialize(self) -> None:
         """ Entry point for component initialization """
