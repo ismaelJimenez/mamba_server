@@ -77,6 +77,9 @@ services:
   http_controller:
     component: http_controller
 
+  hvs_spacewire_gateway_tmtc:
+    component: hvs_h8823_spacewire_gateway_tmtc
+
   # Mocks
 
   single_port_tcp_server_mock:
@@ -93,3 +96,6 @@ services:
 
   xmlrpc_server_mock:
     component: xmlrpc_mock
+
+  hvs_spacewire_gateway_tmtc_mock:
+    component: hvs_h8823_gateway_tmtc_mock

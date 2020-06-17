@@ -238,14 +238,8 @@ class InstrumentDriver(Component):
             if len(service_request.args) == 1:
                 if service_request.args[0] == '1':
                     self._instrument_connect(result)
-                    if result.id in self._shared_memory_setter:
-                        self._shared_memory[self._shared_memory_setter[
-                            result.id]] = 1
                 elif service_request.args[0] == '0':
                     self._instrument_disconnect(result)
-                    if result.id in self._shared_memory_setter:
-                        self._shared_memory[self._shared_memory_setter[
-                            result.id]] = 0
             else:
                 result.type = ParameterType.error
                 result.value = 'Wrong number of arguments'

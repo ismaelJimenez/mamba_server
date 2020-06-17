@@ -68,6 +68,10 @@ class VisaInstrumentDriver(InstrumentDriver):
         if self._inst is not None:
             self._inst.timeout = 3000  # Default timeout
 
+            if result.id in self._shared_memory_setter:
+                self._shared_memory[self._shared_memory_setter[
+                    result.id]] = 1
+
             self._log_dev("Established connection to Instrument")
 
     def _instrument_disconnect(self,

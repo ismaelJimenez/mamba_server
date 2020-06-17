@@ -7,13 +7,17 @@ from mamba.mock.tcp.single_port_tcp_mock import SinglePortTcpMock
 
 class TestClass:
     def test_simple_tmtc(self):
-        self.mock = SinglePortTcpMock(Context())
+        self.mock = SinglePortTcpMock(
+            Context(),
+            local_config={'instrument': {
+                'port': 34567
+            }})
         self.mock.initialize()
 
         # Create a socket (SOCK_STREAM means a TCP socket)
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
             # Connect to server and send data
-            sock.connect(("localhost", 8085))
+            sock.connect(("localhost", 34567))
 
             sock.sendall(
                 bytes('PARAMETER_1?\r\nPARAMETER_2?\r\nPARAMETER_3?\r\n',
@@ -52,7 +56,7 @@ class TestClass:
             # Create a socket (SOCK_STREAM means a TCP socket)
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock_2:
                 # Connect to server and send data
-                sock_2.connect(("localhost", 8085))
+                sock_2.connect(("localhost", 34567))
 
                 sock_2.sendall(
                     bytes('PARAMETER_1?\r\nPARAMETER_2?\r\nPARAMETER_3?\r\n',

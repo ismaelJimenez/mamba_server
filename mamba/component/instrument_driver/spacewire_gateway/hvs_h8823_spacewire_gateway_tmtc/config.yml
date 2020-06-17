@@ -1,0 +1,88 @@
+name: HVS H8823 Spacewire Ethernet Gateway TMTC
+
+instrument:
+  address: 0.0.0.0
+  port:
+    tc: 12345
+    tm: 12346
+  encoding: utf-8
+  terminator:
+    write: "\n"
+    read: "\n"
+
+parameters:
+  connected:
+    # Set parameter type.
+    type: int
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: 0
+
+    # Set parameter description.
+    description: Connection status to TCP server
+
+    # Parameter setter configuration.
+    set:
+      # Alias allows to access parameter under another name.
+      # Connect is an special ID, to command connect/disconnect from the equipment.
+      alias: connect
+      # Setter function signature.
+      signature:
+        - connect:
+            type: int
+            valid: [0, 1]
+
+    # Parameter getter configuration.
+    get:
+
+  spw_link_autostart:
+    # Set parameter type.
+    type: str
+
+    # Parameter setter configuration.
+    set:
+      signature:
+        - status:
+            type: str
+            valid: ['ENA', 'DIS']
+        - port:
+            type: int
+            range: [0, 3]
+      instrument_command:
+        - write: 'SPWG_TC_SPW_LINK_AUTO_{0}_{1}'
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - cyclic: 'SPWG_TM_SPW_AUTOSTART {:}'
+
+  spw_link_reset:
+    # Parameter setter configuration.
+    set:
+      signature:
+        - port:
+            type: int
+            range: [0, 3]
+      instrument_command:
+        - write: 'SPWG_TC_SPW_LINK_RESET_{:}'
+
+  spw_link_enabled:
+    # Set parameter type.
+    type: str
+
+    # Parameter setter configuration.
+    set:
+      signature:
+        - status:
+            type: str
+            valid: ['ENA', 'DIS']
+        - port:
+            type: int
+            range: [0, 3]
+      instrument_command:
+        - write: 'SPWG_TC_SPW_LINK_{0}_{1}'
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - cyclic: 'SPWG_TM_SPW_ENABLED {:}'

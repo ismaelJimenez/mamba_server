@@ -39,6 +39,13 @@ class TwoPortsTcpController(TcpInstrumentDriver):
 
             self._inst_tm.connect(
                 (self._instrument.address, self._instrument.tm_port))
+
+            if result.id in self._shared_memory_setter:
+                self._shared_memory[self._shared_memory_setter[
+                    result.id]] = 1
+
+            self._log_dev("Established connection to Instrument")
+
         except ConnectionRefusedError:
             error = 'Instrument is unreachable'
             if result is not None:
@@ -56,6 +63,11 @@ class TwoPortsTcpController(TcpInstrumentDriver):
         if self._inst_tm is not None:
             self._inst_tm.close()
             self._inst_tm = None
+
+        if result is not None and result.id in self._shared_memory_setter:
+            self._shared_memory[self._shared_memory_setter[result.id]] = 0
+
+        self._log_dev("Closed connection to Instrument")
 
     def _process_inst_command(self, cmd_type: str, cmd: str,
                               service_request: ServiceRequest,
