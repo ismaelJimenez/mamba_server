@@ -41,8 +41,7 @@ class TwoPortsTcpController(TcpInstrumentDriver):
                 (self._instrument.address, self._instrument.tm_port))
 
             if result.id in self._shared_memory_setter:
-                self._shared_memory[self._shared_memory_setter[
-                    result.id]] = 1
+                self._shared_memory[self._shared_memory_setter[result.id]] = 1
 
             self._log_dev("Established connection to Instrument")
 

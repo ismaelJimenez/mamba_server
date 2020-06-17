@@ -106,6 +106,7 @@ class H8823GatewayTmTcMock(InstrumentDriver):
         self._log_info(f'TC Server running in thread: '
                        f'{self._tc_server_thread.name}')
 
+
 class ThreadedCyclicTmHandler(socketserver.BaseRequestHandler):
     """
     The request handler class for the socket server.
@@ -130,12 +131,13 @@ class ThreadedCyclicTmHandler(socketserver.BaseRequestHandler):
 
                 try:
                     start_time = time.time()
-                    while time.time()-start_time < cyclic_tm_delay:
-                        tc_ack = self.server.queue.get(True, cyclic_tm_delay - (time.time()-start_time))
+                    while time.time() - start_time < cyclic_tm_delay:
+                        tc_ack = self.server.queue.get(
+                            True, cyclic_tm_delay - (time.time() - start_time))
 
                         self.request.sendall(
-                            f'{time.time()} {tc_ack}{self.server.eom_w}'.encode(
-                                self.server.encoding))
+                            f'{time.time()} {tc_ack}{self.server.eom_w}'.
+                            encode(self.server.encoding))
 
                 except queue.Empty:
                     continue
@@ -186,16 +188,22 @@ class ThreadedTcpHandler(socketserver.BaseRequestHandler):
                     try:
                         args = Parser(val)(cmd)
 
-                        if (key == 'spw_link_enabled' or key == 'spw_link_autostart' or
-                            key == 'spw_link_timecode_enabled' or key == 'spw_link_start'):
-                            value_split = self.server.telemetries[key].split(" ")
+                        if (key == 'spw_link_enabled'
+                                or key == 'spw_link_autostart'
+                                or key == 'spw_link_timecode_enabled'
+                                or key == 'spw_link_start'):
+                            value_split = self.server.telemetries[key].split(
+                                " ")
                             status = 1 if args[0] == 'ENA' else 0
                             value_split[int(args[1])] = str(status)
-                            self.server.telemetries[key] = " ".join(value_split)
+                            self.server.telemetries[key] = " ".join(
+                                value_split)
                         elif key == 'spw_link_tx_rate':
-                            value_split = self.server.telemetries[key].split(" ")
+                            value_split = self.server.telemetries[key].split(
+                                " ")
                             value_split[int(args[0])] = str(args[1])
-                            self.server.telemetries[key] = " ".join(value_split)
+                            self.server.telemetries[key] = " ".join(
+                                value_split)
                         elif key == 'tm_period':
                             global cyclic_tm_delay
                             cyclic_tm_delay = int(args[0])

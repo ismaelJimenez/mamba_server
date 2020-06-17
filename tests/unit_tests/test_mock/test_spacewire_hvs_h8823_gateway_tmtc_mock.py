@@ -53,23 +53,36 @@ class TestClass:
                 assert 'SPWG_TM_SPW_TX_EOP_CTR 0 0 0 0' in received
                 assert 'SPWG_TM_SPW_RX_TICK_CTR 0 0 0 0' in received
 
-                sock.sendall(bytes('SPWG_TC_SPW_LINK_ENA_0\nSPWG_TC_SPW_LINK_ENA_2\n', "utf-8"))
+                sock.sendall(
+                    bytes('SPWG_TC_SPW_LINK_ENA_0\nSPWG_TC_SPW_LINK_ENA_2\n',
+                          "utf-8"))
                 time.sleep(.1)
                 received = str(sock_tm.recv(1024), "utf-8")
                 assert len(received.split('\n')[:-1]) == 2
                 assert 'SPWG_TC_SPW_LINK_ENA_0' in received
                 assert 'SPWG_TC_SPW_LINK_ENA_2' in received
 
-                sock.sendall(bytes('SPWG_TC_SPW_LINK_AUTO_ENA_1\nSPWG_TC_SPW_LINK_AUTO_ENA_3\n', "utf-8"))
+                sock.sendall(
+                    bytes(
+                        'SPWG_TC_SPW_LINK_AUTO_ENA_1\nSPWG_TC_SPW_LINK_AUTO_ENA_3\n',
+                        "utf-8"))
                 time.sleep(.1)
                 received = str(sock_tm.recv(1024), "utf-8")
                 assert len(received.split('\n')[:-1]) == 2
                 assert 'SPWG_TC_SPW_LINK_AUTO_ENA_1' in received
                 assert 'SPWG_TC_SPW_LINK_AUTO_ENA_3' in received
 
-                sock.sendall(bytes('SPWG_TC_SPW_TIMECODE_ENA_0\nSPWG_TC_SPW_TIMECODE_ENA_2\n', "utf-8"))
-                sock.sendall(bytes('SPWG_TC_SPW_TX_CLK_0 10\nSPWG_TC_SPW_TX_CLK_2 20\n', "utf-8"))
-                sock.sendall(bytes('SPWG_TC_SPW_LINK_START_ENA_1\nSPWG_TC_SPW_LINK_START_ENA_3\n', "utf-8"))
+                sock.sendall(
+                    bytes(
+                        'SPWG_TC_SPW_TIMECODE_ENA_0\nSPWG_TC_SPW_TIMECODE_ENA_2\n',
+                        "utf-8"))
+                sock.sendall(
+                    bytes('SPWG_TC_SPW_TX_CLK_0 10\nSPWG_TC_SPW_TX_CLK_2 20\n',
+                          "utf-8"))
+                sock.sendall(
+                    bytes(
+                        'SPWG_TC_SPW_LINK_START_ENA_1\nSPWG_TC_SPW_LINK_START_ENA_3\n',
+                        "utf-8"))
 
                 time.sleep(.1)
                 received = str(sock_tm.recv(1024), "utf-8")
@@ -105,11 +118,24 @@ class TestClass:
                 assert 'SPWG_TM_SPW_TX_EOP_CTR 0 0 0 0' in received
                 assert 'SPWG_TM_SPW_RX_TICK_CTR 0 0 0 0' in received
 
-                sock.sendall(bytes('SPWG_TC_SPW_LINK_ENA_1\nSPWG_TC_SPW_LINK_ENA_3\n', "utf-8"))
-                sock.sendall(bytes('SPWG_TC_SPW_LINK_AUTO_ENA_0\nSPWG_TC_SPW_LINK_AUTO_ENA_2\n', "utf-8"))
-                sock.sendall(bytes('SPWG_TC_SPW_TIMECODE_ENA_1\nSPWG_TC_SPW_TIMECODE_ENA_3\n', "utf-8"))
-                sock.sendall(bytes('SPWG_TC_SPW_TX_CLK_1 11\nSPWG_TC_SPW_TX_CLK_3 30\n', "utf-8"))
-                sock.sendall(bytes('SPWG_TC_SPW_LINK_START_ENA_0\nSPWG_TC_SPW_LINK_START_ENA_2\n', "utf-8"))
+                sock.sendall(
+                    bytes('SPWG_TC_SPW_LINK_ENA_1\nSPWG_TC_SPW_LINK_ENA_3\n',
+                          "utf-8"))
+                sock.sendall(
+                    bytes(
+                        'SPWG_TC_SPW_LINK_AUTO_ENA_0\nSPWG_TC_SPW_LINK_AUTO_ENA_2\n',
+                        "utf-8"))
+                sock.sendall(
+                    bytes(
+                        'SPWG_TC_SPW_TIMECODE_ENA_1\nSPWG_TC_SPW_TIMECODE_ENA_3\n',
+                        "utf-8"))
+                sock.sendall(
+                    bytes('SPWG_TC_SPW_TX_CLK_1 11\nSPWG_TC_SPW_TX_CLK_3 30\n',
+                          "utf-8"))
+                sock.sendall(
+                    bytes(
+                        'SPWG_TC_SPW_LINK_START_ENA_0\nSPWG_TC_SPW_LINK_START_ENA_2\n',
+                        "utf-8"))
 
                 time.sleep(.1)
 
@@ -141,10 +167,21 @@ class TestClass:
                 assert 'SPWG_TM_SPW_TX_EOP_CTR 0 0 0 0' in received
                 assert 'SPWG_TM_SPW_RX_TICK_CTR 0 0 0 0' in received
 
-                sock.sendall(bytes('SPWG_TC_SPW_LINK_DIS_1\nSPWG_TC_SPW_LINK_DIS_3\n', "utf-8"))
-                sock.sendall(bytes('SPWG_TC_SPW_LINK_AUTO_DIS_0\nSPWG_TC_SPW_LINK_AUTO_DIS_2\n', "utf-8"))
-                sock.sendall(bytes('SPWG_TC_SPW_TIMECODE_DIS_1\nSPWG_TC_SPW_TIMECODE_DIS_3\n', "utf-8"))
-                sock.sendall(bytes('SPWG_TC_SPW_LINK_START_DIS_0\nSPWG_TC_SPW_LINK_START_DIS_2\n', "utf-8"))
+                sock.sendall(
+                    bytes('SPWG_TC_SPW_LINK_DIS_1\nSPWG_TC_SPW_LINK_DIS_3\n',
+                          "utf-8"))
+                sock.sendall(
+                    bytes(
+                        'SPWG_TC_SPW_LINK_AUTO_DIS_0\nSPWG_TC_SPW_LINK_AUTO_DIS_2\n',
+                        "utf-8"))
+                sock.sendall(
+                    bytes(
+                        'SPWG_TC_SPW_TIMECODE_DIS_1\nSPWG_TC_SPW_TIMECODE_DIS_3\n',
+                        "utf-8"))
+                sock.sendall(
+                    bytes(
+                        'SPWG_TC_SPW_LINK_START_DIS_0\nSPWG_TC_SPW_LINK_START_DIS_2\n',
+                        "utf-8"))
 
                 time.sleep(.1)
 
@@ -176,28 +213,41 @@ class TestClass:
                 assert 'SPWG_TM_SPW_TX_EOP_CTR 0 0 0 0' in received
                 assert 'SPWG_TM_SPW_RX_TICK_CTR 0 0 0 0' in received
 
-                sock.sendall(bytes('SPWG_TC_SPW_LINK_RESET_1\nSPWG_TC_SPW_LINK_RESET_3\n', "utf-8"))
-                sock.sendall(bytes('SPWG_TC_SPW_RST_CTR_1\nSPWG_TC_SPW_RST_CTR_3\n', "utf-8"))
+                sock.sendall(
+                    bytes(
+                        'SPWG_TC_SPW_LINK_RESET_1\nSPWG_TC_SPW_LINK_RESET_3\n',
+                        "utf-8"))
+                sock.sendall(
+                    bytes('SPWG_TC_SPW_RST_CTR_1\nSPWG_TC_SPW_RST_CTR_3\n',
+                          "utf-8"))
 
                 time.sleep(.1)
                 received = str(sock_tm.recv(1024), "utf-8")
                 assert len(received.split('\n')[:-1]) == 4
 
-                sock.sendall(bytes('SPWG_TC_TX_RAW_0 ABCD\nSPWG_TC_TX_RAW_1 01ADB\n', "utf-8"))
+                sock.sendall(
+                    bytes('SPWG_TC_TX_RAW_0 ABCD\nSPWG_TC_TX_RAW_1 01ADB\n',
+                          "utf-8"))
                 time.sleep(.1)
                 received = str(sock_tm.recv(1024), "utf-8")
                 assert len(received.split('\n')[:-1]) == 2
                 assert 'SPWG_TC_TX_RAW_0 ABCD' in received
                 assert 'SPWG_TC_TX_RAW_1 01ADB' in received
 
-                sock.sendall(bytes('SPWG_TC_TX_RAW_EEP_0 ABCD\nSPWG_TC_TX_RAW_EEP_1 01ADB\n', "utf-8"))
+                sock.sendall(
+                    bytes(
+                        'SPWG_TC_TX_RAW_EEP_0 ABCD\nSPWG_TC_TX_RAW_EEP_1 01ADB\n',
+                        "utf-8"))
                 time.sleep(.1)
                 received = str(sock_tm.recv(1024), "utf-8")
                 assert len(received.split('\n')[:-1]) == 2
                 assert 'SPWG_TC_TX_RAW_EEP_0 ABCD' in received
                 assert 'SPWG_TC_TX_RAW_EEP_1 01ADB' in received
 
-                sock.sendall(bytes('SPWG_TC_TX_RAW_PART_0 ABCD\nSPWG_TC_TX_RAW_PART_1 01ADB\n', "utf-8"))
+                sock.sendall(
+                    bytes(
+                        'SPWG_TC_TX_RAW_PART_0 ABCD\nSPWG_TC_TX_RAW_PART_1 01ADB\n',
+                        "utf-8"))
                 time.sleep(.1)
                 received = str(sock_tm.recv(1024), "utf-8")
                 assert len(received.split('\n')[:-1]) == 2

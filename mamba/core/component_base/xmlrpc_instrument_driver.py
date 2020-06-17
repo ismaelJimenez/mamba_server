@@ -30,8 +30,7 @@ class XmlRpcInstrumentDriver(InstrumentDriver):
             self._inst = xmlrpc.client.ServerProxy(server_addr)
 
             if result.id in self._shared_memory_setter:
-                self._shared_memory[self._shared_memory_setter[
-                    result.id]] = 1
+                self._shared_memory[self._shared_memory_setter[result.id]] = 1
 
             self._log_dev("Established connection to Instrument")
 

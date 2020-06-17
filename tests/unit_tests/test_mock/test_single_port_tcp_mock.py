@@ -8,8 +8,7 @@ from mamba.mock.tcp.single_port_tcp_mock import SinglePortTcpMock
 class TestClass:
     def test_simple_tmtc(self):
         self.mock = SinglePortTcpMock(
-            Context(),
-            local_config={'instrument': {
+            Context(), local_config={'instrument': {
                 'port': 34567
             }})
         self.mock.initialize()
