@@ -27,6 +27,9 @@ class Instrument:
         self.terminator_read: str = inst_config.get('terminator',
                                                     {}).get('read') or '\n'
 
+        self.max_connection_attempts: int = inst_config.get(
+            'max_connection_attempts', 2)
+
         self.tc_port: Optional[int] = None
         self.tm_port: Optional[int] = None
         self.port: Optional[int] = None
@@ -277,11 +280,12 @@ class InstrumentDriver(Component):
                                f'{service_request.args}'
                 self._log_error(result.value)
 
-            for inst_cmd in inst_commands:
-                cmd_type = list(inst_cmd.keys())[0]
-                cmd = list(inst_cmd.values())[0]
+            if result.type != ParameterType.error:
+                for inst_cmd in inst_commands:
+                    cmd_type = list(inst_cmd.keys())[0]
+                    cmd = list(inst_cmd.values())[0]
 
-                self._process_inst_command(cmd_type, cmd, service_request,
-                                           result)
+                    self._process_inst_command(cmd_type, cmd, service_request,
+                                               result)
 
         self._context.rx['io_result'].on_next(result)

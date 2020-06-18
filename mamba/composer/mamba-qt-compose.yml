@@ -80,6 +80,9 @@ services:
   hvs_spacewire_gateway_tmtc:
     component: hvs_h8823_spacewire_gateway_tmtc
 
+  hvs_h8823_spacewire_gateway_spw_raw:
+    component: hvs_h8823_spacewire_gateway_spw_raw
+
   # Mocks
 
   single_port_tcp_server_mock:
@@ -99,3 +102,6 @@ services:
 
   hvs_spacewire_gateway_tmtc_mock:
     component: hvs_h8823_gateway_tmtc_mock
+
+  hvs_h8823_gateway_spw_raw_mock:
+    component: hvs_h8823_gateway_spw_raw_mock

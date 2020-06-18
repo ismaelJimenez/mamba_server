@@ -61,16 +61,15 @@ parameters:
     # Set parameter initial value upon instrument initialization.
     initial_value: 1
 
+    # Cyclic TM server configuration.
+    cyclic_tm_server:
+      format: 'PARAMETER_1 {:}'
+
     # Parameter setter configuration.
     set:
       signature: [value: {type: int}]
       instrument_command:
         - query: 'PARAMETER_1 {:}'
-
-    # Parameter getter configuration.
-    get:
-      instrument_command:
-        - cyclic: 'PARAMETER_1 {:}'
 
   parameter_2:
     # Set parameter type.
@@ -79,16 +78,15 @@ parameters:
     # Set parameter initial value upon instrument initialization.
     initial_value: '2'
 
+    # Cyclic TM server configuration.
+    cyclic_tm_server:
+      format: 'PARAMETER_2 {:}'
+
     # Parameter setter configuration.
     set:
       signature: [value: {type: str}]
       instrument_command:
         - query: 'PARAMETER_2 {:}'
-
-    # Parameter getter configuration.
-    get:
-      instrument_command:
-        - cyclic: 'PARAMETER_2 {:}'
 
   parameter_3:
     # Set parameter type.
@@ -97,13 +95,13 @@ parameters:
     # Set parameter initial value upon instrument initialization.
     initial_value: 3
 
+    # Cyclic TM server configuration.
+    cyclic_tm_server:
+      format: 'PARAMETER_3 {:}'
+
     # Parameter setter configuration.
     set:
       signature: [value: {type: int}]
       instrument_command:
         - query: 'PARAMETER_3 {:}'
 
-    # Parameter getter configuration.
-    get:
-      instrument_command:
-        - cyclic: 'PARAMETER_3 {:}'

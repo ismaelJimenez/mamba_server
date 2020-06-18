@@ -47,14 +47,10 @@ class CyclicTmTcpMock(InstrumentDriver):
         for key, parameter_info in self._configuration['parameters'].items():
             self._shared_memory[key] = parameter_info.get('initial_value')
 
-            cmd_list = parameter_info.get('get',
-                                          {}).get('instrument_command', {})
-            if len(cmd_list) > 0:
-                cmd_type = list(cmd_list[0].keys())[0]
-                cmd = list(cmd_list[0].values())[0]
-
-                if cmd_type == 'cyclic':
-                    self._cyclic_tm_mapping[key] = cmd
+            tm_format = parameter_info.get('cyclic_tm_server',
+                                           {}).get('format', {})
+            if len(tm_format) > 0:
+                self._cyclic_tm_mapping[key] = tm_format
 
         # Create the TM socket server, binding to host and port
         socketserver.TCPServer.allow_reuse_address = True

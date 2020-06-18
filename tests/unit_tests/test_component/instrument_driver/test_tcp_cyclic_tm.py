@@ -85,13 +85,25 @@ class TestClass:
         assert component._configuration == self.default_component_config
 
         # Test custom variables default values
-        assert component._shared_memory == {'connected': 0, 'raw_query': ''}
+        assert component._shared_memory == {
+            'connected': 0,
+            'parameter_1': 0,
+            'parameter_2': 0,
+            'parameter_3': 0,
+            'raw_query': ''
+        }
         assert component._shared_memory_getter == {
             'connected': 'connected',
+            'parameter_1': 'parameter_1',
+            'parameter_2': 'parameter_2',
+            'parameter_3': 'parameter_3',
             'raw_query': 'raw_query'
         }
         assert component._shared_memory_setter == {
             'connect': 'connected',
+            'parameter_1': 'parameter_1',
+            'parameter_2': 'parameter_2',
+            'parameter_3': 'parameter_3',
             'raw_query': 'raw_query'
         }
         assert component._parameter_info == self.default_service_info
@@ -160,13 +172,25 @@ class TestClass:
         assert component._configuration == custom_component_config
 
         # Test custom variables default values
-        assert component._shared_memory == {'connected': 0, 'raw_query': ''}
+        assert component._shared_memory == {
+            'connected': 0,
+            'parameter_1': 0,
+            'parameter_2': 0,
+            'parameter_3': 0,
+            'raw_query': ''
+        }
         assert component._shared_memory_getter == {
             'connected': 'connected',
+            'parameter_1': 'parameter_1',
+            'parameter_2': 'parameter_2',
+            'parameter_3': 'parameter_3',
             'raw_query': 'raw_query'
         }
         assert component._shared_memory_setter == {
             'connect': 'connected',
+            'parameter_1': 'parameter_1',
+            'parameter_2': 'parameter_2',
+            'parameter_3': 'parameter_3',
             'raw_query': 'raw_query'
         }
 
@@ -227,7 +251,13 @@ class TestClass:
             }})
         component.initialize()
 
-        assert component._shared_memory == {'connected': 0, 'raw_query': ''}
+        assert component._shared_memory == {
+            'connected': 0,
+            'parameter_1': 0,
+            'parameter_2': 0,
+            'parameter_3': 0,
+            'raw_query': ''
+        }
 
     def test_io_signature_publication(self):
         """ Test component io_signature observable """
@@ -818,6 +848,94 @@ class TestClass:
 
         assert '"new_param" Command for GET does not have a Query' in str(
             excinfo.value)
+
+    def test_tcp_broken_and_reconnection(self):
+        # Start Mock
+        mock = CyclicTmTcpMock(
+            self.context,
+            local_config={'instrument': {
+                'port': {
+                    'tc': 32458,
+                    'tm': 32459
+                }
+            }})
+        mock.initialize()
+
+        # Start Test
+        component = CyclicTmTcpController(
+            self.context,
+            local_config={'instrument': {
+                'port': {
+                    'tc': 32458,
+                    'tm': 32459
+                }
+            }})
+        component.initialize()
+        dummy_test_class = CallbackTestClass()
+
+        # Subscribe to the topic that shall be published
+        # Subscribe to the topic that shall be published
+        self.context.rx['io_result'].pipe(
+            op.filter(lambda value: isinstance(value, ServiceResponse) and
+                      value.id != 'parameter_1' and value.id != 'parameter_2'
+                      and value.id != 'parameter_3')).subscribe(
+                          dummy_test_class.test_func_1)
+
+        self.context.rx['io_result'].pipe(
+            op.filter(lambda value: value.id == 'parameter_1' or value.id ==
+                      'parameter_2' or value.id == 'parameter_3')).subscribe(
+                          dummy_test_class.test_func_2)
+
+        # 1 - Test connection to the instrument
+        assert component._inst is None
+
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='cyclic_telemetry_tcp_controller',
+                           id='connect',
+                           type=ParameterType.set,
+                           args=['1']))
+
+        time.sleep(.1)
+
+        assert component._inst is not None
+        assert dummy_test_class.func_1_times_called == 1
+        assert dummy_test_class.func_1_last_value.id == 'connect'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.set
+        assert dummy_test_class.func_1_last_value.value is None
+
+        # 2 - Test generic query
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='cyclic_telemetry_tcp_controller',
+                           id='idn',
+                           type=ParameterType.get,
+                           args=[]))
+
+        time.sleep(.1)
+
+        assert dummy_test_class.func_1_times_called == 2
+        assert dummy_test_class.func_1_last_value.id == 'idn'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.get
+        assert dummy_test_class.func_1_last_value.value == 'Mamba Framework,Cyclic Telemetry TCP Mock,1.0'
+
+        # Force connection close
+        component._inst.close()
+
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='cyclic_telemetry_tcp_controller',
+                           id='idn',
+                           type=ParameterType.get,
+                           args=[]))
+
+        time.sleep(.1)
+
+        assert dummy_test_class.func_1_times_called == 3
+        assert dummy_test_class.func_1_last_value.id == 'idn'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.get
+        assert dummy_test_class.func_1_last_value.value == 'Mamba Framework,Cyclic Telemetry TCP Mock,1.0'
+
+        self.context.rx['quit'].on_next(Empty())
+
+        time.sleep(1)
 
     def test_quit_observer(self):
         """ Test component quit observer """

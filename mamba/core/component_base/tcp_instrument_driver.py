@@ -46,12 +46,12 @@ class TcpInstrumentDriver(InstrumentDriver):
             self._inst.connect(
                 (self._instrument.address, self._instrument.port))
 
-            if result.id in self._shared_memory_setter:
+            if result is not None and result.id in self._shared_memory_setter:
                 self._shared_memory[self._shared_memory_setter[result.id]] = 1
 
             self._log_dev("Established connection to Instrument")
 
-        except ConnectionRefusedError:
+        except (ConnectionRefusedError, OSError):
             error = 'Instrument is unreachable'
             if result is not None:
                 result.type = ParameterType.error
@@ -72,34 +72,48 @@ class TcpInstrumentDriver(InstrumentDriver):
     def _process_inst_command(self, cmd_type: str, cmd: str,
                               service_request: ServiceRequest,
                               result: ServiceResponse) -> None:
-        if self._inst is not None:
-            try:
-                if cmd_type == 'query':
-                    value = tcp_raw_query(self._inst,
-                                          cmd.format(*service_request.args),
-                                          self._instrument.terminator_write,
-                                          self._instrument.terminator_read,
-                                          self._instrument.encoding)
+        connection_attempts = 0
+        success = False
 
-                    if service_request.type == ParameterType.set:
-                        self._shared_memory[self._shared_memory_setter[
-                            service_request.id]] = value
-                    else:
-                        result.value = value
+        while connection_attempts < self._instrument.max_connection_attempts:
+            connection_attempts += 1
 
-                elif cmd_type == 'write':
-                    tcp_raw_write(self._inst,
-                                  cmd.format(*service_request.args),
-                                  self._instrument.terminator_write,
-                                  self._instrument.encoding)
+            if self._inst is not None:
+                try:
+                    if cmd_type == 'query':
+                        value = tcp_raw_query(
+                            self._inst, cmd.format(*service_request.args),
+                            self._instrument.terminator_write,
+                            self._instrument.terminator_read,
+                            self._instrument.encoding)
 
-            except ConnectionRefusedError:
+                        if service_request.type == ParameterType.set:
+                            self._shared_memory[self._shared_memory_setter[
+                                service_request.id]] = value
+                        else:
+                            result.value = value
+
+                    elif cmd_type == 'write':
+                        tcp_raw_write(self._inst,
+                                      cmd.format(*service_request.args),
+                                      self._instrument.terminator_write,
+                                      self._instrument.encoding)
+
+                except (ConnectionRefusedError, OSError):
+                    self._instrument_disconnect()
+                    self._instrument_connect()
+                    continue
+            else:
                 result.type = ParameterType.error
-                result.value = 'Not possible to communicate to the' \
-                               ' instrument'
+                result.value = 'Not possible to perform command before ' \
+                               'connection is established'
                 self._log_error(result.value)
-        else:
+
+            success = True
+            break
+
+        if not success:
             result.type = ParameterType.error
-            result.value = 'Not possible to perform command before ' \
-                           'connection is established'
+            result.value = 'Not possible to communicate to the' \
+                           ' instrument'
             self._log_error(result.value)

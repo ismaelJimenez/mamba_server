@@ -2,11 +2,11 @@
 from typing import Optional
 import os
 
-from mamba.core.component_base import TcpTmTcCyclic
+from mamba.core.component_base import TcpInstrumentDriver
 from mamba.core.context import Context
 
 
-class CyclicTmTcpController(TcpTmTcCyclic):
+class H8823SpwRawController(TcpInstrumentDriver):
     """ Simple TCP controller base class """
     def __init__(self,
                  context: Context,

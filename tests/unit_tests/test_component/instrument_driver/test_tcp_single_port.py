@@ -807,6 +807,150 @@ class TestClass:
         assert '"new_param" Command for GET does not have a Query' in str(
             excinfo.value)
 
+    def test_tcp_broken_and_no_reconnection(self):
+        # Start Mock
+        mock = SinglePortTcpMock(self.context)
+        mock.initialize()
+
+        # Start Test
+        component = SinglePortTcpController(
+            self.context,
+            local_config={'instrument': {
+                'max_connection_attempts': 1
+            }})
+        component.initialize()
+        dummy_test_class = CallbackTestClass()
+
+        # Subscribe to the topic that shall be published
+        self.context.rx['io_result'].pipe(
+            op.filter(
+                lambda value: isinstance(value, ServiceResponse))).subscribe(
+                    dummy_test_class.test_func_1)
+
+        # 1 - Test connection to the instrument
+        assert component._inst is None
+
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='single_port_tcp_controller',
+                           id='connect',
+                           type=ParameterType.set,
+                           args=['1']))
+
+        time.sleep(.1)
+
+        assert component._inst is not None
+        assert dummy_test_class.func_1_times_called == 1
+        assert dummy_test_class.func_1_last_value.id == 'connect'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.set
+        assert dummy_test_class.func_1_last_value.value is None
+
+        # 2 - Test generic query
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='single_port_tcp_controller',
+                           id='idn',
+                           type=ParameterType.get,
+                           args=[]))
+
+        time.sleep(.1)
+
+        assert dummy_test_class.func_1_times_called == 2
+        assert dummy_test_class.func_1_last_value.id == 'idn'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.get
+        assert dummy_test_class.func_1_last_value.value == 'Mamba Framework,Single Port TCP Mock,1.0'
+
+        # Force connection close
+        component._inst.close()
+
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='single_port_tcp_controller',
+                           id='idn',
+                           type=ParameterType.get,
+                           args=[]))
+
+        time.sleep(.1)
+
+        assert dummy_test_class.func_1_times_called == 3
+        assert dummy_test_class.func_1_last_value.id == 'idn'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.error
+        assert dummy_test_class.func_1_last_value.value == 'Not possible to communicate to the instrument'
+
+        self.context.rx['quit'].on_next(Empty())
+
+        time.sleep(1)
+
+    def test_tcp_broken_and_reconnection(self):
+        # Start Mock
+        mock = SinglePortTcpMock(self.context,
+                                 local_config={'instrument': {
+                                     'port': 21345
+                                 }})
+        mock.initialize()
+
+        # Start Test
+        component = SinglePortTcpController(
+            self.context, local_config={'instrument': {
+                'port': 21345
+            }})
+        component.initialize()
+        dummy_test_class = CallbackTestClass()
+
+        # Subscribe to the topic that shall be published
+        self.context.rx['io_result'].pipe(
+            op.filter(
+                lambda value: isinstance(value, ServiceResponse))).subscribe(
+                    dummy_test_class.test_func_1)
+
+        # 1 - Test connection to the instrument
+        assert component._inst is None
+
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='single_port_tcp_controller',
+                           id='connect',
+                           type=ParameterType.set,
+                           args=['1']))
+
+        time.sleep(.1)
+
+        assert component._inst is not None
+        assert dummy_test_class.func_1_times_called == 1
+        assert dummy_test_class.func_1_last_value.id == 'connect'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.set
+        assert dummy_test_class.func_1_last_value.value is None
+
+        # 2 - Test generic query
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='single_port_tcp_controller',
+                           id='idn',
+                           type=ParameterType.get,
+                           args=[]))
+
+        time.sleep(.1)
+
+        assert dummy_test_class.func_1_times_called == 2
+        assert dummy_test_class.func_1_last_value.id == 'idn'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.get
+        assert dummy_test_class.func_1_last_value.value == 'Mamba Framework,Single Port TCP Mock,1.0'
+
+        # Force connection close
+        component._inst.close()
+
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='single_port_tcp_controller',
+                           id='idn',
+                           type=ParameterType.get,
+                           args=[]))
+
+        time.sleep(.1)
+
+        assert dummy_test_class.func_1_times_called == 3
+        assert dummy_test_class.func_1_last_value.id == 'idn'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.get
+        assert dummy_test_class.func_1_last_value.value == 'Mamba Framework,Single Port TCP Mock,1.0'
+
+        self.context.rx['quit'].on_next(Empty())
+
+        time.sleep(1)
+
     def test_quit_observer(self):
         """ Test component quit observer """
         class Test:

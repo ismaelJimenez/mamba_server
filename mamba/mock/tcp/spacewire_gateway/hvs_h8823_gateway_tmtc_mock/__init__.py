@@ -31,6 +31,7 @@ class H8823GatewayTmTcMock(InstrumentDriver):
         self._tc_mapping: Dict[str, str] = {}
         global cyclic_tm_delay
         cyclic_tm_delay = self._configuration['instrument']['tm_period']
+        self._half_tm_activated = self._configuration.get('half_tm', 0)
 
         self._app_running = True
 
@@ -56,14 +57,10 @@ class H8823GatewayTmTcMock(InstrumentDriver):
         for key, parameter_info in self._configuration['parameters'].items():
             self._shared_memory[key] = parameter_info.get('initial_value')
 
-            cmd_list = parameter_info.get('get',
-                                          {}).get('instrument_command', {})
-            if len(cmd_list) > 0:
-                cmd_type = list(cmd_list[0].keys())[0]
-                cmd = list(cmd_list[0].values())[0]
-
-                if cmd_type == 'cyclic':
-                    self._cyclic_tm_mapping[key] = cmd
+            tm_format = parameter_info.get('cyclic_tm_server',
+                                           {}).get('format', {})
+            if len(tm_format) > 0:
+                self._cyclic_tm_mapping[key] = tm_format
 
             cmd_list = parameter_info.get('set',
                                           {}).get('instrument_command', {})
@@ -119,28 +116,44 @@ class ThreadedCyclicTmHandler(socketserver.BaseRequestHandler):
         # Send  telemetries
         while self.server.do_run:
             try:
-                for key, value in self.server.telemetry_map.items():
-                    socket_tm = value.format(self.server.telemetries[key])
-                    self.server.log_dev(
-                        fr' - Publish socket cyclic TM: {socket_tm}')
+                if self.server.half_tm_activated:
                     self.request.sendall(
-                        f'{time.time()} {socket_tm}{self.server.eom_w}'.encode(
-                            self.server.encoding))
+                        f'{time.time()} SPWG_TM_SPW_TX_EOP_CTR 4 3 2 1'
+                        f'{self.server.eom_w}{time.time()} '
+                        f'SPWG_TM_SPW_TX_EEP_CTR 0 1 '
+                        .encode(self.server.encoding))
 
-                global cyclic_tm_delay
+                    time.sleep(2)
 
-                try:
-                    start_time = time.time()
-                    while time.time() - start_time < cyclic_tm_delay:
-                        tc_ack = self.server.queue.get(
-                            True, cyclic_tm_delay - (time.time() - start_time))
-
+                    self.request.sendall(
+                        f'2 3{self.server.eom_w}{time.time()} '
+                        f'SPWG_TM_SPW_RX_TICK_CTR 6 7 8 9'
+                        f'{self.server.eom_w}'
+                        .encode(self.server.encoding))
+                else:
+                    for key, value in self.server.telemetry_map.items():
+                        socket_tm = value.format(self.server.telemetries[key])
+                        self.server.log_dev(
+                            fr' - Publish socket cyclic TM: {socket_tm}')
                         self.request.sendall(
-                            f'{time.time()} {tc_ack}{self.server.eom_w}'.
+                            f'{time.time()} {socket_tm}{self.server.eom_w}'.
                             encode(self.server.encoding))
 
-                except queue.Empty:
-                    continue
+                    global cyclic_tm_delay
+
+                    try:
+                        start_time = time.time()
+                        while time.time() - start_time < cyclic_tm_delay:
+                            tc_ack = self.server.queue.get(
+                                True,
+                                cyclic_tm_delay - (time.time() - start_time))
+
+                            self.request.sendall(
+                                f'{time.time()} {tc_ack}{self.server.eom_w}'.
+                                encode(self.server.encoding))
+
+                    except queue.Empty:
+                        continue
 
             except BrokenPipeError:
                 break
@@ -161,6 +174,7 @@ class ThreadedCyclicTmServer(socketserver.ThreadingMixIn,
         self.encoding = parent._instrument.encoding
         self.telemetry_map = parent._cyclic_tm_mapping
         self.queue = parent.tc_ack_queue
+        self.half_tm_activated = parent._half_tm_activated
 
         self.do_run = True
 

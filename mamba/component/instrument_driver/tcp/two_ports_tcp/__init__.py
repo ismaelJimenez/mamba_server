@@ -40,12 +40,12 @@ class TwoPortsTcpController(TcpInstrumentDriver):
             self._inst_tm.connect(
                 (self._instrument.address, self._instrument.tm_port))
 
-            if result.id in self._shared_memory_setter:
+            if result is not None and result.id in self._shared_memory_setter:
                 self._shared_memory[self._shared_memory_setter[result.id]] = 1
 
             self._log_dev("Established connection to Instrument")
 
-        except ConnectionRefusedError:
+        except (ConnectionRefusedError, OSError):
             error = 'Instrument is unreachable'
             if result is not None:
                 result.type = ParameterType.error
@@ -71,37 +71,51 @@ class TwoPortsTcpController(TcpInstrumentDriver):
     def _process_inst_command(self, cmd_type: str, cmd: str,
                               service_request: ServiceRequest,
                               result: ServiceResponse) -> None:
-        if self._inst is not None and self._inst_tm is not None:
-            try:
-                if cmd_type == 'query':
-                    tcp_raw_write(self._inst,
-                                  cmd.format(*service_request.args),
-                                  self._instrument.terminator_write,
-                                  self._instrument.encoding)
+        connection_attempts = 0
+        success = False
 
-                    value = tcp_raw_read(self._inst_tm,
-                                         self._instrument.terminator_read,
-                                         self._instrument.encoding)
+        while connection_attempts < self._instrument.max_connection_attempts:
+            connection_attempts += 1
 
-                    if service_request.type == ParameterType.set:
-                        self._shared_memory[self._shared_memory_setter[
-                            service_request.id]] = value
-                    else:
-                        result.value = value
+            if self._inst is not None and self._inst_tm is not None:
+                try:
+                    if cmd_type == 'query':
+                        tcp_raw_write(self._inst,
+                                      cmd.format(*service_request.args),
+                                      self._instrument.terminator_write,
+                                      self._instrument.encoding)
 
-                elif cmd_type == 'write':
-                    tcp_raw_write(self._inst,
-                                  cmd.format(*service_request.args),
-                                  self._instrument.terminator_write,
-                                  self._instrument.encoding)
+                        value = tcp_raw_read(self._inst_tm,
+                                             self._instrument.terminator_read,
+                                             self._instrument.encoding)
 
-            except ConnectionRefusedError:
+                        if service_request.type == ParameterType.set:
+                            self._shared_memory[self._shared_memory_setter[
+                                service_request.id]] = value
+                        else:
+                            result.value = value
+
+                    elif cmd_type == 'write':
+                        tcp_raw_write(self._inst,
+                                      cmd.format(*service_request.args),
+                                      self._instrument.terminator_write,
+                                      self._instrument.encoding)
+
+                except (ConnectionRefusedError, OSError):
+                    self._instrument_disconnect()
+                    self._instrument_connect()
+                    continue
+            else:
                 result.type = ParameterType.error
-                result.value = 'Not possible to communicate to the' \
-                               ' instrument'
+                result.value = 'Not possible to perform command before ' \
+                               'connection is established'
                 self._log_error(result.value)
-        else:
+
+            success = True
+            break
+
+        if not success:
             result.type = ParameterType.error
-            result.value = 'Not possible to perform command before ' \
-                           'connection is established'
+            result.value = 'Not possible to communicate to the' \
+                           ' instrument'
             self._log_error(result.value)

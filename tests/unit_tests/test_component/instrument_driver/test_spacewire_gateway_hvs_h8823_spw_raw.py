@@ -7,13 +7,14 @@ from rx import operators as op
 
 from mamba.core.testing.utils import compose_service_info, get_config_dict, CallbackTestClass, get_provider_params_info
 from mamba.core.context import Context
-from mamba.mock.tcp.two_ports_tcp_mock import TwoPortsTcpMock
-from mamba.component.instrument_driver.tcp.two_ports_tcp import TwoPortsTcpController
+from mamba.mock.tcp.spacewire_gateway.hvs_h8823_gateway_spw_raw_mock import H8823GatewaySpwRawMock
+from mamba.component.instrument_driver.spacewire_gateway.hvs_h8823_spacewire_gateway_spw_raw import H8823SpwRawController
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.msg import Empty, ServiceRequest, ServiceResponse, ParameterType
 
-component_path = os.path.join('component', 'instrument_driver', 'tcp',
-                              'two_ports_tcp')
+component_path = os.path.join('component', 'instrument_driver',
+                              'spacewire_gateway',
+                              'hvs_h8823_spacewire_gateway_spw_raw')
 
 
 class TestClass:
@@ -47,13 +48,13 @@ class TestClass:
     def test_wo_context(self):
         """ Test component behaviour without required context """
         with pytest.raises(TypeError) as excinfo:
-            TwoPortsTcpController()
+            H8823SpwRawController()
 
         assert "missing 1 required positional argument" in str(excinfo.value)
 
     def test_w_default_context_component_creation(self):
         """ Test component creation behaviour with default context """
-        component = TwoPortsTcpController(self.context)
+        component = H8823SpwRawController(self.context)
 
         # Test default configuration load
         assert component._configuration == self.default_component_config
@@ -66,16 +67,14 @@ class TestClass:
         assert component._inst is None
 
         assert component._instrument.address == '0.0.0.0'
-        assert component._instrument.port is None
-        assert component._instrument.tc_port == 8086
-        assert component._instrument.tm_port == 8087
+        assert component._instrument.port == 5001
         assert component._instrument.encoding == 'utf-8'
-        assert component._instrument.terminator_write == '\r\n'
+        assert component._instrument.terminator_write == '\n'
         assert component._instrument.terminator_read == '\n'
 
     def test_w_default_context_component_initialization(self):
         """ Test component initialization behaviour with default context """
-        component = TwoPortsTcpController(self.context)
+        component = H8823SpwRawController(self.context)
         component.initialize()
 
         # Test default configuration load
@@ -95,24 +94,19 @@ class TestClass:
         assert component._inst is None
 
         assert component._instrument.address == '0.0.0.0'
-        assert component._instrument.port is None
-        assert component._instrument.tc_port == 8086
-        assert component._instrument.tm_port == 8087
+        assert component._instrument.port == 5001
         assert component._instrument.encoding == 'utf-8'
-        assert component._instrument.terminator_write == '\r\n'
+        assert component._instrument.terminator_write == '\n'
         assert component._instrument.terminator_read == '\n'
 
     def test_w_custom_context(self):
         """ Test component creation behaviour with default context """
-        component = TwoPortsTcpController(
+        component = H8823SpwRawController(
             self.context,
             local_config={
                 'name': 'custom_name',
                 'instrument': {
-                    'port': {
-                        'tc': 8088,
-                        'tm': 8089
-                    }
+                    'port': 8078
                 },
                 'parameters': {
                     'new_param': {
@@ -134,8 +128,7 @@ class TestClass:
 
         custom_component_config = copy.deepcopy(self.default_component_config)
         custom_component_config['name'] = 'custom_name'
-        custom_component_config['instrument']['port']['tc'] = 8088
-        custom_component_config['instrument']['port']['tm'] = 8089
+        custom_component_config['instrument']['port'] = 8078
         custom_component_config['parameters']['new_param'] = {
             'description': 'New parameter description',
             'set': {
@@ -173,14 +166,14 @@ class TestClass:
 
         # Test with wrong topics dictionary
         with pytest.raises(ComponentConfigException) as excinfo:
-            TwoPortsTcpController(self.context,
+            H8823SpwRawController(self.context,
                                   local_config={
                                       'parameters': 'wrong'
                                   }).initialize()
         assert 'Parameters configuration: wrong format' in str(excinfo.value)
 
         # In case no new parameters are given, use the default ones
-        component = TwoPortsTcpController(self.context,
+        component = H8823SpwRawController(self.context,
                                           local_config={'parameters': {}})
         component.initialize()
 
@@ -188,7 +181,7 @@ class TestClass:
 
         # Test with missing address
         with pytest.raises(ComponentConfigException) as excinfo:
-            TwoPortsTcpController(self.context,
+            H8823SpwRawController(self.context,
                                   local_config={
                                       'instrument': {
                                           'address': None
@@ -199,7 +192,7 @@ class TestClass:
 
         # Test with missing port
         with pytest.raises(ComponentConfigException) as excinfo:
-            TwoPortsTcpController(self.context,
+            H8823SpwRawController(self.context,
                                   local_config={
                                       'instrument': {
                                           'port': None
@@ -208,7 +201,7 @@ class TestClass:
         assert "Missing port in Instrument Configuration" in str(excinfo.value)
 
         # Test case properties do not have a getter, setter or default
-        component = TwoPortsTcpController(
+        component = H8823SpwRawController(
             self.context, local_config={'parameters': {
                 'new_param': {}
             }})
@@ -224,7 +217,7 @@ class TestClass:
         self.context.rx['io_service_signature'].subscribe(
             dummy_test_class.test_func_1)
 
-        component = TwoPortsTcpController(self.context)
+        component = H8823SpwRawController(self.context)
         component.initialize()
 
         time.sleep(.1)
@@ -241,7 +234,7 @@ class TestClass:
         ])
         assert received_params_info == expected_params_info
 
-        component = TwoPortsTcpController(
+        component = H8823SpwRawController(
             self.context,
             local_config={
                 'name': 'custom_name',
@@ -272,7 +265,7 @@ class TestClass:
 
         custom_component_config = copy.deepcopy(self.default_component_config)
         custom_component_config['name'] = 'custom_name'
-        custom_component_config['instrument']['address'] = '1.2.3.4'
+        custom_component_config['instrument']['address'] = 8071
         parameters = {
             'new_param': {
                 'description': 'New parameter description',
@@ -308,11 +301,11 @@ class TestClass:
     def test_io_service_request_observer(self):
         """ Test component io_service_request observer """
         # Start Mock
-        mock = TwoPortsTcpMock(self.context)
+        mock = H8823GatewaySpwRawMock(self.context)
         mock.initialize()
 
         # Start Test
-        component = TwoPortsTcpController(self.context)
+        component = H8823SpwRawController(self.context)
         component.initialize()
         dummy_test_class = CallbackTestClass()
 
@@ -324,10 +317,11 @@ class TestClass:
 
         # 1 - Test that component only gets activated for implemented services
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='NOT_EXISTING',
-                           type='any',
-                           args=[]))
+            ServiceRequest(
+                provider='hvs_h8823_spacewire_ethernet_gateway_spw_raw',
+                id='NOT_EXISTING',
+                type='any',
+                args=[]))
 
         assert dummy_test_class.func_1_times_called == 0
         assert dummy_test_class.func_1_last_value is None
@@ -343,15 +337,16 @@ class TestClass:
 
         # 2 - Test generic command before connection to the instrument has been established
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='idn',
-                           type=ParameterType.get,
-                           args=[]))
+            ServiceRequest(
+                provider='hvs_h8823_spacewire_ethernet_gateway_spw_raw',
+                id='raw_write',
+                type=ParameterType.set,
+                args=['ASDF']))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 1
-        assert dummy_test_class.func_1_last_value.id == 'idn'
+        assert dummy_test_class.func_1_last_value.id == 'raw_write'
         assert dummy_test_class.func_1_last_value.type == ParameterType.error
         assert dummy_test_class.func_1_last_value.value == 'Not possible to perform command before connection is established'
 
@@ -359,10 +354,11 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='connect',
-                           type=ParameterType.set,
-                           args=['1']))
+            ServiceRequest(
+                provider='hvs_h8823_spacewire_ethernet_gateway_spw_raw',
+                id='connect',
+                type=ParameterType.set,
+                args=['1']))
 
         time.sleep(.1)
 
@@ -372,173 +368,85 @@ class TestClass:
         assert dummy_test_class.func_1_last_value.type == ParameterType.set
         assert dummy_test_class.func_1_last_value.value is None
 
-        # 4 - Test no system errors
+        # 4 - Test generic command
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='sys_err',
-                           type=ParameterType.get))
+            ServiceRequest(
+                provider='hvs_h8823_spacewire_ethernet_gateway_spw_raw',
+                id='raw_write',
+                type=ParameterType.set,
+                args=['0SDF']))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 3
-        assert dummy_test_class.func_1_last_value.id == 'sys_err'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == '0,_No_Error'
-
-        # 5 - Test generic command
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='clear',
-                           type=ParameterType.set,
-                           args=[]))
-
-        time.sleep(.1)
-
-        assert dummy_test_class.func_1_times_called == 4
-        assert dummy_test_class.func_1_last_value.id == 'clear'
+        assert dummy_test_class.func_1_last_value.id == 'raw_write'
         assert dummy_test_class.func_1_last_value.type == ParameterType.set
         assert dummy_test_class.func_1_last_value.value is None
 
-        # 6 - Test generic query
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='idn',
-                           type=ParameterType.get,
-                           args=[]))
-
-        time.sleep(.1)
-
-        assert dummy_test_class.func_1_times_called == 5
-        assert dummy_test_class.func_1_last_value.id == 'idn'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == 'Mamba Framework,Two Port TCP Mock,1.0'
-
-        # 7 - Test shared memory set
+        # 5 - Test shared memory set
         assert component._shared_memory == {'connected': 1, 'raw_query': ''}
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='raw_query',
-                           type=ParameterType.set,
-                           args=['*IDN?']))
+            ServiceRequest(
+                provider='hvs_h8823_spacewire_ethernet_gateway_spw_raw',
+                id='raw_query',
+                type=ParameterType.set,
+                args=['103456789ABCDEF']))
 
         time.sleep(.1)
 
         assert component._shared_memory == {
             'connected': 1,
-            'raw_query': 'Mamba Framework,Two Port TCP Mock,1.0'
+            'raw_query': '103456789ABCDEF'
         }
 
-        assert dummy_test_class.func_1_times_called == 6
+        assert dummy_test_class.func_1_times_called == 4
         assert dummy_test_class.func_1_last_value.id == 'raw_query'
         assert dummy_test_class.func_1_last_value.type == ParameterType.set
         assert dummy_test_class.func_1_last_value.value is None
 
         # 8 - Test shared memory get
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='raw_query',
-                           type=ParameterType.get,
-                           args=[]))
+            ServiceRequest(
+                provider='hvs_h8823_spacewire_ethernet_gateway_spw_raw',
+                id='raw_query',
+                type=ParameterType.get,
+                args=[]))
 
         time.sleep(.1)
 
-        assert dummy_test_class.func_1_times_called == 7
+        assert dummy_test_class.func_1_times_called == 5
         assert dummy_test_class.func_1_last_value.id == 'raw_query'
         assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == 'Mamba Framework,Two Port TCP Mock,1.0'
+        assert dummy_test_class.func_1_last_value.value == '103456789ABCDEF'
 
-        # 9 - Test special case of msg command with multiple args
+        # 9 - Test disconnection to the instrument
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='parameter_1',
-                           type=ParameterType.get,
-                           args=[]))
-
-        time.sleep(.1)
-
-        assert dummy_test_class.func_1_times_called == 8
-        assert dummy_test_class.func_1_last_value.id == 'parameter_1'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == '1'
-
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='parameter_1',
-                           type=ParameterType.set,
-                           args=['2']))
-
-        time.sleep(.1)
-
-        assert dummy_test_class.func_1_times_called == 9
-        assert dummy_test_class.func_1_last_value.id == 'parameter_1'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.set
-        assert dummy_test_class.func_1_last_value.value is None
-
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='raw_write',
-                           type=ParameterType.set,
-                           args=['PARAMETER_1', '10']))
-
-        time.sleep(.1)
-
-        assert dummy_test_class.func_1_times_called == 10
-        assert dummy_test_class.func_1_last_value.id == 'raw_write'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.set
-        assert dummy_test_class.func_1_last_value.value is None
-
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='parameter_1',
-                           type=ParameterType.get,
-                           args=[]))
-
-        time.sleep(.1)
-
-        assert dummy_test_class.func_1_times_called == 11
-        assert dummy_test_class.func_1_last_value.id == 'parameter_1'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == '10'
-
-        # 10 - Test no system errors
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='sys_err',
-                           type=ParameterType.get))
-
-        time.sleep(.1)
-
-        assert dummy_test_class.func_1_times_called == 12
-        assert dummy_test_class.func_1_last_value.id == 'sys_err'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == '0,_No_Error'
-
-        # 11 - Test disconnection to the instrument
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='connect',
-                           type=ParameterType.set,
-                           args=['0']))
+            ServiceRequest(
+                provider='hvs_h8823_spacewire_ethernet_gateway_spw_raw',
+                id='connect',
+                type=ParameterType.set,
+                args=['0']))
 
         time.sleep(.1)
 
         assert component._inst is None
-        assert dummy_test_class.func_1_times_called == 13
+        assert dummy_test_class.func_1_times_called == 6
         assert dummy_test_class.func_1_last_value.id == 'connect'
         assert dummy_test_class.func_1_last_value.type == ParameterType.set
         assert dummy_test_class.func_1_last_value.value is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='connected',
-                           type=ParameterType.get,
-                           args=[]))
+            ServiceRequest(
+                provider='hvs_h8823_spacewire_ethernet_gateway_spw_raw',
+                id='connected',
+                type=ParameterType.get,
+                args=[]))
 
         time.sleep(.1)
 
         assert component._inst is None
-        assert dummy_test_class.func_1_times_called == 14
+        assert dummy_test_class.func_1_times_called == 7
         assert dummy_test_class.func_1_last_value.id == 'connected'
         assert dummy_test_class.func_1_last_value.type == ParameterType.get
         assert dummy_test_class.func_1_last_value.value == 0
@@ -557,23 +465,20 @@ class TestClass:
                     dummy_test_class.test_func_1)
 
         # Test simulated normal connection to the instrument
-        component = TwoPortsTcpController(
-            self.context,
-            local_config={'instrument': {
-                'port': {
-                    'tc': 8088,
-                    'tm': 8089
-                }
+        component = H8823SpwRawController(
+            self.context, local_config={'instrument': {
+                'port': 8095
             }})
         component.initialize()
 
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='connect',
-                           type=ParameterType.set,
-                           args=['1']))
+            ServiceRequest(
+                provider='hvs_h8823_spacewire_ethernet_gateway_spw_raw',
+                id='connect',
+                type=ParameterType.set,
+                args=['1']))
 
         time.sleep(1)
 
@@ -592,16 +497,17 @@ class TestClass:
                     dummy_test_class.test_func_1)
 
         # Test real connection to missing instrument
-        component = TwoPortsTcpController(self.context)
+        component = H8823SpwRawController(self.context)
         component.initialize()
 
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='connect',
-                           type=ParameterType.set,
-                           args=['0']))
+            ServiceRequest(
+                provider='hvs_h8823_spacewire_ethernet_gateway_spw_raw',
+                id='connect',
+                type=ParameterType.set,
+                args=['0']))
 
         time.sleep(.1)
 
@@ -611,153 +517,9 @@ class TestClass:
         assert dummy_test_class.func_1_last_value.type == ParameterType.set
         assert dummy_test_class.func_1_last_value.value is None
 
-    def test_multi_command_multi_input_parameter(self):
-        # Start Mock
-        mock = TwoPortsTcpMock(
-            self.context,
-            local_config={'instrument': {
-                'port': {
-                    'tc': 8093,
-                    'tm': 8094
-                }
-            }})
-        mock.initialize()
-
-        dummy_test_class = CallbackTestClass()
-
-        # Subscribe to the topic that shall be published
-        self.context.rx['io_result'].pipe(
-            op.filter(
-                lambda value: isinstance(value, ServiceResponse))).subscribe(
-                    dummy_test_class.test_func_1)
-
-        component = TwoPortsTcpController(
-            self.context,
-            local_config={
-                'instrument': {
-                    'port': {
-                        'tc': 8093,
-                        'tm': 8094
-                    }
-                },
-                'parameters': {
-                    'new_param': {
-                        'type': 'int',
-                        'description': 'New parameter description',
-                        'set': {
-                            'signature': [{
-                                'arg_1': {
-                                    'type': 'int'
-                                }
-                            }, {
-                                'arg_2': {
-                                    'type': 'int'
-                                }
-                            }],
-                            'instrument_command': [{
-                                'write': 'PARAMETER_1 {0}'
-                            }, {
-                                'write': 'PARAMETER_2 {1}'
-                            }, {
-                                'query': 'PARAMETER_1?'
-                            }]
-                        },
-                        'get': None,
-                    }
-                }
-            })
-
-        component.initialize()
-
-        # Connect to instrument and check initial status
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='connect',
-                           type=ParameterType.set,
-                           args=['1']))
-
-        time.sleep(.1)
-
-        assert component._shared_memory == {
-            'connected': 1,
-            'new_param': None,
-            'raw_query': ''
-        }
-
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='parameter_1',
-                           type=ParameterType.get,
-                           args=[]))
-
-        time.sleep(.1)
-
-        assert dummy_test_class.func_1_times_called == 2
-        assert dummy_test_class.func_1_last_value.id == 'parameter_1'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == '1'
-
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='parameter_2',
-                           type=ParameterType.get,
-                           args=[]))
-
-        time.sleep(.1)
-
-        assert dummy_test_class.func_1_times_called == 3
-        assert dummy_test_class.func_1_last_value.id == 'parameter_2'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == '2'
-
-        # Call new parameter
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='new_param',
-                           type=ParameterType.set,
-                           args=['3', '4']))
-
-        time.sleep(.1)
-
-        assert component._shared_memory == {
-            'connected': 1,
-            'new_param': '3',
-            'raw_query': ''
-        }
-
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='parameter_1',
-                           type=ParameterType.get,
-                           args=[]))
-
-        time.sleep(.1)
-
-        assert dummy_test_class.func_1_times_called == 5
-        assert dummy_test_class.func_1_last_value.id == 'parameter_1'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == '3'
-
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='parameter_2',
-                           type=ParameterType.get,
-                           args=[]))
-
-        time.sleep(.1)
-
-        assert dummy_test_class.func_1_times_called == 6
-        assert dummy_test_class.func_1_last_value.id == 'parameter_2'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == '4'
-
-        self.context.rx['quit'].on_next(Empty())
-
-        time.sleep(1)
-
     def test_service_invalid_info(self):
         with pytest.raises(ComponentConfigException) as excinfo:
-            TwoPortsTcpController(self.context,
+            H8823SpwRawController(self.context,
                                   local_config={
                                       'parameters': {
                                           'new_param': {
@@ -780,7 +542,7 @@ class TestClass:
                ' be [[arg_1, arg_2, ...], return_type]' in str(excinfo.value)
 
         with pytest.raises(ComponentConfigException) as excinfo:
-            TwoPortsTcpController(self.context,
+            H8823SpwRawController(self.context,
                                   local_config={
                                       'parameters': {
                                           'new_param': {
@@ -806,7 +568,7 @@ class TestClass:
             excinfo.value)
 
         with pytest.raises(ComponentConfigException) as excinfo:
-            TwoPortsTcpController(self.context,
+            H8823SpwRawController(self.context,
                                   local_config={
                                       'parameters': {
                                           'new_param': {
@@ -826,113 +588,18 @@ class TestClass:
         assert '"new_param" Command for GET does not have a Query' in str(
             excinfo.value)
 
-    def test_tcp_broken_and_no_reconnection(self):
-        # Start Mock
-        mock = TwoPortsTcpMock(self.context)
-        mock.initialize()
-
-        # Start Test
-        component = TwoPortsTcpController(
-            self.context,
-            local_config={'instrument': {
-                'max_connection_attempts': 1
-            }})
-        component.initialize()
-        dummy_test_class = CallbackTestClass()
-
-        # Subscribe to the topic that shall be published
-        self.context.rx['io_result'].pipe(
-            op.filter(
-                lambda value: isinstance(value, ServiceResponse))).subscribe(
-                    dummy_test_class.test_func_1)
-
-        # 1 - Test connection to the instrument
-        assert component._inst is None
-
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='connect',
-                           type=ParameterType.set,
-                           args=['1']))
-
-        time.sleep(.1)
-
-        assert component._inst is not None
-        assert dummy_test_class.func_1_times_called == 1
-        assert dummy_test_class.func_1_last_value.id == 'connect'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.set
-        assert dummy_test_class.func_1_last_value.value is None
-
-        # 2 - Test generic query
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='idn',
-                           type=ParameterType.get,
-                           args=[]))
-
-        time.sleep(.1)
-
-        assert dummy_test_class.func_1_times_called == 2
-        assert dummy_test_class.func_1_last_value.id == 'idn'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == 'Mamba Framework,Two Port TCP Mock,1.0'
-
-        # Force connection close
-        component._inst.close()
-
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='idn',
-                           type=ParameterType.get,
-                           args=[]))
-
-        time.sleep(.1)
-
-        assert dummy_test_class.func_1_times_called == 3
-        assert dummy_test_class.func_1_last_value.id == 'idn'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.error
-        assert dummy_test_class.func_1_last_value.value == 'Not possible to communicate to the instrument'
-
-        # Force connection close
-        component._inst_tm.close()
-
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='idn',
-                           type=ParameterType.get,
-                           args=[]))
-
-        time.sleep(.1)
-
-        assert dummy_test_class.func_1_times_called == 4
-        assert dummy_test_class.func_1_last_value.id == 'idn'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.error
-        assert dummy_test_class.func_1_last_value.value == 'Not possible to communicate to the instrument'
-
-        self.context.rx['quit'].on_next(Empty())
-
-        time.sleep(1)
-
     def test_tcp_broken_and_reconnection(self):
         # Start Mock
-        mock = TwoPortsTcpMock(
-            self.context,
-            local_config={'instrument': {
-                'port': {
-                    'tc': 32456,
-                    'tm': 32457
-                }
+        mock = H8823GatewaySpwRawMock(
+            self.context, local_config={'instrument': {
+                'port': 34657
             }})
         mock.initialize()
 
         # Start Test
-        component = TwoPortsTcpController(
-            self.context,
-            local_config={'instrument': {
-                'port': {
-                    'tc': 32456,
-                    'tm': 32457
-                }
+        component = H8823SpwRawController(
+            self.context, local_config={'instrument': {
+                'port': 34657
             }})
         component.initialize()
         dummy_test_class = CallbackTestClass()
@@ -947,10 +614,11 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='connect',
-                           type=ParameterType.set,
-                           args=['1']))
+            ServiceRequest(
+                provider='hvs_h8823_spacewire_ethernet_gateway_spw_raw',
+                id='connect',
+                type=ParameterType.set,
+                args=['1']))
 
         time.sleep(.1)
 
@@ -962,49 +630,35 @@ class TestClass:
 
         # 2 - Test generic query
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='idn',
-                           type=ParameterType.get,
-                           args=[]))
+            ServiceRequest(
+                provider='hvs_h8823_spacewire_ethernet_gateway_spw_raw',
+                id='raw_query',
+                type=ParameterType.set,
+                args=['103456789ABCDEF']))
 
         time.sleep(.1)
 
-        assert dummy_test_class.func_1_times_called == 2
-        assert dummy_test_class.func_1_last_value.id == 'idn'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == 'Mamba Framework,Two Port TCP Mock,1.0'
+        assert component._shared_memory == {
+            'connected': 1,
+            'raw_query': '103456789ABCDEF'
+        }
 
         # Force connection close
         component._inst.close()
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='idn',
-                           type=ParameterType.get,
-                           args=[]))
-
-        time.sleep(1)
-
-        assert dummy_test_class.func_1_times_called == 3
-        assert dummy_test_class.func_1_last_value.id == 'idn'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == 'Mamba Framework,Two Port TCP Mock,1.0'
-
-        # Force connection close
-        component._inst_tm.close()
-
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='idn',
-                           type=ParameterType.get,
-                           args=[]))
+            ServiceRequest(
+                provider='hvs_h8823_spacewire_ethernet_gateway_spw_raw',
+                id='raw_query',
+                type=ParameterType.set,
+                args=['103456789ABCDEE']))
 
         time.sleep(.1)
 
-        assert dummy_test_class.func_1_times_called == 4
-        assert dummy_test_class.func_1_last_value.id == 'idn'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == 'Mamba Framework,Two Port TCP Mock,1.0'
+        assert component._shared_memory == {
+            'connected': 1,
+            'raw_query': '103456789ABCDEE'
+        }
 
         self.context.rx['quit'].on_next(Empty())
 
@@ -1018,7 +672,7 @@ class TestClass:
             def close(self):
                 self.called = True
 
-        component = TwoPortsTcpController(self.context)
+        component = H8823SpwRawController(self.context)
         component.initialize()
 
         # Test quit while on load window

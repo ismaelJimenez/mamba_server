@@ -35,11 +35,62 @@ parameters:
     # Parameter getter configuration.
     get:
 
+  raw_write:
+    # Set parameter description.
+    description: Transmits the passed string to the SPW port in a EOP terminated packet
+
+    # Parameter setter configuration.
+    set:
+      signature:
+        - port:
+            type: int
+            range: [0, 3]
+        - hex_msg:
+            type: str
+      instrument_command:
+        - write: 'SPWG_TC_TX_RAW_{0} {1}'
+
+  raw_eep_write:
+    # Set parameter description.
+    description: Transmits the passed string to the SPW port in a EEP terminated packet
+
+    # Parameter setter configuration.
+    set:
+      signature:
+        - port:
+            type: int
+            range: [0, 3]
+        - hex_msg:
+            type: str
+      instrument_command:
+        - write: 'SPWG_TC_TX_RAW_EEP_{0} {1}'
+
+  raw_part_write:
+    # Set parameter description.
+    description: Transmit the passed string to the SPW port in an unterminated packet
+
+    # Parameter setter configuration.
+    set:
+      signature:
+        - port:
+            type: int
+            range: [0, 3]
+        - hex_msg:
+            type: str
+      instrument_command:
+        - write: 'SPWG_TC_TX_RAW_PART_{0} {1}'
+
   spw_link_autostart:
     # Set parameter type.
     type: str
 
-    # Parameter setter configuration.
+    # Set parameter initial value upon instrument initialization.
+    initial_value: '0 0 0 0'
+
+    # Cyclic TM client configuration.
+    cyclic_tm_client:
+      format: 'SPWG_TM_SPW_AUTOSTART {:}'
+
     set:
       signature:
         - status:
@@ -53,8 +104,34 @@ parameters:
 
     # Parameter getter configuration.
     get:
-      instrument_command:
-        - cyclic: 'SPWG_TM_SPW_AUTOSTART {:}'
+
+  credit_error_counter:
+    # Set parameter type.
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: '0 0 0 0'
+
+    # Cyclic TM client configuration.
+    cyclic_tm_client:
+      format: 'SPWG_TM_SPW_CRED_ERR_CTR {:}'
+
+    # Parameter getter configuration.
+    get:
+
+  disconnect_error_counter:
+    # Set parameter type.
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: '0 0 0 0'
+
+    # Cyclic TM client configuration.
+    cyclic_tm_client:
+      format: 'SPWG_TM_SPW_DISC_ERR_CTR {:}'
+
+    # Parameter getter configuration.
+    get:
 
   spw_link_reset:
     # Parameter setter configuration.
@@ -66,11 +143,37 @@ parameters:
       instrument_command:
         - write: 'SPWG_TC_SPW_LINK_RESET_{:}'
 
+  spw_link_reset_counters:
+    # Parameter setter configuration.
+    set:
+      signature:
+        - port:
+            type: int
+            range: [0, 3]
+      instrument_command:
+        - write: 'SPWG_TC_SPW_RST_CTR_{:}'
+
+  tm_period:
+    # Parameter setter configuration.
+    set:
+      signature:
+        - seconds:
+            type: int
+            range: [0.1, 10]
+      instrument_command:
+        - write: 'SPWG_TC_TM_PERIOD {:}'
+
   spw_link_enabled:
     # Set parameter type.
     type: str
 
-    # Parameter setter configuration.
+    # Set parameter initial value upon instrument initialization.
+    initial_value: '0 0 0 0'
+
+    # Cyclic TM client configuration.
+    cyclic_tm_client:
+      format: 'SPWG_TM_SPW_ENABLED {:}'
+
     set:
       signature:
         - status:
@@ -84,5 +187,261 @@ parameters:
 
     # Parameter getter configuration.
     get:
+
+  escape_error_counter:
+    # Set parameter type.
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: '0 0 0 0'
+
+    # Cyclic TM client configuration.
+    cyclic_tm_client:
+      format: 'SPWG_TM_SPW_ESC_ERR_CTR {:}'
+
+    # Parameter getter configuration.
+    get:
+
+  parity_error_counter:
+    # Set parameter type.
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: '0 0 0 0'
+
+    # Cyclic TM client configuration.
+    cyclic_tm_client:
+      format: 'SPWG_TM_SPW_PAR_ERR_CTR {:}'
+
+    # Parameter getter configuration.
+    get:
+
+  spw_link_status:
+    # Set parameter type.
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: '0 0 0 0'
+
+    # Cyclic TM client configuration.
+    cyclic_tm_client:
+      format: 'SPWG_TM_SPW_STS {:}'
+
+    # Parameter getter configuration.
+    get:
+
+  spw_link_running:
+    # Set parameter type.
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: '0 0 0 0'
+
+    # Cyclic TM client configuration.
+    cyclic_tm_client:
+      format: 'SPWG_TM_SPW_RUNNING {:}'
+
+    # Parameter getter configuration.
+    get:
+
+  bytes_received_counter:
+    # Set parameter type.
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: '0 0 0 0'
+
+    # Cyclic TM client configuration.
+    cyclic_tm_client:
+      format: 'SPWG_TM_SPW_RX_BYTE_CTR {:}'
+
+    # Parameter getter configuration.
+    get:
+
+  eep_received_counter:
+    # Set parameter type.
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: '0 0 0 0'
+
+    # Cyclic TM client configuration.
+    cyclic_tm_client:
+      format: 'SWPG_TM_SPW_RX_EEP_CTR {:}'
+
+    # Parameter getter configuration.
+    get:
+
+  eop_received_counter:
+    # Set parameter type.
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: '0 0 0 0'
+
+    # Cyclic TM client configuration.
+    cyclic_tm_client:
+      format: 'SPWG_TM_SPW_RX_EOP_CTR {:}'
+
+    # Parameter getter configuration.
+    get:
+
+  spw_link_rx_rate:
+    # Set parameter type.
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: '0 0 0 0'
+
+    # Cyclic TM client configuration.
+    cyclic_tm_client:
+      format: 'SPWG_TM_SPW_RX_RATE {:}'
+
+    # Parameter getter configuration.
+    get:
+
+  spw_link_start:
+    # Set parameter type.
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: '0 0 0 0'
+
+    # Cyclic TM client configuration.
+    cyclic_tm_client:
+      format: 'SPWG_TM_SPW_START {:}'
+
+    set:
+      signature:
+        - status:
+            type: str
+            valid: ['ENA', 'DIS']
+        - port:
+            type: int
+            range: [0, 3]
       instrument_command:
-        - cyclic: 'SPWG_TM_SPW_ENABLED {:}'
+        - write: 'SPWG_TC_SPW_LINK_START_{0}_{1}'
+
+    # Parameter getter configuration.
+    get:
+
+  spw_link_tcp_connected:
+    # Set parameter type.
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: '0 0 0 0'
+
+    # Cyclic TM client configuration.
+    cyclic_tm_client:
+      format: 'SPWG_TM_SPW_TCP_CONN {:}'
+
+    # Parameter getter configuration.
+    get:
+
+  spw_link_timecode_enabled:
+    # Set parameter type.
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: '0 0 0 0'
+
+    # Cyclic TM client configuration.
+    cyclic_tm_client:
+      format: 'SPWG_TM_SPW_TIMECODE_ENABLED {:}'
+
+    set:
+      signature:
+        - status:
+            type: str
+            valid: ['ENA', 'DIS']
+        - port:
+            type: int
+            range: [0, 3]
+      instrument_command:
+        - write: 'SPWG_TC_SPW_TIMECODE_{0}_{1}'
+
+    # Parameter getter configuration.
+    get:
+
+  spw_link_bytes_sent_counter:
+    # Set parameter type.
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: '0 0 0 0'
+
+    # Cyclic TM client configuration.
+    cyclic_tm_client:
+      format: 'SPWG_TM_SPW_TX_BYTE_CTR {:}'
+
+    # Parameter getter configuration.
+    get:
+
+  spw_link_tx_rate:
+    # Set parameter type.
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: '0 0 0 0'
+
+    # Cyclic TM client configuration.
+    cyclic_tm_client:
+      format: 'SPWG_TM_SPW_TX_CLK {:}'
+
+    set:
+      signature:
+        - port:
+            type: int
+            range: [0, 3]
+        - frequency:
+            type: int(Hz)
+      instrument_command:
+        - write: 'SPWG_TC_SPW_TX_CLK_{0} {1}'
+
+    # Parameter getter configuration.
+    get:
+
+  eep_sent_counter:
+    # Set parameter type.
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: '0 0 0 0'
+
+    # Cyclic TM client configuration.
+    cyclic_tm_client:
+      format: 'SPWG_TM_SPW_TX_EEP_CTR {:}'
+
+    # Parameter getter configuration.
+    get:
+
+  eop_sent_counter:
+    # Set parameter type.
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: '0 0 0 0'
+
+    # Cyclic TM client configuration.
+    cyclic_tm_client:
+      format: 'SPWG_TM_SPW_TX_EOP_CTR {:}'
+
+    # Parameter getter configuration.
+    get:
+
+  ticks_received_counter:
+    # Set parameter type.
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: '0 0 0 0'
+
+    # Cyclic TM client configuration.
+    cyclic_tm_client:
+      format: 'SPWG_TM_SPW_RX_TICK_CTR {:}'
+
+    # Parameter getter configuration.
+    get:
+
+

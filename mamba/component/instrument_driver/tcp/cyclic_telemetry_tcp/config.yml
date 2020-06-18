@@ -99,6 +99,13 @@ parameters:
     # Set parameter type.
     type: int
 
+    # Set parameter initial value upon instrument initialization.
+    initial_value: 0
+
+    # Cyclic TM client configuration.
+    cyclic_tm_client:
+      format: 'PARAMETER_1 {:}'
+
     # Parameter setter configuration.
     set:
       signature: [value: {type: int}]
@@ -107,12 +114,17 @@ parameters:
 
     # Parameter getter configuration.
     get:
-      instrument_command:
-        - cyclic: 'PARAMETER_1 {:}'
 
   parameter_2:
     # Set parameter type.
     type: int
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: 0
+
+    # Cyclic TM client configuration.
+    cyclic_tm_client:
+      format: 'PARAMETER_2 {:}'
 
     # Parameter setter configuration.
     set:
@@ -122,12 +134,17 @@ parameters:
 
     # Parameter getter configuration.
     get:
-      instrument_command:
-        - cyclic: 'PARAMETER_2 {:}'
 
   parameter_3:
     # Set parameter type.
     type: int
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: 0
+
+    # Cyclic TM client configuration.
+    cyclic_tm_client:
+      format: 'PARAMETER_3 {:}'
 
     # Parameter setter configuration.
     set:
@@ -137,5 +154,3 @@ parameters:
 
     # Parameter getter configuration.
     get:
-      instrument_command:
-        - cyclic: 'PARAMETER_3 {:}'
