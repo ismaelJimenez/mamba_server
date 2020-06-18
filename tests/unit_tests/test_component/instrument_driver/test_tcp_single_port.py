@@ -809,13 +809,17 @@ class TestClass:
 
     def test_tcp_broken_and_no_reconnection(self):
         # Start Mock
-        mock = SinglePortTcpMock(self.context)
+        mock = SinglePortTcpMock(self.context,
+                                 local_config={'instrument': {
+                                     'port': 21349
+                                 }})
         mock.initialize()
 
         # Start Test
         component = SinglePortTcpController(
             self.context,
             local_config={'instrument': {
+                'port': 21349,
                 'max_connection_attempts': 1
             }})
         component.initialize()
