@@ -999,7 +999,7 @@ class TestClass:
                            type=ParameterType.get,
                            args=[]))
 
-        time.sleep(.1)
+        time.sleep(1)
 
         assert dummy_test_class.func_1_times_called == 4
         assert dummy_test_class.func_1_last_value.id == 'idn'
