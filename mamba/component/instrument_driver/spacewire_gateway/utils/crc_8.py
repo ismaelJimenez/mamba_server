@@ -26,13 +26,9 @@ RMAP_CRCTable = [
 ]
 
 
-def _calculate_crc_8(incrc: int, inbyte: int) -> int:
-    return RMAP_CRCTable[incrc ^ inbyte]
-
-
 def crc_8(bytes_string: bytes) -> bytes:
     inc = 0
     for i in range(len(bytes_string)):
-        inc = _calculate_crc_8(inc, bytes_string[i])
+        inc = RMAP_CRCTable[inc ^ bytes_string[i]]
 
     return struct.pack("B", inc)
