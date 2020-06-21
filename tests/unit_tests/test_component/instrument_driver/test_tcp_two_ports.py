@@ -828,14 +828,24 @@ class TestClass:
 
     def test_tcp_broken_and_no_reconnection(self):
         # Start Mock
-        mock = TwoPortsTcpMock(self.context)
+        mock = TwoPortsTcpMock(self.context,
+            local_config={'instrument': {
+                'port': {
+                    'tc': 32478,
+                    'tm': 32479
+                }
+            }})
         mock.initialize()
 
         # Start Test
         component = TwoPortsTcpController(
             self.context,
             local_config={'instrument': {
-                'max_connection_attempts': 1
+                'max_connection_attempts': 1,
+                'port': {
+                    'tc': 32478,
+                    'tm': 32479
+                }
             }})
         component.initialize()
         dummy_test_class = CallbackTestClass()
