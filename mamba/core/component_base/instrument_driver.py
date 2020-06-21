@@ -41,6 +41,8 @@ class Instrument:
             self.port = int(inst_config.get('port')) if inst_config.get(
                 'port') is not None else None
 
+        self.reply_timeout: str = inst_config.get('reply_timeout') or None
+
 
 def parameters_format_validation(parameters: Dict[str, dict]) -> None:
     if not isinstance(parameters, dict):

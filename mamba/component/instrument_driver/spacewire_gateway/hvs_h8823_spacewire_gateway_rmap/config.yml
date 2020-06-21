@@ -1,0 +1,282 @@
+name: HVS H8823 Spacewire Ethernet Gateway Rmap
+
+instrument:
+  address: 0.0.0.0
+  port: 5002
+  reply_timeout: 10
+
+rmap:
+  target_logical_address: 0x32
+  key: 0x20
+  initiator_logical_address: 0x20
+
+parameters:
+  connected:
+    # Set parameter type.
+    type: int
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: 0
+
+    # Set parameter description.
+    description: Connection status to TCP server
+
+    # Parameter setter configuration.
+    set:
+      # Alias allows to access parameter under another name.
+      # Connect is an special ID, to command connect/disconnect from the equipment.
+      alias: connect
+      # Setter function signature.
+      signature:
+        - connect:
+            type: int
+            valid: [0, 1]
+
+    # Parameter getter configuration.
+    get:
+
+  raw_query:
+    # Set parameter type.
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: ''
+
+    # Set parameter description.
+    description: Raw query to intrument
+
+    # Parameter setter configuration.
+    set:
+      signature: [raw_hex: {type: str(hex)}]
+      instrument_command:
+        - query: '{:}'
+
+    # Parameter getter configuration.
+    get:
+
+  raw_write:
+    # Set parameter description.
+    description: Raw write to intrument
+
+    # Parameter setter configuration.
+    set:
+      signature: [raw_hex: {type: str(hex)}]
+      instrument_command: [write: '{:}']
+
+  last_raw_cmd:
+    # Set parameter type.
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: ''
+
+    # Set parameter description.
+    description: Last command sent to gateway
+
+    # Parameter getter configuration.
+    get:
+
+  last_raw_reply:
+    # Set parameter type.
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: ''
+
+    # Set parameter description.
+    description: Last raw reply received from the gateway
+
+    # Parameter getter configuration.
+    get:
+
+  read_single_addr:
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: ''
+
+    # Set parameter description.
+    description: Read single address
+
+    # Parameter setter configuration.
+    set:
+      signature: [address: {type: str(hex)}]
+
+      instrument_command:
+        - rmap:
+            command_code:
+              reply: 1
+            address: '{0}'
+            size: 4
+
+    # Parameter getter configuration.
+    get:
+
+  read_inc_addr:
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: ''
+
+    # Set parameter description.
+    description: Read incrementing addresses
+
+    # Parameter setter configuration.
+    set:
+      signature: [address: {type: str(hex)}, data_length: {type: int}]
+
+      instrument_command:
+        - rmap:
+            command_code:
+              reply: 1
+              increment_address: 1
+            address: '{0}'
+            size: '{1}'
+
+    # Parameter getter configuration.
+    get:
+
+  write_single_addr_no_verify_no_reply:
+    # Set parameter description.
+    description: Write, single address, don’t verify before writing, no reply
+
+    # Parameter setter configuration.
+    set:
+      signature: [address: {type: str(hex)}, value: {type: str(hex)}]
+
+      instrument_command:
+        - rmap:
+            command_code:
+              write: 1
+            address: '{0}'
+            size: 4
+            body: '{1}'
+
+  write_inc_addr_no_verify_no_reply:
+    # Set parameter description.
+    description: Write, incrementing addresses, don’t verify before writing, no reply
+
+    # Parameter setter configuration.
+    set:
+      signature: [address: {type: str(hex)}, value: {type: str(hex)}]
+
+      instrument_command:
+        - rmap:
+            command_code:
+              write: 1
+              increment_address: 1
+            address: '{0}'
+            body: '{1}'
+
+  write_single_addr_no_verify_send_reply:
+    # Set parameter description.
+    description: Write, single address, don’t verify before writing, send reply
+
+    # Parameter setter configuration.
+    set:
+      signature: [address: {type: str(hex)}, value: {type: str(hex)}]
+
+      instrument_command:
+        - rmap:
+            command_code:
+              write: 1
+              reply: 1
+            address: '{0}'
+            size: 4
+            body: '{1}'
+
+  write_inc_addr_no_verify_send_reply:
+    # Set parameter description.
+    description: Write, incrementing addresses, don’t verify before writing, send reply
+
+    # Parameter setter configuration.
+    set:
+      signature: [address: {type: str(hex)}, value: {type: str(hex)}]
+
+      instrument_command:
+        - rmap:
+            command_code:
+              write: 1
+              reply: 1
+              increment_address: 1
+            address: '{0}'
+            body: '{1}'
+
+  write_single_addr_verify_no_reply:
+    # Set parameter description.
+    description: Write, single address, verify before writing, no reply
+
+    # Parameter setter configuration.
+    set:
+      signature: [address: {type: str(hex)}, value: {type: str(hex)}]
+
+      instrument_command:
+        - rmap:
+            command_code:
+              write: 1
+              verify: 1
+            address: '{0}'
+            size: 4
+            body: '{1}'
+
+  write_inc_addr_verify_no_reply:
+    # Set parameter description.
+    description: Write, incrementing addresses, verify before writing, no reply
+
+    # Parameter setter configuration.
+    set:
+      signature: [address: {type: str(hex)}, value: {type: str(hex)}]
+
+      instrument_command:
+        - rmap:
+            command_code:
+              write: 1
+              verify: 1
+              increment_address: 1
+            address: '{0}'
+            body: '{1}'
+
+  write_single_addr_verify_send_reply:
+    # Set parameter description.
+    description: Write, single address, verify before writing, send reply
+
+    # Parameter setter configuration.
+    set:
+      signature: [address: {type: str(hex)}, value: {type: str(hex)}]
+
+      instrument_command:
+        - rmap:
+            command_code:
+              write: 1
+              verify: 1
+              reply: 1
+            address: '{0}'
+            size: 4
+            body: '{1}'
+
+  write_inc_addr_verify_send_reply:
+    # Set parameter description.
+    description: Write, incrementing addresses, verify before writing, send reply
+
+    # Parameter setter configuration.
+    set:
+      signature: [address: {type: str(hex)}, value: {type: str(hex)}]
+
+      instrument_command:
+        - rmap:
+            command_code:
+              write: 1
+              verify: 1
+              reply: 1
+              increment_address: 1
+            address: '{0}'
+            body: '{1}'
+
+
+
+
+
+
+
+#    'TAEU_N_TC_READ_INC_ADDR' : { 'telnet_command': 'TAEU_N_TC_READ_INC_ADDR', 'meta_data': 'TAEU_N_TC_READ_INC_ADDR;2;TAEU_N Read Inc Addr', 'params': [{'id': 'Address (hex)', 'data_type': 'hexstr'}, {'id': 'Data count', 'data_type': 'uint32'}]},
+#    'TAEU_N_TC_READ_SINGLE_ADDR' : { 'telnet_command': 'TAEU_N_TC_READ_SINGLE_ADDR', 'meta_data': 'TAEU_N_TC_READ_SINGLE_ADDR;1;TAEU_N Read Single Addr', 'params': [{'id': 'Address (hex)', 'data_type': 'hexstr'}]},

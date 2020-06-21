@@ -49,6 +49,9 @@ class TcpInstrumentDriver(InstrumentDriver):
             if result is not None and result.id in self._shared_memory_setter:
                 self._shared_memory[self._shared_memory_setter[result.id]] = 1
 
+            if self._instrument.reply_timeout is not None:
+                self._inst.settimeout(float(self._instrument.reply_timeout))
+
             self._log_dev("Established connection to Instrument")
 
         except (ConnectionRefusedError, OSError):

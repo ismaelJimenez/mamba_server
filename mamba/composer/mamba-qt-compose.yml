@@ -81,7 +81,7 @@ services:
     component: hvs_h8823_spacewire_gateway_tmtc
 
   hvs_h8823_spacewire_gateway_spw_rmap:
-    component: hvs_h8823_spacewire_gateway_spw_rmap
+    component: hvs_h8823_spacewire_gateway_rmap
 
   # Mocks
 
