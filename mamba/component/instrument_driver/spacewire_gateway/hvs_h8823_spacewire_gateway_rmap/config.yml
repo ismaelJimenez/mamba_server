@@ -271,12 +271,3 @@ parameters:
               increment_address: 1
             address: '{0}'
             body: '{1}'
-
-
-
-
-
-
-
-#    'TAEU_N_TC_READ_INC_ADDR' : { 'telnet_command': 'TAEU_N_TC_READ_INC_ADDR', 'meta_data': 'TAEU_N_TC_READ_INC_ADDR;2;TAEU_N Read Inc Addr', 'params': [{'id': 'Address (hex)', 'data_type': 'hexstr'}, {'id': 'Data count', 'data_type': 'uint32'}]},
-#    'TAEU_N_TC_READ_SINGLE_ADDR' : { 'telnet_command': 'TAEU_N_TC_READ_SINGLE_ADDR', 'meta_data': 'TAEU_N_TC_READ_SINGLE_ADDR;1;TAEU_N Read Single Addr', 'params': [{'id': 'Address (hex)', 'data_type': 'hexstr'}]},
