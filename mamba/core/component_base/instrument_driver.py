@@ -226,7 +226,7 @@ class InstrumentDriver(Component):
     def _process_inst_command(self, cmd_type: str, cmd: str,
                               service_request: ServiceRequest,
                               result: ServiceResponse) -> None:
-        raise NotImplementedError
+        pass
 
     def _run_command(self, service_request: ServiceRequest) -> None:
         self._log_dev(f"Received service request: {service_request.id}")

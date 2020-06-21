@@ -120,16 +120,15 @@ class ThreadedCyclicTmHandler(socketserver.BaseRequestHandler):
                     self.request.sendall(
                         f'{time.time()} SPWG_TM_SPW_TX_EOP_CTR 4 3 2 1'
                         f'{self.server.eom_w}{time.time()} '
-                        f'SPWG_TM_SPW_TX_EEP_CTR 0 1 '
-                        .encode(self.server.encoding))
+                        f'SPWG_TM_SPW_TX_EEP_CTR 0 1 '.encode(
+                            self.server.encoding))
 
                     time.sleep(2)
 
                     self.request.sendall(
                         f'2 3{self.server.eom_w}{time.time()} '
                         f'SPWG_TM_SPW_RX_TICK_CTR 6 7 8 9'
-                        f'{self.server.eom_w}'
-                        .encode(self.server.encoding))
+                        f'{self.server.eom_w}'.encode(self.server.encoding))
                 else:
                     for key, value in self.server.telemetry_map.items():
                         socket_tm = value.format(self.server.telemetries[key])

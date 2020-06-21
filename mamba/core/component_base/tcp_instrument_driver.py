@@ -6,7 +6,7 @@ from mamba.core.context import Context
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.component_base import InstrumentDriver
 from mamba.core.msg import ServiceRequest, \
-    ServiceResponse, ParameterType, Empty
+    ServiceResponse, ParameterType
 
 
 def tcp_raw_write(sock: socket.socket, message: str, eom_w: str,

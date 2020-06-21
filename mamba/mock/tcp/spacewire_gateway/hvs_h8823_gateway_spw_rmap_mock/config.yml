@@ -1,0 +1,16 @@
+name: HVS H8823 Spacewire Ethernet Gateway Spw Rmap Mock
+
+# Component network configuration
+
+instrument:
+  address: 0.0.0.0
+  port: 5002
+
+# Component TMTC
+
+parameters:
+  raw_msg:
+    # Parameter setter configuration.
+    set:
+      signature: [bytes_msg: {type: bytes}]
+

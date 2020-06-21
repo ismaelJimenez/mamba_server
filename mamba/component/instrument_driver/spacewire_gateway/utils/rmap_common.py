@@ -65,6 +65,9 @@ class RMAP:
 
 
 def rmap_bytes_to_dict(rmap_bytes_msg):
+    if len(rmap_bytes_msg) < 8:
+        return None
+
     instruction = rmap_bytes_msg[2]
 
     packet_type = instruction >> 6

@@ -816,12 +816,14 @@ class TestClass:
         mock.initialize()
 
         # Start Test
-        component = SinglePortTcpController(
-            self.context,
-            local_config={'instrument': {
-                'port': 21349,
-                'max_connection_attempts': 1
-            }})
+        component = SinglePortTcpController(self.context,
+                                            local_config={
+                                                'instrument': {
+                                                    'port': 21349,
+                                                    'max_connection_attempts':
+                                                    1
+                                                }
+                                            })
         component.initialize()
         dummy_test_class = CallbackTestClass()
 
