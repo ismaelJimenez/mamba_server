@@ -10,8 +10,14 @@ from mamba.commands import MambaCommand
 TEMPLATES_DIR = "template"
 
 COMPONENT_TYPES = {
-    'main': "Application main graphical component.",
-    'plugin': "Application plugin component."
+    'gui': {
+        'description': 'Mamba graphical component.',
+        'folder': 'gui'
+    },
+    'visa_instrument_driver': {
+        'description': 'Application plugin component.',
+        'folder': 'instrument_driver'
+    }
 }
 
 
@@ -67,7 +73,7 @@ class Command(MambaCommand):
             print(f"error: '{component_type}' is not a valid component type")
             return 1
 
-        component_dir = join(project_dir, 'component', component_type, module)
+        component_dir = join(project_dir, 'component', COMPONENT_TYPES[component_type]['folder'], module)
 
         if exists(component_dir):
             print(f'error: component {module} already exists in '
@@ -94,7 +100,7 @@ def _templates_dir(mamba_dir, component_type):
 def _list_component_types():
     print("Available component types:")
     for component_type_key, component_type_value in COMPONENT_TYPES.items():
-        print(f"  {component_type_key}: {component_type_value}")
+        print(f"  {component_type_key}: {component_type_value['description']}")
 
 
 def _sanitize_module_name(module_name):

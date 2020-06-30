@@ -1,0 +1,2 @@
+name: 'Custom Gui Component' # Name of the action
+menu: 'Custom Menu' # High level Menu name shown in the menu bar

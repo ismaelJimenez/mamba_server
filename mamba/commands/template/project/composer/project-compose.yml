@@ -1,6 +1,107 @@
 version: '0.1'
 services:
-  main_qt:
-    title: Mi App
-  quit:
-  about_qt:
+
+  # GUI
+  main_window:
+    component: main_window_qt
+    title: Custom App
+
+  Quit:
+    component: quit
+
+  tc_window:
+    component: tc_window_qt
+
+  tm_window:
+    component: tm_window_qt
+
+  log_window:
+    component: log_window_qt
+
+  load_perspective:
+    component: load_perspective_qt
+
+  save_perspective:
+    component: save_perspective_qt
+
+  About:
+    component: about_qt
+
+  # Utilities
+
+  logger:
+    component: logger
+
+  # TMTC Server
+
+  socket_server:
+    component: tcp_single_port_server
+
+  # Protocol
+
+  socket_translator:
+    component: hvs_protocol_translator
+
+  protocol_controller:
+    component: mamba_protocol_controller
+
+  # IO Controllers
+
+  shutdown:
+    component: remote_shutdown
+
+  signal_generator:
+    component: rs_smb100b
+
+  digitizer:
+    component: ks_m8131a
+
+  cyclic_telemetry_tcp:
+    component: cyclic_telemetry_tcp
+
+  spectrum_analyzer:
+    component: rs_fsw
+
+  switch_matrix:
+    component: ks_34980a
+
+  single_port_tcp_controller:
+    component: single_port_tcp
+
+  two_ports_tcp_controller:
+    component: two_ports_tcp
+
+  xmlrpc_controller:
+    component: xmlrpc_controller
+
+  http_controller:
+    component: http_controller
+
+  hvs_spacewire_gateway_tmtc:
+    component: hvs_h8823_spacewire_gateway_tmtc
+
+  hvs_h8823_spacewire_gateway_spw_rmap:
+    component: hvs_h8823_spacewire_gateway_rmap
+
+  # Mocks
+
+  single_port_tcp_server_mock:
+    component: single_port_tcp_mock
+
+  two_ports_tcp_server_mock:
+    component: two_ports_tcp_mock
+
+  cyclic_tcp_server_mock:
+    component: cyclic_tm_tcp_mock
+
+  http_server_mock:
+    component: flask_server_mock
+
+  xmlrpc_server_mock:
+    component: xmlrpc_mock
+
+  hvs_spacewire_gateway_tmtc_mock:
+    component: hvs_h8823_gateway_tmtc_mock
+
+  hvs_h8823_gateway_spw_rmap_mock:
+    component: hvs_h8823_gateway_spw_rmap_mock

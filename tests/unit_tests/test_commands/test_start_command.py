@@ -2,7 +2,7 @@ from tempfile import mkdtemp
 from os.path import join, exists
 from shutil import rmtree
 
-from mamba.utils.test import get_testenv, cmd_exec, cmd_exec_output
+from mamba.core.testing.utils import get_testenv, cmd_exec, cmd_exec_output
 
 
 class TestClass:
@@ -32,10 +32,18 @@ class TestClass:
                         self.project_name) == 0
 
         assert exists(join(self.proj_path, 'mamba.cfg'))
-        assert exists(join(self.proj_path, 'launch'))
-        assert exists(join(self.proj_path, 'launch', 'project-compose.yml'))
+        assert exists(join(self.proj_path, 'composer'))
+        assert exists(join(self.proj_path, 'composer', 'project-compose.yml'))
         assert exists(join(self.proj_path, 'component'))
         assert exists(join(self.proj_path, 'component', '__init__.py'))
+        assert exists(join(self.proj_path, 'component', 'gui'))
+        assert exists(join(self.proj_path, 'component', 'gui', '__init__.py'))
+        assert exists(join(self.proj_path, 'component', 'instrument_driver'))
+        assert exists(join(self.proj_path, 'component', 'instrument_driver', '__init__.py'))
+        assert exists(join(self.proj_path, 'log'))
+        assert exists(join(self.proj_path, 'log', '__init__.py'))
+        assert exists(join(self.proj_path, 'mock'))
+        assert exists(join(self.proj_path, 'mock', '__init__.py'))
 
         output = cmd_exec_output(self, 'mamba', 'start',
                                  self.project_name + '2')

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Script for YAML formatting"""
+"""Script for MyPy Check"""
 
 import subprocess
 import os

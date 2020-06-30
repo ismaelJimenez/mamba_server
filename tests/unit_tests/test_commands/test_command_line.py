@@ -2,7 +2,7 @@ from tempfile import mkdtemp
 from os.path import join
 from shutil import rmtree
 
-from mamba.utils.test import get_testenv, cmd_exec, cmd_exec_output
+from mamba.core.testing.utils import get_testenv, cmd_exec, cmd_exec_output
 
 
 class TestClass:

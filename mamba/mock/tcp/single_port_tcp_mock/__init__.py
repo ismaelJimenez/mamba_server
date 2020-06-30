@@ -19,8 +19,6 @@ class SinglePortTcpMock(InstrumentDriver):
         self._server: Optional[ThreadedTcpServer] = None
         self._server_thread: Optional[threading.Thread] = None
 
-        self._app_running = True
-
     def _close(self, rx_value: Optional[Empty] = None) -> None:
         """ Entry point for closing the component """
         if self._server is not None:
