@@ -29,8 +29,8 @@ class TestClass:
         # Initialize plugin in local folder
         assert cmd_exec(self, 'mamba', 'start', self.project_name) == 0
         self.cwd = join(self.temp_path, self.project_name)
-        assert cmd_exec(self, 'mamba', 'generate', 'plugin', 'plugin_1') == 0
-        assert exists(join(self.proj_path, 'component', 'plugin', 'plugin_1'))
+        assert cmd_exec(self, 'mamba', 'generate', 'visa_instrument_driver', 'plugin_1') == 0
+        assert exists(join(self.proj_path, 'component', 'instrument_driver', 'plugin_1'))
         assert exists(join(self.proj_path, 'composer'))
 
         self.mamba_dir = os.path.join(os.path.dirname(__file__), '..', '..',
@@ -108,8 +108,8 @@ class TestClass:
         assert 'plugin_1' in components_dict
 
     def test_get_components_duplicated_component(self):
-        assert cmd_exec(self, 'mamba', 'generate', 'plugin', 'quit') == 0
-        assert exists(join(self.proj_path, 'component', 'plugin', 'quit'))
+        assert cmd_exec(self, 'mamba', 'generate', 'visa_instrument_driver', 'quit') == 0
+        assert exists(join(self.proj_path, 'component', 'instrument_driver', 'quit'))
 
         with pytest.raises(ComposeFileException) as excinfo:
             utils.get_components({'quit': {}},
@@ -117,4 +117,4 @@ class TestClass:
                                  Context())
 
         assert 'is duplicated' in str(excinfo.value)
-        rmtree(join(self.proj_path, 'component', 'plugin', 'quit'))
+        rmtree(join(self.proj_path, 'component', 'instrument_driver', 'quit'))

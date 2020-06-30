@@ -21,8 +21,8 @@ class TestClass:
     def test_get_classes_from_module_commands_class_gui_plugin(self):
         components = utils.get_classes_from_module('mamba.commands', Component)
         assert len(components) == 2
-        assert 'main' in components
-        assert 'plugin' in components
+        assert 'gui' in components
+        assert 'visa_instrument_driver' in components
 
     def test_get_classes_from_module_components_class_gui_plugin_recursive(
             self):

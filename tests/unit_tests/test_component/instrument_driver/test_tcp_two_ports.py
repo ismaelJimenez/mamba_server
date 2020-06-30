@@ -828,122 +828,27 @@ class TestClass:
 
     def test_tcp_broken_and_no_reconnection(self):
         # Start Mock
-        mock = TwoPortsTcpMock(self.context,
-            local_config={'instrument': {
-                'port': {
-                    'tc': 32478,
-                    'tm': 32479
-                }
-            }})
-        mock.initialize()
-
-        # Start Test
-        component = TwoPortsTcpController(
-            self.context,
-            local_config={'instrument': {
-                'max_connection_attempts': 1,
-                'port': {
-                    'tc': 32478,
-                    'tm': 32479
-                }
-            }})
-        component.initialize()
-        dummy_test_class = CallbackTestClass()
-
-        # Subscribe to the topic that shall be published
-        self.context.rx['io_result'].pipe(
-            op.filter(
-                lambda value: isinstance(value, ServiceResponse))).subscribe(
-                    dummy_test_class.test_func_1)
-
-        # 1 - Test connection to the instrument
-        assert component._inst is None
-
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='connect',
-                           type=ParameterType.set,
-                           args=['1']))
-
-        time.sleep(.1)
-
-        assert component._inst is not None
-        assert dummy_test_class.func_1_times_called == 1
-        assert dummy_test_class.func_1_last_value.id == 'connect'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.set
-        assert dummy_test_class.func_1_last_value.value is None
-
-        # 2 - Test generic query
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='idn',
-                           type=ParameterType.get,
-                           args=[]))
-
-        time.sleep(.1)
-
-        assert dummy_test_class.func_1_times_called == 2
-        assert dummy_test_class.func_1_last_value.id == 'idn'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == 'Mamba Framework,Two Port TCP Mock,1.0'
-
-        # Force connection close
-        component._inst.close()
-
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='idn',
-                           type=ParameterType.get,
-                           args=[]))
-
-        time.sleep(.1)
-
-        assert dummy_test_class.func_1_times_called == 3
-        assert dummy_test_class.func_1_last_value.id == 'idn'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.error
-        assert dummy_test_class.func_1_last_value.value == 'Not possible to communicate to the instrument'
-
-        # Force connection close
-        component._inst_tm.close()
-
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='two_ports_tcp_controller',
-                           id='idn',
-                           type=ParameterType.get,
-                           args=[]))
-
-        time.sleep(.1)
-
-        assert dummy_test_class.func_1_times_called == 4
-        assert dummy_test_class.func_1_last_value.id == 'idn'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.error
-        assert dummy_test_class.func_1_last_value.value == 'Not possible to communicate to the instrument'
-
-        self.context.rx['quit'].on_next(Empty())
-
-        time.sleep(1)
-
-    def test_tcp_broken_and_reconnection(self):
-        # Start Mock
         mock = TwoPortsTcpMock(
             self.context,
             local_config={'instrument': {
                 'port': {
-                    'tc': 32456,
-                    'tm': 32457
+                    'tc': 32478,
+                    'tm': 32479
                 }
             }})
         mock.initialize()
 
         # Start Test
-        component = TwoPortsTcpController(
-            self.context,
-            local_config={'instrument': {
-                'port': {
-                    'tc': 32456,
-                    'tm': 32457
-                }
-            }})
+        component = TwoPortsTcpController(self.context,
+                                          local_config={
+                                              'instrument': {
+                                                  'max_connection_attempts': 1,
+                                                  'port': {
+                                                      'tc': 32478,
+                                                      'tm': 32479
+                                                  }
+                                              }
+                                          })
         component.initialize()
         dummy_test_class = CallbackTestClass()
 
@@ -993,12 +898,12 @@ class TestClass:
                            type=ParameterType.get,
                            args=[]))
 
-        time.sleep(1)
+        time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 3
         assert dummy_test_class.func_1_last_value.id == 'idn'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == 'Mamba Framework,Two Port TCP Mock,1.0'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.error
+        assert dummy_test_class.func_1_last_value.value == 'Not possible to communicate to the instrument'
 
         # Force connection close
         component._inst_tm.close()
@@ -1009,12 +914,12 @@ class TestClass:
                            type=ParameterType.get,
                            args=[]))
 
-        time.sleep(1)
+        time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 4
         assert dummy_test_class.func_1_last_value.id == 'idn'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == 'Mamba Framework,Two Port TCP Mock,1.0'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.error
+        assert dummy_test_class.func_1_last_value.value == 'Not possible to communicate to the instrument'
 
         self.context.rx['quit'].on_next(Empty())
 
