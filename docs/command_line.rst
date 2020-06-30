@@ -20,7 +20,7 @@ That will create a new Mamba workspace, with the following structure:
     │   ├── gui/
     │   │   └── __init__.py
     │   └── instrument_driver/
-    │   │   └── __init__.py
+    │       └── __init__.py
     ├── composer/ 
     │   └── project-compose.yml
     ├── log/ 
@@ -28,3 +28,28 @@ That will create a new Mamba workspace, with the following structure:
     └── mock/ 
         └── __init__.py
 
+Now you can run the default project composer file:
+
+.. code:: console
+
+    cd new_mamba_project
+    mamba serve -r project
+    
+This should start the Mamba Server Graphical interface. It is important to notice that Mamba "serve" shall always be executed in the root workspace of the mamba project, in the example in the new_mamba_project folder.
+
+You can also generate a new VISA controller via the command line tool with:
+
+
+.. code:: console
+
+    mamba generate visa_instrument_driver new_custom_visa_driver
+    
+To use the newly create controller, you will hace to add it to the project-compose.yml, with:
+
+.. code:: yaml
+
+    services:
+        custom_controller
+            component: new_custom_visa_driver
+
+Now you are ready to create you own Mamba Server Application. You can use th standard components from mamba-server or create your own ones and add them to the project-compose.yml.
