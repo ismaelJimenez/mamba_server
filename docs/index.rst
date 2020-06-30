@@ -7,6 +7,7 @@ Mamba Server is a framework for controlling ground equipment.
     :maxdepth: 2
 
     installation
+    command_line
     contributing
 
 
