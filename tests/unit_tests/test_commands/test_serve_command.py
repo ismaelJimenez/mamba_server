@@ -37,8 +37,7 @@ class TestClass:
         assert '--list' in output
 
     def test_serve_list(self):
-        assert cmd_exec(self, 'mamba', 'start',
-                        self.project_name) == 0
+        assert cmd_exec(self, 'mamba', 'start', self.project_name) == 0
 
         self.cwd = join(self.temp_path, self.project_name)
 
@@ -51,7 +50,6 @@ class TestClass:
         assert '- project' in output
 
     def test_serve_non_existing(self):
-        assert cmd_exec(self, 'mamba', 'serve',
-                        '-r non_existing') == 1
+        assert cmd_exec(self, 'mamba', 'serve', '-r non_existing') == 1
         assert 'Unable to find launch file' in cmd_exec_output(
             self, 'mamba', 'serve', '-r non_existing')

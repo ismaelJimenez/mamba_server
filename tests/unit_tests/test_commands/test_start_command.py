@@ -28,8 +28,7 @@ class TestClass:
         pass
 
     def test_start_in_new_folder(self):
-        assert cmd_exec(self, 'mamba', 'start',
-                        self.project_name) == 0
+        assert cmd_exec(self, 'mamba', 'start', self.project_name) == 0
 
         assert exists(join(self.proj_path, 'mamba.cfg'))
         assert exists(join(self.proj_path, 'composer'))
@@ -39,7 +38,9 @@ class TestClass:
         assert exists(join(self.proj_path, 'component', 'gui'))
         assert exists(join(self.proj_path, 'component', 'gui', '__init__.py'))
         assert exists(join(self.proj_path, 'component', 'instrument_driver'))
-        assert exists(join(self.proj_path, 'component', 'instrument_driver', '__init__.py'))
+        assert exists(
+            join(self.proj_path, 'component', 'instrument_driver',
+                 '__init__.py'))
         assert exists(join(self.proj_path, 'log'))
         assert exists(join(self.proj_path, 'log', '__init__.py'))
         assert exists(join(self.proj_path, 'mock'))
@@ -51,16 +52,13 @@ class TestClass:
         assert 'New Mamba project' in output
         assert 'launch your default project with' in output
 
-        assert cmd_exec(self, 'mamba', 'start',
-                        self.project_name) == 1
+        assert cmd_exec(self, 'mamba', 'start', self.project_name) == 1
 
-        output = cmd_exec_output(self, 'mamba', 'start',
-                                 self.project_name)
+        output = cmd_exec_output(self, 'mamba', 'start', self.project_name)
         assert 'Error' in output
         assert 'mamba.cfg already exists' in output
 
-        assert cmd_exec(self, 'mamba', 'start',
-                        'wrong---project---name') == 1
+        assert cmd_exec(self, 'mamba', 'start', 'wrong---project---name') == 1
 
         output = cmd_exec_output(self, 'mamba', 'start',
                                  'wrong---project---name')

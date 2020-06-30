@@ -21,7 +21,8 @@ class Logger(Component):
         self._logger.setLevel(logging.DEBUG)
 
         # create formatter and add it to the handlers
-        formatter = logging.Formatter('[%(levelname)s] [%(asctime)s] %(message)s', "%Y%m%dT%H%M%S")
+        formatter = logging.Formatter(
+            '[%(levelname)s] [%(asctime)s] %(message)s', "%Y%m%dT%H%M%S")
 
         # create console handler with a higher
         ch = logging.StreamHandler()
@@ -35,9 +36,9 @@ class Logger(Component):
         if context.get('project_dir') is not None:
             # create file handler for logs
             timestamp = time.strftime("%Y%m%dT%H%M%S")
-            fh = logging.FileHandler(os.path.join(context.get('project_dir'),
-                                                  'log',
-                                                  f'{timestamp}.log'))
+            fh = logging.FileHandler(
+                os.path.join(context.get('project_dir'), 'log',
+                             f'{timestamp}.log'))
             fh.setLevel(logging.DEBUG)
             fh.setFormatter(formatter)
             self._logger.addHandler(fh)
@@ -66,6 +67,7 @@ class Logger(Component):
             self._logger.warning(msg)
         else:
             self._logger.error(msg)
+
 
 #
 #
