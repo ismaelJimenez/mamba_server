@@ -52,4 +52,4 @@ To use the newly create controller, you will hace to add it to the project-compo
         custom_controller
             component: new_custom_visa_driver
 
-Now you are ready to create you own Mamba Server Application. You can use th standard components from mamba-server or create your own ones and add them to the project-compose.yml.
+Now you are ready to create you own Mamba Server Application. You can use the standard components from mamba-server or create your own ones and add them to the project-compose.yml.
