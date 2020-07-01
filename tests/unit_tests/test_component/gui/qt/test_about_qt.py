@@ -2,6 +2,7 @@ import pytest
 import os
 
 from mamba.core.context import Context
+from mamba.core.msg import Empty
 from mamba.component.gui.qt.about_qt import AboutComponent
 from mamba.component.gui.qt import MainWindowQt
 
@@ -64,3 +65,7 @@ class TestClass:
         # Test menu is in menu bar
         assert main_window._exists_menu('&Help')
         assert main_window._is_action_in_menu('&Help', '&About')
+
+        # Force close of any opened windows
+        main_window._close(Empty())
+        main_window._qt_app.quit()

@@ -18,8 +18,8 @@ services:
   log_window:
     component: log_window_qt
 
-  load_perspective:
-    component: load_perspective_qt
+  load_view:
+    component: load_view_qt
 
   save_perspective:
     component: save_perspective_qt

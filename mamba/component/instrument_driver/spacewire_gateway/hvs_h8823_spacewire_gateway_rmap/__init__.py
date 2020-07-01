@@ -1,5 +1,5 @@
 """ Single Port TCP controller base """
-from typing import Optional
+from typing import Optional, Dict, Any
 import os
 import struct
 import socket
@@ -46,7 +46,7 @@ class H8823SpwRmapController(TcpInstrumentDriver):
         # Initialize instrument configuration
         self._rmap = RMAP(self._configuration.get('rmap'))
 
-    def _process_inst_command(self, cmd_type: str, cmd: str,
+    def _process_inst_command(self, cmd_type: str, cmd: Dict[str, Any],
                               service_request: ServiceRequest,
                               result: ServiceResponse) -> None:
 

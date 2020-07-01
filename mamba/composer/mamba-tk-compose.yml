@@ -18,8 +18,8 @@ services:
   log_window:
     component: log_window_tk
 
-  load_perspective:
-    component: load_perspective_tk
+  load_view:
+    component: load_view_tk
 
   save_perspective:
     component: save_perspective_tk

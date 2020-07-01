@@ -284,7 +284,7 @@ class Plugin(GuiPlugin):
 
         for row in range(0, services_table.rowCount()):
             perspective['data']['services'].append(
-                services_table.item(row, 0).text())
+                services_table.cellWidget(row, 0).text())
 
         print(perspective)
 
@@ -292,8 +292,8 @@ class Plugin(GuiPlugin):
 
     def closeEvent(self, services_table):
         for row in range(0, services_table.rowCount()):
-            param_text = services_table.item(services_table.visualRow(row),
-                                             0).text().split(' -> ')
+            param_text = services_table.cellWidget(
+                services_table.visualRow(row), 0).text().split(' -> ')
             service = param_text[1]
             provider = param_text[0]
 
