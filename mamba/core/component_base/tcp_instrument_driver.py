@@ -1,5 +1,5 @@
 """ TCP Instrument driver controller base """
-from typing import Optional
+from typing import Optional, Any
 import socket
 
 from mamba.core.context import Context
@@ -72,7 +72,7 @@ class TcpInstrumentDriver(InstrumentDriver):
                 self._shared_memory[self._shared_memory_setter[result.id]] = 0
             self._log_dev("Closed connection to Instrument")
 
-    def _process_inst_command(self, cmd_type: str, cmd: str,
+    def _process_inst_command(self, cmd_type: str, cmd: Any,
                               service_request: ServiceRequest,
                               result: ServiceResponse) -> None:
         connection_attempts = 0
