@@ -21,8 +21,8 @@ services:
   load_view:
     component: load_view_qt
 
-  save_perspective:
-    component: save_perspective_qt
+  save_view:
+    component: save_view_qt
 
   About:
     component: about_qt

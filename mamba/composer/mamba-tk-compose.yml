@@ -21,8 +21,8 @@ services:
   load_view:
     component: load_view_tk
 
-  save_perspective:
-    component: save_perspective_tk
+  save_view:
+    component: save_view_tk
 
   About:
     component: about_tk
