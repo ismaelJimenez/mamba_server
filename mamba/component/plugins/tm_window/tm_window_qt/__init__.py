@@ -247,10 +247,16 @@ class Plugin(GuiPlugin):
             window.resize(perspective['width'], perspective['height'])
 
             for service_id in reversed(perspective['services']):
-                for provider, services in self._io_services.items():
-                    if service_id in services:
-                        self.add_service(provider, service_id, services_table)
-                        break
+                param_id_split = service_id.split(' -> ')
+                provider = param_id_split[0]
+                param_id = param_id_split[1]
+
+                if provider in self._io_services:
+                    if len([
+                            param for param in self._io_services[provider]
+                            if param.id == param_id
+                    ]) > 0:
+                        self.add_service(provider, param_id, services_table)
         else:
             window.adjustSize()
 
@@ -264,10 +270,9 @@ class Plugin(GuiPlugin):
 
         window.destroyed.connect(lambda: self.closeEvent(services_table))
 
-        self._context.rx['generate_perspective'].pipe(
-            op.filter(lambda value: isinstance(value, Empty))).subscribe(
-                on_next=lambda _: self._generate_perspective(
-                    window, services_table))
+        self._context.rx['generate_perspective'].subscribe(
+            on_next=lambda _: self._generate_perspective(
+                window, services_table))
 
     def _generate_perspective(self, window: QMdiSubWindow, services_table):
         perspective = {
@@ -302,8 +307,8 @@ class Plugin(GuiPlugin):
             if self._observed_services[(provider, service)] == 0:
                 self._observed_services.pop((provider, service), None)
 
-            self._service_tables.remove(services_table)
-            self._observer_modified.on_next(None)
+        self._service_tables.remove(services_table)
+        self._observer_modified.on_next(None)
 
     def _io_service_signature(self, parameters_info: List[ParameterInfo]):
         """ Entry point for processing the service signatures.

@@ -9,19 +9,19 @@ services:
   Quit:
     component: quit
 
-  tc_window:
-    component: tc_window_tk
+  Parameter Setter:
+    component: parameter_setter_window_tk
 
   tm_window:
     component: tm_window_tk
 
-  log_window:
+  Mamba Log:
     component: log_window_tk
 
-  load_view:
+  Load View:
     component: load_view_tk
 
-  save_view:
+  Save View:
     component: save_view_tk
 
   About:

@@ -44,6 +44,7 @@ class LogWindowComponent(GuiPlugin):
         perspective = rx_value.perspective
 
         window = QMdiSubWindow()
+        window.setWindowTitle('Mamba Logger')
         self._context.rx['register_window'].on_next(window)
 
         child = QWidget()

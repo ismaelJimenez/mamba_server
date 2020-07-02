@@ -4,16 +4,15 @@ import os
 import time
 
 from rx.core.typing import Disposable
-from rx import operators as op
 from typing import Optional, Dict, List
 
 import tkinter as tk
-from tkinter import Frame, N, S, W, E, BooleanVar, IntVar
+from tkinter import Frame, N, S, W, E
 from tkinter.ttk import Treeview
 
 from mamba.core.component_base import GuiPlugin
 from mamba.component.gui.msg import RunAction
-from mamba.core.msg import Empty, Log, LogLevel
+from mamba.core.msg import Log, LogLevel
 from mamba.core.context import Context
 
 
@@ -164,9 +163,6 @@ class LogWindowComponent(GuiPlugin):
 
         # Define custom variables
         self._windows: List[tk.Tk] = []
-
-    def initialize(self) -> None:
-        super().initialize()
 
     def _received_log(self, log: Log, log_table: LogWindowFrame) -> None:
         """ Entry point for processing a new msg telecommand coming from the
