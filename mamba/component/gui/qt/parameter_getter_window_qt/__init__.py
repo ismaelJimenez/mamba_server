@@ -1,8 +1,12 @@
-""" Parameter Setter window GUI Component """
+""" Parameter Getter window GUI Component """
 
 import os
+import time
+from typing import List, Dict, Optional, Any
 
-from typing import List, Dict, Optional
+from rx import operators as op
+from rx.subject import Subject
+from rx.core.typing import Disposable
 
 from PySide2.QtWidgets import QLabel, QWidget, QApplication, QComboBox, \
     QHBoxLayout, QMdiSubWindow, QPushButton, QTableWidget, QMenu, QVBoxLayout,\
@@ -10,15 +14,19 @@ from PySide2.QtWidgets import QLabel, QWidget, QApplication, QComboBox, \
 from PySide2.QtCore import Qt, QCoreApplication
 from PySide2.QtGui import QIcon, QCursor, QFont, QMouseEvent
 
+from mamba.core.context import Context
 from mamba.core.component_base import GuiPlugin
 from mamba.component.gui.msg import RunAction
-from mamba.core.msg import ServiceRequest, ParameterInfo, ParameterType
-from mamba.core.context import Context
+from mamba.core.msg import Empty, ServiceResponse, ParameterInfo, \
+    ParameterType, ServiceRequest
 
 
-class ParameterSetterTable(QTableWidget):
-    def __init__(self, *args, **kwargs) -> None:
+class ParameterGetterTable(QTableWidget):
+    def __init__(self, observed_services: Dict[tuple, int],
+                 observer_modified: Subject, *args, **kwargs):
         QTableWidget.__init__(self, *args, **kwargs)
+        self._observed_services = observed_services
+        self._observer_modified = observer_modified
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         if event.button() == Qt.RightButton:
@@ -30,21 +38,40 @@ class ParameterSetterTable(QTableWidget):
                 action = menu.exec_(QCursor.pos())
 
                 if action == remove_action:
+
+                    param_text = self.cellWidget(it.row(),
+                                                 0).text().split(' -> ')
+                    service = param_text[1]
+                    provider = param_text[0]
+
+                    self._observed_services[(provider, service)] -= 1
+
+                    if self._observed_services[(provider, service)] == 0:
+                        self._observed_services.pop((provider, service), None)
+                        self._observer_modified.on_next(None)
+
                     self.removeRow(it.row())
 
         QTableWidget.mousePressEvent(self, event)
 
 
-class ParameterSetterComponent(GuiPlugin):
-    """ Parameter Setter window GUI Component in Qt5 """
+class ParameterGetterComponent(GuiPlugin):
+    """ Parameter Getter window GUI Component in Qt5 """
     def __init__(self,
                  context: Context,
                  local_config: Optional[Dict[str, dict]] = None) -> None:
+
+        self._observer_modified = Subject()
+
         super().__init__(os.path.dirname(__file__), context, local_config)
 
         # Define custom variables
         self._app: Optional[QCoreApplication] = None
         self._io_services: Dict[str, List[ParameterInfo]] = {}
+
+        self._service_tables: List[ParameterGetterTable] = []
+        self._observed_services: Dict[tuple, int] = {}
+        self._io_result_subs: Optional[Disposable] = None
 
     def initialize(self) -> None:
         super().initialize()
@@ -61,7 +88,10 @@ class ParameterSetterComponent(GuiPlugin):
         self._context.rx['io_service_signature'].subscribe(
             on_next=self._io_service_signature)
 
-    def run(self, rx_value: RunAction) -> None:
+        self._observer_modified.subscribe(
+            on_next=self._process_observer_modification)
+
+    def run(self, rx_value: RunAction):
         """ Entry point for running the plugin
 
             Args:
@@ -70,7 +100,7 @@ class ParameterSetterComponent(GuiPlugin):
         perspective = rx_value.perspective
 
         window = QMdiSubWindow()
-        window.setWindowTitle('Parameter Setter')
+        window.setWindowTitle('Parameter Getter')
         self._context.rx['register_window'].on_next(window)
 
         child = QWidget()
@@ -100,13 +130,13 @@ class ParameterSetterComponent(GuiPlugin):
         service_layout.addWidget(add_service_button)
 
         request_label = QLabel("Services:")
-        services_table = ParameterSetterTable()
-        services_table.setColumnCount(6)
+        services_table = ParameterGetterTable(self._observed_services,
+                                              self._observer_modified)
+        self._service_tables.append(services_table)
+        services_table.setColumnCount(5)
 
-        services_table.setHorizontalHeaderLabels([
-            "Service", "Description", "Param#1", "Param#2", "Param#3",
-            "Param#4"
-        ])
+        services_table.setHorizontalHeaderLabels(
+            ["Service", "Description", "Measure", "Unit", "Stamp"])
 
         services_table.verticalHeader().setSectionsMovable(True)
         services_table.verticalHeader().setDragEnabled(True)
@@ -145,14 +175,15 @@ class ParameterSetterComponent(GuiPlugin):
         else:
             window.adjustSize()
 
-        services_table.setColumnWidth(0, window.width() * 0.3)
-        services_table.setColumnWidth(1, window.width() * 0.4)
+        services_table.setColumnWidth(0, window.width() * 0.2)
+        services_table.setColumnWidth(1, window.width() * 0.2)
         services_table.setColumnWidth(2, window.width() * 0.2)
         services_table.setColumnWidth(3, window.width() * 0.2)
         services_table.setColumnWidth(4, window.width() * 0.2)
-        services_table.setColumnWidth(5, window.width() * 0.2)
 
         window.show()
+
+        window.destroyed.connect(lambda: self.closeEvent(services_table))
 
         self._context.rx['generate_perspective'].subscribe(
             on_next=lambda _: self._generate_perspective(
@@ -166,39 +197,27 @@ class ParameterSetterComponent(GuiPlugin):
                 provider_combo.currentText(), []):
             service_combo.addItem(parameter_info.id)
 
-    def call_service(self, provider_id: str, service_id: str,
-                     services_table: ParameterSetterTable) -> None:
-        args = []
-
-        parameter_text = f'{provider_id} -> {service_id}'
-
-        for row in range(0, services_table.rowCount()):
-            if services_table.cellWidget(row, 0).text() == parameter_text:
-                for param_index in range(2, 6):
-                    param = services_table.item(row, param_index).text()
-                    if (param == '-') or (param == ''):
-                        break
-                    else:
-                        args.append(param)
-
+    def call_service(self, provider_id: str, service_id: str) -> None:
         self._context.rx['tc'].on_next(
             ServiceRequest(provider=provider_id,
                            id=service_id,
-                           args=args,
-                           type=ParameterType.set))
+                           args=[],
+                           type=ParameterType.get))
 
     def add_service(self, provider: str, service: str,
-                    services_table: ParameterSetterTable) -> None:
+                    services_table: ParameterGetterTable) -> None:
         if (service == '') or (provider == ''):
             return
 
-        parameter_info = [
-            parameter_info for parameter_info in self._io_services[provider]
-            if parameter_info.id == service
-        ][0]
+        parameter_info = \
+            [parameter_info for parameter_info in self._io_services[provider]
+             if parameter_info.id == service][0]
 
-        parameters = parameter_info.signature[0]
-        num_params = len(parameters)
+        for row in range(0, services_table.rowCount()
+                         ):  # Do not allow 2 services with same name
+            if services_table.cellWidget(
+                    row, 0).text() == f'{provider} -> {service}':
+                return
 
         services_table.insertRow(0)
 
@@ -208,68 +227,45 @@ class ParameterSetterComponent(GuiPlugin):
         service_btn.setFont(bold_font)
 
         service_btn.clicked.connect(
-            lambda: self.call_service(provider, service, services_table))
+            lambda: self.call_service(provider, service))
 
         description_item = QTableWidgetItem(parameter_info.description)
         description_item.setFlags(Qt.ItemIsEnabled)
 
-        if num_params > 0:
-            param = parameters[0]
+        measured_value = QTableWidgetItem("N/A")
+        measured_value.setFlags(Qt.ItemIsEnabled)
+        measured_value.setTextAlignment(Qt.AlignCenter)
 
-            param_1 = QTableWidgetItem("")
-            param_1.setTextAlignment(Qt.AlignCenter)
+        units = QTableWidgetItem("-")
+        units.setFlags(Qt.ItemIsEnabled)
+        units.setTextAlignment(Qt.AlignCenter)
 
-            param_1.setToolTip(str(param))
-        else:
-            param_1 = QTableWidgetItem("-")
-            param_1.setTextAlignment(Qt.AlignCenter)
-            param_1.setFlags(Qt.ItemIsEnabled)
+        stamp = QTableWidgetItem("N/A")
+        stamp.setFlags(Qt.ItemIsEnabled)
+        stamp.setTextAlignment(Qt.AlignCenter)
 
-        if num_params > 1:
-            param = parameters[1]
-
-            param_2 = QTableWidgetItem("")
-            param_2.setTextAlignment(Qt.AlignCenter)
-
-            param_2.setToolTip(str(param))
-        else:
-            param_2 = QTableWidgetItem("-")
-            param_2.setTextAlignment(Qt.AlignCenter)
-            param_2.setFlags(Qt.ItemIsEnabled)
-
-        if num_params > 2:
-            param = parameters[2]
-
-            param_3 = QTableWidgetItem("")
-            param_3.setTextAlignment(Qt.AlignCenter)
-
-            param_3.setToolTip(str(param))
-        else:
-            param_3 = QTableWidgetItem("-")
-            param_3.setTextAlignment(Qt.AlignCenter)
-            param_3.setFlags(Qt.ItemIsEnabled)
-
-        if num_params > 3:
-            param = parameters[3]
-
-            param_4 = QTableWidgetItem("")
-            param_4.setTextAlignment(Qt.AlignCenter)
-
-            param_4.setToolTip(str(param))
-        else:
-            param_4 = QTableWidgetItem("-")
-            param_4.setTextAlignment(Qt.AlignCenter)
-            param_4.setFlags(Qt.ItemIsEnabled)
+        font = QFont()
+        font.setBold(True)
 
         services_table.setCellWidget(0, 0, service_btn)
         services_table.setItem(0, 1, description_item)
-        services_table.setItem(0, 2, param_1)
-        services_table.setItem(0, 3, param_2)
-        services_table.setItem(0, 4, param_3)
-        services_table.setItem(0, 5, param_4)
+        services_table.setItem(0, 2, measured_value)
+        services_table.item(0, 2).setBackground(Qt.black)
+        services_table.item(0, 2).setForeground(Qt.green)
+        services_table.item(0, 2).setFont(font)
+        services_table.setItem(0, 3, units)
+        services_table.setItem(0, 4, stamp)
+        services_table.item(0, 4).setFont(font)
+        services_table.item(0, 4).setForeground(Qt.darkGray)
+
+        if self._observed_services.get((provider, service)) is None:
+            self._observed_services[(provider, service)] = 1
+            self._observer_modified.on_next(None)
+        else:
+            self._observed_services[(provider, service)] += 1
 
     def _generate_perspective(self, window: QMdiSubWindow,
-                              services_table: ParameterSetterTable) -> None:
+                              services_table: ParameterGetterTable) -> None:
         perspective = {
             'menu_title': self._configuration['menu'],
             'action_name': self._configuration['name'],
@@ -297,5 +293,48 @@ class ParameterSetterComponent(GuiPlugin):
         """
         self._io_services[parameters_info[0].provider] = [
             param for param in parameters_info
-            if param.type == ParameterType.set
+            if param.type == ParameterType.get
         ]
+
+    def _process_observer_modification(self, rx_value: Any) -> None:
+        if self._io_result_subs is not None:
+            self._io_result_subs.dispose()
+        self._io_result_subs = self._context.rx['io_result'].pipe(
+            op.filter(lambda value: value.type == ParameterType.get and
+                      (value.provider, value.id) in self._observed_services)
+        ).subscribe(on_next=self._process_io_result)
+
+    def _process_io_result(self, rx_value: ServiceResponse) -> None:
+        for table in self._service_tables:
+            for row in range(0, table.rowCount()):
+                service_id = table.cellWidget(row, 0).text()
+                if service_id == f'{rx_value.provider} -> {rx_value.id}':
+                    table.item(table.visualRow(row),
+                               2).setText(str(rx_value.value))
+                    table.item(table.visualRow(row),
+                               4).setText(str(time.time()))
+                    if rx_value.type == 'error':
+                        table.item(table.visualRow(row),
+                                   2).setBackground(Qt.red)
+                        table.item(table.visualRow(row),
+                                   2).setForeground(Qt.black)
+                    else:
+                        table.item(table.visualRow(row),
+                                   2).setBackground(Qt.black)
+                        table.item(table.visualRow(row),
+                                   2).setForeground(Qt.green)
+
+    def closeEvent(self, services_table: ParameterGetterTable) -> None:
+        for row in range(0, services_table.rowCount()):
+            param_text = services_table.cellWidget(
+                services_table.visualRow(row), 0).text().split(' -> ')
+            service = param_text[1]
+            provider = param_text[0]
+
+            self._observed_services[(provider, service)] -= 1
+
+            if self._observed_services[(provider, service)] == 0:
+                self._observed_services.pop((provider, service), None)
+
+        self._service_tables.remove(services_table)
+        self._observer_modified.on_next(None)

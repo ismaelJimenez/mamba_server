@@ -4,7 +4,7 @@ import time
 
 from mamba.core.context import Context
 from mamba.component.instrument_driver.digitizer import DigitizerKsm8131A
-from mamba.component.gui.tk.parameter_setter_window_tk import ParameterSetterComponent
+from mamba.component.gui.tk.parameter_getter_window_tk import ParameterGetterComponent
 from mamba.component.gui.msg import RunAction, RegisterAction
 from mamba.core.msg import Empty
 from mamba.component.gui.tk import MainWindowTk
@@ -26,7 +26,7 @@ class TestClass:
 
     def test_component_wo_context(self):
         with pytest.raises(TypeError) as excinfo:
-            ParameterSetterComponent()
+            ParameterGetterComponent()
 
         assert "missing 1 required positional argument" in str(excinfo.value)
 
@@ -36,7 +36,7 @@ class TestClass:
         self.context.rx['register_action'].subscribe(
             dummy_test_class.test_func_1)
 
-        component = ParameterSetterComponent(self.context)
+        component = ParameterGetterComponent(self.context)
         component.initialize()
 
         time.sleep(.1)
@@ -44,7 +44,7 @@ class TestClass:
         # Test default configuration
         assert component._configuration == {
             'menu': 'Utils',
-            'name': 'Parameter Setter'
+            'name': 'Parameter Getter'
         }
 
         assert component._windows == []
@@ -53,21 +53,21 @@ class TestClass:
         assert dummy_test_class.func_1_times_called == 1
         assert isinstance(dummy_test_class.func_1_last_value, RegisterAction)
         assert dummy_test_class.func_1_last_value.menu_title == 'Utils'
-        assert dummy_test_class.func_1_last_value.action_name == 'Parameter Setter'
+        assert dummy_test_class.func_1_last_value.action_name == 'Parameter Getter'
         assert dummy_test_class.func_1_last_value.shortcut is None
         assert dummy_test_class.func_1_last_value.status_tip is None
 
     def test_component_run_no_perspective(self):
         dummy_test_class = CallbackTestClass()
 
-        component = ParameterSetterComponent(self.context)
+        component = ParameterGetterComponent(self.context)
         component.initialize()
 
         self.context.rx['register_window'].subscribe(
             dummy_test_class.test_func_1)
 
         self.context.rx['run_plugin'].on_next(
-            RunAction(menu_title='Utils', action_name='Parameter Setter'))
+            RunAction(menu_title='Utils', action_name='Parameter Getter'))
 
         time.sleep(.1)
 
@@ -83,7 +83,7 @@ class TestClass:
 
         assert dummy_test_class.func_2_times_called == 1
         assert dummy_test_class.func_2_last_value[
-            'action_name'] == 'Parameter Setter'
+            'action_name'] == 'Parameter Getter'
         assert dummy_test_class.func_2_last_value['data']['services'] == []
         assert dummy_test_class.func_2_last_value['menu_title'] == 'Utils'
 
@@ -94,7 +94,7 @@ class TestClass:
     def test_component_run_w_perspective(self):
         dummy_test_class = CallbackTestClass()
 
-        component = ParameterSetterComponent(self.context)
+        component = ParameterGetterComponent(self.context)
         component.initialize()
 
         digitizer = DigitizerKsm8131A(self.context)
@@ -107,11 +107,11 @@ class TestClass:
 
         self.context.rx['run_plugin'].on_next(
             RunAction(menu_title='Utils',
-                      action_name='Parameter Setter',
+                      action_name='Parameter Getter',
                       perspective={
                           'services': [
-                              'keysight_m8131a_digitizer -> clear',
-                              'keysight_m8131a_digitizer -> connect'
+                              'keysight_m8131a_digitizer -> raw_query',
+                              'keysight_m8131a_digitizer -> connected'
                           ],
                           'width':
                           100,
@@ -137,10 +137,10 @@ class TestClass:
 
         assert dummy_test_class.func_2_times_called == 1
         assert dummy_test_class.func_2_last_value[
-            'action_name'] == 'Parameter Setter'
+            'action_name'] == 'Parameter Getter'
         assert dummy_test_class.func_2_last_value['data']['services'] == [
-            'keysight_m8131a_digitizer -> clear',
-            'keysight_m8131a_digitizer -> connect'
+            'keysight_m8131a_digitizer -> raw_query',
+            'keysight_m8131a_digitizer -> connected'
         ]
         assert dummy_test_class.func_2_last_value['menu_title'] == 'Utils'
 
@@ -155,12 +155,12 @@ class TestClass:
         # Test help is not in menu bar
         assert not main_window._exists_menu('Utils')
 
-        component = ParameterSetterComponent(self.context)
+        component = ParameterGetterComponent(self.context)
         component.initialize()
 
         # Test menu is in menu bar
         assert main_window._exists_menu('Utils')
-        assert main_window._is_action_in_menu('Utils', 'Parameter Setter')
+        assert main_window._is_action_in_menu('Utils', 'Parameter Getter')
 
         # Force close of any opened windows
         main_window._load_app.quit()

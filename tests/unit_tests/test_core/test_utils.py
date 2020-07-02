@@ -28,10 +28,12 @@ class TestClass:
             self):
         classes_dict = utils.get_classes_from_module('mamba.component.gui',
                                                      Component)
-        assert len(classes_dict) == 13  # One class is the base
+        assert len(classes_dict) == 15  # One class is the base
         assert 'main_window_qt' in classes_dict
         assert 'parameter_setter_window_qt' in classes_dict
         assert 'parameter_setter_window_tk' in classes_dict
+        assert 'parameter_getter_window_qt' in classes_dict
+        assert 'parameter_getter_window_tk' in classes_dict
         assert 'main_window_tk' in classes_dict
         assert 'log_window_qt' in classes_dict
         assert 'log_window_tk' in classes_dict
@@ -69,14 +71,14 @@ class TestClass:
             utils.get_components({
                 'about_qt': {},
                 'about_tk_fail': {}
-            }, ['mamba.component.plugins'], Component, Context())
+            }, ['mamba.component.gui'], Component, Context())
 
         assert 'about_qt: missing component property' in str(excinfo.value)
 
         with pytest.raises(ComposeFileException) as excinfo:
             utils.get_components({'about_qt': {
                 'component': 'wrong'
-            }}, ['mamba.component.plugins'], Component, Context())
+            }}, ['mamba.component.gui'], Component, Context())
 
         assert "about_qt: component wrong' is not a valid component " \
                "identifier" in str(excinfo.value)

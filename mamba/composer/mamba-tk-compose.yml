@@ -12,8 +12,8 @@ services:
   Parameter Setter:
     component: parameter_setter_window_tk
 
-  tm_window:
-    component: tm_window_tk
+  Parameter Getter:
+    component: parameter_getter_window_tk
 
   Mamba Log:
     component: log_window_tk
