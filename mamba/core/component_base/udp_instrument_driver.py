@@ -1,5 +1,5 @@
 """ UDP Instrument driver controller base """
-from typing import Optional
+from typing import Optional, Any
 import socket
 
 from mamba.core.context import Context
@@ -9,19 +9,24 @@ from mamba.core.msg import ServiceRequest, \
     ServiceResponse, ParameterType
 
 
-def udp_raw_write(sock: socket.socket, message: str, eom_w: str,
-                  encoding: str) -> None:
-    sock.sendall(bytes(f'{message}{eom_w}', encoding))
+def udp_raw_write(message: str, eom_w: str, encoding: str, ip: str,
+                  port: int) -> None:
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+        sock.sendto(bytes(f'{message}{eom_w}', encoding), (ip, port))
 
 
-def udp_raw_query(sock: socket.socket, message: str, eom_w: str, eom_r: str,
-                  encoding: str) -> str:
-    sock.sendall(bytes(f'{message}{eom_w}', encoding))
-    return str(sock.recv(1024), encoding)[:-len(eom_r)]
-
-
-def udp_raw_read(sock: socket.socket, eom_r: str, encoding: str) -> str:
-    return str(sock.recv(1024), encoding)[:-len(eom_r)]
+def udp_raw_query(message: str,
+                  eom_w: str,
+                  eom_r: str,
+                  encoding: str,
+                  ip: str,
+                  port: int,
+                  timeout: Optional[int] = None) -> str:
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+        sock.sendto(bytes(f'{message}{eom_w}', encoding), (ip, port))
+        timeout = 5 if timeout is None else timeout
+        sock.settimeout(float(timeout))
+        return str(sock.recv(1024), encoding)[:-len(eom_r)]
 
 
 class UdpInstrumentDriver(InstrumentDriver):
@@ -37,42 +42,9 @@ class UdpInstrumentDriver(InstrumentDriver):
             raise ComponentConfigException(
                 'Missing port in Instrument Configuration')
 
-        self._inst: Optional[socket.socket] = None
+        self._inst = 1
 
-    def _instrument_connect(self,
-                            result: Optional[ServiceResponse] = None) -> None:
-        try:
-            self._inst = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self._inst.connect(
-                (self._instrument.address, self._instrument.port))
-
-            if result is not None and result.id in self._shared_memory_setter:
-                self._shared_memory[self._shared_memory_setter[result.id]] = 1
-
-            if self._instrument.reply_timeout is not None:
-                self._inst.settimeout(float(self._instrument.reply_timeout))
-
-            self._log_dev("Established connection to Instrument")
-
-        except (ConnectionRefusedError, OSError):
-            error = 'Instrument is unreachable'
-            if result is not None:
-                result.type = ParameterType.error
-                result.value = error
-            self._log_error(error)
-
-    def _instrument_disconnect(self,
-                               result: Optional[ServiceResponse] = None
-                               ) -> None:
-        if self._inst is not None:
-            self._inst.close()
-            self._inst = None
-
-            if result is not None and result.id in self._shared_memory_setter:
-                self._shared_memory[self._shared_memory_setter[result.id]] = 0
-            self._log_dev("Closed connection to Instrument")
-
-    def _process_inst_command(self, cmd_type: str, cmd: str,
+    def _process_inst_command(self, cmd_type: str, cmd: Any,
                               service_request: ServiceRequest,
                               result: ServiceResponse) -> None:
         connection_attempts = 0
@@ -85,10 +57,12 @@ class UdpInstrumentDriver(InstrumentDriver):
                 try:
                     if cmd_type == 'query':
                         value = udp_raw_query(
-                            self._inst, cmd.format(*service_request.args),
+                            cmd.format(*service_request.args),
                             self._instrument.terminator_write,
                             self._instrument.terminator_read,
-                            self._instrument.encoding)
+                            self._instrument.encoding,
+                            self._instrument.address, self._instrument.port,
+                            self._instrument.reply_timeout)
 
                         if service_request.type == ParameterType.set:
                             self._shared_memory[self._shared_memory_setter[
@@ -97,10 +71,11 @@ class UdpInstrumentDriver(InstrumentDriver):
                             result.value = value
 
                     elif cmd_type == 'write':
-                        udp_raw_write(self._inst,
-                                      cmd.format(*service_request.args),
+                        udp_raw_write(cmd.format(*service_request.args),
                                       self._instrument.terminator_write,
-                                      self._instrument.encoding)
+                                      self._instrument.encoding,
+                                      self._instrument.address,
+                                      self._instrument.port)
 
                 except (ConnectionRefusedError, OSError):
                     self._instrument_disconnect()

@@ -2,11 +2,11 @@
 from typing import Optional
 import os
 
-from mamba.core.component_base import TcpInstrumentDriver
+from mamba.core.component_base import UdpInstrumentDriver
 from mamba.core.context import Context
 
 
-class SinglePortTcpController(TcpInstrumentDriver):
+class SinglePortUdpController(UdpInstrumentDriver):
     """ Simple UDP controller base class """
     def __init__(self,
                  context: Context,

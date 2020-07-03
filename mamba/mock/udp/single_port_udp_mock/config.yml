@@ -4,15 +4,103 @@ name: Single Port UDP Server Mock
 
 instrument:
   address: 0.0.0.0
-  port: 8087
+  port: 8095
+  encoding: utf-8
   terminator:
-    write: ''
-    read: ''
+    write: "\n"
+    read: "\r\n"
 
 # Component TMTC
 
 parameters:
-  raw_msg:
+  idn:
+    # Set parameter type.
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: 'Mamba Framework,Single Port UDP Mock,1.0'
+
+    # Set parameter description.
+    description: Instrument identification
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: '*IDN?'
+
+  syst_err:
+    # Set parameter type.
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: '0,_No_Error'
+
+    # Set parameter description.
+    description: Oldest error in queue
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: 'SYST:ERR?'
+
+  cls:
+    # Set parameter description.
+    description: Clear status
+
     # Parameter setter configuration.
     set:
-      signature: [bytes_msg: {type: bytes}]
+      instrument_command: [write: '*CLS']
+
+  parameter_1:
+    # Set parameter type.
+    type: int
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: 1
+
+    # Parameter setter configuration.
+    set:
+      signature: [value: {type: int}]
+      instrument_command:
+        - query: 'PARAMETER_1 {:}'
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: 'PARAMETER_1?'
+
+  parameter_2:
+    # Set parameter type.
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: '2'
+
+    # Parameter setter configuration.
+    set:
+      signature: [value: {type: str}]
+      instrument_command:
+        - query: 'PARAMETER_2 {:}'
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: 'PARAMETER_2?'
+
+  parameter_3:
+    # Set parameter type.
+    type: int
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: 3
+
+    # Parameter setter configuration.
+    set:
+      signature: [value: {type: int}]
+      instrument_command:
+        - query: 'PARAMETER_3 {:}'
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: 'PARAMETER_3?'

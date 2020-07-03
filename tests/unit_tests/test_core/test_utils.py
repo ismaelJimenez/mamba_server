@@ -13,10 +13,11 @@ class TestClass:
 
     def test_get_classes_from_module_commands(self):
         cmds = utils.get_classes_from_module('mamba.commands', MambaCommand)
-        assert len(cmds) == 3
+        assert len(cmds) == 4
         assert 'serve' in cmds
         assert 'start' in cmds
         assert 'generate' in cmds
+        assert 'dump_if' in cmds
 
     def test_get_classes_from_module_commands_class_gui_plugin(self):
         components = utils.get_classes_from_module('mamba.commands', Component)
