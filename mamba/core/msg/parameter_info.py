@@ -2,7 +2,7 @@ from typing import Any
 import enum
 
 
-class ParameterType(enum.Enum):
+class ParameterType(enum.IntEnum):
     get = 0
     set = 1
     get_meta = 2
