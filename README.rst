@@ -20,10 +20,10 @@ Mamba Framework Overview
 ========================
 
 Mamba is a framework for data acquisition in distributed test environments. The Mamba Framework is composed of:
-
-  - **Mamba Server**: The tool to develop the controllers for the different Ground Control Equipments.
-  - **Mamba Client**: A set of libraries for composing a central controller that can use the services provided from one or more Mamba Servers.
-  - **Mamba Utils**: A set of utilities that are useful in the development of Ground Testbeds, like UDP and TCP sniffers.
+  
+- **Mamba Server**: A tool to develop the controllers for the different Ground Control Equipments.
+- **Mamba Client**: A set of libraries for composing a central controller that can use the services provided from one or more Mamba Servers (https://github.com/mamba-framework/mamba-client).
+- **Mamba Utils**: A set of utilities that are useful in the development of Ground Testbeds, like UDP and TCP sniffers (https://github.com/mamba-framework/mamba-utils).
 
 Mamba Server Overview
 =====================
