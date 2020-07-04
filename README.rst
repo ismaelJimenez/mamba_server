@@ -16,12 +16,23 @@ Mamba-Server
    :target: ../master/LICENSE
 
 
-Overview
-============
-Framework for controlling ground equipment
+Mamba Framework Overview
+========================
+
+Mamba is a framework for data acquisition in distributed test environments. The Mamba Framework is composed of:
+
+  - **Mamba Server**: The tool to develop the controllers for the different Ground Control Equipments.
+  - **Mamba Client**: A set of libraries for composing a central controller that can use the services provided from one or more Mamba Servers.
+  - **Mamba Utils**: A set of utilities that are useful in the development of Ground Testbeds, like UDP and TCP sniffers.
+
+Mamba Server Overview
+=====================
+Mamba Server is a tool for the development of Ground Test Equipment Controllers. The Mamba Server is implemented in Python and has a component base architecture. 
+
+While it has been developed to serve the needs of spacecraft equipment test applications, it can also be used in any other kind of project that require the control of different test equipments. Although the projects where Mamba is deployed usually are composed of dozens of different distributed ground equipments, it is also a perfect fit a an small project composed only af a handful of instruments controlled by one single computer.
 
 Requirements
-============
+------------
 
 * Python 3.6+
 * Works on Linux, Windows and macOS
@@ -32,6 +43,9 @@ Install
 The quick way::
 
     pip install mamba-server
+    
+See the install section in the documentation at
+https://mamba-server.readthedocs.io/en/latest/installation.html for more details.
     
 Documentation
 =============
