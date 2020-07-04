@@ -59,3 +59,8 @@ Documentation
 
 Documentation is available online at https://mamba-server.readthedocs.io and in the ``docs``
 directory.
+
+License
+=======
+
+See `License <https://github.com/mamba-framework/mamba-server/blob/master/LICENSE>`__.
