@@ -30,7 +30,7 @@ The next image shows an architectural example of a testbed implemented with the 
 .. image:: docs/utils/mamba_framework_architecture.jpg
    :height: 18px
 
-Where each Mamba Server can run in the same or different computers, located in the same building or in different countries. Also there can be one or more Mamba Client Applications.
+Where each Mamba Server can run in the same or different computers and be located in the same building or in different countries.
 
 Mamba Server Overview
 =====================
