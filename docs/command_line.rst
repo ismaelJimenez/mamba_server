@@ -1,10 +1,21 @@
 .. command_line
 
-Mamba Command Line
-==================
+Mamba Command Line Interface
+============================
+
+The Mamba command-line interface (CLI) is the go-to tool for developing Mamba server applications.
+
+Help
+----
+
+The Mamba CLI ships with command documentation that is accessible with the --help flag.
+
+.. code:: console
+
+    mamba --help
+    mamba <command> --help
 
 First, we should create a new Mamba Server project:
-
 .. code:: console
 
     mamba start new_mamba_project
