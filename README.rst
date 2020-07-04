@@ -24,7 +24,7 @@ Requirements
 ============
 
 * Python 3.6+
-* Works on Linux, Windows, macOS, BSD
+* Works on Linux, Windows and macOS
 
 Install
 =======
@@ -32,3 +32,9 @@ Install
 The quick way::
 
     pip install mamba-server
+    
+Documentation
+=============
+
+Documentation is available online at https://mamba-server.readthedocs.io and in the ``docs``
+directory.
