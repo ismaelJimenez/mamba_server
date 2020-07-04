@@ -36,7 +36,9 @@ Mamba Server Overview
 =====================
 Mamba Server is a tool for the development of Ground Test Equipment Controllers. The Mamba Server is implemented in Python and has a component based architecture. 
 
-While it has been developed to serve the needs of spacecraft equipment test applications, it can also be used in any other kind of project that require the control of different test equipments. Although the projects where Mamba is deployed usually are composed of dozens of different distributed ground equipments, it is also a perfect fit a an small project composed only af a handful of instruments controlled by one single computer.
+While it has been developed to serve the needs of spacecraft equipment test applications, it can also be used in any other kind of project that require the control of different test equipments, like a physics experiment laboratory or in the Automotion industry.
+
+Although the projects where Mamba is deployed usually are composed of dozens of different distributed ground equipments, it is also a perfect fit a an small project composed only by a handful of instruments controlled by one single computer.
 
 Requirements
 ------------
