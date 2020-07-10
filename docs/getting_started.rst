@@ -61,12 +61,6 @@ You can build a Mamba Server application using any text editor combined with the
 
 Follow the steps below to get the set by step procedure to set-up the most common code editors: PyCharm or VS Code. If you want to use a different editor, that’s OK, skip ahead to the Test Drive Chapter.
 
-.. toctree::
-    :maxdepth: 1
-
-    set_up_pycharm
-    set_up_vscode
-
 - `Set Up PyCharm for Mamba Server App Development <https://github.com/mamba-framework/mamba-server/blob/master/docs/set_up_pycharm.rst>`__
 - Set Up Visual Code for Mamba Server App Development
 
