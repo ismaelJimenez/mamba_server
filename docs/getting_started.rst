@@ -22,7 +22,7 @@ Test mamba has been properly installed by running:
 Make sure the latest version of the Mamba Server is installed.
 
 Create a new Mamba Server Project
----------------------------------
+=================================
 
 Next start a new Mamba Server Project
 
@@ -56,16 +56,22 @@ Then, install the project requirements:
     pip install -r requirements.txt
 
 Set Up an Editor
-----------------
+================
 You can build a Mamba Server application using any text editor combined with the Mamba command-line tools.
 
 Follow the steps below to get the set by step procedure to set-up the most common code editors: PyCharm or VS Code. If you want to use a different editor, that’s OK, skip ahead to the Test Drive Chapter.
 
-- Set Up PyCharm for Mamba Server App Development
+.. toctree::
+    :maxdepth: 1
+
+    set_up_pycharm
+    set_up_vscode
+
+- `Set Up PyCharm for Mamba Server App Development <https://github.com/mamba-framework/mamba-server/blob/master/docs/set_up_pycharm.rst>`__
 - Set Up Visual Code for Mamba Server App Development
 
 Create your first component
----------------------------
+===========================
 In the command line, go to the project root and type
 
 .. code:: console
