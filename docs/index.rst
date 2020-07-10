@@ -8,6 +8,8 @@ Mamba Server is a framework for controlling ground equipment.
 
     getting_started
     command_line
+    set_up_pycharm
+    set_up_vscode
     contributing
 
 
