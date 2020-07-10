@@ -59,12 +59,10 @@ Set Up an Editor
 ================
 You can build a Mamba Server application using any text editor combined with the Mamba command-line tools.
 
-Follow the steps below to get the set by step procedure to set-up the most common code editors: PyCharm or VS Code. If you want to use a different editor, that’s OK, skip ahead to the Test Drive Chapter.
+Follow the steps below to get the set by step procedure to set-up the most common code editors: PyCharm or VS Code. If you want to use a different editor, that’s OK, skip ahead to the next chapter.
 
-This is a link to the RST Overview: :ref:`RST Set Up PyCharm`
-
-- `Set Up PyCharm for Mamba Server App Development <https://github.com/mamba-framework/mamba-server/blob/master/docs/set_up_pycharm.rst>`__
-- Set Up Visual Code for Mamba Server App Development
+- `Set Up PyCharm for Mamba Server App Development <https://mamba-server.readthedocs.io/en/latest/set_up_pycharm.html>`__
+- `Set Up Visual Code for Mamba Server App Development <https://mamba-server.readthedocs.io/en/latest/set_up_vscode.html>`__
 
 Create your first component
 ===========================
