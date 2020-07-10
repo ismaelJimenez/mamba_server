@@ -58,10 +58,14 @@ Mamba start generates a default composer file (project-compose.yml), that can be
 
     mamba serve -r project
 
-After execution of the previous command the Mamba Server Graphical interface shall be shown:
+After execution of the previous command the Mamba Server Graphical interface loading window shall be shown:
+
+.. image:: images/main_gui.png
+
+And afterward the Mamba GUI:
 
 .. image:: images/loading_window.png
-.. image:: images/main_gui.png
+
 
 Mamba Generate
 --------------
