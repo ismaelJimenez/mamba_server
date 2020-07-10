@@ -1,14 +1,18 @@
 .. _RST Set Up PyCharm
 
+==============================
+Set Up Mamba Server in PyCharm
+==============================
+
 Install PyCharm
----------------
+===============
 
 PyCharm is a well known editor with Python execution and debug support.
 
 - `Pycharm <https://www.jetbrains.com/pycharm/download/>`__, latest stable version
 
 Configure Mamba Server Project
-------------------------------
+==============================
 Inside PyCharm:
 
 1. Open the project you have created during the "Getting Started" tutorial.
@@ -19,6 +23,6 @@ Inside PyCharm:
     - Working directory: <path to example project root>
 
 Validate your setup
--------------------
+===================
 1. Invoke Run > Run, and check Mamba Server GUI starts.
 
