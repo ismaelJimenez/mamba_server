@@ -52,9 +52,7 @@ Install
 The quick way::
 
     pip install mamba-server
-    
-See the install section in the documentation at
-https://mamba-server.readthedocs.io/en/latest/installation.html for more details.
+
     
 Documentation
 =============
