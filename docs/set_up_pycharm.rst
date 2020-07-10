@@ -1,4 +1,4 @@
-.. Set Up PyCharm
+.. _RST Set Up PyCharm
 
 Install PyCharm
 ---------------
