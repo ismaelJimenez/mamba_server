@@ -1,4 +1,4 @@
-.. _RST Set Up PyCharm
+.. Set Up PyCharm
 
 ==============================
 Set Up Mamba Server in PyCharm
