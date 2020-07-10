@@ -15,47 +15,71 @@ The Mamba CLI ships with command documentation that is accessible with the --hel
     mamba --help
     mamba <command> --help
 
-First, we should create a new Mamba Server project:
+Mamba Start
+-----------
+The Mamba Start command creates a new Mamba Server project that can run in any OS.
+
 .. code:: console
 
-    mamba start new_mamba_project
-   
-That will create a new Mamba workspace, with the following structure: 
-  
+    mamba start <project_name>
+
+Mamba Start will create a new mamba server workspace with the following structure:
+
 ::
 
-    new_mamba_project
+    <project_name>
     ├── __init__.py
     ├── mamba.cfg
-    ├── component/          
+    ├── component/
     │   ├── gui/
     │   │   └── __init__.py
     │   └── instrument_driver/
     │       └── __init__.py
-    ├── composer/ 
+    ├── composer/
     │   └── project-compose.yml
-    ├── log/ 
+    ├── log/
     │   └── __init__.py
-    └── mock/ 
+    └── mock/
         └── __init__.py
 
-Now you can run the default project composer file:
+All project specific components will be contained in the "component" folder. In the "composer" folder we will have all our project composition files. A new log will be created in the "logs" folder in every mamba server run. And the "mocks" folder will contain all equipment simulators, if any.
+
+Mamba Serve
+-----------
+Mamba Server has to be run inside the mamba server project directory, and it will start a mamba server from a given composer file.
 
 .. code:: console
 
-    cd new_mamba_project
+    mamba serve -r <composer_file>
+
+Mamba start generates a default composer file (project-compose.yml), that can be used as a template to generate the project specific composer file.
+
+.. code:: console
+
     mamba serve -r project
-    
-This should start the Mamba Server Graphical interface. It is important to notice that Mamba "serve" shall always be executed in the root workspace of the mamba project, in the example in the new_mamba_project folder.
 
-You can also generate a new VISA controller via the command line tool with:
+After execution of the previous command the Mamba Server Graphical interface shall be shown:
 
+.. image:: images/loading_window.png
+.. image:: images/main_gui.png
+
+Mamba Generate
+--------------
+Mamba generate makes very easy the creation of standard new components.
+
+.. code:: console
+
+    mamba generate <component_template> <component_name>
+
+For example, a new VISA component can be created as:
 
 .. code:: console
 
     mamba generate visa_instrument_driver new_custom_visa_driver
-    
-To use the newly create controller, you will hace to add it to the project-compose.yml, with:
+
+Now, in the "component" folder a new component "new_custom_visa_driver" has been created.
+
+To use the newly create controller, you will have to add it to the project-compose.yml, with:
 
 .. code:: yaml
 
@@ -64,3 +88,22 @@ To use the newly create controller, you will hace to add it to the project-compo
             component: new_custom_visa_driver
 
 Now you are ready to create you own Mamba Server Application. You can use the standard components from mamba-server or create your own ones and add them to the project-compose.yml.
+
+Mamba Dump IF
+-------------
+The Mamba CLI dump_if command is very useful to export the mamba interface to a Mamba Client project.
+
+.. code:: console
+
+    mamba dump_if -r <composer_file>
+
+This will generate an mamba_if.yml file that can be imported directly into a mamba client application.
+
+Troubleshooting
+---------------
+
+To troubleshoot issues with the Mamba CLI, the following may be useful:
+
+- Make sure the latest version of the Mamba CLI is installed. Get the installed version by running mamba --version
+- Be sure to run "mamba <command>" in your project directory.
+

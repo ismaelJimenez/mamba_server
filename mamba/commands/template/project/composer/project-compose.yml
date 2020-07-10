@@ -4,25 +4,25 @@ services:
   # GUI
   main_window:
     component: main_window_qt
-    title: Custom App
+    title: Mamba Server App
 
   Quit:
     component: quit
 
-  tc_window:
-    component: tc_window_qt
+  Parameter Setter:
+    component: parameter_setter_window_qt
 
-  tm_window:
-    component: tm_window_qt
+  Parameter Getter:
+    component: parameter_getter_window_qt
 
-  log_window:
+  Mamba Log:
     component: log_window_qt
 
-  load_perspective:
-    component: load_perspective_qt
+  Load View:
+    component: load_view_qt
 
-  save_perspective:
-    component: save_perspective_qt
+  Save View:
+    component: save_view_qt
 
   About:
     component: about_qt

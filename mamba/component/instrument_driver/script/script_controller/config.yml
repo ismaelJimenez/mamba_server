@@ -1,0 +1,63 @@
+name: Script Controller
+
+instrument:
+  address: None
+  port: 0
+
+source_folder:
+  local: scripts
+
+parameters:
+  python_cmd_exec:
+    # Set parameter description.
+    description: Execute local python script
+
+    # Parameter setter configuration.
+    set:
+      signature:
+        - args:
+            type: str
+      instrument_command:
+        - script:
+            type: python
+
+  bash_cmd_exec:
+    # Set parameter description.
+    description: Execute local bash script
+
+    # Parameter setter configuration.
+    set:
+      signature:
+        - args:
+            type: str
+      instrument_command:
+        - script:
+            type: bash
+
+  dump_to_file:
+    # Set parameter description.
+    description: Execute dump_to_file python script
+
+    # Parameter setter configuration.
+    set:
+      signature:
+        - args:
+            type: str
+      instrument_command:
+        - script:
+            type: python
+            command: dump_to_file.py
+
+  clean_dump:
+    # Set parameter description.
+    description: Execute clean_dump bash script
+
+    # Parameter setter configuration.
+    set:
+      signature:
+        - args:
+            type: str
+      instrument_command:
+        - script:
+            type: bash
+            command: clean_dump.sh

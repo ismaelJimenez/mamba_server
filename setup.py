@@ -70,7 +70,8 @@ setup(
         'Rx>=3.1.0',
         'PyVISA>=1.10.1',
         'PyVISA-sim>=0.3',
-        'PyVISA-py>=0.4.0'
+        'PyVISA-py>=0.4.0',
+        'Flask>=1.1.2'
     ],
     extras_require=extras_require,
 )

@@ -83,6 +83,12 @@ services:
   hvs_h8823_spacewire_gateway_spw_rmap:
     component: hvs_h8823_spacewire_gateway_rmap
 
+  script_controller:
+    component: script_controller
+
+  power_supply:
+    component: ks_n5700
+
   # Mocks
 
   single_port_tcp_server_mock:

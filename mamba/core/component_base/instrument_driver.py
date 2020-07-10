@@ -12,6 +12,8 @@ from mamba.core.msg import ServiceRequest, Empty, \
 
 class Instrument:
     def __init__(self, inst_config: dict) -> None:
+        if inst_config is None:
+            inst_config = {}
         instrument_address = inst_config.get('address')
         if instrument_address is not None and isinstance(
                 instrument_address, str):
