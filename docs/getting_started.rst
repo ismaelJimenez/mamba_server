@@ -1,7 +1,11 @@
 .. Getting Started
 
+=================================
+Getting Started with Mamba Server
+=================================
+
 Install
--------
+=======
 
 Mamba-Server runs on `Python <http://www.python.org/>`__ 3. To install Mamba-Server:
 
