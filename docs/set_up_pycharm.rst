@@ -26,3 +26,8 @@ Validate your setup
 ===================
 1. Invoke Run > Run, and check Mamba Server GUI starts.
 
+.. image:: images/main_gui.png
+
+And afterward the Mamba GUI:
+
+.. image:: images/loading_window.png

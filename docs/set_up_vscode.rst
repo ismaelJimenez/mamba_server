@@ -45,3 +45,11 @@ Validate your setup
 ===================
 1. Invoke Run > Start Debugging, and check Mamba Server GUI starts.
 
+After execution of the previous command the Mamba Server Graphical interface loading window shall be shown:
+
+.. image:: images/main_gui.png
+
+And afterward the Mamba GUI:
+
+.. image:: images/loading_window.png
+
