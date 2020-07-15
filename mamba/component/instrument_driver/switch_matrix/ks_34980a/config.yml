@@ -101,6 +101,7 @@ parameters:
         - query: 'SYST:ERR?'
 
   channel_close:
+  channel_close_set:
     # Set parameter type.
     type: int
 
@@ -113,12 +114,26 @@ parameters:
       instrument_command:
         - write: 'ROUT:CLOS {:}'
 
+  channel_close_get:
+    # Set parameter type.
+    type: int
+
+    # Set parameter description.
+    description: Channel close state
+
+    # Parameter setter configuration.
+    set:
+      signature: [channel_id: {type: str}]
+      instrument_command:
+        - query: 'ROUT:CLOS? {:}'
+
     # Parameter getter configuration.
     get:
       instrument_command:
         - query: 'ROUT:CLOS? {:}'
 
   channel_open:
+  channel_open_set:
     # Set parameter type.
     type: int
 
@@ -133,8 +148,20 @@ parameters:
 
     # Parameter getter configuration.
     get:
+  channel_open_get:
+    # Set parameter type.
+    type: int
+
+    # Set parameter description.
+    description: Channel open state
+
+    # Parameter setter configuration.
+    set:
+      signature: [channel_id: {type: str}]
       instrument_command:
         - query: 'ROUT:OPEN? {:}'
+
+    get:
 
   channel_open_all:
     # Set parameter description.
@@ -365,4 +392,3 @@ parameters:
     get:
       instrument_command:
         - query: 'FETCh?'
-

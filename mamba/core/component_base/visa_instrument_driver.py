@@ -88,7 +88,8 @@ class VisaInstrumentDriver(InstrumentDriver):
                               result: ServiceResponse) -> None:
         if self._inst is not None:
             try:
-                a = cmd.format(*service_request.args)
+                self._log_dev(cmd.format(*service_request.args))
+
                 if cmd_type == 'query':
                     value = self._inst.query(
                         cmd.format(*service_request.args)).replace(' ', '_')

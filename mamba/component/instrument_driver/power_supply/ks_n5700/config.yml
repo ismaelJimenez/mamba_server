@@ -3,6 +3,8 @@ name: Keysight Series N5700 DC Power Supply
 instrument:
   visa_sim: mock/visa/power_supply/ks_n5700.yml
   address: TCPIP0::1.2.3.4::INSTR
+  terminator:
+    write: "\n"
 
 parameters:
   connected:
