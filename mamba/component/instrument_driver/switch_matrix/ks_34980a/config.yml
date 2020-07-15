@@ -100,7 +100,6 @@ parameters:
       instrument_command:
         - query: 'SYST:ERR?'
 
-  channel_close:
   channel_close_set:
     # Set parameter type.
     type: int
@@ -132,7 +131,6 @@ parameters:
       instrument_command:
         - query: 'ROUT:CLOS? {:}'
 
-  channel_open:
   channel_open_set:
     # Set parameter type.
     type: int
