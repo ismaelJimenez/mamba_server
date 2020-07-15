@@ -128,8 +128,6 @@ parameters:
 
     # Parameter getter configuration.
     get:
-      instrument_command:
-        - query: 'ROUT:CLOS? {:}'
 
   channel_open_set:
     # Set parameter type.
@@ -146,6 +144,7 @@ parameters:
 
     # Parameter getter configuration.
     get:
+
   channel_open_get:
     # Set parameter type.
     type: int
