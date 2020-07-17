@@ -82,21 +82,30 @@ class TestClass:
 
         # Test custom variables default values
         assert component._shared_memory == {
+            'channel_close_get': None,
             'channel_frequency_config_get': '',
-            'connected': False,
+            'channel_open_get': None,
+            'channel_open_set': None,
+            'connected': 0,
             'measure_dc_voltage': 0.0,
             'raw_query': '',
             'resistance_measure': 0.0
         }
         assert component._shared_memory_getter == {
+            'channel_close_get': 'channel_close_get',
             'channel_frequency_config_get': 'channel_frequency_config_get',
+            'channel_open_get': 'channel_open_get',
+            'channel_open_set': 'channel_open_set',
             'connected': 'connected',
             'measure_dc_voltage': 'measure_dc_voltage',
             'raw_query': 'raw_query',
             'resistance_measure': 'resistance_measure'
         }
         assert component._shared_memory_setter == {
+            'channel_close_get': 'channel_close_get',
             'channel_frequency_config_get': 'channel_frequency_config_get',
+            'channel_open_get': 'channel_open_get',
+            'channel_open_set': 'channel_open_set',
             'connect': 'connected',
             'measure_dc_voltage': 'measure_dc_voltage',
             'raw_query': 'raw_query',
@@ -190,21 +199,30 @@ class TestClass:
 
         # Test custom variables default values
         assert component._shared_memory == {
+            'channel_close_get': None,
             'channel_frequency_config_get': '',
-            'connected': False,
+            'channel_open_get': None,
+            'channel_open_set': None,
+            'connected': 0,
             'measure_dc_voltage': 0.0,
             'raw_query': '',
             'resistance_measure': 0.0
         }
         assert component._shared_memory_getter == {
+            'channel_close_get': 'channel_close_get',
             'channel_frequency_config_get': 'channel_frequency_config_get',
+            'channel_open_get': 'channel_open_get',
+            'channel_open_set': 'channel_open_set',
             'connected': 'connected',
             'measure_dc_voltage': 'measure_dc_voltage',
             'raw_query': 'raw_query',
             'resistance_measure': 'resistance_measure'
         }
         assert component._shared_memory_setter == {
+            'channel_close_get': 'channel_close_get',
             'channel_frequency_config_get': 'channel_frequency_config_get',
+            'channel_open_get': 'channel_open_get',
+            'channel_open_set': 'channel_open_set',
             'connect': 'connected',
             'measure_dc_voltage': 'measure_dc_voltage',
             'raw_query': 'raw_query',
@@ -252,8 +270,11 @@ class TestClass:
         component.initialize()
 
         assert component._shared_memory == {
+            'channel_close_get': None,
             'channel_frequency_config_get': '',
-            'connected': False,
+            'channel_open_get': None,
+            'channel_open_set': None,
+            'connected': 0,
             'measure_dc_voltage': 0.0,
             'raw_query': '',
             'resistance_measure': 0.0
@@ -452,7 +473,10 @@ class TestClass:
 
         # 7 - Test shared memory set
         assert component._shared_memory == {
+            'channel_close_get': None,
             'channel_frequency_config_get': '',
+            'channel_open_get': None,
+            'channel_open_set': None,
             'connected': 1,
             'measure_dc_voltage': 0.0,
             'raw_query': '',
@@ -468,7 +492,10 @@ class TestClass:
         time.sleep(.1)
 
         assert component._shared_memory == {
+            'channel_close_get': None,
             'channel_frequency_config_get': '',
+            'channel_open_get': None,
+            'channel_open_set': None,
             'connected': 1,
             'measure_dc_voltage': 0.0,
             'raw_query':
@@ -518,7 +545,10 @@ class TestClass:
         time.sleep(.1)
 
         assert component._shared_memory == {
+            'channel_close_get': None,
             'channel_frequency_config_get': '',
+            'channel_open_get': None,
+            'channel_open_set': None,
             'connected': 1,
             'measure_dc_voltage': 0.0,
             'raw_query': '10',

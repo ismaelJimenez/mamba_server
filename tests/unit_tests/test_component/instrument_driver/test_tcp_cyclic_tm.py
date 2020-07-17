@@ -70,8 +70,8 @@ class TestClass:
 
         assert component._instrument.address == '0.0.0.0'
         assert component._instrument.port is None
-        assert component._instrument.tc_port == 8091
-        assert component._instrument.tm_port == 8092
+        assert component._instrument.tc_port == 9091
+        assert component._instrument.tm_port == 9092
         assert component._instrument.encoding == 'utf-8'
         assert component._instrument.terminator_write == '\r\n'
         assert component._instrument.terminator_read == '\n'
@@ -118,8 +118,8 @@ class TestClass:
 
         assert component._instrument.address == '0.0.0.0'
         assert component._instrument.port is None
-        assert component._instrument.tc_port == 8091
-        assert component._instrument.tm_port == 8092
+        assert component._instrument.tc_port == 9091
+        assert component._instrument.tm_port == 9092
         assert component._instrument.encoding == 'utf-8'
         assert component._instrument.terminator_write == '\r\n'
         assert component._instrument.terminator_read == '\n'

@@ -69,7 +69,7 @@ class TestClass:
         assert component._instrument.address == 'TCPIP0::1.2.3.4::INSTR'
         assert component._instrument.visa_sim == 'mock/visa/power_supply/ks_n5700.yml'
         assert component._instrument.encoding == 'ascii'
-        assert component._instrument.terminator_write == '\r\n'
+        assert component._instrument.terminator_write == '\n'
         assert component._instrument.terminator_read == '\n'
 
     def test_w_default_context_component_initialization(self):
@@ -100,7 +100,7 @@ class TestClass:
         assert component._instrument.address == 'TCPIP0::1.2.3.4::INSTR'
         assert component._instrument.visa_sim == 'mock/visa/power_supply/ks_n5700.yml'
         assert component._instrument.encoding == 'ascii'
-        assert component._instrument.terminator_write == '\r\n'
+        assert component._instrument.terminator_write == '\n'
         assert component._instrument.terminator_read == '\n'
 
     def test_visa_sim_local_from_project_folder(self):

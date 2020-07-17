@@ -5,7 +5,7 @@ devices:
 
     eom:
       TCPIP INSTR:
-        q: "\r\n"
+        q: "\n"
         r: "\n"
 
     dialogues:

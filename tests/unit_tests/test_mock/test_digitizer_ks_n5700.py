@@ -21,7 +21,7 @@ class TestClass:
         asd = os.path.join(mamba_dir, MOCK_FILE)
         self.visa_inst = pyvisa.ResourceManager(
             f"{os.path.join(mamba_dir, MOCK_FILE)}@sim").open_resource(
-                INST_ADDRESS, read_termination='\n')
+                INST_ADDRESS, write_termination='\n', read_termination='\n')
 
     def teardown_method(self):
         """ teardown_method called for every method """
