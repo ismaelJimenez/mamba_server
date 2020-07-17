@@ -41,7 +41,7 @@ setup(
     maintainer='Ismael Jimenez',
     maintainer_email='mamba.framework@gmail.com',
     license='MIT',
-    packages=find_packages(exclude=('tests', 'tests.*')),
+    packages=find_packages(exclude=('extras', 'extras.*', 'tests', 'tests.*')),
     include_package_data=True,
     zip_safe=False,
     entry_points={

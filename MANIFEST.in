@@ -2,8 +2,9 @@ include README.rst
 include LICENSE
 include MANIFEST.in
 
-recursive-include mamba *
-recursive-include artwork *.png
+include mamba/VERSION
+include mamba/artwork/*.png
+include mamba/artwork/*.ico
+recursive-include mamba *.yml
 
-recursive-include extras *
-recursive-include tests *
+
