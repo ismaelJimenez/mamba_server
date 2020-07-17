@@ -5,8 +5,8 @@ name: Cyclic TCP Server Mock
 instrument:
   address: 0.0.0.0
   port:
-    tc: 8091
-    tm: 8092
+    tc: 9091
+    tm: 9092
   encoding: utf-8
   terminator:
     write: "\n"
