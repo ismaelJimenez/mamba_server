@@ -34,7 +34,8 @@ blank_mapping = [
     ': Empty',
     '-> Menu',
     ': AppStatus',
-    '-> bool'
+    '-> bool',
+    '-> Any'
 ]
 
 random_mapping = [
