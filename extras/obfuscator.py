@@ -17,7 +17,13 @@ blank_mapping = [
     ' -> None',
     ': Context',
     ': Optional[Dict[str, dict]]',
-    ': RunAction'
+    ': RunAction',
+    ': str',
+    ': type',
+    '-> Iterator[Callable]',
+    '-> List[ModuleType]',
+    ': Dict[str, dict]',
+    'List[str]'
 ]
 
 random_mapping = [
@@ -28,7 +34,12 @@ random_mapping = [
     ('context', ['core.']),
     'local_config',
     'rx_value',
-    'CustomGuiComponent'
+    'CustomGuiComponent',
+    'get_classes_from_module',
+    'get_components',
+    'merge_dicts',
+    '_walk_modules',
+    'component_type'
 ]
 
 instance_random_mapping = []
