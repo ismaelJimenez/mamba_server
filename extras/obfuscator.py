@@ -38,7 +38,10 @@ random_mapping = [
     'get_components',
     'merge_dicts',
     '_walk_modules',
-    'component_type'
+    'component_type',
+    'mamba_dir',
+    'project_dir',
+    ('compose_parser', ['core.']),
 ]
 
 instance_random_mapping = []
