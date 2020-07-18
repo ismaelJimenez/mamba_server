@@ -28,7 +28,7 @@ blank_mapping = [
     '-> int',
     ': Any',
     ': List[ParameterInfo]',
-    ': ParameterType',
+    #': ParameterType',
     ': Menu',
     ': RegisterAction',
     ': Empty',
