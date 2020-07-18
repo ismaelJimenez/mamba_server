@@ -25,7 +25,8 @@ blank_mapping = [
     ': Dict[str, dict]',
     ': List[str]',
     ': Optional[str]',
-    '-> int'
+    '-> int',
+    ': Any'
 ]
 
 random_mapping = [
@@ -36,7 +37,7 @@ random_mapping = [
     # 'merge_dicts',
     '_walk_modules',
     # 'component_type',
-    # 'mamba_dir',
+    #('mamba_dir', ['context.set']),
     # 'project_dir',
     # 'compose_parser',
     # 'compose_file'
