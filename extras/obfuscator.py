@@ -23,7 +23,9 @@ blank_mapping = [
     '-> Iterator[Callable]',
     '-> List[ModuleType]',
     ': Dict[str, dict]',
-    ': List[str]'
+    ': List[str]',
+    ': Optional[str]',
+    '-> int'
 ]
 
 random_mapping = [
@@ -42,6 +44,8 @@ random_mapping = [
     'mamba_dir',
     'project_dir',
     'compose_parser',
+    'GuiPlugin',
+    'compose_file'
 ]
 
 instance_random_mapping = []
