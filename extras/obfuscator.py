@@ -32,7 +32,6 @@ random_mapping = [
     '_register_observers',
     '_context',
     'initialize',
-    ('run', ['app.run', 'spw_link_running', '.run_action']),
     ('context', ['core.']),
     'local_config',
     'rx_value',
