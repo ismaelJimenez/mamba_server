@@ -26,7 +26,8 @@ blank_mapping = [
     ': List[str]',
     ': Optional[str]',
     '-> int',
-    ': Any'
+    ': Any',
+    ': List[ParameterInfo]'
 ]
 
 random_mapping = [
