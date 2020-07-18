@@ -40,7 +40,7 @@ setup(
     author='Mamba-Server developers',
     maintainer='Ismael Jimenez',
     maintainer_email='mamba.framework@gmail.com',
-    license='MIT',
+    license='Other/Proprietary License',
     packages=find_packages(exclude=('extras', 'extras.*', 'tests', 'tests.*')),
     include_package_data=True,
     zip_safe=False,
