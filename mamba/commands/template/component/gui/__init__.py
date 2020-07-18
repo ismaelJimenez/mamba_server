@@ -33,3 +33,4 @@ class CustomGuiComponent(GuiPlugin):
             Args:
                 rx_value (RunAction): The value published by the subject.
         """
+        pass
