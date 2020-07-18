@@ -38,6 +38,7 @@ class MambaCommand:
         """
         Populate option parse with options available for this command
         """
+        pass
 
     @staticmethod
     def run(args, mamba_dir, project_dir):
