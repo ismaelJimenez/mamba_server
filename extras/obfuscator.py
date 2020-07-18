@@ -45,7 +45,8 @@ random_mapping = [
     'project_dir',
     'compose_parser',
     'GuiPlugin',
-    'compose_file'
+    'compose_file',
+    'Context'
 ]
 
 instance_random_mapping = []
