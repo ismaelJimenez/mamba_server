@@ -36,7 +36,6 @@ random_mapping = [
     ('context', ['core.']),
     'local_config',
     'rx_value',
-    'CustomGuiComponent',
     'get_components',
     'merge_dicts',
     '_walk_modules',
@@ -44,9 +43,7 @@ random_mapping = [
     'mamba_dir',
     'project_dir',
     'compose_parser',
-    'GuiPlugin',
-    'compose_file',
-    'Context'
+    'compose_file'
 ]
 
 instance_random_mapping = []
