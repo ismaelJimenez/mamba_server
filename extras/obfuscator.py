@@ -35,7 +35,6 @@ random_mapping = [
     'local_config',
     'rx_value',
     'CustomGuiComponent',
-    'get_classes_from_module',
     'get_components',
     'merge_dicts',
     '_walk_modules',
