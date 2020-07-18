@@ -7,7 +7,7 @@ from shutil import copytree
 
 from mamba.commands import MambaCommand
 
-TEMPLATES_DIR = "template"
+TEMPLATES_DIR = "templates"
 
 COMPONENT_TYPES = {
     'gui': {
@@ -94,7 +94,7 @@ class Command(MambaCommand):
 
 
 def _templates_dir(mamba_dir, component_type):
-    return os.path.join(mamba_dir, 'commands', TEMPLATES_DIR, 'component',
+    return os.path.join(mamba_dir, TEMPLATES_DIR, 'component',
                         component_type)
 
 

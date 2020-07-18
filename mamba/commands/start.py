@@ -10,7 +10,7 @@ from shutil import ignore_patterns, copy2, copystat
 
 from mamba.commands import MambaCommand
 
-TEMPLATES_DIR = "template"
+TEMPLATES_DIR = "templates"
 IGNORE = ignore_patterns('*.pyc', '.svn')
 
 
@@ -120,4 +120,4 @@ class Command(MambaCommand):
 
 
 def _templates_dir(mamba_dir):
-    return os.path.join(mamba_dir, "commands", TEMPLATES_DIR, 'project')
+    return os.path.join(mamba_dir, TEMPLATES_DIR, 'project')
