@@ -217,6 +217,7 @@ class InstrumentDriver(Component):
             service_request: The current service request.
             result: The result to be published.
         """
+        pass
 
     def _instrument_connect(self,
                             result: Optional[ServiceResponse] = None) -> None:

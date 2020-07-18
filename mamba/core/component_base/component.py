@@ -46,3 +46,4 @@ class Component:
 
     def initialize(self) -> None:
         """ Entry point for component initialization """
+        pass
