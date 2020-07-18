@@ -1,0 +1,3 @@
+name: New Project  # Name of the action
+menu: '&File'  # High level Menu name shown in the menu bar
+shortcut: Ctrl+N # Menu shortcut (Optional)

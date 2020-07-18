@@ -52,6 +52,12 @@ class TestClass:
         assert 'New Mamba project' in output
         assert 'launch your default project with' in output
 
+        output = cmd_exec_output(self, 'mamba', 'start',
+                                 join(self.temp_path, self.project_name + '3'))
+
+        assert 'New Mamba project' in output
+        assert 'launch your default project with' in output
+
         assert cmd_exec(self, 'mamba', 'start', self.project_name) == 1
 
         output = cmd_exec_output(self, 'mamba', 'start', self.project_name)

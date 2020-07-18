@@ -29,13 +29,14 @@ class TestClass:
             self):
         classes_dict = utils.get_classes_from_module('mamba.component.gui',
                                                      Component)
-        assert len(classes_dict) == 15  # One class is the base
+        assert len(classes_dict) == 16  # One class is the base
         assert 'main_window_qt' in classes_dict
         assert 'parameter_setter_window_qt' in classes_dict
         assert 'parameter_setter_window_tk' in classes_dict
         assert 'parameter_getter_window_qt' in classes_dict
         assert 'parameter_getter_window_tk' in classes_dict
         assert 'main_window_tk' in classes_dict
+        assert 'new_project_qt' in classes_dict
         assert 'log_window_qt' in classes_dict
         assert 'log_window_tk' in classes_dict
         assert 'load_view_qt' in classes_dict

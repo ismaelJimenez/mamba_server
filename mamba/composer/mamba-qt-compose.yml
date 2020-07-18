@@ -6,8 +6,13 @@ services:
     component: main_window_qt
     title: Mamba Server App
 
-  Quit:
+  '&New Project':
+    component: new_project_qt
+    menu: '&File'
+
+  '&Quit':
     component: quit
+    menu: '&File'
 
   Parameter Setter:
     component: parameter_setter_window_qt

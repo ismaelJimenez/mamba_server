@@ -56,23 +56,32 @@ class Command(MambaCommand):
         parser.add_argument("project_name", help="New project folder name")
 
     @staticmethod
-    def run(args, mamba_dir, project_dir):
+    def run(args, mamba_dir, project_dir, error_logger=None):
         project_name = args.project_name
 
-        project_dir = join(getcwd(), project_name)
+        if os.path.isabs(project_name):
+            project_dir = project_name
+            project_id = os.path.basename(project_name)
+        else:
+            project_dir = join(getcwd(), project_name)
+            project_id = project_name
 
         if exists(join(project_dir, 'mamba.cfg')):
-            print(f'Error: mamba.cfg already exists in {abspath(project_dir)}')
+            msg = f'Error: mamba.cfg already exists in {abspath(project_dir)}'
+            if error_logger is None:
+                print(msg)
+            else:
+                error_logger(msg)
+
             return 1
 
-        if not Command._is_valid_name(project_name):
+        if not Command._is_valid_name(project_id, error_logger):
             return 1
 
         templates_dir = _templates_dir(mamba_dir)
         Command._copytree(templates_dir, abspath(project_dir))
 
-        print(f"New Mamba project '{project_name}', using template directory "
-              f"'{templates_dir}', created in:")
+        print(f"New Mamba project '{project_id}', created in:")
         print(f"    {abspath(project_dir)}\n")
         print("You can launch your default project with:")
         print(f"    cd {project_dir}")
@@ -81,7 +90,7 @@ class Command(MambaCommand):
         return 0
 
     @staticmethod
-    def _is_valid_name(project_name):
+    def _is_valid_name(project_name, error_logger):
         def _module_exists(module_name):
             try:
                 import_module(module_name)
@@ -90,10 +99,21 @@ class Command(MambaCommand):
                 return False
 
         if not re.search(r'^[_a-zA-Z]\w*$', project_name):
-            print('Error: Project names must begin with a letter and contain'
-                  ' only\nletters, numbers and underscores')
+            msg = 'Error: Project names must begin with a letter and contain' \
+                  ' only\nletters, numbers and underscores'
+
+            if error_logger is None:
+                print(msg)
+            else:
+                error_logger(msg)
+
         elif _module_exists(project_name):
-            print('Error: Module %r already exists' % project_name)
+            msg = f'Error: Module {project_name} already exists'
+
+            if error_logger is None:
+                print(msg)
+            else:
+                error_logger(msg)
         else:
             return True
         return False

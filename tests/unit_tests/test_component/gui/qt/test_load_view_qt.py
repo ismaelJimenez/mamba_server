@@ -39,7 +39,6 @@ class TestClass:
         }
 
         assert component._app is not None
-        assert component._views == []
 
     def test_views_publication(self):
         dummy_test_class = CallbackTestClass()
@@ -56,7 +55,6 @@ class TestClass:
         }
 
         assert component._app is not None
-        assert component._views == []
 
         component.publish_views([{
             "menu_title": "Utils",
@@ -147,7 +145,6 @@ class TestClass:
         }
 
         assert component._app is not None
-        assert component._views == []
 
         # Test menu is in menu bar
         assert main_window._exists_menu('View')

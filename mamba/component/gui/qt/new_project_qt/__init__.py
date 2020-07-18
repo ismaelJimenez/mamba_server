@@ -1,7 +1,6 @@
-""" Load view component """
+""" New Project component """
 
 import os
-import json
 
 from typing import Optional, Dict, Any
 from PySide2.QtWidgets import QApplication, QWidget, QFileDialog
@@ -10,10 +9,11 @@ from PySide2.QtCore import QCoreApplication
 from mamba.core.component_base import GuiPlugin
 from mamba.component.gui.msg import RunAction
 from mamba.core.context import Context
+from mamba.commands.start import Command as NewProjectCommand
 
 
-class LoadViewComponent(GuiPlugin):
-    """ Load view component in Qt5 """
+class NewProjectComponent(GuiPlugin):
+    """ New Project component in Qt5 """
     def __init__(self,
                  context: Context,
                  local_config: Optional[Dict[str, dict]] = None) -> None:
@@ -37,20 +37,22 @@ class LoadViewComponent(GuiPlugin):
                           action_name=profile['action_name'],
                           perspective=profile['data']))
 
+    def generate_new_project(self, dir):
+        class Argument:
+            project_name = dir
+        new_project_command = NewProjectCommand()
+        new_project_command.run(Argument, self._context.get('mamba_dir'), dir, self._log_error)
+
     def run(self, rx_value: RunAction) -> None:
         """ Entry point for running the plugin
 
             Args:
                 rx_value (RunAction): The value published by the subject.
         """
-        options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        file_name, _ = QFileDialog.getOpenFileName(QWidget(),
-                                                   "Load View",
-                                                   "",
-                                                   "View Files (*.json)",
-                                                   options=options)
+        dir = QFileDialog.getExistingDirectory(QWidget(), 'New Mamba Project',
+                                               os.getcwd(),
+                                               QFileDialog.ShowDirsOnly
+                                               | QFileDialog.DontResolveSymlinks)
+        if dir:
+            self.generate_new_project(dir)
 
-        if file_name:
-            with open(file_name, "r") as read_file:
-                self.publish_views(json.load(read_file))
