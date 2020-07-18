@@ -41,7 +41,7 @@ random_mapping = [
     'component_type',
     'mamba_dir',
     'project_dir',
-    ('compose_parser', ['core.']),
+    'compose_parser',
 ]
 
 instance_random_mapping = []
