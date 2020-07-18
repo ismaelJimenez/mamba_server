@@ -23,7 +23,7 @@ blank_mapping = [
     '-> Iterator[Callable]',
     '-> List[ModuleType]',
     ': Dict[str, dict]',
-    'List[str]'
+    ': List[str]'
 ]
 
 random_mapping = [
