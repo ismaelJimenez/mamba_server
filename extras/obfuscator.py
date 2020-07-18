@@ -29,17 +29,17 @@ blank_mapping = [
 ]
 
 random_mapping = [
-    ('context', ['core.']),
-    'local_config',
-    'rx_value',
-    'get_components',
-    'merge_dicts',
+    # ('context', ['core.']),
+    # 'local_config',
+    # 'rx_value',
+    # 'get_components',
+    # 'merge_dicts',
     '_walk_modules',
-    'component_type',
-    'mamba_dir',
-    'project_dir',
-    'compose_parser',
-    'compose_file'
+    # 'component_type',
+    # 'mamba_dir',
+    # 'project_dir',
+    # 'compose_parser',
+    # 'compose_file'
 ]
 
 instance_random_mapping = []
