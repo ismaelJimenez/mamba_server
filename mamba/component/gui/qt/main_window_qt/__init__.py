@@ -14,6 +14,7 @@ from mamba.core.context import Context
 from mamba.core.component_base import MainWindow
 from mamba.core.msg import Empty
 from mamba.component.gui.msg import RegisterAction, RunAction
+from .eula_manager import EulaManager
 
 
 class MainWindowQt(MainWindow):
@@ -106,6 +107,19 @@ class MainWindowQt(MainWindow):
     def _show(self) -> None:
         """ Entry point for showing main screen """
         self._app.showMaximized()
+
+        mamba_config = os.path.join(self._context.get('mamba_dir'), '..', 'mamba_config.json')
+
+        if not os.path.exists(mamba_config):
+            eula_manager = EulaManager(os.path.join(self._context.get('mamba_dir'), '..', 'LICENSE'), self._app)
+
+            result = eula_manager.run()
+
+            if result == 1:
+                f = open(mamba_config, 'w')
+                f.close()
+            else:
+                self._close(Empty())
 
     def _hide(self) -> None:
         """ Entry point for hiding main screen """
