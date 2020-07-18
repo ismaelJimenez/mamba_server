@@ -4,7 +4,7 @@ import sys
 from tempfile import mkdtemp
 from shutil import rmtree
 
-from mamba.core.compose_parser import compose_parser
+from mamba.core.composer_parser import compose_parser
 from mamba.core import utils
 from mamba.core.component_base import Component
 from mamba.core.testing.utils import get_testenv, cmd_exec

@@ -2,7 +2,7 @@ import pytest
 import os
 from tempfile import NamedTemporaryFile
 
-from mamba.core.compose_parser import compose_parser
+from mamba.core.composer_parser import compose_parser
 from mamba.core.exceptions import ComposeFileException
 
 
