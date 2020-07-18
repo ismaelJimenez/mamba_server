@@ -27,7 +27,14 @@ blank_mapping = [
     ': Optional[str]',
     '-> int',
     ': Any',
-    ': List[ParameterInfo]'
+    ': List[ParameterInfo]',
+    ': ParameterType',
+    ': Menu',
+    ': RegisterAction',
+    ': Empty',
+    '-> Menu',
+    ': AppStatus',
+    '-> bool'
 ]
 
 random_mapping = [
