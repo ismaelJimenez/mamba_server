@@ -29,9 +29,6 @@ blank_mapping = [
 ]
 
 random_mapping = [
-    '_register_observers',
-    '_context',
-    'initialize',
     ('context', ['core.']),
     'local_config',
     'rx_value',
