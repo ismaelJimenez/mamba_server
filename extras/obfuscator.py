@@ -11,7 +11,7 @@ def get_random_alphanumeric_string():
     return random.choice(string.ascii_letters) + ''.join((random.choice(letters_and_digits) for i in range(length)))
 
 
-rootdir = ['mamba/core', 'tests']
+rootdir = ['mamba/core', 'mamba/commands', 'tests']
 
 blank_mapping = [
     ' -> None',
