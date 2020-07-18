@@ -6,7 +6,7 @@ from mamba.commands import MambaCommand
 
 from mamba.core.compose_parser import compose_parser
 
-DEFAULT_LAUNCH_FILE = 'mamba-qt'
+DEFAULT_LAUNCH_FILE = 'mamba-qt-default'
 LAUNCH_FILES_DIR = 'composer'
 
 

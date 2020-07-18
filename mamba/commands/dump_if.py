@@ -6,7 +6,7 @@ from mamba.commands import MambaCommand
 
 from mamba.core.interface_dump import interface_dump
 
-DEFAULT_LAUNCH_FILE = 'mamba-qt'
+DEFAULT_LAUNCH_FILE = 'mamba-qt-default'
 DEFAULT_IF_DUMP_FILE = 'mamba_if.json'
 LAUNCH_FILES_DIR = 'composer'
 

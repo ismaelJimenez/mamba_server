@@ -1,5 +1,5 @@
 include README.rst
-include LICENSE
+include mamba/LICENSE
 include MANIFEST.in
 
 include mamba/VERSION
