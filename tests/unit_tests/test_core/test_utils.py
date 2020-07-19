@@ -19,12 +19,6 @@ class TestClass:
         assert 'generate' in cmds
         assert 'dump_if' in cmds
 
-    def test_get_classes_from_module_commands_class_gui_plugin(self):
-        components = utils.get_classes_from_module('mamba.commands', Component)
-        assert len(components) == 2
-        assert 'gui' in components
-        assert 'visa_instrument_driver' in components
-
     def test_get_classes_from_module_components_class_gui_plugin_recursive(
             self):
         classes_dict = utils.get_classes_from_module('mamba.component.gui',
