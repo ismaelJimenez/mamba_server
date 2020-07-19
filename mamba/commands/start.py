@@ -6,9 +6,10 @@ import re
 from os.path import join, exists, abspath
 from os import getcwd
 from importlib import import_module
-from shutil import ignore_patterns, copy2, copystat
+from shutil import ignore_patterns
 
 from mamba.commands import MambaCommand
+from mamba.core.utils import copytree
 
 TEMPLATES_DIR = "templates"
 IGNORE = ignore_patterns('*.pyc', '.svn')
@@ -23,32 +24,6 @@ class Command(MambaCommand):
     @staticmethod
     def short_desc():
         return "Create new project"
-
-    @staticmethod
-    def _copytree(src, dst):
-        """
-        Since the original function always creates the directory, to resolve
-        the issue a new function had to be created. It's a simple copy and
-        was reduced for this case.
-        """
-        ignore = IGNORE
-        names = os.listdir(src)
-        ignored_names = ignore(src, names)
-
-        if not os.path.exists(dst):
-            os.makedirs(dst)
-
-        for name in names:
-            if name in ignored_names:
-                continue
-
-            srcname = os.path.join(src, name)
-            dstname = os.path.join(dst, name)
-            if os.path.isdir(srcname):
-                Command._copytree(srcname, dstname)
-            else:
-                copy2(srcname, dstname)
-        copystat(src, dst)
 
     @staticmethod
     def add_arguments(parser):
@@ -79,7 +54,7 @@ class Command(MambaCommand):
             return 1
 
         templates_dir = _templates_dir(mamba_dir)
-        Command._copytree(templates_dir, abspath(project_dir))
+        copytree(templates_dir, abspath(project_dir), IGNORE)
 
         print(f"New Mamba project '{project_id}', created in:")
         print(f"    {abspath(project_dir)}\n")

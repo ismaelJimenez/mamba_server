@@ -1,63 +1,6 @@
 version: '0.1'
+
 services:
 
-  # IO Controllers
-
-  shutdown:
-    component: remote_shutdown
-
-  signal_generator:
-    component: rs_smb100b
-
-  digitizer:
-    component: ks_m8131a
-
-  cyclic_telemetry_tcp:
-    component: cyclic_telemetry_tcp
-
-  spectrum_analyzer:
-    component: rs_fsw
-
-  switch_matrix:
-    component: ks_34980a
-
-  single_port_tcp_controller:
-    component: single_port_tcp
-
-  two_ports_tcp_controller:
-    component: two_ports_tcp
-
-  xmlrpc_controller:
-    component: xmlrpc_controller
-
-  http_controller:
-    component: http_controller
-
-  hvs_spacewire_gateway_tmtc:
-    component: hvs_h8823_spacewire_gateway_tmtc
-
-  hvs_h8823_spacewire_gateway_spw_rmap:
-    component: hvs_h8823_spacewire_gateway_rmap
-
-  # Mocks
-
-  single_port_tcp_server_mock:
-    component: single_port_tcp_mock
-
-  two_ports_tcp_server_mock:
-    component: two_ports_tcp_mock
-
-  cyclic_tcp_server_mock:
-    component: cyclic_tm_tcp_mock
-
-  http_server_mock:
-    component: flask_server_mock
-
-  xmlrpc_server_mock:
-    component: xmlrpc_mock
-
-  hvs_spacewire_gateway_tmtc_mock:
-    component: hvs_h8823_gateway_tmtc_mock
-
-  hvs_h8823_gateway_spw_rmap_mock:
-    component: hvs_h8823_gateway_spw_rmap_mock
+  dummy_visa_component:
+    component: example_visa_component

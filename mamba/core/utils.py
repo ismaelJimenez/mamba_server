@@ -8,6 +8,7 @@ from typing import List, Iterator, Dict, Callable, Any
 from types import ModuleType
 from importlib import import_module
 from pkgutil import iter_modules
+from shutil import ignore_patterns, copy2, copystat
 
 from mamba.core.context import Context
 from mamba.core.exceptions import ComposeFileException
@@ -133,6 +134,32 @@ def merge_dicts(dict_1, dict_2):
         else:
             result[key] = dict_2[key]
     return result
+
+
+def copytree(src, dst, ignore_pattern=ignore_patterns('*.pyc', '.svn')):
+    """
+    Since the original function always creates the directory, to resolve
+    the issue a new function had to be created. It's a simple copy and
+    was reduced for this case.
+    """
+    ignore = ignore_pattern
+    names = os.listdir(src)
+    ignored_names = ignore(src, names)
+
+    if not os.path.exists(dst):
+        os.makedirs(dst)
+
+    for name in names:
+        if name in ignored_names:
+            continue
+
+        srcname = os.path.join(src, name)
+        dstname = os.path.join(dst, name)
+        if os.path.isdir(srcname):
+            copytree(srcname, dstname)
+        else:
+            copy2(srcname, dstname)
+    copystat(src, dst)
 
 
 def _walk_modules(path: str) -> List[ModuleType]:

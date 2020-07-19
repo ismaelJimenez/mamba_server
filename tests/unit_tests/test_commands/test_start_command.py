@@ -33,14 +33,8 @@ class TestClass:
         assert exists(join(self.proj_path, 'mamba.cfg'))
         assert exists(join(self.proj_path, 'composer'))
         assert exists(join(self.proj_path, 'composer', 'project-compose.yml'))
-        assert exists(join(self.proj_path, 'component'))
-        assert exists(join(self.proj_path, 'component', '__init__.py'))
-        assert exists(join(self.proj_path, 'component', 'gui'))
-        assert exists(join(self.proj_path, 'component', 'gui', '__init__.py'))
-        assert exists(join(self.proj_path, 'component', 'instrument_driver'))
-        assert exists(
-            join(self.proj_path, 'component', 'instrument_driver',
-                 '__init__.py'))
+        assert exists(join(self.proj_path, 'components'))
+        assert exists(join(self.proj_path, 'components', '__init__.py'))
         assert exists(join(self.proj_path, 'log'))
         assert exists(join(self.proj_path, 'log', '__init__.py'))
         assert exists(join(self.proj_path, 'mock'))

@@ -32,7 +32,7 @@ class TestClass:
         assert cmd_exec(self, 'mamba', 'generate', 'visa_instrument_driver',
                         'plugin_1') == 0
         assert exists(
-            join(self.proj_path, 'component', 'instrument_driver', 'plugin_1'))
+            join(self.proj_path, 'components', 'plugin_1'))
         assert exists(join(self.proj_path, 'composer'))
 
         self.mamba_dir = os.path.join(os.path.dirname(__file__), '..', '..',
@@ -63,8 +63,9 @@ class TestClass:
 
     def test_get_classes_from_module_components_local(self):
         # Test component load
-        classes_dict = utils.get_classes_from_module('component', Component)
-        assert len(classes_dict) == 1
+        classes_dict = utils.get_classes_from_module('components', Component)
+        assert len(classes_dict) == 2
+        assert 'example_visa_component' in classes_dict
         assert 'plugin_1' in classes_dict
 
     def test_get_components_local(self):
@@ -84,7 +85,7 @@ class TestClass:
         components_dict = utils.get_components(
             {'plugin_1': {
                 'component': 'about_qt'
-            }}, ['component', 'mamba.component'], Component, Context())
+            }}, ['components', 'mamba.component'], Component, Context())
         assert len(components_dict) == 1
         assert 'plugin_1' in components_dict
 
@@ -102,7 +103,7 @@ class TestClass:
                 'plugin_1': {
                     'component': 'about_qt'
                 }
-            }, ['mamba.component', 'component'], Component, Context())
+            }, ['mamba.component', 'components'], Component, Context())
         assert len(components_dict) == 4
         assert 'about_1' in components_dict
         assert 'about' in components_dict
@@ -113,12 +114,12 @@ class TestClass:
         assert cmd_exec(self, 'mamba', 'generate', 'visa_instrument_driver',
                         'quit') == 0
         assert exists(
-            join(self.proj_path, 'component', 'instrument_driver', 'quit'))
+            join(self.proj_path, 'components', 'quit'))
 
         components_dict = utils.get_components({'quit': {
             'component': 'quit'
         }},
-                                ['mamba.component', 'component'], Component,
+                                ['mamba.component', 'components'], Component,
                                 Context())
 
         assert len(components_dict) == 1

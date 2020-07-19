@@ -1,21 +1,20 @@
-""" New Project component """
+""" Open Project component """
 
 import os
-import sys
 
 from typing import Optional, Dict, Any
-from PySide2.QtWidgets import QApplication, QWidget, QFileDialog
+from PySide2.QtWidgets import QApplication, QWidget
 from PySide2.QtCore import QCoreApplication
 
 from mamba.core.component_base import GuiPlugin
 from mamba.component.gui.msg import RunAction
 from mamba.core.context import Context
-from mamba.commands.start import Command as NewProjectCommand
-from mamba.core.composer_parser import compose_parser
+
+from .marketplace_component_dialog import MarketComponentDialog
 
 
-class NewProjectComponent(GuiPlugin):
-    """ New Project component in Qt5 """
+class OpenProjectComponent(GuiPlugin):
+    """ Open Project component in Qt5 """
     def __init__(self,
                  context: Context,
                  local_config: Optional[Dict[str, dict]] = None) -> None:
@@ -39,25 +38,11 @@ class NewProjectComponent(GuiPlugin):
                           action_name=profile['action_name'],
                           perspective=profile['data']))
 
-    def generate_new_project(self, dir):
-        class Argument:
-            project_name = dir
-        new_project_command = NewProjectCommand()
-        new_project_command.run(Argument, self._context.get('mamba_dir'), dir, self._log_error)
-
     def run(self, rx_value: RunAction) -> None:
         """ Entry point for running the plugin
 
             Args:
                 rx_value (RunAction): The value published by the subject.
         """
-        dir = QFileDialog.getExistingDirectory(QWidget(), 'New Mamba Project',
-                                               os.getcwd(),
-                                               QFileDialog.ShowDirsOnly
-                                               | QFileDialog.DontResolveSymlinks)
-        if dir:
-            self.generate_new_project(dir)
-
-            sys.path.insert(0, dir)
-
-            compose_parser(os.path.join(dir, 'composer', 'project-compose.yml'), self._context.get('mamba_dir'), dir)
+        market = MarketComponentDialog(self._context.get('mamba_dir'), os.path.join(self._context.get('mamba_dir'), 'marketplace', 'components'), QWidget())
+        return market.exec_()

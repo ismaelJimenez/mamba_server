@@ -1,8 +1,14 @@
-name: R&S SMB100B RF Signal Generator
+name: Keysight Series N5700 DC Power Supply Controller
+version: 0.1
+status: Partial interface implementation
+maintainer: Mamba Developers
+maintainer_email: mambaframework@gmail.com
 
 instrument:
-  visa_sim: mock/visa/signal_generator/rs_smb100b.yml
+  visa_sim: mock/visa/power_supply/ks_n5700.yml
   address: TCPIP0::1.2.3.4::INSTR
+  terminator:
+    write: "\n"
 
 parameters:
   connected:
@@ -97,60 +103,58 @@ parameters:
       instrument_command:
         - query: 'SYST:ERR?'
 
-  power_level:
+  output_current_setting:
     # Set parameter type.
     type: float
 
     # Set parameter description.
-    description: RF level applied to the device under tests
+    description: Output current setting
 
     # Parameter setter configuration.
     set:
-      signature: [amplitude: {type: float}]
+      # Setter function signature.
+      signature: [amperes: {type: float}]
       instrument_command:
-        - write: 'POWer {:}'
+        - write: 'CURR {:}'
 
     # Parameter getter configuration.
     get:
       instrument_command:
-        - query: 'POWer?'
+        - query: 'CURR?'
 
-  frequency_mode:
+  output_voltage_setting:
     # Set parameter type.
-    type: str
+    type: float
 
     # Set parameter description.
-    description: Frequency mode for generating the RF output signal
+    description: Output voltage setting
 
     # Parameter setter configuration.
     set:
-      signature:
-        - mode:
-            type: str
-            valid: ['CW', 'FIXed', 'SWEep', 'LIST']
-
+      # Setter function signature.
+      signature: [volts: {type: float}]
       instrument_command:
-        - write: 'FREQuency:MODE {:}'
+        - write: 'VOLT {:}'
 
     # Parameter getter configuration.
     get:
       instrument_command:
-        - query: 'FREQuency:MODE?'
+        - query: 'VOLT?'
 
-  output_power:
+  output_state:
     # Set parameter type.
     type: int
 
     # Set parameter description.
-    description: RF output signal active status
+    description: Output enabled status
 
     # Parameter setter configuration.
     set:
+      # Setter function signature.
       signature:
         - state:
             type: int
             valid: [0, 1]
-
       instrument_command:
         - write: 'OUTP {:}'
 
@@ -159,41 +163,45 @@ parameters:
       instrument_command:
         - query: 'OUTP?'
 
-  cw_frequency:
+  over_voltage_setting:
     # Set parameter type.
     type: float
 
     # Set parameter description.
-    description: RF output CW frequency
+    description: Over-voltage trip point
 
     # Parameter setter configuration.
     set:
-      signature: [fixed: {type: float}]
+      # Setter function signature.
+      signature: [volts: {type: float}]
       instrument_command:
-        - write: 'FREQuency:CW {:}'
+        - write: 'VOLT:PROT:LEV {:}'
 
     # Parameter getter configuration.
     get:
       instrument_command:
-        - query: 'FREQuency:CW?'
+        - query: 'VOLT:PROT:LEV?'
 
-  clock_source:
+  measure_output_current:
     # Set parameter type.
-    type: str
+    type: float
 
     # Set parameter description.
-    description: Source of the reference frequency
-
-    # Parameter setter configuration.
-    set:
-      signature:
-        - state:
-            type: str
-            valid: ['INTernal', 'EXTernal']
-      instrument_command:
-        - write: 'SOURce:ROSCillator:SOURce {:}'
+    description: Measured output current
 
     # Parameter getter configuration.
     get:
       instrument_command:
-        - query: 'SOURce:ROSCillator:SOURce?'
+        - query: 'MEAS:CURR?'
+
+  measure_output_voltage:
+    # Set parameter type.
+    type: float
+
+    # Set parameter description.
+    description: Measured output voltage
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: 'MEAS:VOLT?'

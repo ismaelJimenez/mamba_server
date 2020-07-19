@@ -1,4 +1,8 @@
-name: Keysight Series N5700 DC Power Supply
+name: Keysight Series N5700 DC Power Supply Controller
+version: 0.1
+status: Partial interface implementation
+maintainer: Mamba Developers
+maintainer_email: mambaframework@gmail.com
 
 instrument:
   visa_sim: mock/visa/power_supply/ks_n5700.yml

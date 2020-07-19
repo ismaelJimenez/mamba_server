@@ -73,8 +73,7 @@ class Command(MambaCommand):
             print(f"error: '{component_type}' is not a valid component type")
             return 1
 
-        component_dir = join(project_dir, 'component',
-                             COMPONENT_TYPES[component_type]['folder'], module)
+        component_dir = join(project_dir, 'components', module)
 
         if exists(component_dir):
             print(f'error: component {module} already exists in '

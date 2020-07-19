@@ -1,6 +1,7 @@
 """ Open Project component """
 
 import os
+import sys
 from os.path import dirname
 
 from typing import Optional, Dict, Any
@@ -53,4 +54,6 @@ class OpenProjectComponent(GuiPlugin):
                                                    options=options)
 
         if file_name:
+            sys.path.insert(0, dirname(dirname(file_name)))
+
             compose_parser(file_name, self._context.get('mamba_dir'), dirname(dirname(file_name)))

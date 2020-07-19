@@ -34,24 +34,23 @@ class TestClass:
 
         assert cmd_exec(self, 'mamba', 'generate', 'visa_instrument_driver',
                         'instrument_driver_1') == 0
-        assert exists(join(self.proj_path, 'component', 'instrument_driver'))
+        assert exists(join(self.proj_path, 'components'))
         assert exists(
-            join(self.proj_path, 'component', 'instrument_driver',
-                 'instrument_driver_1'))
+            join(self.proj_path, 'components', 'instrument_driver_1'))
         assert exists(
-            join(self.proj_path, 'component', 'instrument_driver',
+            join(self.proj_path, 'components',
                  'instrument_driver_1', '__init__.py'))
         assert exists(
-            join(self.proj_path, 'component', 'instrument_driver',
+            join(self.proj_path, 'components',
                  'instrument_driver_1', 'config.yml'))
 
         assert cmd_exec(self, 'mamba', 'generate', 'gui', 'gui_1') == 0
-        assert exists(join(self.proj_path, 'component', 'gui'))
-        assert exists(join(self.proj_path, 'component', 'gui', 'gui_1'))
+        assert exists(join(self.proj_path, 'components',))
+        assert exists(join(self.proj_path, 'components', 'gui_1'))
         assert exists(
-            join(self.proj_path, 'component', 'gui', 'gui_1', '__init__.py'))
+            join(self.proj_path, 'components', 'gui_1', '__init__.py'))
         assert exists(
-            join(self.proj_path, 'component', 'gui', 'gui_1', 'config.yml'))
+            join(self.proj_path, 'components', 'gui_1', 'config.yml'))
 
     def test_generate_valid_project_folder_duplicated_name(self):
         assert cmd_exec(self, 'mamba', 'start', self.project_name) == 0

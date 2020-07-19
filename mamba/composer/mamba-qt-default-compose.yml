@@ -31,6 +31,9 @@ services:
   Save View:
     component: save_view_qt
 
+  '&Component':
+    component: marketplace_component_qt
+
   About:
     component: about_qt
 
