@@ -1,50 +1,6 @@
 version: '0.1'
 services:
 
-  # GUI
-  main_window:
-    component: main_window_qt
-    title: Mamba Server App
-
-  Quit:
-    component: quit
-
-  Parameter Setter:
-    component: parameter_setter_window_qt
-
-  Parameter Getter:
-    component: parameter_getter_window_qt
-
-  Mamba Log:
-    component: log_window_qt
-
-  Load View:
-    component: load_view_qt
-
-  Save View:
-    component: save_view_qt
-
-  About:
-    component: about_qt
-
-  # Utilities
-
-  logger:
-    component: logger
-
-  # TMTC Server
-
-  socket_server:
-    component: tcp_single_port_server
-
-  # Protocol
-
-  socket_translator:
-    component: hvs_protocol_translator
-
-  protocol_controller:
-    component: mamba_protocol_controller
-
   # IO Controllers
 
   shutdown:

@@ -1,6 +1,7 @@
 """ Open Project component """
 
 import os
+from os.path import dirname
 
 from typing import Optional, Dict, Any
 from PySide2.QtWidgets import QApplication, QWidget, QFileDialog
@@ -9,6 +10,7 @@ from PySide2.QtCore import QCoreApplication
 from mamba.core.component_base import GuiPlugin
 from mamba.component.gui.msg import RunAction
 from mamba.core.context import Context
+from mamba.core.composer_parser import compose_parser
 
 
 class OpenProjectComponent(GuiPlugin):
@@ -50,6 +52,5 @@ class OpenProjectComponent(GuiPlugin):
                                                    "View Files (*-compose.yml)",
                                                    options=options)
 
-        # if file_name:
-        #     with open(file_name, "r") as read_file:
-        #         self.publish_views(json.load(read_file))
+        if file_name:
+            compose_parser(file_name, self._context.get('mamba_dir'), dirname(dirname(file_name)))

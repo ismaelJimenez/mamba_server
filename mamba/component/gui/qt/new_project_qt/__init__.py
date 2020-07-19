@@ -10,6 +10,7 @@ from mamba.core.component_base import GuiPlugin
 from mamba.component.gui.msg import RunAction
 from mamba.core.context import Context
 from mamba.commands.start import Command as NewProjectCommand
+from mamba.core.composer_parser import compose_parser
 
 
 class NewProjectComponent(GuiPlugin):
@@ -55,4 +56,4 @@ class NewProjectComponent(GuiPlugin):
                                                | QFileDialog.DontResolveSymlinks)
         if dir:
             self.generate_new_project(dir)
-
+            compose_parser(os.path.join(dir, 'composer', 'project-compose.yml'), self._context.get('mamba_dir'), dir)
