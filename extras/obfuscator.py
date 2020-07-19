@@ -40,13 +40,13 @@ blank_mapping = [
 random_mapping = [
     # ('context', ['core.']),
     # 'local_config',
-    # 'rx_value',
-    # 'get_components',
-    # 'merge_dicts',
+    'rx_value',
+    'get_components',
+    'merge_dicts',
     '_walk_modules',
-    # 'component_type',
-    #('mamba_dir', ['context.set']),
-    # 'project_dir',
+    'component_type',
+    ('mamba_dir', ["'mamba_dir'"]),
+    ('project_dir', ["'project_dir'"]),
     # 'compose_parser',
     # 'compose_file'
 ]
