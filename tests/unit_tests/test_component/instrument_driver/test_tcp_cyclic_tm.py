@@ -8,11 +8,11 @@ from rx import operators as op
 from mamba.core.testing.utils import compose_service_info, get_config_dict, CallbackTestClass, get_provider_params_info
 from mamba.core.context import Context
 from mamba.mock.tcp.cyclic_tm_tcp_mock import CyclicTmTcpMock
-from mamba.marketplace.components.tcp.cyclic_telemetry_tcp import CyclicTmTcpController
+from mamba.marketplace.components.tcp_udp.cyclic_telemetry_tcp import CyclicTmTcpController
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.msg import Empty, ServiceRequest, ServiceResponse, ParameterType
 
-component_path = os.path.join('marketplace', 'components', 'tcp',
+component_path = os.path.join('marketplace', 'components', 'tcp_udp',
                               'cyclic_telemetry_tcp')
 
 

@@ -34,7 +34,7 @@ class MarketComponentDialog(QDialog):
 
         self.toolBox = QToolBox()
 
-        toolboxes_list = [x for x in os.listdir(marketplace_dir) if '.py' not in x]
+        toolboxes_list = [x for x in os.listdir(marketplace_dir) if '.py' not in x and '__' not in x]
 
         self.component_name_mapping = {}
 
