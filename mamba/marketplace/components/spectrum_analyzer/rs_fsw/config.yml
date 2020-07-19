@@ -1,0 +1,128 @@
+name: R&S FSW Signal and Spectrum Analyzer Controller
+version: 0.1
+status: Partial interface implementation
+maintainer: Mamba Developers
+maintainer_email: mambaframework@gmail.com
+
+instrument:
+  visa_sim: mock/visa/spectrum_analyzer/rs_fsw.yml
+  address: TCPIP0::1.2.3.4::INSTR
+
+parameters:
+  connected:
+    # Set parameter type.
+    type: int
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: 0
+
+    # Set parameter description.
+    description: Connection status to instrument
+
+    # Parameter setter configuration.
+    set:
+      # Alias allows to access parameter under another name.
+      # Connect is an special ID, to command connect/disconnect from the equipment.
+      alias: connect
+      # Setter function signature.
+      signature:
+        - connect:
+            type: int
+            valid: [0, 1]
+
+    # Parameter getter configuration.
+    get:
+
+  raw_query:
+    # Set parameter type.
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: ''
+
+    # Set parameter description.
+    description: Raw query to intrument
+
+    # Parameter setter configuration.
+    set:
+      signature: [raw_query: {type: str}]
+      instrument_command:
+        - query: '{:}'
+
+    # Parameter getter configuration.
+    get:
+
+  raw_write:
+    # Set parameter description.
+    description: Raw write to intrument
+
+    # Parameter setter configuration.
+    set:
+      signature: [raw_write: {type: str}]
+      instrument_command: [write: '{:}']
+
+  idn:
+    # Set parameter type.
+    type: str
+
+    # Set parameter description.
+    description: Instrument identification
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: '*IDN?'
+
+  clear:
+    # Set parameter description.
+    description: Clear status
+
+    # Parameter setter configuration.
+    set:
+      instrument_command: [write: '*CLS']
+
+  reset:
+    # Set parameter description.
+    description: Reset
+
+    # Parameter setter configuration.
+    set:
+      instrument_command: [write: '*RST']
+
+  sys_err:
+    # Set parameter type.
+    type: str
+
+    # Set parameter description.
+    description: Oldest error in queue
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: 'SYST:ERR?'
+
+  trigger_out:
+    # Set parameter description.
+    description: Trigger Out Pulse
+
+    # Parameter setter configuration.
+    set:
+      instrument_command:
+        - write: 'OUTP:TRIG2:PULS:IMM'
+
+  trigger_in:
+    # Set parameter type.
+    type: int
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: 0
+
+    # Set parameter description.
+    description: Trigger Input
+
+    # Parameter setter configuration.
+    set:
+      signature: [timeout: {type: int, range: seconds}]
+
+    get:
+

@@ -8,11 +8,11 @@ from rx import operators as op
 
 from mamba.core.testing.utils import compose_service_info, get_config_dict, CallbackTestClass, get_provider_params_info
 from mamba.core.context import Context
-from mamba.component.instrument_driver.script.script_controller import ScriptInstrumentDriver
+from mamba.marketplace.components.script.script_controller import ScriptInstrumentDriver
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.msg import Empty, ServiceRequest, ServiceResponse, ParameterType
 
-component_path = os.path.join('component', 'instrument_driver', 'script',
+component_path = os.path.join('marketplace', 'components', 'script',
                               'script_controller')
 
 
@@ -71,7 +71,7 @@ class TestClass:
         assert component._instrument.terminator_write == '\r\n'
         assert component._instrument.terminator_read == '\n'
 
-        assert 'mamba-server/mamba/component/instrument_driver/script/script_controller/scripts' in component._scripts_folder
+        assert 'mamba-server/mamba/marketplace/components/script/script_controller/scripts' in component._scripts_folder
 
     def test_w_default_context_component_initialization(self):
         """ Test component initialization behaviour with default context """
@@ -94,7 +94,7 @@ class TestClass:
         assert component._instrument.terminator_write == '\r\n'
         assert component._instrument.terminator_read == '\n'
 
-        assert 'mamba-server/mamba/component/instrument_driver/script/script_controller/scripts' in component._scripts_folder
+        assert 'mamba-server/mamba/marketplace/components/script/script_controller/scripts' in component._scripts_folder
 
     def test_w_global_source_folder(self):
         """ Test component creation behaviour with default context """

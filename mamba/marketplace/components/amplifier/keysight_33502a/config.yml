@@ -1,0 +1,270 @@
+name: Keysight 33502A 2-Channel Isolated Amplifier Controller
+version: 0.1
+status: Partial interface implementation
+maintainer: Mamba Developers
+maintainer_email: mambaframework@gmail.com
+
+instrument:
+  visa_sim: mock/visa/amplifier/ks_33502a.yml
+  address: TCPIP0::1.2.3.4::INSTR
+
+parameters:
+  connected:
+    # Set parameter type.
+    type: int
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: 0
+
+    # Set parameter description.
+    description: Connection status to instrument
+
+    # Parameter setter configuration.
+    set:
+      # Alias allows to access parameter under another name.
+      # Connect is an special ID, to command connect/disconnect from the equipment.
+      alias: connect
+      # Setter function signature.
+      signature:
+        - connect:
+            type: int
+            valid: [0, 1]
+
+    # Parameter getter configuration.
+    get:
+
+  raw_query:
+    # Set parameter type.
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: ''
+
+    # Set parameter description.
+    description: Raw query to intrument
+
+    # Parameter setter configuration.
+    set:
+      signature: [raw_query: {type: str}]
+      instrument_command:
+        - query: '{:}'
+
+    # Parameter getter configuration.
+    get:
+
+  raw_write:
+    # Set parameter description.
+    description: Raw write to intrument
+
+    # Parameter setter configuration.
+    set:
+      signature: [raw_write: {type: str}]
+      instrument_command: [write: '{:}']
+
+  idn:
+    # Set parameter type.
+    type: str
+
+    # Set parameter description.
+    description: Instrument identification
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: '*IDN?'
+
+  clear:
+    # Set parameter description.
+    description: Clear status
+
+    # Parameter setter configuration.
+    set:
+      instrument_command: [write: '*CLS']
+
+  sys_err:
+    # Set parameter type.
+    type: str
+
+    # Set parameter description.
+    description: Oldest error in queue
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: 'SYST:ERR?'
+
+  channel_1_gain:
+    # Set parameter type.
+    type: str
+
+    # Set parameter description.
+    description: Gain of channel 1
+
+    # Parameter setter configuration.
+    set:
+      # Setter function signature.
+      signature:
+        - gain:
+            type: str
+            valid: ['DIRect', 'AMPLifier']
+      instrument_command:
+        - write: 'ROUT1:PATH {:}'
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: 'ROUT1:PATH?'
+
+  channel_2_gain:
+    # Set parameter type.
+    type: str
+
+    # Set parameter description.
+    description: Gain of channel 2
+
+    # Parameter setter configuration.
+    set:
+      # Setter function signature.
+      signature:
+        - gain:
+            type: str
+            valid: ['DIRect', 'AMPLifier']
+      instrument_command:
+        - write: 'ROUT2:PATH {:}'
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: 'ROUT2:PATH?'
+
+  channel_1_state:
+    # Set parameter type.
+    type: int
+
+    # Set parameter description.
+    description: Channel 1 ON/OFF state
+
+    # Parameter setter configuration.
+    set:
+      # Setter function signature.
+      signature:
+        - state:
+            type: int
+            valid: [0, 1]
+      instrument_command:
+        - write: 'OUTP1 {:}'
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: 'OUTP1:STATe?'
+
+  channel_2_state:
+    # Set parameter type.
+    type: int
+
+    # Set parameter description.
+    description: Channel 2 ON/OFF state
+
+    # Parameter setter configuration.
+    set:
+      # Setter function signature.
+      signature:
+        - state:
+            type: int
+            valid: [0, 1]
+      instrument_command:
+        - write: 'OUTP2 {:}'
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: 'OUTP2:STATe?'
+
+  channel_1_coupling:
+    # Set parameter type.
+    type: str
+
+    # Set parameter description.
+    description: Channel 1 coupling
+
+    # Parameter setter configuration.
+    set:
+      # Setter function signature.
+      signature:
+        - coupling:
+            type: str
+            valid: ['AC', 'DC']
+      instrument_command:
+        - write: 'INP1:COUP {:}'
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: 'INP1:COUP?'
+
+  channel_2_coupling:
+    # Set parameter type.
+    type: str
+
+    # Set parameter description.
+    description: Channel 2 coupling
+
+    # Parameter setter configuration.
+    set:
+      # Setter function signature.
+      signature:
+        - coupling:
+            type: str
+            valid: ['AC', 'DC']
+      instrument_command:
+        - write: 'INP2:COUP {:}'
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: 'INP2:COUP?'
+
+  channel_1_impedance:
+    # Set parameter type.
+    type: str
+
+    # Set parameter description.
+    description: Channel 1 impedance
+
+    # Parameter setter configuration.
+    set:
+      # Setter function signature.
+      signature:
+        - impedance:
+            type: int
+            valid: [50, 1000000]
+      instrument_command:
+        - write: 'INP1:IMP {:}'
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: 'INP1:IMP?'
+
+  channel_2_impedance:
+    # Set parameter type.
+    type: str
+
+    # Set parameter description.
+    description: Channel 2 impedance
+
+    # Parameter setter configuration.
+    set:
+      # Setter function signature.
+      signature:
+        - impedance:
+            type: int
+            valid: [50, 1000000]
+      instrument_command:
+        - write: 'INP2:IMP {:}'
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: 'INP2:IMP?'

@@ -1,0 +1,395 @@
+name: Keysight 34980A Multifunction Switch Controller
+version: 0.1
+status: Partial interface implementation
+maintainer: Mamba Developers
+maintainer_email: mambaframework@gmail.com
+
+instrument:
+  visa_sim: mock/visa/switch_matrix/ks_34980a.yml
+  address: TCPIP0::1.2.3.4::INSTR
+  encoding: utf-8
+  terminator:
+    write: "\n"
+
+parameters:
+  connected:
+    # Set parameter type.
+    type: int
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: 0
+
+    # Set parameter description.
+    description: Connection status to instrument
+
+    # Parameter setter configuration.
+    set:
+      # Alias allows to access parameter under another name.
+      # Connect is an special ID, to command connect/disconnect from the equipment.
+      alias: connect
+      # Setter function signature.
+      signature:
+        - connect:
+            type: int
+            valid: [0, 1]
+
+    # Parameter getter configuration.
+    get:
+
+  raw_write:
+    # Set parameter description.
+    description: Raw write to intrument
+
+    # Parameter setter configuration.
+    set:
+      signature: [raw_write: {type: str}]
+      instrument_command: [write: '{:}']
+
+  raw_query:
+    # Set parameter type.
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: ''
+
+    # Set parameter description.
+    description: Raw query to intrument
+
+    # Parameter setter configuration.
+    set:
+      signature: [raw_query: {type: str}]
+      instrument_command:
+        - query: '{:}'
+
+    # Parameter getter configuration.
+    get:
+
+  idn:
+    # Set parameter type.
+    type: str
+
+    # Set parameter description.
+    description: Instrument identification
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: '*IDN?'
+
+  clear:
+    # Set parameter description.
+    description: Clear status
+
+    # Parameter setter configuration.
+    set:
+      instrument_command: [write: '*CLS']
+
+  reset:
+    # Set parameter description.
+    description: Reset
+
+    # Parameter setter configuration.
+    set:
+      instrument_command: [write: '*RST']
+
+  sys_err:
+    # Set parameter type.
+    type: str
+
+    # Set parameter description.
+    description: Oldest error in queue
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: 'SYST:ERR?'
+
+  channel_close_set:
+    # Set parameter type.
+    type: int
+
+    # Set parameter description.
+    description: Channel close state
+
+    # Parameter setter configuration.
+    set:
+      signature: [channel_id: {type: str}]
+      instrument_command:
+        - write: 'ROUT:CLOS {:}'
+
+  channel_close_get:
+    # Set parameter type.
+    type: int
+
+    # Set parameter description.
+    description: Channel close state
+
+    # Parameter setter configuration.
+    set:
+      signature: [channel_id: {type: str}]
+      instrument_command:
+        - query: 'ROUT:CLOS? {:}'
+
+    # Parameter getter configuration.
+    get:
+
+  channel_open_set:
+    # Set parameter type.
+    type: int
+
+    # Set parameter description.
+    description: Channel open state
+
+    # Parameter setter configuration.
+    set:
+      signature: [channel_id: {type: str}]
+      instrument_command:
+        - write: 'ROUT:OPEN {:}'
+
+    # Parameter getter configuration.
+    get:
+
+  channel_open_get:
+    # Set parameter type.
+    type: int
+
+    # Set parameter description.
+    description: Channel open state
+
+    # Parameter setter configuration.
+    set:
+      signature: [channel_id: {type: str}]
+      instrument_command:
+        - query: 'ROUT:OPEN? {:}'
+
+    get:
+
+  channel_open_all:
+    # Set parameter description.
+    description: Open all slot channel
+
+    # Parameter setter configuration.
+    set:
+      signature: [slot_id: {type: str}]
+      instrument_command:
+        - write: 'ROUT:OPEN:ALL {:}'
+
+  dc_voltage_measure:
+    # Set parameter description.
+    description: Instrument configuration for dc voltage measurements
+
+    # Parameter setter configuration.
+    set:
+      signature: [channel_id: {type: str}]
+      instrument_command:
+        - write: 'CONF:VOLT:DC {:}'
+
+  resistance_measure:
+    # Set parameter type.
+    type: float
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: 0.0
+
+    # Set parameter description.
+    description: 2-wire resistance measurements
+
+    # Parameter setter configuration.
+    set:
+      signature: [channel_id: {type: str}]
+      instrument_command:
+        - query: 'MEAS:RES? {:}'
+
+    # Parameter getter configuration.
+    get:
+
+  route_scan_config:
+    # Set parameter type.
+    type: str
+
+    # Set parameter description.
+    description: Scan list configuration
+
+    # Parameter setter configuration.
+    set:
+      signature: [scan_list: {type: str}]
+      instrument_command:
+        - query: 'ROUT:SCAN {:}'
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: 'ROUT:SCAN?'
+
+  channel_frequency_config_set:
+    # Set parameter description.
+    description: Set channel frequency configuration
+
+    # Parameter setter configuration.
+    set:
+      signature:
+        - frequency: {type: float}
+        - channel_id: {type: str}
+      instrument_command:
+        - write: 'SOUR:FUNC:FREQ {0},{1}'
+
+  channel_frequency_config_get:
+    # Set parameter type.
+    type: str
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: ''
+
+    # Set parameter description.
+    description: Get channel frequency configuration
+
+    # Parameter setter configuration.
+    set:
+      signature: [channel_id: {type: str}]
+      instrument_command:
+        - query: 'SOUR:FUNC:FREQ? {:}'
+
+    # Parameter getter configuration.
+    get:
+
+  channel_trace_output_mode:
+    # Set parameter type.
+    type: int
+
+    # Set parameter description.
+    description: Set channel trace output mode
+
+    # Parameter setter configuration.
+    set:
+      signature:
+        - mode:
+            type: int
+            valid: [0, 1]
+        - channel_id: {type: str}
+      instrument_command:
+        - write: 'SOUR:FUNC:ENAB {0}, {1}'
+
+  measure_dc_voltage:
+    # Set parameter type.
+    type: float
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: 0.0
+
+    # Set parameter description.
+    description: Measure DC voltage
+
+    # Parameter setter configuration.
+    set:
+      signature: [channel_id: {type: str}]
+      instrument_command:
+        - query: 'MEASure:VOLTage:DC? {:}'
+
+    # Parameter getter configuration.
+    get:
+
+  channel_output_status:
+    # Set parameter description.
+    description: Channel output status
+
+    # Parameter setter configuration.
+    set:
+      signature:
+        - status:
+            type: int
+            valid: [0, 1]
+        - channel_id: {type: str}
+      instrument_command:
+        - write: 'OUTP:STAT {0}, {1}'
+
+  init:
+    # Set parameter description.
+    description: State of the triggering system
+
+    # Parameter setter configuration.
+    set:
+      instrument_command:
+        - write: 'INIT'
+
+  voltage_offset:
+    # Set parameter description.
+    description: Channel voltage offset for scaled traced outputs
+
+    # Parameter setter configuration.
+    set:
+      signature:
+        - offset: {type: float}
+        - channel_id: {type: str}
+      instrument_command:
+        - write: 'SOUR:FUNC:VOLT:OFFS {0},{1}'
+
+  voltage_gain:
+    # Set parameter description.
+    description: Channel voltage gain for scaled traced outputs
+
+    # Parameter setter configuration.
+    set:
+      signature:
+        - gain: {type: float}
+        - channel_id: {type: str}
+      instrument_command:
+        - write: 'SOUR:FUNC:VOLT:OFFS {0},{1}'
+
+  trace_cycle_number:
+    # Set parameter description.
+    description: Channel trace cycles number
+
+    # Parameter setter configuration.
+    set:
+      signature:
+        - count:
+            type: int
+            range: [0, 254]
+        - channel_id: {type: str}
+      instrument_command:
+        - write: 'SOUR:FUNC:TRAC:NCYC {0},{1}'
+
+  trace_function:
+    # Set parameter description.
+    description: Trace data generation
+
+    # Parameter setter configuration.
+    set:
+      signature:
+        - slot:
+            type: int
+            range: [1, 8]
+        - type:
+            type: str
+            valid: ['RAMP', 'SINusoid', 'SQUare', 'TRIangle']
+        - name:
+            type: str
+        - points:
+            type: int
+            range: [8, 512000]
+      instrument_command:
+        - write: 'TRAC:FUNC {0}, {1}, {2}, {3}'
+
+  channel_trace_name:
+    # Set parameter description.
+    description: Channel trace name
+
+    # Parameter setter configuration.
+    set:
+      signature:
+        - name: {type: str}
+        - channel_id: {type: str}
+      instrument_command:
+        - write: 'SOUR:FUNC:TRAC {0}, {1}'
+
+  output_buffer:
+    # Set parameter type.
+    type: str
+
+    # Set parameter description.
+    description: Output buffer memory
+
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: 'FETCh?'

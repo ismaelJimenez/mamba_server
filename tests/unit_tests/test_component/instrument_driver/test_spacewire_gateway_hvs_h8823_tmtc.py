@@ -9,13 +9,13 @@ from rx import operators as op
 from mamba.core.testing.utils import compose_service_info, get_config_dict, CallbackTestClass, get_provider_params_info
 from mamba.core.context import Context
 from mamba.mock.tcp.spacewire_gateway.hvs_h8823_gateway_tmtc_mock import H8823GatewayTmTcMock
-from mamba.component.instrument_driver.spacewire_gateway.hvs_h8823_spacewire_gateway_tmtc import H8823TmTcController
+from mamba.marketplace.components.spacewire_gateway.hvs_h8823_tmtc import H8823TmTcController
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.msg import Empty, ServiceRequest, ServiceResponse, ParameterType
 
-component_path = os.path.join('component', 'instrument_driver',
+component_path = os.path.join('marketplace', 'components',
                               'spacewire_gateway',
-                              'hvs_h8823_spacewire_gateway_tmtc')
+                              'hvs_h8823_tmtc')
 
 
 class TestClass:

@@ -8,12 +8,12 @@ from rx import operators as op
 
 from mamba.core.testing.utils import compose_service_info, get_config_dict, CallbackTestClass, get_provider_params_info
 from mamba.core.context import Context
-from mamba.component.instrument_driver.switch_matrix import SwitchMatrixKs34980a
+from mamba.marketplace.components.switch_matrix.keysight_34980a import SwitchMatrixKs34980a
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.msg import Empty, ServiceRequest, ServiceResponse, ParameterType
 
-component_path = os.path.join('component', 'instrument_driver',
-                              'switch_matrix', 'ks_34980a')
+component_path = os.path.join('marketplace', 'components',
+                              'switch_matrix', 'keysight_34980a')
 
 
 class TestClass:
@@ -382,7 +382,7 @@ class TestClass:
 
         # 1 - Test that component only gets activated for implemented services
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_multifunction_switch',
+            ServiceRequest(provider='keysight_34980a_multifunction_switch_controller',
                            id='NOT_EXISTING',
                            type='any',
                            args=[]))
@@ -401,7 +401,7 @@ class TestClass:
 
         # 2 - Test generic command before connection to the instrument has been established
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_multifunction_switch',
+            ServiceRequest(provider='keysight_34980a_multifunction_switch_controller',
                            id='idn',
                            type=ParameterType.get,
                            args=[]))
@@ -417,7 +417,7 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_multifunction_switch',
+            ServiceRequest(provider='keysight_34980a_multifunction_switch_controller',
                            id='connect',
                            type=ParameterType.set,
                            args=['1']))
@@ -432,7 +432,7 @@ class TestClass:
 
         # 4 - Test no system errors
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_multifunction_switch',
+            ServiceRequest(provider='keysight_34980a_multifunction_switch_controller',
                            id='sys_err',
                            type=ParameterType.get))
 
@@ -445,7 +445,7 @@ class TestClass:
 
         # 5 - Test generic command
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_multifunction_switch',
+            ServiceRequest(provider='keysight_34980a_multifunction_switch_controller',
                            id='clear',
                            type=ParameterType.set,
                            args=[]))
@@ -459,7 +459,7 @@ class TestClass:
 
         # 6 - Test generic query
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_multifunction_switch',
+            ServiceRequest(provider='keysight_34980a_multifunction_switch_controller',
                            id='idn',
                            type=ParameterType.get,
                            args=[]))
@@ -484,7 +484,7 @@ class TestClass:
         }
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_multifunction_switch',
+            ServiceRequest(provider='keysight_34980a_multifunction_switch_controller',
                            id='raw_query',
                            type=ParameterType.set,
                            args=['*IDN?']))
@@ -510,7 +510,7 @@ class TestClass:
 
         # 8 - Test shared memory get
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_multifunction_switch',
+            ServiceRequest(provider='keysight_34980a_multifunction_switch_controller',
                            id='raw_query',
                            type=ParameterType.get,
                            args=[]))
@@ -524,7 +524,7 @@ class TestClass:
 
         # 9 - Test special case of msg command with multiple args
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_multifunction_switch',
+            ServiceRequest(provider='keysight_34980a_multifunction_switch_controller',
                            id='raw_write',
                            type=ParameterType.set,
                            args=['CONF:VOLT:DC', '10,0.003,(@4009)']))
@@ -537,7 +537,7 @@ class TestClass:
         assert dummy_test_class.func_1_last_value.value is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_multifunction_switch',
+            ServiceRequest(provider='keysight_34980a_multifunction_switch_controller',
                            id='raw_query',
                            type=ParameterType.set,
                            args=['MEAS:VOLT:DC?', '1,0.001,(@4009)']))
@@ -556,7 +556,7 @@ class TestClass:
         }
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_multifunction_switch',
+            ServiceRequest(provider='keysight_34980a_multifunction_switch_controller',
                            id='raw_query',
                            type=ParameterType.get,
                            args=[]))
@@ -570,7 +570,7 @@ class TestClass:
 
         # 10 - Test no system errors
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_multifunction_switch',
+            ServiceRequest(provider='keysight_34980a_multifunction_switch_controller',
                            id='sys_err',
                            type=ParameterType.get))
 
@@ -583,7 +583,7 @@ class TestClass:
 
         # 11 - Test disconnection to the instrument
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_multifunction_switch',
+            ServiceRequest(provider='keysight_34980a_multifunction_switch_controller',
                            id='connect',
                            type=ParameterType.set,
                            args=['0']))
@@ -597,7 +597,7 @@ class TestClass:
         assert dummy_test_class.func_1_last_value.value is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_multifunction_switch',
+            ServiceRequest(provider='keysight_34980a_multifunction_switch_controller',
                            id='connected',
                            type=ParameterType.get,
                            args=[]))
@@ -630,7 +630,7 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_multifunction_switch',
+            ServiceRequest(provider='keysight_34980a_multifunction_switch_controller',
                            id='connect',
                            type=ParameterType.set,
                            args=['1']))
@@ -658,7 +658,7 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_multifunction_switch',
+            ServiceRequest(provider='keysight_34980a_multifunction_switch_controller',
                            id='connect',
                            type=ParameterType.set,
                            args=['0']))
@@ -692,7 +692,7 @@ class TestClass:
                                      }
                                  }).initialize()
 
-        assert 'Signature of service keysight_34980a_multifunction_switch : "new_param" is invalid. Format shall' \
+        assert 'Signature of service keysight_34980a_multifunction_switch_controller : "new_param" is invalid. Format shall' \
                ' be [[arg_1, arg_2, ...], return_type]' in str(excinfo.value)
 
         with pytest.raises(ComponentConfigException) as excinfo:
@@ -780,7 +780,7 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_multifunction_switch',
+            ServiceRequest(provider='keysight_34980a_multifunction_switch_controller',
                            id='connect',
                            type=ParameterType.set,
                            args=['1']))

@@ -10,9 +10,9 @@ from mamba.core.msg import Empty
 from mamba.core.context import Context
 from mamba.core.component_base import InstrumentDriver
 
-from mamba.component.instrument_driver.spacewire_gateway.utils.rmap_common \
+from mamba.marketplace.components.spacewire_gateway.utils.rmap_common \
     import rmap_bytes_to_dict
-from mamba.component.instrument_driver.spacewire_gateway.utils.rmap_test \
+from mamba.marketplace.components.spacewire_gateway.utils.rmap_test \
     import generate_write_reply, generate_read_reply
 
 

@@ -1,4 +1,4 @@
-from mamba.component.instrument_driver.spacewire_gateway.utils.crc_8 import crc_8
+from mamba.marketplace.components.spacewire_gateway.utils.crc_8 import crc_8
 
 
 def test_crc_8():

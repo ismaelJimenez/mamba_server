@@ -8,11 +8,11 @@ from rx import operators as op
 
 from mamba.core.testing.utils import compose_service_info, get_config_dict, CallbackTestClass, get_provider_params_info
 from mamba.core.context import Context
-from mamba.component.instrument_driver.spectrum_analyzer import SpectrumAnalyzerRsFsw
+from mamba.marketplace.components.spectrum_analyzer.rs_fsw import SpectrumAnalyzerRsFsw
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.msg import Empty, ServiceRequest, ServiceResponse, ParameterType
 
-component_path = os.path.join('component', 'instrument_driver',
+component_path = os.path.join('marketplace', 'components',
                               'spectrum_analyzer', 'rs_fsw')
 
 
@@ -348,7 +348,7 @@ class TestClass:
 
         # 1 - Test that component only gets activated for implemented services
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='r&s_fsw_signal_and_spectrum_analyzer',
+            ServiceRequest(provider='r&s_fsw_signal_and_spectrum_analyzer_controller',
                            id='NOT_EXISTING',
                            type='any',
                            args=[]))
@@ -367,7 +367,7 @@ class TestClass:
 
         # 2 - Test generic command before connection to the instrument has been established
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='r&s_fsw_signal_and_spectrum_analyzer',
+            ServiceRequest(provider='r&s_fsw_signal_and_spectrum_analyzer_controller',
                            id='idn',
                            type=ParameterType.get,
                            args=[]))
@@ -383,7 +383,7 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='r&s_fsw_signal_and_spectrum_analyzer',
+            ServiceRequest(provider='r&s_fsw_signal_and_spectrum_analyzer_controller',
                            id='connect',
                            type=ParameterType.set,
                            args=['1']))
@@ -398,7 +398,7 @@ class TestClass:
 
         # 4 - Test no system errors
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='r&s_fsw_signal_and_spectrum_analyzer',
+            ServiceRequest(provider='r&s_fsw_signal_and_spectrum_analyzer_controller',
                            id='sys_err',
                            type=ParameterType.get))
 
@@ -411,7 +411,7 @@ class TestClass:
 
         # 5 - Test generic command
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='r&s_fsw_signal_and_spectrum_analyzer',
+            ServiceRequest(provider='r&s_fsw_signal_and_spectrum_analyzer_controller',
                            id='clear',
                            type=ParameterType.set,
                            args=[]))
@@ -425,7 +425,7 @@ class TestClass:
 
         # 6 - Test generic query
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='r&s_fsw_signal_and_spectrum_analyzer',
+            ServiceRequest(provider='r&s_fsw_signal_and_spectrum_analyzer_controller',
                            id='idn',
                            type=ParameterType.get,
                            args=[]))
@@ -445,7 +445,7 @@ class TestClass:
         }
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='r&s_fsw_signal_and_spectrum_analyzer',
+            ServiceRequest(provider='r&s_fsw_signal_and_spectrum_analyzer_controller',
                            id='raw_query',
                            type=ParameterType.set,
                            args=['*IDN?']))
@@ -465,7 +465,7 @@ class TestClass:
 
         # 8 - Test shared memory get
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='r&s_fsw_signal_and_spectrum_analyzer',
+            ServiceRequest(provider='r&s_fsw_signal_and_spectrum_analyzer_controller',
                            id='raw_query',
                            type=ParameterType.get,
                            args=[]))
@@ -479,7 +479,7 @@ class TestClass:
 
         # 9 - Test especific command
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='r&s_fsw_signal_and_spectrum_analyzer',
+            ServiceRequest(provider='r&s_fsw_signal_and_spectrum_analyzer_controller',
                            id='raw_query',
                            type=ParameterType.set,
                            args=['*OPC?']))
@@ -493,7 +493,7 @@ class TestClass:
         }
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='r&s_fsw_signal_and_spectrum_analyzer',
+            ServiceRequest(provider='r&s_fsw_signal_and_spectrum_analyzer_controller',
                            id='raw_query',
                            type=ParameterType.get,
                            args=[]))
@@ -507,7 +507,7 @@ class TestClass:
 
         # 10 - Test no system errors
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='r&s_fsw_signal_and_spectrum_analyzer',
+            ServiceRequest(provider='r&s_fsw_signal_and_spectrum_analyzer_controller',
                            id='sys_err',
                            type=ParameterType.get))
 
@@ -520,7 +520,7 @@ class TestClass:
 
         # 11 - Test disconnection to the instrument
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='r&s_fsw_signal_and_spectrum_analyzer',
+            ServiceRequest(provider='r&s_fsw_signal_and_spectrum_analyzer_controller',
                            id='connect',
                            type=ParameterType.set,
                            args=['0']))
@@ -534,7 +534,7 @@ class TestClass:
         assert dummy_test_class.func_1_last_value.value is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='r&s_fsw_signal_and_spectrum_analyzer',
+            ServiceRequest(provider='r&s_fsw_signal_and_spectrum_analyzer_controller',
                            id='connected',
                            type=ParameterType.get,
                            args=[]))
@@ -567,7 +567,7 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='r&s_fsw_signal_and_spectrum_analyzer',
+            ServiceRequest(provider='r&s_fsw_signal_and_spectrum_analyzer_controller',
                            id='connect',
                            type=ParameterType.set,
                            args=['1']))
@@ -595,7 +595,7 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='r&s_fsw_signal_and_spectrum_analyzer',
+            ServiceRequest(provider='r&s_fsw_signal_and_spectrum_analyzer_controller',
                            id='connect',
                            type=ParameterType.set,
                            args=['0']))
@@ -698,7 +698,7 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='r&s_fsw_signal_and_spectrum_analyzer',
+            ServiceRequest(provider='r&s_fsw_signal_and_spectrum_analyzer_controller',
                            id='connect',
                            type=ParameterType.set,
                            args=['1']))

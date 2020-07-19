@@ -3,7 +3,7 @@ import os
 import time
 
 from mamba.core.context import Context
-from mamba.component.instrument_driver.digitizer import DigitizerKsm8131A
+from mamba.marketplace.components.digitizer.keysight_m8131a import DigitizerKsm8131A
 from mamba.component.gui.tk.parameter_setter_window_tk import ParameterSetterComponent
 from mamba.component.gui.msg import RunAction, RegisterAction
 from mamba.core.msg import Empty
@@ -110,8 +110,8 @@ class TestClass:
                       action_name='Parameter Setter',
                       perspective={
                           'services': [
-                              'keysight_m8131a_digitizer -> clear',
-                              'keysight_m8131a_digitizer -> connect'
+                              'keysight_m8131a_digitizer_controller -> clear',
+                              'keysight_m8131a_digitizer_controller -> connect'
                           ],
                           'width':
                           100,
@@ -139,8 +139,8 @@ class TestClass:
         assert dummy_test_class.func_2_last_value[
             'action_name'] == 'Parameter Setter'
         assert dummy_test_class.func_2_last_value['data']['services'] == [
-            'keysight_m8131a_digitizer -> clear',
-            'keysight_m8131a_digitizer -> connect'
+            'keysight_m8131a_digitizer_controller -> clear',
+            'keysight_m8131a_digitizer_controller -> connect'
         ]
         assert dummy_test_class.func_2_last_value['menu_title'] == 'Utils'
 

@@ -43,10 +43,13 @@ class MarketComponentDialog(QDialog):
 
             toolbox_layout = QGridLayout()
 
+            index = 0
+
             for component in components_list:
                 self.component_name_mapping[component.replace('_', ' ').title()] = os.path.join(marketplace_dir, toolbox, component)
                 toolbox_layout.addWidget(self.create_cell_widget(component.replace('_', ' ').title(),
-                                                                 os.path.join(mamba_dir, 'artwork', 'plugin.png')), 0, 0)
+                                                                 os.path.join(mamba_dir, 'artwork', 'plugin.png')), int(index/2), index%2)
+                index += 1
 
             toolbox_layout.setRowStretch(2, 10)
             toolbox_layout.setColumnStretch(2, 10)
