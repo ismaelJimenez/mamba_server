@@ -39,7 +39,7 @@ blank_mapping = [
 
 random_mapping = [
     # ('context', ['core.']),
-    # 'local_config',
+    'local_config',
     'rx_value',
     'get_components',
     'merge_dicts',
@@ -47,8 +47,8 @@ random_mapping = [
     'component_type',
     ('mamba_dir', ["'mamba_dir'"]),
     ('project_dir', ["'project_dir'"]),
-    # 'compose_parser',
-    # 'compose_file'
+    'compose_parser',
+    'compose_file'
 ]
 
 instance_random_mapping = []
