@@ -30,7 +30,7 @@ blank_mapping = [
     ': Optional[dict]',
     ': Optional[ServiceResponse]',
     ': ServiceResponse',
-    ': ServiceRespons',
+    ': ServiceRequest',
     ': Any',
     ': List[ParameterInfo]',
     ': Menu',
