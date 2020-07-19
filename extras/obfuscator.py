@@ -38,15 +38,15 @@ blank_mapping = [
 ]
 
 random_mapping = [
-    'rx_value',
-    'get_components',
-    'merge_dicts',
-    '_walk_modules',
-    'component_type',
-    ('mamba_dir', ["'mamba_dir'"]),
-    ('project_dir', ["'project_dir'"]),
-    'compose_parser',
-    'compose_file'
+    # 'rx_value',
+    # 'get_components',
+    # 'merge_dicts',
+    # '_walk_modules',
+    # 'component_type',
+    # ('mamba_dir', ["'mamba_dir'"]),
+    # ('project_dir', ["'project_dir'"]),
+    # 'compose_parser',
+    # 'compose_file'
 ]
 
 instance_random_mapping = []
