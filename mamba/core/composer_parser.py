@@ -10,6 +10,8 @@ from mamba.core.component_base import Component
 
 from mamba.core.msg.app_status import AppStatus
 
+context = Context()
+
 
 def compose_parser(compose_file: str,
                    mamba_dir: str,
@@ -19,12 +21,11 @@ def compose_parser(compose_file: str,
     component_folders = ['mamba.component', 'mamba.mock']
 
     if project_dir is not None:
-        component_folders.append('component')
+        component_folders.insert(0, 'component')
 
     with open(compose_file) as file:
         compose_config = yaml.load(file, Loader=yaml.FullLoader)
 
-        context = Context()
         context.set('mamba_dir', mamba_dir)
         context.set('project_dir', project_dir)
 
@@ -37,9 +38,11 @@ def compose_parser(compose_file: str,
                 if isinstance(service, Component):
                     service.initialize()
 
-            # Start Mamba App
-            context.rx['app_status'].on_next(AppStatus.Running)
-
             return 0
         else:
             return 1
+
+
+def start_mamba_app() -> None:
+    # Start Mamba App
+    context.rx['app_status'].on_next(AppStatus.Running)

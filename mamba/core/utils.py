@@ -91,16 +91,9 @@ def get_components(used_components: Dict[str, dict], modules: List[str],
     for module in modules:
         components_in_module = get_classes_from_module(module, component_type)
 
-        all_components_set = set(all_components_by_type)
-        new_components_set = set(components_in_module)
-
-        intersection = all_components_set.intersection(new_components_set)
-
-        if len(intersection) > 0:
-            raise ComposeFileException(
-                f"Component identifier '{intersection}' is duplicated")
-
-        all_components_by_type.update(components_in_module)
+        for key, value in components_in_module.items():
+            if key not in all_components_by_type:
+                all_components_by_type[key] = value
 
     dict_used_components = {}
 

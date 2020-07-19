@@ -115,10 +115,11 @@ class TestClass:
         assert exists(
             join(self.proj_path, 'component', 'instrument_driver', 'quit'))
 
-        with pytest.raises(ComposeFileException) as excinfo:
-            utils.get_components({'quit': {}},
-                                 ['mamba.component', 'component'], Component,
-                                 Context())
+        components_dict = utils.get_components({'quit': {
+            'component': 'quit'
+        }},
+                                ['mamba.component', 'component'], Component,
+                                Context())
 
-        assert 'is duplicated' in str(excinfo.value)
-        rmtree(join(self.proj_path, 'component', 'instrument_driver', 'quit'))
+        assert len(components_dict) == 1
+        assert 'quit' in components_dict

@@ -8,3 +8,4 @@ __pycache__/
 *.egg-info
 *.mypy*
 mamba_config.json
+*.log
