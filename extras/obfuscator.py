@@ -38,8 +38,6 @@ blank_mapping = [
 ]
 
 random_mapping = [
-    # ('context', ['core.']),
-    'local_config',
     'rx_value',
     'get_components',
     'merge_dicts',
