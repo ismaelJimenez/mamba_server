@@ -16,7 +16,6 @@ rootdir = ['mamba/core', 'mamba/commands', 'tests']
 blank_mapping = [
     ' -> None',
     ': Context',
-    ': Optional[Dict[str, dict]] = ',
     ': RunAction',
     ': str',
     ': type',
@@ -24,11 +23,8 @@ blank_mapping = [
     '-> List[ModuleType]',
     ': Dict[str, dict]',
     ': List[str]',
-    ': Optional[str] = ',
     '-> int',
     '-> str',
-    ': Optional[dict] = ',
-    ': Optional[ServiceResponse] = ',
     ': ServiceResponse',
     ': ServiceRequest',
     ': Any',
@@ -39,8 +35,15 @@ blank_mapping = [
     '-> Menu',
     ': AppStatus',
     '-> bool',
-    '-> Any',
-    '-> Optional[str] = '
+    '-> Any'
+]
+
+static_mapping = [
+    (': Optional[Dict[str, dict]] = ', '='),
+    (': Optional[str] = ', '='),
+    (': Optional[dict] = ', '='),
+    (': Optional[ServiceResponse] = ', '='),
+    ('-> Optional[str] = ', '='),
 ]
 
 random_mapping = [
@@ -95,6 +98,9 @@ for subdir, dirs, files in chain.from_iterable(os.walk(path) for path in rootdir
 
                     for map in blank_mapping:
                         line = line.replace(map, '')
+
+                    for map in static_mapping:
+                        line = line.replace(map[0], map[1])
 
                     for map in instance_random_mapping:
                         if isinstance(map[0], tuple):
