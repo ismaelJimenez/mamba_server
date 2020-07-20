@@ -49,6 +49,9 @@ setup(
     classifiers=[
         'Development Status :: 1 - Planning',
         'Environment :: Console',
+        'Environment :: MacOS X',
+        'Environment :: Win32 (MS Windows)',
+        'Environment :: X11 Applications :: Qt ',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)',
         'License :: Other/Proprietary License',
