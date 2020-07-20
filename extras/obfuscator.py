@@ -68,7 +68,7 @@ for subdir, dirs, files in chain.from_iterable(os.walk(path) for path in rootdir
             with fileinput.FileInput(filename, inplace=True) as file:
                 in_comment = False
                 for line in file:
-                    if '# ' in line:
+                    if '# ' in line and not '##' in line:
                         new_line = line.split('#', 1)[0].rstrip()
                         if new_line != '':
                             print(new_line, end='\n')
