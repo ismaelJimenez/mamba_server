@@ -35,7 +35,8 @@ blank_mapping = [
     ' -> Menu',
     ': AppStatus',
     ' -> bool',
-    ' -> Any'
+    ' -> Any',
+    ': dict'
 ]
 
 static_mapping = [
