@@ -46,6 +46,7 @@ static_mapping = [
     (': Optional[dict] = ', '='),
     (': Optional[ServiceResponse] = ', '='),
     ('-> Optional[str] = ', '='),
+    (': str = ', '=')
 ]
 
 random_mapping = [
@@ -98,11 +99,11 @@ for subdir, dirs, files in chain.from_iterable(os.walk(path) for path in rootdir
                     if in_comment:
                         continue
 
-                    for map in blank_mapping:
-                        line = line.replace(map, '')
-
                     for map in static_mapping:
                         line = line.replace(map[0], map[1])
+
+                    for map in blank_mapping:
+                        line = line.replace(map, '')
 
                     for map in instance_random_mapping:
                         if isinstance(map[0], tuple):
