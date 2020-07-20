@@ -2,11 +2,19 @@
 Mamba-Server
 ================
 
+.. image:: https://api.travis-ci.org/mamba-framework/mamba-server.svg?branch=master
+   :target: https://travis-ci.org/github/mamba-framework/mamba-server/builds
+.. image:: https://img.shields.io/codecov/c/github/mamba-framework/mamba-server/master.svg
+   :target: https://codecov.io/github/mamba-framework/mamba-server?branch=master
+   :alt: Coverage report
 .. image:: https://img.shields.io/pypi/v/Mamba-Server.svg
         :target: https://pypi.python.org/pypi/Mamba-Server
 .. image:: https://img.shields.io/readthedocs/mamba-server.svg
         :target: https://readthedocs.org/projects/mamba-server/builds/
         :alt: Documentation Status
+.. image:: https://img.shields.io/badge/license-%20MIT-blue.svg
+   :target: ../master/LICENSE
+
 
 Mamba Framework Overview
 ========================
@@ -14,7 +22,7 @@ Mamba Framework Overview
 Mamba is a framework for data acquisition in distributed test environments. The Mamba Framework is composed of:
   
 - **Mamba Server**: A tool to develop the controllers for the different Ground Control Equipments.
-- **Mamba Client**: A set of libraries for composing a central controller that can use the services provided from one or more Mamba Servers. The central controller can be writen in a Jupyter Notebook, in a traditional development environment (like Visual Code or PyCharm) or be executed as an stand-alone script (https://github.com/mamba-framework/mamba-client-docs).
+- **Mamba Client**: A set of libraries for composing a central controller that can use the services provided from one or more Mamba Servers. The central controller can be writen in a Jupyter Notebook, in a traditional development environment (like Visual Code or PyCharm) or be executed as an stand-alone script (https://github.com/mamba-framework/mamba-client).
 - **Mamba Utils**: A set of utilities that are useful in the development of Ground Testbeds, like UDP and TCP sniffers (https://github.com/mamba-framework/mamba-utils).
 
 The next image shows an architectural example of a testbed implemented with the Mamba Framework:
@@ -38,22 +46,10 @@ Requirements
 * Python 3.6+
 * Works on Linux, Windows and macOS
 
-License
-=======
-
-Mamba Server is dual-licensed under commercial and open source licenses. The commercial Mamba license gives you the full rights to create and distribute software on your own terms without any open source license obligations. With the commercial license you also have access to the official Mamba Support and close strategic relationship with The Mamba Company to make sure your development goals are met. See `License <https://github.com/mamba-framework/mamba-server-docs/blob/master/LICENSE>`__.
-
-
-Mamba Server  is also available under GPL and LGPLv3 open source licenses. Mamba tools and some libraries are only available under GPL. The Mamba open source licensing is ideal for use cases such as open source projects with open source distribution, student/academic purposes, hobby projects, internal research projects without external distribution, or other projects where all (L)GPL obligations can be met.
-
-In order to preserve the true meaning of open development and uphold the spirit of free software, it is imperative that the rules and regulations of open source licenses required by the Free Software Foundation are followed. Learn more: http://www.gnu.org/licenses.
-
-When deciding which license to use, please check your corporate open source policy or consult a SW licensing legal expert.
-
 Install
 =======
 
-The GPL and LGPLv3 version of Mamba Server can be installed from PyPI:
+The quick way::
 
     pip install mamba-server
 
@@ -64,3 +60,8 @@ Documentation
 
 Documentation is available online at https://mamba-server.readthedocs.io and in the ``docs``
 directory.
+
+License
+=======
+
+See `License <https://github.com/mamba-framework/mamba-server/blob/master/LICENSE.txt>`__.
