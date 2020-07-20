@@ -1,10 +1,10 @@
-################################################################################################
-##
-##  Copyright (c) Mamba Developers. All rights reserved.
-##  Licensed under the MIT License. See License.txt in the project root for license information.
-##
-################################################################################################
-
+############################################################################
+#
+# Copyright (c) Mamba Developers. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+#
+############################################################################
 """ Open Project component """
 
 import os
@@ -51,5 +51,8 @@ class MarketplaceComponent(GuiPlugin):
             Args:
                 rx_value (RunAction): The value published by the subject.
         """
-        market = MarketComponentDialog(self._context.get('mamba_dir'), os.path.join(self._context.get('mamba_dir'), 'marketplace', 'components'), QWidget())
+        market = MarketComponentDialog(
+            self._context.get('mamba_dir'),
+            os.path.join(self._context.get('mamba_dir'), 'marketplace',
+                         'components'), QWidget())
         return market.exec_()

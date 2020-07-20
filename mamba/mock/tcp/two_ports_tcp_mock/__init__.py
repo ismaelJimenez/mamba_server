@@ -1,10 +1,10 @@
-################################################################################################
-##
-##  Copyright (c) Mamba Developers. All rights reserved.
-##  Licensed under the MIT License. See License.txt in the project root for license information.
-##
-################################################################################################
-
+############################################################################
+#
+# Copyright (c) Mamba Developers. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+#
+############################################################################
 """ Component for simulating 2 ports TCP server equipment """
 
 import os

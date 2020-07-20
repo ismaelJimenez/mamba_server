@@ -1,10 +1,10 @@
-################################################################################################
-##
-##  Copyright (c) Mamba Developers. All rights reserved.
-##  Licensed under the MIT License. See License.txt in the project root for license information.
-##
-################################################################################################
-
+############################################################################
+#
+# Copyright (c) Mamba Developers. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+#
+############################################################################
 """ HTTP controller base """
 
 from typing import Optional

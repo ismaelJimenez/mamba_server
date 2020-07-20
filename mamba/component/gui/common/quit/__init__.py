@@ -1,10 +1,10 @@
-################################################################################################
-##
-##  Copyright (c) Mamba Developers. All rights reserved.
-##  Licensed under the MIT License. See License.txt in the project root for license information.
-##
-################################################################################################
-
+############################################################################
+#
+# Copyright (c) Mamba Developers. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+#
+############################################################################
 """ Plugin to close Mamba Application """
 
 import os
@@ -19,6 +19,7 @@ from mamba.component.gui.msg import RunAction
 
 class QuitComponent(GuiPlugin):
     """ Plugin to close Main Window """
+
     def __init__(self,
                  context: Context,
                  local_config: Optional[dict] = None) -> None:

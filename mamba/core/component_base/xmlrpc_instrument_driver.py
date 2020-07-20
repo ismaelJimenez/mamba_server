@@ -1,10 +1,10 @@
-################################################################################################
-##
-##  Copyright (c) Mamba Developers. All rights reserved.
-##  Licensed under the MIT License. See License.txt in the project root for license information.
-##
-################################################################################################
-
+############################################################################
+#
+# Copyright (c) Mamba Developers. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+#
+############################################################################
 """ TCP Instrument driver controller base """
 
 from typing import Optional
@@ -14,7 +14,7 @@ from mamba.core.context import Context
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.component_base import InstrumentDriver
 from mamba.core.msg import ServiceRequest, \
-    ServiceResponse, ParameterType, Empty
+    ServiceResponse, ParameterType
 
 
 class XmlRpcInstrumentDriver(InstrumentDriver):

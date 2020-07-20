@@ -31,8 +31,7 @@ class TestClass:
         self.cwd = join(self.temp_path, self.project_name)
         assert cmd_exec(self, 'mamba', 'generate', 'visa_instrument_driver',
                         'plugin_1') == 0
-        assert exists(
-            join(self.proj_path, 'components', 'plugin_1'))
+        assert exists(join(self.proj_path, 'components', 'plugin_1'))
         assert exists(join(self.proj_path, 'composer'))
 
         self.mamba_dir = os.path.join(os.path.dirname(__file__), '..', '..',
@@ -113,14 +112,11 @@ class TestClass:
     def test_get_components_duplicated_component(self):
         assert cmd_exec(self, 'mamba', 'generate', 'visa_instrument_driver',
                         'quit') == 0
-        assert exists(
-            join(self.proj_path, 'components', 'quit'))
+        assert exists(join(self.proj_path, 'components', 'quit'))
 
         components_dict = utils.get_components({'quit': {
             'component': 'quit'
-        }},
-                                ['mamba.component', 'components'], Component,
-                                Context())
+        }}, ['mamba.component', 'components'], Component, Context())
 
         assert len(components_dict) == 1
         assert 'quit' in components_dict

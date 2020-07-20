@@ -106,22 +106,23 @@ class TestClass:
             dummy_test_class.test_func_1)
 
         self.context.rx['run_plugin'].on_next(
-            RunAction(menu_title='Utils',
-                      action_name='Parameter Getter',
-                      perspective={
-                          'services': [
-                              'keysight_m8131a_digitizer_controller -> raw_query',
-                              'keysight_m8131a_digitizer_controller -> connected'
-                          ],
-                          'width':
-                          100,
-                          'height':
-                          100,
-                          'pos_x':
-                          0,
-                          'pos_y':
-                          0
-                      }))
+            RunAction(
+                menu_title='Utils',
+                action_name='Parameter Getter',
+                perspective={
+                    'services': [
+                        'keysight_m8131a_digitizer_controller -> raw_query',
+                        'keysight_m8131a_digitizer_controller -> connected'
+                    ],
+                    'width':
+                    100,
+                    'height':
+                    100,
+                    'pos_x':
+                    0,
+                    'pos_y':
+                    0
+                }))
 
         time.sleep(.1)
 

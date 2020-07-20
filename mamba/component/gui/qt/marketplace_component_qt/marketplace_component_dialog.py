@@ -1,9 +1,10 @@
-################################################################################################
-##
-##  Copyright (c) Mamba Developers. All rights reserved.
-##  Licensed under the MIT License. See License.txt in the project root for license information.
-##
-################################################################################################
+############################################################################
+#
+# Copyright (c) Mamba Developers. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+#
+############################################################################
 
 import os
 import yaml
@@ -37,25 +38,37 @@ class MarketComponentDialog(QDialog):
         self.close_button = QPushButton("Close")
 
         self.cell_button_group = QButtonGroup()
-        self.cell_button_group.buttonClicked.connect(self.cell_button_group_clicked)
+        self.cell_button_group.buttonClicked.connect(
+            self.cell_button_group_clicked)
 
         self.toolBox = QToolBox()
 
-        toolboxes_list = [x for x in os.listdir(marketplace_dir) if '.py' not in x and '__' not in x]
+        toolboxes_list = [
+            x for x in os.listdir(marketplace_dir)
+            if '.py' not in x and '__' not in x
+        ]
 
         self.component_name_mapping = {}
 
         for toolbox in toolboxes_list:
-            components_list = [x for x in os.listdir(os.path.join(marketplace_dir, toolbox)) if '.py' not in x and '__pycache__' not in x]
+            components_list = [
+                x for x in os.listdir(os.path.join(marketplace_dir, toolbox))
+                if '.py' not in x and '__pycache__' not in x
+            ]
 
             toolbox_layout = QGridLayout()
 
             index = 0
 
             for component in components_list:
-                self.component_name_mapping[component.replace('_', ' ').title()] = os.path.join(marketplace_dir, toolbox, component)
-                toolbox_layout.addWidget(self.create_cell_widget(component.replace('_', ' ').title(),
-                                                                 os.path.join(mamba_dir, 'artwork', 'plugin.png')), int(index/2), index%2)
+                self.component_name_mapping[component.replace(
+                    '_', ' ').title()] = os.path.join(marketplace_dir, toolbox,
+                                                      component)
+                toolbox_layout.addWidget(
+                    self.create_cell_widget(
+                        component.replace('_', ' ').title(),
+                        os.path.join(mamba_dir, 'artwork', 'plugin.png')),
+                    int(index / 2), index % 2)
                 index += 1
 
             toolbox_layout.setRowStretch(2, 10)
@@ -64,7 +77,8 @@ class MarketComponentDialog(QDialog):
             toolbox_widget = QWidget()
             toolbox_widget.setLayout(toolbox_layout)
 
-            self.toolBox.addItem(toolbox_widget, toolbox.replace('_', ' ').title())
+            self.toolBox.addItem(toolbox_widget,
+                                 toolbox.replace('_', ' ').title())
 
         # Create layout and add widgets
 
@@ -95,24 +109,29 @@ class MarketComponentDialog(QDialog):
         self.center()
 
     def download_button_clicked(self):
-        dir = QFileDialog.getExistingDirectory(QWidget(), 'Download Component',
-                                               os.getcwd(),
-                                               QFileDialog.ShowDirsOnly
-                                               | QFileDialog.DontResolveSymlinks)
+        dir = QFileDialog.getExistingDirectory(
+            QWidget(), 'Download Component', os.getcwd(),
+            QFileDialog.ShowDirsOnly
+            | QFileDialog.DontResolveSymlinks)
         if dir:
-            component_name = os.path.basename(self.component_name_mapping[self.selected_item])
-            target_dir = os.path.join(dir, os.path.basename(self.component_name_mapping[self.selected_item]))
+            component_name = os.path.basename(
+                self.component_name_mapping[self.selected_item])
+            target_dir = os.path.join(
+                dir,
+                os.path.basename(
+                    self.component_name_mapping[self.selected_item]))
 
             if os.path.exists(target_dir):
                 QMessageBox.warning(self, 'Mamba Component Download ERROR',
-                                  f'Folder {target_dir} already exists.')
+                                    f'Folder {target_dir} already exists.')
             else:
                 copytree(self.component_name_mapping[self.selected_item],
-                                  os.path.join(dir, component_name))
+                         os.path.join(dir, component_name))
 
-                QMessageBox.about(self, 'Mamba Component Download',
-                                  f'Component {component_name} downloaded successfully to:\n'
-                                  f' {target_dir}')
+                QMessageBox.about(
+                    self, 'Mamba Component Download',
+                    f'Component {component_name} downloaded successfully to:\n'
+                    f' {target_dir}')
 
     def cell_button_group_clicked(self, button):
         self.download_button.setEnabled(True)
@@ -160,7 +179,6 @@ class MarketComponentDialog(QDialog):
         frame_gm = self.frameGeometry()
         screen = QApplication.desktop().screenNumber(
             QApplication.desktop().cursor().pos())
-        center_point = QApplication.desktop().screenGeometry(
-            screen).center()
+        center_point = QApplication.desktop().screenGeometry(screen).center()
         frame_gm.moveCenter(center_point)
         self.move(frame_gm.topLeft())

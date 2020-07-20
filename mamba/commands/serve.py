@@ -1,10 +1,10 @@
-################################################################################################
-##
-##  Copyright (c) Mamba Developers. All rights reserved.
-##  Licensed under the MIT License. See License.txt in the project root for license information.
-##
-################################################################################################
-
+############################################################################
+#
+# Copyright (c) Mamba Developers. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+#
+############################################################################
 """ Mamba server start command """
 
 from os.path import join, exists, dirname
@@ -40,12 +40,15 @@ class Command(MambaCommand):
     def run(args, mamba_dir, project_dir):
         if args.load_standalone_composer:
             project_dir = dirname(dirname(args.load_standalone_composer))
-            if exists(args.load_standalone_composer) and exists(join(project_dir, 'mamba.cfg')):
-                compose_parser(args.load_standalone_composer, mamba_dir, join(project_dir))
+            if exists(args.load_standalone_composer) and exists(
+                    join(project_dir, 'mamba.cfg')):
+                compose_parser(args.load_standalone_composer, mamba_dir,
+                               join(project_dir))
             else:
                 return 1
         else:
-            launch_file = _find_launch_file(DEFAULT_LAUNCH_FILE, mamba_dir, project_dir)
+            launch_file = _find_launch_file(DEFAULT_LAUNCH_FILE, mamba_dir,
+                                            project_dir)
             if launch_file is not None:
                 compose_parser(launch_file, mamba_dir, project_dir)
             else:
@@ -55,7 +58,8 @@ class Command(MambaCommand):
                 project_dir = dirname(dirname(args.load_composer))
                 if exists(args.load_composer):
                     if exists(join(project_dir, 'mamba.cfg')):
-                        compose_parser(args.load_composer, mamba_dir, join(project_dir))
+                        compose_parser(args.load_composer, mamba_dir,
+                                       join(project_dir))
                     else:
                         print(f'Invalid Mamba Project: {project_dir}')
                         return 1

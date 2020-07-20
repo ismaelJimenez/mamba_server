@@ -1,10 +1,10 @@
-################################################################################################
-##
-##  Copyright (c) Mamba Developers. All rights reserved.
-##  Licensed under the MIT License. See License.txt in the project root for license information.
-##
-################################################################################################
-
+############################################################################
+#
+# Copyright (c) Mamba Developers. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+#
+############################################################################
 """ Components creation command """
 
 import os
@@ -101,8 +101,7 @@ class Command(MambaCommand):
 
 
 def _templates_dir(mamba_dir, component_type):
-    return os.path.join(mamba_dir, TEMPLATES_DIR, 'component',
-                        component_type)
+    return os.path.join(mamba_dir, TEMPLATES_DIR, 'component', component_type)
 
 
 def _list_component_types():

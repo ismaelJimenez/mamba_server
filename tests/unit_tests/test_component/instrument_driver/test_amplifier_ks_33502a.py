@@ -341,7 +341,8 @@ class TestClass:
         # 1 - Test that component only gets activated for implemented services
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(
-                provider='keysight_33502a_2-channel_isolated_amplifier_controller',
+                provider=
+                'keysight_33502a_2-channel_isolated_amplifier_controller',
                 id='NOT_EXISTING',
                 type='any',
                 args=[]))
@@ -361,7 +362,8 @@ class TestClass:
         # 2 - Test generic command before connection to the instrument has been established
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(
-                provider='keysight_33502a_2-channel_isolated_amplifier_controller',
+                provider=
+                'keysight_33502a_2-channel_isolated_amplifier_controller',
                 id='idn',
                 type=ParameterType.get,
                 args=[]))
@@ -378,7 +380,8 @@ class TestClass:
 
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(
-                provider='keysight_33502a_2-channel_isolated_amplifier_controller',
+                provider=
+                'keysight_33502a_2-channel_isolated_amplifier_controller',
                 id='connect',
                 type=ParameterType.set,
                 args=['1']))
@@ -394,7 +397,8 @@ class TestClass:
         # 4 - Test no system errors
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(
-                provider='keysight_33502a_2-channel_isolated_amplifier_controller',
+                provider=
+                'keysight_33502a_2-channel_isolated_amplifier_controller',
                 id='sys_err',
                 type=ParameterType.get))
 
@@ -408,7 +412,8 @@ class TestClass:
         # 5 - Test generic command
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(
-                provider='keysight_33502a_2-channel_isolated_amplifier_controller',
+                provider=
+                'keysight_33502a_2-channel_isolated_amplifier_controller',
                 id='clear',
                 type=ParameterType.set,
                 args=[]))
@@ -423,7 +428,8 @@ class TestClass:
         # 6 - Test generic query
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(
-                provider='keysight_33502a_2-channel_isolated_amplifier_controller',
+                provider=
+                'keysight_33502a_2-channel_isolated_amplifier_controller',
                 id='idn',
                 type=ParameterType.get,
                 args=[]))
@@ -440,7 +446,8 @@ class TestClass:
 
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(
-                provider='keysight_33502a_2-channel_isolated_amplifier_controller',
+                provider=
+                'keysight_33502a_2-channel_isolated_amplifier_controller',
                 id='raw_query',
                 type=ParameterType.set,
                 args=['*IDN?']))
@@ -460,7 +467,8 @@ class TestClass:
         # 8 - Test shared memory get
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(
-                provider='keysight_33502a_2-channel_isolated_amplifier_controller',
+                provider=
+                'keysight_33502a_2-channel_isolated_amplifier_controller',
                 id='raw_query',
                 type=ParameterType.get,
                 args=[]))
@@ -475,7 +483,8 @@ class TestClass:
         # 9 - Test special case of msg command with multiple args
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(
-                provider='keysight_33502a_2-channel_isolated_amplifier_controller',
+                provider=
+                'keysight_33502a_2-channel_isolated_amplifier_controller',
                 id='raw_write',
                 type=ParameterType.set,
                 args=['ROUT1:PATH', 'AMP']))
@@ -489,7 +498,8 @@ class TestClass:
 
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(
-                provider='keysight_33502a_2-channel_isolated_amplifier_controller',
+                provider=
+                'keysight_33502a_2-channel_isolated_amplifier_controller',
                 id='raw_query',
                 type=ParameterType.set,
                 args=['ROUT1:PATH?']))
@@ -500,7 +510,8 @@ class TestClass:
 
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(
-                provider='keysight_33502a_2-channel_isolated_amplifier_controller',
+                provider=
+                'keysight_33502a_2-channel_isolated_amplifier_controller',
                 id='raw_query',
                 type=ParameterType.get,
                 args=[]))
@@ -515,7 +526,8 @@ class TestClass:
         # 10 - Specific parameters
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(
-                provider='keysight_33502a_2-channel_isolated_amplifier_controller',
+                provider=
+                'keysight_33502a_2-channel_isolated_amplifier_controller',
                 id='channel_2_gain',
                 type=ParameterType.get,
                 args=[]))
@@ -529,7 +541,8 @@ class TestClass:
 
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(
-                provider='keysight_33502a_2-channel_isolated_amplifier_controller',
+                provider=
+                'keysight_33502a_2-channel_isolated_amplifier_controller',
                 id='channel_2_gain',
                 type=ParameterType.set,
                 args=['AMP']))
@@ -543,7 +556,8 @@ class TestClass:
 
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(
-                provider='keysight_33502a_2-channel_isolated_amplifier_controller',
+                provider=
+                'keysight_33502a_2-channel_isolated_amplifier_controller',
                 id='channel_2_gain',
                 type=ParameterType.get,
                 args=[]))
@@ -558,7 +572,8 @@ class TestClass:
         # 11 - Test no system errors
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(
-                provider='keysight_33502a_2-channel_isolated_amplifier_controller',
+                provider=
+                'keysight_33502a_2-channel_isolated_amplifier_controller',
                 id='sys_err',
                 type=ParameterType.get))
 
@@ -572,7 +587,8 @@ class TestClass:
         # 12 - Test disconnection to the instrument
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(
-                provider='keysight_33502a_2-channel_isolated_amplifier_controller',
+                provider=
+                'keysight_33502a_2-channel_isolated_amplifier_controller',
                 id='connect',
                 type=ParameterType.set,
                 args=['0']))
@@ -587,7 +603,8 @@ class TestClass:
 
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(
-                provider='keysight_33502a_2-channel_isolated_amplifier_controller',
+                provider=
+                'keysight_33502a_2-channel_isolated_amplifier_controller',
                 id='connected',
                 type=ParameterType.get,
                 args=[]))
@@ -621,7 +638,8 @@ class TestClass:
 
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(
-                provider='keysight_33502a_2-channel_isolated_amplifier_controller',
+                provider=
+                'keysight_33502a_2-channel_isolated_amplifier_controller',
                 id='connect',
                 type=ParameterType.set,
                 args=['1']))
@@ -650,7 +668,8 @@ class TestClass:
 
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(
-                provider='keysight_33502a_2-channel_isolated_amplifier_controller',
+                provider=
+                'keysight_33502a_2-channel_isolated_amplifier_controller',
                 id='connect',
                 type=ParameterType.set,
                 args=['0']))
@@ -754,7 +773,8 @@ class TestClass:
 
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(
-                provider='keysight_33502a_2-channel_isolated_amplifier_controller',
+                provider=
+                'keysight_33502a_2-channel_isolated_amplifier_controller',
                 id='connect',
                 type=ParameterType.set,
                 args=['1']))

@@ -1,10 +1,10 @@
-################################################################################################
-##
-##  Copyright (c) Mamba Developers. All rights reserved.
-##  Licensed under the MIT License. See License.txt in the project root for license information.
-##
-################################################################################################
-
+############################################################################
+#
+# Copyright (c) Mamba Developers. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+#
+############################################################################
 """ New Project component """
 
 import os
@@ -49,8 +49,10 @@ class NewProjectComponent(GuiPlugin):
     def generate_new_project(self, dir):
         class Argument:
             project_name = dir
+
         new_project_command = NewProjectCommand()
-        new_project_command.run(Argument, self._context.get('mamba_dir'), dir, self._log_error)
+        new_project_command.run(Argument, self._context.get('mamba_dir'), dir,
+                                self._log_error)
 
     def run(self, rx_value: RunAction) -> None:
         """ Entry point for running the plugin
@@ -58,13 +60,15 @@ class NewProjectComponent(GuiPlugin):
             Args:
                 rx_value (RunAction): The value published by the subject.
         """
-        dir = QFileDialog.getExistingDirectory(QWidget(), 'New Mamba Project',
-                                               os.getcwd(),
-                                               QFileDialog.ShowDirsOnly
-                                               | QFileDialog.DontResolveSymlinks)
+        dir = QFileDialog.getExistingDirectory(
+            QWidget(), 'New Mamba Project', os.getcwd(),
+            QFileDialog.ShowDirsOnly
+            | QFileDialog.DontResolveSymlinks)
         if dir:
             self.generate_new_project(dir)
 
             sys.path.insert(0, dir)
 
-            compose_parser(os.path.join(dir, 'composer', 'project-compose.yml'), self._context.get('mamba_dir'), dir)
+            compose_parser(
+                os.path.join(dir, 'composer', 'project-compose.yml'),
+                self._context.get('mamba_dir'), dir)

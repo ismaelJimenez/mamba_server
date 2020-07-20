@@ -12,8 +12,8 @@ from mamba.marketplace.components.switch_matrix.keysight_34980a import SwitchMat
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.msg import Empty, ServiceRequest, ServiceResponse, ParameterType
 
-component_path = os.path.join('marketplace', 'components',
-                              'switch_matrix', 'keysight_34980a')
+component_path = os.path.join('marketplace', 'components', 'switch_matrix',
+                              'keysight_34980a')
 
 
 class TestClass:
@@ -382,10 +382,11 @@ class TestClass:
 
         # 1 - Test that component only gets activated for implemented services
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_multifunction_switch_controller',
-                           id='NOT_EXISTING',
-                           type='any',
-                           args=[]))
+            ServiceRequest(
+                provider='keysight_34980a_multifunction_switch_controller',
+                id='NOT_EXISTING',
+                type='any',
+                args=[]))
 
         assert dummy_test_class.func_1_times_called == 0
         assert dummy_test_class.func_1_last_value is None
@@ -401,10 +402,11 @@ class TestClass:
 
         # 2 - Test generic command before connection to the instrument has been established
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_multifunction_switch_controller',
-                           id='idn',
-                           type=ParameterType.get,
-                           args=[]))
+            ServiceRequest(
+                provider='keysight_34980a_multifunction_switch_controller',
+                id='idn',
+                type=ParameterType.get,
+                args=[]))
 
         time.sleep(.1)
 
@@ -417,10 +419,11 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_multifunction_switch_controller',
-                           id='connect',
-                           type=ParameterType.set,
-                           args=['1']))
+            ServiceRequest(
+                provider='keysight_34980a_multifunction_switch_controller',
+                id='connect',
+                type=ParameterType.set,
+                args=['1']))
 
         time.sleep(.1)
 
@@ -432,9 +435,10 @@ class TestClass:
 
         # 4 - Test no system errors
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_multifunction_switch_controller',
-                           id='sys_err',
-                           type=ParameterType.get))
+            ServiceRequest(
+                provider='keysight_34980a_multifunction_switch_controller',
+                id='sys_err',
+                type=ParameterType.get))
 
         time.sleep(.1)
 
@@ -445,10 +449,11 @@ class TestClass:
 
         # 5 - Test generic command
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_multifunction_switch_controller',
-                           id='clear',
-                           type=ParameterType.set,
-                           args=[]))
+            ServiceRequest(
+                provider='keysight_34980a_multifunction_switch_controller',
+                id='clear',
+                type=ParameterType.set,
+                args=[]))
 
         time.sleep(.1)
 
@@ -459,10 +464,11 @@ class TestClass:
 
         # 6 - Test generic query
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_multifunction_switch_controller',
-                           id='idn',
-                           type=ParameterType.get,
-                           args=[]))
+            ServiceRequest(
+                provider='keysight_34980a_multifunction_switch_controller',
+                id='idn',
+                type=ParameterType.get,
+                args=[]))
 
         time.sleep(.1)
 
@@ -484,10 +490,11 @@ class TestClass:
         }
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_multifunction_switch_controller',
-                           id='raw_query',
-                           type=ParameterType.set,
-                           args=['*IDN?']))
+            ServiceRequest(
+                provider='keysight_34980a_multifunction_switch_controller',
+                id='raw_query',
+                type=ParameterType.set,
+                args=['*IDN?']))
 
         time.sleep(.1)
 
@@ -510,10 +517,11 @@ class TestClass:
 
         # 8 - Test shared memory get
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_multifunction_switch_controller',
-                           id='raw_query',
-                           type=ParameterType.get,
-                           args=[]))
+            ServiceRequest(
+                provider='keysight_34980a_multifunction_switch_controller',
+                id='raw_query',
+                type=ParameterType.get,
+                args=[]))
 
         time.sleep(.1)
 
@@ -524,10 +532,11 @@ class TestClass:
 
         # 9 - Test special case of msg command with multiple args
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_multifunction_switch_controller',
-                           id='raw_write',
-                           type=ParameterType.set,
-                           args=['CONF:VOLT:DC', '10,0.003,(@4009)']))
+            ServiceRequest(
+                provider='keysight_34980a_multifunction_switch_controller',
+                id='raw_write',
+                type=ParameterType.set,
+                args=['CONF:VOLT:DC', '10,0.003,(@4009)']))
 
         time.sleep(.1)
 
@@ -537,10 +546,11 @@ class TestClass:
         assert dummy_test_class.func_1_last_value.value is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_multifunction_switch_controller',
-                           id='raw_query',
-                           type=ParameterType.set,
-                           args=['MEAS:VOLT:DC?', '1,0.001,(@4009)']))
+            ServiceRequest(
+                provider='keysight_34980a_multifunction_switch_controller',
+                id='raw_query',
+                type=ParameterType.set,
+                args=['MEAS:VOLT:DC?', '1,0.001,(@4009)']))
 
         time.sleep(.1)
 
@@ -556,10 +566,11 @@ class TestClass:
         }
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_multifunction_switch_controller',
-                           id='raw_query',
-                           type=ParameterType.get,
-                           args=[]))
+            ServiceRequest(
+                provider='keysight_34980a_multifunction_switch_controller',
+                id='raw_query',
+                type=ParameterType.get,
+                args=[]))
 
         time.sleep(.1)
 
@@ -570,9 +581,10 @@ class TestClass:
 
         # 10 - Test no system errors
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_multifunction_switch_controller',
-                           id='sys_err',
-                           type=ParameterType.get))
+            ServiceRequest(
+                provider='keysight_34980a_multifunction_switch_controller',
+                id='sys_err',
+                type=ParameterType.get))
 
         time.sleep(.1)
 
@@ -583,10 +595,11 @@ class TestClass:
 
         # 11 - Test disconnection to the instrument
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_multifunction_switch_controller',
-                           id='connect',
-                           type=ParameterType.set,
-                           args=['0']))
+            ServiceRequest(
+                provider='keysight_34980a_multifunction_switch_controller',
+                id='connect',
+                type=ParameterType.set,
+                args=['0']))
 
         time.sleep(.1)
 
@@ -597,10 +610,11 @@ class TestClass:
         assert dummy_test_class.func_1_last_value.value is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_multifunction_switch_controller',
-                           id='connected',
-                           type=ParameterType.get,
-                           args=[]))
+            ServiceRequest(
+                provider='keysight_34980a_multifunction_switch_controller',
+                id='connected',
+                type=ParameterType.get,
+                args=[]))
 
         time.sleep(.1)
 
@@ -630,10 +644,11 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_multifunction_switch_controller',
-                           id='connect',
-                           type=ParameterType.set,
-                           args=['1']))
+            ServiceRequest(
+                provider='keysight_34980a_multifunction_switch_controller',
+                id='connect',
+                type=ParameterType.set,
+                args=['1']))
 
         time.sleep(.1)
 
@@ -658,10 +673,11 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_multifunction_switch_controller',
-                           id='connect',
-                           type=ParameterType.set,
-                           args=['0']))
+            ServiceRequest(
+                provider='keysight_34980a_multifunction_switch_controller',
+                id='connect',
+                type=ParameterType.set,
+                args=['0']))
 
         time.sleep(.1)
 
@@ -780,10 +796,11 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_34980a_multifunction_switch_controller',
-                           id='connect',
-                           type=ParameterType.set,
-                           args=['1']))
+            ServiceRequest(
+                provider='keysight_34980a_multifunction_switch_controller',
+                id='connect',
+                type=ParameterType.set,
+                args=['1']))
 
         time.sleep(.1)
 

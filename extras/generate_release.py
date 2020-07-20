@@ -19,6 +19,7 @@ if os.path.exists('mamba/mamba_config.json'):
     os.remove('mamba/mamba_config.json')
 
 with tempfile.TemporaryFile() as out:
-    script_state = subprocess.call([sys.executable, 'setup.py', 'sdist', 'bdist_wheel'],
-                                   stdout=out,
-                                   stderr=out)
+    script_state = subprocess.call(
+        [sys.executable, 'setup.py', 'sdist', 'bdist_wheel'],
+        stdout=out,
+        stderr=out)

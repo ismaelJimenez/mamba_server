@@ -1,10 +1,10 @@
-################################################################################################
-##
-##  Copyright (c) Mamba Developers. All rights reserved.
-##  Licensed under the MIT License. See License.txt in the project root for license information.
-##
-################################################################################################
-
+############################################################################
+#
+# Copyright (c) Mamba Developers. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+#
+############################################################################
 """ Open Project component """
 
 import os
@@ -54,13 +54,15 @@ class OpenProjectComponent(GuiPlugin):
         """
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        file_name, _ = QFileDialog.getOpenFileName(QWidget(),
-                                                   "Load Mamba Composer File",
-                                                   "",
-                                                   "View Files (*-compose.yml)",
-                                                   options=options)
+        file_name, _ = QFileDialog.getOpenFileName(
+            QWidget(),
+            "Load Mamba Composer File",
+            "",
+            "View Files (*-compose.yml)",
+            options=options)
 
         if file_name:
             sys.path.insert(0, dirname(dirname(file_name)))
 
-            compose_parser(file_name, self._context.get('mamba_dir'), dirname(dirname(file_name)))
+            compose_parser(file_name, self._context.get('mamba_dir'),
+                           dirname(dirname(file_name)))

@@ -1,10 +1,10 @@
-################################################################################################
-##
-##  Copyright (c) Mamba Developers. All rights reserved.
-##  Licensed under the MIT License. See License.txt in the project root for license information.
-##
-################################################################################################
-
+############################################################################
+#
+# Copyright (c) Mamba Developers. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+#
+############################################################################
 """ Main window implemented with Qt5 """
 
 import os
@@ -115,10 +115,13 @@ class MainWindowQt(MainWindow):
         """ Entry point for showing main screen """
         self._app.showMaximized()
 
-        mamba_config = os.path.join(self._context.get('mamba_dir'), 'mamba_config.json')
+        mamba_config = os.path.join(self._context.get('mamba_dir'),
+                                    'mamba_config.json')
 
         if not os.path.exists(mamba_config):
-            eula_manager = EulaManager(os.path.join(self._context.get('mamba_dir'), 'LICENSE'), self._app)
+            eula_manager = EulaManager(
+                os.path.join(self._context.get('mamba_dir'), 'LICENSE'),
+                self._app)
 
             result = eula_manager.run()
 

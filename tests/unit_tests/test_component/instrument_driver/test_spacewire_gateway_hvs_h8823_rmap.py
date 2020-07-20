@@ -12,8 +12,7 @@ from mamba.marketplace.components.spacewire_gateway.hvs_h8823_rmap import H8823S
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.msg import Empty, ServiceRequest, ServiceResponse, ParameterType
 
-component_path = os.path.join('marketplace', 'components',
-                              'spacewire_gateway',
+component_path = os.path.join('marketplace', 'components', 'spacewire_gateway',
                               'hvs_h8823_rmap')
 
 
