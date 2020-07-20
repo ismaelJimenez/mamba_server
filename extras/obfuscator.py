@@ -19,12 +19,12 @@ blank_mapping = [
     ': RunAction',
     ': str',
     ': type',
-    '-> Iterator[Callable]',
-    '-> List[ModuleType]',
+    ' -> Iterator[Callable]',
+    ' -> List[ModuleType]',
     ': Dict[str, dict]',
     ': List[str]',
-    '-> int',
-    '-> str',
+    ' -> int',
+    ' -> str',
     ': ServiceResponse',
     ': ServiceRequest',
     ': Any',
@@ -32,10 +32,10 @@ blank_mapping = [
     ': Menu',
     ': RegisterAction',
     ': Empty',
-    '-> Menu',
+    ' -> Menu',
     ': AppStatus',
-    '-> bool',
-    '-> Any'
+    ' -> bool',
+    ' -> Any'
 ]
 
 static_mapping = [
