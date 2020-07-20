@@ -1,6 +1,5 @@
 pytest==5.4.3
 flask
-jsonify
 request
 mypy
 pyvisa
