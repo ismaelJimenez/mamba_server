@@ -9,7 +9,7 @@ class EulaDialog(QDialog):
 
         self.resize(800, 600)
 
-        self.setWindowTitle("End User Licence Agreement (EULA)")
+        self.setWindowTitle("License Agreements and Service Terms")
 
         self.eula_text = QTextEdit()
         self.eula_text.setReadOnly(True)
