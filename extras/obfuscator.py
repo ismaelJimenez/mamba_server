@@ -16,7 +16,7 @@ rootdir = ['mamba/core', 'mamba/commands', 'tests']
 blank_mapping = [
     ' -> None',
     ': Context',
-    ': Optional[Dict[str, dict]]',
+    ': Optional[Dict[str, dict]] = ',
     ': RunAction',
     ': str',
     ': type',
@@ -24,11 +24,11 @@ blank_mapping = [
     '-> List[ModuleType]',
     ': Dict[str, dict]',
     ': List[str]',
-    ': Optional[str]',
+    ': Optional[str] = ',
     '-> int',
     '-> str',
-    ': Optional[dict]',
-    ': Optional[ServiceResponse]',
+    ': Optional[dict] = ',
+    ': Optional[ServiceResponse] = ',
     ': ServiceResponse',
     ': ServiceRequest',
     ': Any',
@@ -40,7 +40,7 @@ blank_mapping = [
     ': AppStatus',
     '-> bool',
     '-> Any',
-    '-> Optional[str]'
+    '-> Optional[str] = '
 ]
 
 random_mapping = [
