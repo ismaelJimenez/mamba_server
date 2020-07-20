@@ -50,7 +50,7 @@ setup(
         'Development Status :: 1 - Planning',
         'Environment :: Console',
         'Intended Audience :: Developers',
-        'License :: GNU Library or Lesser General Public License (LGPL)',
+        'License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)',
         'License :: Other/Proprietary License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
