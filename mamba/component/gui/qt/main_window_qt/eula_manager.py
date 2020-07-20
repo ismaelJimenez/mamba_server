@@ -6,7 +6,8 @@
 #
 ############################################################################
 
-from PySide2.QtWidgets import QDialog, QHBoxLayout, QPushButton, QVBoxLayout, QTextEdit
+from PySide2.QtWidgets import QDialog, QHBoxLayout, QPushButton, \
+    QVBoxLayout, QTextEdit
 
 
 class EulaDialog(QDialog):

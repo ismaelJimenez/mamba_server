@@ -10,8 +10,8 @@ import os
 import yaml
 
 from PySide2.QtWidgets import QWidget, QDialog, QHBoxLayout, QPushButton, \
-    QVBoxLayout, QTextEdit, QToolBox, QGridLayout, QToolButton, QLabel, QApplication,\
-    QButtonGroup, QFileDialog, QMessageBox
+    QVBoxLayout, QTextEdit, QToolBox, QGridLayout, QToolButton, \
+    QLabel, QApplication, QButtonGroup, QFileDialog, QMessageBox
 
 from PySide2.QtGui import QIcon
 from PySide2.QtCore import QSize
@@ -154,7 +154,8 @@ class MarketComponentDialog(QDialog):
                 f'<b>Version</b>: {compose_config["version"]}<br><br>' \
                 f'<b>Status</b>: {compose_config["status"]}<br><br>' \
                 f'<b>Maintainer</b>: {compose_config["maintainer"]}<br><br>' \
-                f'<b>Maintainer Email</b>: {compose_config["maintainer_email"]}<br><br>'
+                f'<b>Maintainer Email</b>: ' \
+                f'{compose_config["maintainer_email"]}<br><br>'
 
             self.description_text.setText(component_description)
 
