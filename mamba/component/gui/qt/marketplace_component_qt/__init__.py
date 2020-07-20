@@ -52,7 +52,7 @@ from mamba.core.context import Context
 from .marketplace_component_dialog import MarketComponentDialog
 
 
-class OpenProjectComponent(GuiPlugin):
+class MarketplaceComponent(GuiPlugin):
     """ Open Project component in Qt5 """
     def __init__(self,
                  context: Context,
