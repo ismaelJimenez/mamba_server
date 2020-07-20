@@ -36,7 +36,8 @@ blank_mapping = [
     ': AppStatus',
     ' -> bool',
     ' -> Any',
-    ': dict'
+    ': dict',
+    ' -> Dict[Tuple[str, ParameterType], dict]'
 ]
 
 static_mapping = [
