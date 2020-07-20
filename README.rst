@@ -41,7 +41,8 @@ Requirements
 License
 =======
 
-Mamba Server is dual-licensed under commercial and open source licenses. The commercial Mamba license gives you the full rights to create and distribute software on your own terms without any open source license obligations. With the commercial license you also have access to the official Mamba Support and close strategic relationship with The Mamba Company to make sure your development goals are met.
+Mamba Server is dual-licensed under commercial and open source licenses. The commercial Mamba license gives you the full rights to create and distribute software on your own terms without any open source license obligations. With the commercial license you also have access to the official Mamba Support and close strategic relationship with The Mamba Company to make sure your development goals are met. See `License <https://github.com/mamba-framework/mamba-server-docs/blob/master/LICENSE>`__.
+
 
 Mamba Server  is also available under GPL and LGPLv3 open source licenses. Mamba tools and some libraries are only available under GPL. The Mamba open source licensing is ideal for use cases such as open source projects with open source distribution, student/academic purposes, hobby projects, internal research projects without external distribution, or other projects where all (L)GPL obligations can be met.
 
