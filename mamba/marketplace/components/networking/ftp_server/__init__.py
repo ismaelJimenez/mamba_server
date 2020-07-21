@@ -21,7 +21,7 @@ from mamba.core.msg import ServiceResponse
 from mamba.core.context import Context
 
 
-class FTPController(InstrumentDriver):
+class FTPServerComponent(InstrumentDriver):
     """ FTP controller base class """
     def __init__(self,
                  context: Context,

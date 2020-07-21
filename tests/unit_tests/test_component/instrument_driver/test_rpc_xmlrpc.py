@@ -8,11 +8,11 @@ from rx import operators as op
 from mamba.core.testing.utils import compose_service_info, get_config_dict, CallbackTestClass, get_provider_params_info
 from mamba.core.context import Context
 from mamba.mock.rpc.xmlrpc_mock import XmlRpcMock
-from mamba.marketplace.components.rpc.xmlrpc_controller import XmlRpcController
+from mamba.marketplace.components.networking.xmlrpc_controller import XmlRpcController
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.msg import Empty, ServiceRequest, ServiceResponse, ParameterType
 
-component_path = os.path.join('marketplace', 'components', 'rpc',
+component_path = os.path.join('marketplace', 'components', 'networking',
                               'xmlrpc_controller')
 
 

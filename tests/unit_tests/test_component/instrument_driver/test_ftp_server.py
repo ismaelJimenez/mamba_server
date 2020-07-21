@@ -9,12 +9,12 @@ from rx import operators as op
 
 from mamba.core.testing.utils import compose_service_info, get_config_dict, CallbackTestClass, get_provider_params_info
 from mamba.core.context import Context
-from mamba.marketplace.components.ftp.ftp_controller import FTPController
+from mamba.marketplace.components.networking.ftp_server import FTPServerComponent
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.msg import Empty, ServiceRequest, ServiceResponse, ParameterType
 
-component_path = os.path.join('marketplace', 'components', 'ftp',
-                              'ftp_controller')
+component_path = os.path.join('marketplace', 'components', 'networking',
+                              'ftp_server')
 
 
 class TestClass:
@@ -48,13 +48,13 @@ class TestClass:
     def test_wo_context(self):
         """ Test component behaviour without required context """
         with pytest.raises(TypeError) as excinfo:
-            FTPController()
+            FTPServerComponent()
 
         assert "missing 1 required positional argument" in str(excinfo.value)
 
     def test_w_default_context_component_creation(self):
         """ Test component creation behaviour with default context """
-        component = FTPController(self.context)
+        component = FTPServerComponent(self.context)
 
         # Test default configuration load
         assert component._configuration == self.default_component_config
@@ -76,7 +76,7 @@ class TestClass:
 
     def test_w_default_context_component_initialization(self):
         """ Test component initialization behaviour with default context """
-        component = FTPController(self.context)
+        component = FTPServerComponent(self.context)
         component.initialize()
 
         # Test default configuration load
@@ -122,7 +122,7 @@ class TestClass:
 
     def test_w_custom_context(self):
         """ Test component creation behaviour with default context """
-        component = FTPController(self.context,
+        component = FTPServerComponent(self.context,
                                   local_config={
                                       'name': 'custom_name',
                                       'ftp': {
@@ -193,7 +193,7 @@ class TestClass:
     def test_w_wrong_custom_context(self):
         # Test with missing user name
         with pytest.raises(ComponentConfigException) as excinfo:
-            FTPController(self.context,
+            FTPServerComponent(self.context,
                           local_config={
                               'ftp': {
                                   'user_name': None
@@ -203,7 +203,7 @@ class TestClass:
 
         # Test with missing user password
         with pytest.raises(ComponentConfigException) as excinfo:
-            FTPController(self.context,
+            FTPServerComponent(self.context,
                           local_config={
                               'ftp': {
                                   'user_password': None
@@ -214,7 +214,7 @@ class TestClass:
 
         # Test with missing port
         with pytest.raises(ComponentConfigException) as excinfo:
-            FTPController(self.context, local_config={
+            FTPServerComponent(self.context, local_config={
                 'ftp': {
                     'port': None
                 }
@@ -223,7 +223,7 @@ class TestClass:
 
         # Test with missing source folder
         with pytest.raises(ComponentConfigException) as excinfo:
-            FTPController(self.context,
+            FTPServerComponent(self.context,
                           local_config={
                               'ftp': {
                                   'source_folder': {
@@ -242,7 +242,7 @@ class TestClass:
         self.context.rx['io_service_signature'].subscribe(
             dummy_test_class.test_func_1)
 
-        component = FTPController(self.context)
+        component = FTPServerComponent(self.context)
         component.initialize()
 
         time.sleep(.1)
@@ -265,7 +265,7 @@ class TestClass:
         ftp = FTP()  # connect to host, default port
 
         # Start Test
-        component = FTPController(self.context)
+        component = FTPServerComponent(self.context)
         component.initialize()
         dummy_test_class = CallbackTestClass()
 
@@ -277,7 +277,7 @@ class TestClass:
 
         # 1 - Test that component only gets activated for implemented services
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='ftp_controller',
+            ServiceRequest(provider='ftp_server',
                            id='NOT_EXISTING',
                            type='any',
                            args=[]))
@@ -302,7 +302,7 @@ class TestClass:
 
         # 3 - Start FTP Server
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='ftp_controller',
+            ServiceRequest(provider='ftp_server',
                            id='connect',
                            type=ParameterType.set,
                            args=['1']))
@@ -352,7 +352,7 @@ class TestClass:
 
         # 7 - Stop FTP Server
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='ftp_controller',
+            ServiceRequest(provider='ftp_server',
                            id='connect',
                            type=ParameterType.set,
                            args=['0']))
@@ -380,7 +380,7 @@ class TestClass:
         ftp = FTP()  # connect to host, default port
 
         # Start Test
-        component = FTPController(
+        component = FTPServerComponent(
             self.context,
             local_config={'ftp': {
                 'source_folder': {
@@ -398,7 +398,7 @@ class TestClass:
 
         # 1 - Test that component only gets activated for implemented services
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='ftp_controller',
+            ServiceRequest(provider='ftp_server',
                            id='NOT_EXISTING',
                            type='any',
                            args=[]))
@@ -423,7 +423,7 @@ class TestClass:
 
         # 3 - Start FTP Server
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='ftp_controller',
+            ServiceRequest(provider='ftp_server',
                            id='connect',
                            type=ParameterType.set,
                            args=['1']))
@@ -480,7 +480,7 @@ class TestClass:
 
         # 7 - Stop FTP Server
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='ftp_controller',
+            ServiceRequest(provider='ftp_server',
                            id='connect',
                            type=ParameterType.set,
                            args=['0']))

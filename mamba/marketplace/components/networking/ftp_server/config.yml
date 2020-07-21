@@ -6,7 +6,7 @@
 #
 ############################################################################
 
-name: FTP Controller
+name: FTP Server
 version: 0.1
 status: Testing
 maintainer: Mamba Developers
