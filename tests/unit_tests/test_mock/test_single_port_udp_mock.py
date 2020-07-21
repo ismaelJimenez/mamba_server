@@ -2,7 +2,7 @@ import socket
 import time
 
 from mamba.core.context import Context
-from mamba.marketplace.components.simulator.udp.single_port_udp_mock import SinglePortUdpMock
+from mamba.marketplace.components.simulator.udp_server_single_port_sim import SinglePortUdpMock
 
 
 class TestClass:
