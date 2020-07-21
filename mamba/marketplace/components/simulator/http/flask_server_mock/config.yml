@@ -6,19 +6,16 @@
 #
 ############################################################################
 
-name: TCP Server Mock with different TC/TM ports
+name: Flask Server Mock
+version: 0.1
+status: Template
+maintainer: Mamba Developers
+maintainer_email: mamba.framework@gmail.com
 
 # Component network configuration
-
 instrument:
   address: 0.0.0.0
-  port:
-    tc: 8086
-    tm: 8087
-  encoding: utf-8
-  terminator:
-    write: "\n"
-    read: "\r\n"
+  port: 5000
 
 # Component TMTC
 
@@ -28,15 +25,10 @@ parameters:
     type: str
 
     # Set parameter initial value upon instrument initialization.
-    initial_value: 'Mamba Framework,Two Port TCP Mock,1.0'
+    initial_value: 'Mamba Framework,HTTP Flask Mock,1.0'
 
     # Set parameter description.
     description: Instrument identification
-
-    # Parameter getter configuration.
-    get:
-      instrument_command:
-        - query: '*IDN?'
 
   syst_err:
     # Set parameter type.
@@ -48,18 +40,9 @@ parameters:
     # Set parameter description.
     description: Oldest error in queue
 
-    # Parameter getter configuration.
-    get:
-      instrument_command:
-        - query: 'SYST:ERR?'
-
   cls:
     # Set parameter description.
     description: Clear status
-
-    # Parameter setter configuration.
-    set:
-      instrument_command: [write: '*CLS']
 
   parameter_1:
     # Set parameter type.
@@ -68,17 +51,6 @@ parameters:
     # Set parameter initial value upon instrument initialization.
     initial_value: 1
 
-    # Parameter setter configuration.
-    set:
-      signature: [value: {type: int}]
-      instrument_command:
-        - query: 'PARAMETER_1 {:}'
-
-    # Parameter getter configuration.
-    get:
-      instrument_command:
-        - query: 'PARAMETER_1?'
-
   parameter_2:
     # Set parameter type.
     type: str
@@ -86,31 +58,9 @@ parameters:
     # Set parameter initial value upon instrument initialization.
     initial_value: '2'
 
-    # Parameter setter configuration.
-    set:
-      signature: [value: {type: str}]
-      instrument_command:
-        - query: 'PARAMETER_2 {:}'
-
-    # Parameter getter configuration.
-    get:
-      instrument_command:
-        - query: 'PARAMETER_2?'
-
   parameter_3:
     # Set parameter type.
     type: int
 
     # Set parameter initial value upon instrument initialization.
     initial_value: 3
-
-    # Parameter setter configuration.
-    set:
-      signature: [value: {type: int}]
-      instrument_command:
-        - query: 'PARAMETER_3 {:}'
-
-    # Parameter getter configuration.
-    get:
-      instrument_command:
-        - query: 'PARAMETER_3?'

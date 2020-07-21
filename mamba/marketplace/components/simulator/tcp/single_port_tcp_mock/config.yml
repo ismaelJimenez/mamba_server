@@ -7,6 +7,10 @@
 ############################################################################
 
 name: Single Port TCP Server Mock
+version: 0.1
+status: Template
+maintainer: Mamba Developers
+maintainer_email: mamba.framework@gmail.com
 
 # Component network configuration
 

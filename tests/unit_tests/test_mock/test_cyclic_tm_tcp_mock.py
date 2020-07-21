@@ -2,7 +2,7 @@ import socket
 import time
 
 from mamba.core.context import Context
-from mamba.mock.tcp.cyclic_tm_tcp_mock import CyclicTmTcpMock
+from mamba.marketplace.components.simulator.tcp.cyclic_tm_tcp_mock import CyclicTmTcpMock
 
 
 class TestClass:

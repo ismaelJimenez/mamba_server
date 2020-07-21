@@ -2,7 +2,7 @@ import time
 import http.client
 
 from mamba.core.context import Context
-from mamba.mock.http.flask_server_mock import FlaskServerMock
+from mamba.marketplace.components.simulator.http.flask_server_mock import FlaskServerMock
 
 
 class TestClass:

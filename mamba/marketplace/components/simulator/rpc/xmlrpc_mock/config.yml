@@ -6,12 +6,17 @@
 #
 ############################################################################
 
-name: Flask Server Mock
+name: XMLRPC Mock
+version: 0.1
+status: Template
+maintainer: Mamba Developers
+maintainer_email: mamba.framework@gmail.com
 
 # Component network configuration
+
 instrument:
   address: 0.0.0.0
-  port: 5000
+  port: 8090
 
 # Component TMTC
 
@@ -21,7 +26,7 @@ parameters:
     type: str
 
     # Set parameter initial value upon instrument initialization.
-    initial_value: 'Mamba Framework,HTTP Flask Mock,1.0'
+    initial_value: 'Mamba Framework,XMLRPC Mock,1.0'
 
     # Set parameter description.
     description: Instrument identification

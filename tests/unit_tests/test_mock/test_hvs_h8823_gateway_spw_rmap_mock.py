@@ -3,7 +3,7 @@ import time
 import struct
 
 from mamba.core.context import Context
-from mamba.mock.tcp.spacewire_gateway.hvs_h8823_gateway_spw_rmap_mock import H8823GatewaySpwRmapMock
+from mamba.marketplace.components.simulator.tcp.spacewire_gateway.hvs_h8823_gateway_spw_rmap_mock import H8823GatewaySpwRmapMock
 from mamba.marketplace.components.spacewire_gateway.utils.rmap_common import RMAP, rmap_bytes_to_dict
 
 

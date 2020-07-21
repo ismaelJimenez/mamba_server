@@ -2,7 +2,7 @@ import socket
 import time
 
 from mamba.core.context import Context
-from mamba.mock.tcp.single_port_tcp_mock import SinglePortTcpMock
+from mamba.marketplace.components.simulator.tcp.single_port_tcp_mock import SinglePortTcpMock
 
 
 class TestClass:

@@ -2,7 +2,7 @@ import socket
 import time
 
 from mamba.core.context import Context
-from mamba.mock.tcp.two_ports_tcp_mock import TwoPortsTcpMock
+from mamba.marketplace.components.simulator.tcp.two_ports_tcp_mock import TwoPortsTcpMock
 
 
 class TestClass:

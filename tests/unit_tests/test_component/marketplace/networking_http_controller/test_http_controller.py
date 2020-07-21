@@ -7,7 +7,7 @@ from rx import operators as op
 
 from mamba.core.testing.utils import compose_service_info, get_config_dict, CallbackTestClass, get_provider_params_info
 from mamba.core.context import Context
-from mamba.mock.http.flask_server_mock import FlaskServerMock
+from mamba.marketplace.components.simulator.http.flask_server_mock import FlaskServerMock
 from mamba.marketplace.components.networking.http_controller import HttpController
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.msg import Empty, ServiceRequest, ServiceResponse, ParameterType

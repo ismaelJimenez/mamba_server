@@ -25,7 +25,7 @@ def compose_parser(compose_file: str,
                    mamba_dir: str,
                    project_dir: Optional[str] = None) -> int:
     """ Compose Mamba App from launch file """
-    component_folders = ['mamba.component', 'mamba.mock']
+    component_folders = ['mamba.component']
 
     if project_dir is not None:
         component_folders.insert(0, 'components')
