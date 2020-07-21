@@ -7,7 +7,7 @@ from rx import operators as op
 
 from mamba.core.testing.utils import compose_service_info, get_config_dict, CallbackTestClass, get_provider_params_info
 from mamba.core.context import Context
-from mamba.marketplace.components.simulator.tcp.two_ports_tcp_mock import TwoPortsTcpMock
+from mamba.marketplace.components.simulator.tcp_server_two_ports_sim import TwoPortsTcpMock
 from mamba.marketplace.components.tcp_udp.two_ports_tcp import TwoPortsTcpController
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.msg import Empty, ServiceRequest, ServiceResponse, ParameterType
