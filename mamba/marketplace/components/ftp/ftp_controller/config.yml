@@ -1,0 +1,49 @@
+############################################################################
+#
+# Copyright (c) Mamba Developers. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+#
+############################################################################
+
+name: FTP Controller
+version: 0.1
+status: Testing
+maintainer: Mamba Developers
+maintainer_email: mambaframework@gmail.com
+
+instrument:
+  address: None
+  port: 0
+
+ftp:
+  user_name: user
+  user_password: 12345
+  port: 2121
+  source_folder:
+    local: ftp_example_folder
+
+parameters:
+  connected:
+    # Set parameter type.
+    type: int
+
+    # Set parameter initial value upon instrument initialization.
+    initial_value: 0
+
+    # Set parameter description.
+    description: Connection status to TCP server
+
+    # Parameter setter configuration.
+    set:
+      # Alias allows to access parameter under another name.
+      # Connect is an special ID, to command connect/disconnect from the equipment.
+      alias: connect
+      # Setter function signature.
+      signature:
+        - connect:
+            type: int
+            valid: [0, 1]
+
+    # Parameter getter configuration.
+    get:

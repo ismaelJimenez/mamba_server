@@ -74,7 +74,7 @@ setup(
         'PyVISA>=1.10.1',
         'PyVISA-sim>=0.3',
         'PyVISA-py>=0.4.0',
-        'Flask>=1.1.2'
+        'pyftpdlib>=1.5.6'
     ],
     extras_require=extras_require,
 )

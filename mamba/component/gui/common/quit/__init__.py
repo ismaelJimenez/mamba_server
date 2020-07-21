@@ -19,7 +19,6 @@ from mamba.component.gui.msg import RunAction
 
 class QuitComponent(GuiPlugin):
     """ Plugin to close Main Window """
-
     def __init__(self,
                  context: Context,
                  local_config: Optional[dict] = None) -> None:
