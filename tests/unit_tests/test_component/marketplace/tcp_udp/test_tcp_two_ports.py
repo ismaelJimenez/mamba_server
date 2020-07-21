@@ -561,8 +561,8 @@ class TestClass:
             self.context,
             local_config={'instrument': {
                 'port': {
-                    'tc': 8088,
-                    'tm': 8089
+                    'tc': 12000,
+                    'tm': 12001
                 }
             }})
         component.initialize()

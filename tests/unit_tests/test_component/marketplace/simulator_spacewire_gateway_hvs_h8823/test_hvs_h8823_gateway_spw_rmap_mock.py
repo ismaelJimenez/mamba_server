@@ -4,7 +4,7 @@ import struct
 
 from mamba.core.context import Context
 from mamba.marketplace.components.simulator.spacewire_gateway_hvs_h8823_rmap_sim import H8823GatewaySpwRmapMock
-from mamba.marketplace.components.spacewire_gateway.utils.rmap_common import RMAP, rmap_bytes_to_dict
+from mamba.core.rmap_utils.rmap_common import RMAP, rmap_bytes_to_dict
 
 
 class TestClass:

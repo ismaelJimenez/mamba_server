@@ -8,8 +8,7 @@
 
 import struct
 
-from mamba.marketplace.components.spacewire_gateway.utils.crc_8 \
-    import crc_8
+from mamba.core.rmap_utils.crc_8 import crc_8
 
 
 def generate_write_reply(write_cmd_bytes, status) -> bytes:

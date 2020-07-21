@@ -9,8 +9,7 @@
 import struct
 
 from mamba.core.exceptions import ComponentConfigException
-from mamba.marketplace.components.spacewire_gateway.utils.crc_8 \
-    import crc_8
+from mamba.core.rmap_utils.crc_8 import crc_8
 
 
 def get_rmap_cmd_code(write: bool, verify: bool, reply: bool, inc: bool):

@@ -18,10 +18,8 @@ from mamba.core.msg import Empty
 from mamba.core.context import Context
 from mamba.core.component_base import InstrumentDriver
 
-from mamba.marketplace.components.spacewire_gateway.utils.rmap_common \
-    import rmap_bytes_to_dict
-from mamba.marketplace.components.spacewire_gateway.utils.rmap_test \
-    import generate_write_reply, generate_read_reply
+from mamba.core.rmap_utils.rmap_common import rmap_bytes_to_dict
+from mamba.core.rmap_utils.rmap_test import generate_write_reply, generate_read_reply
 
 
 class H8823GatewaySpwRmapMock(InstrumentDriver):

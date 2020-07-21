@@ -1,8 +1,8 @@
 import pytest
 
 from mamba.core.exceptions import ComponentConfigException
-from mamba.marketplace.components.spacewire_gateway.utils.rmap_common import RMAP, rmap_bytes_to_dict
-from mamba.marketplace.components.spacewire_gateway.utils.rmap_test import generate_write_reply, generate_read_reply
+from mamba.core.rmap_utils.rmap_common import RMAP, rmap_bytes_to_dict
+from mamba.core.rmap_utils.rmap_test import generate_write_reply, generate_read_reply
 
 
 class TestClass:

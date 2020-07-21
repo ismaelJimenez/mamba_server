@@ -14,7 +14,7 @@ import socket
 
 from mamba.core.component_base import TcpInstrumentDriver
 from mamba.core.context import Context
-from mamba.marketplace.components.spacewire_gateway.utils.rmap_common \
+from mamba.core.rmap_utils.rmap_common \
     import RMAP, rmap_bytes_to_dict
 from mamba.core.msg import ServiceRequest, \
     ServiceResponse, ParameterType
