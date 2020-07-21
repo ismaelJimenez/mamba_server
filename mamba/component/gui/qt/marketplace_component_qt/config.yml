@@ -7,5 +7,5 @@
 ############################################################################
 
 name: Component  # Name of the action
-menu: '&Plugins'  # High level Menu name shown in the menu bar
+menu: '&Marketplace'  # High level Menu name shown in the menu bar
 shortcut: Ctrl+C # Menu shortcut (Optional)

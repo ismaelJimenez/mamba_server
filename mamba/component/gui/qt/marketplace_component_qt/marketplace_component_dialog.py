@@ -50,7 +50,7 @@ class MarketComponentDialog(QDialog):
 
         self.component_name_mapping = {}
 
-        for toolbox in toolboxes_list:
+        for toolbox in sorted(toolboxes_list):
             components_list = [
                 x for x in os.listdir(os.path.join(marketplace_dir, toolbox))
                 if '.py' not in x and '__pycache__' not in x

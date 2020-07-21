@@ -10,7 +10,7 @@ name: VISA Controller Template
 version: 0.1
 status: Template
 maintainer: Mamba Developers
-maintainer_email: mambaframework@gmail.com
+maintainer_email: mamba.framework@gmail.com
 
 instrument:
   visa_sim: visa_sim.yml

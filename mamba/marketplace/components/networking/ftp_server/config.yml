@@ -10,7 +10,7 @@ name: FTP Server
 version: 0.1
 status: Testing
 maintainer: Mamba Developers
-maintainer_email: mambaframework@gmail.com
+maintainer_email: mamba.framework@gmail.com
 
 instrument:
   address: None

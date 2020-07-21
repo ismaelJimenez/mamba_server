@@ -10,7 +10,7 @@ name: R&S FSW Signal and Spectrum Analyzer Controller
 version: 0.1
 status: Partial interface implementation
 maintainer: Mamba Developers
-maintainer_email: mambaframework@gmail.com
+maintainer_email: mamba.framework@gmail.com
 
 instrument:
   visa_sim: visa_sim.yml
