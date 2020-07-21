@@ -20,14 +20,14 @@ from mamba.core.utils import path_from_string
 
 
 def get_visa_sim_file(sim_path: Optional[str],
-                      mamba_dir: str) -> Optional[str]:
+                      config_folder: str) -> Optional[str]:
     sim_file = None
     if sim_path is not None:
         if os.path.exists(sim_path):
             sim_file = sim_path
-        elif os.path.exists(os.path.join(mamba_dir,
-                                         path_from_string(sim_path))):
-            sim_file = os.path.join(mamba_dir, path_from_string(sim_path))
+        elif os.path.exists(
+                os.path.join(config_folder, path_from_string(sim_path))):
+            sim_file = os.path.join(config_folder, path_from_string(sim_path))
         else:
             raise ComponentConfigException('Visa-sim file has not been found')
 
@@ -49,8 +49,8 @@ class VisaInstrumentDriver(InstrumentDriver):
         """ Entry point for component initialization """
         super().initialize()
 
-        self._simulation_file = get_visa_sim_file(
-            self._instrument.visa_sim, self._context.get('mamba_dir'))
+        self._simulation_file = get_visa_sim_file(self._instrument.visa_sim,
+                                                  self._config_folder)
 
     def _instrument_connect(self,
                             result: Optional[ServiceResponse] = None) -> None:

@@ -21,7 +21,7 @@ class TestClass:
     def setup_class(self):
         """ setup_class called once for the class """
         self.mamba_path = os.path.join(os.path.dirname(__file__), '..', '..',
-                                       '..', '..', 'mamba')
+                                       '..', '..', '..', 'mamba')
 
         self.default_component_config = get_config_dict(
             os.path.join(self.mamba_path, component_path, 'config.yml'))
@@ -39,7 +39,7 @@ class TestClass:
         self.context.set(
             'mamba_dir',
             os.path.join(os.path.dirname(__file__), '..', '..', '..', '..',
-                         'mamba'))
+                         '..', 'mamba'))
 
     def teardown_method(self):
         """ teardown_method called for every method """
@@ -123,17 +123,18 @@ class TestClass:
     def test_w_custom_context(self):
         """ Test component creation behaviour with default context """
         component = FTPServerComponent(self.context,
-                                  local_config={
-                                      'name': 'custom_name',
-                                      'ftp': {
-                                          'user_name': 'test_name',
-                                          'user_password': 54321,
-                                          'port': 1212,
-                                          'source_folder': {
-                                              'global': '/test/test_folder'
-                                          }
-                                      },
-                                  })
+                                       local_config={
+                                           'name': 'custom_name',
+                                           'ftp': {
+                                               'user_name': 'test_name',
+                                               'user_password': 54321,
+                                               'port': 1212,
+                                               'source_folder': {
+                                                   'global':
+                                                   '/test/test_folder'
+                                               }
+                                           },
+                                       })
         component.initialize()
 
         custom_component_config = copy.deepcopy(self.default_component_config)
@@ -194,43 +195,44 @@ class TestClass:
         # Test with missing user name
         with pytest.raises(ComponentConfigException) as excinfo:
             FTPServerComponent(self.context,
-                          local_config={
-                              'ftp': {
-                                  'user_name': None
-                              }
-                          }).initialize()
+                               local_config={
+                                   'ftp': {
+                                       'user_name': None
+                                   }
+                               }).initialize()
         assert "Missing user name in FTP Configuration" in str(excinfo.value)
 
         # Test with missing user password
         with pytest.raises(ComponentConfigException) as excinfo:
             FTPServerComponent(self.context,
-                          local_config={
-                              'ftp': {
-                                  'user_password': None
-                              }
-                          }).initialize()
+                               local_config={
+                                   'ftp': {
+                                       'user_password': None
+                                   }
+                               }).initialize()
         assert "Missing user password in FTP Configuration" in str(
             excinfo.value)
 
         # Test with missing port
         with pytest.raises(ComponentConfigException) as excinfo:
-            FTPServerComponent(self.context, local_config={
-                'ftp': {
-                    'port': None
-                }
-            }).initialize()
+            FTPServerComponent(self.context,
+                               local_config={
+                                   'ftp': {
+                                       'port': None
+                                   }
+                               }).initialize()
         assert "Missing port in FTP Configuration" in str(excinfo.value)
 
         # Test with missing source folder
         with pytest.raises(ComponentConfigException) as excinfo:
             FTPServerComponent(self.context,
-                          local_config={
-                              'ftp': {
-                                  'source_folder': {
-                                      'local': None
-                                  }
-                              }
-                          }).initialize()
+                               local_config={
+                                   'ftp': {
+                                       'source_folder': {
+                                           'local': None
+                                       }
+                                   }
+                               }).initialize()
         assert "Missing source folder in FTP Configuration" in str(
             excinfo.value)
 

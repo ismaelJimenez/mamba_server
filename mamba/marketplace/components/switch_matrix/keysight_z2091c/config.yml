@@ -13,8 +13,11 @@ maintainer: Mamba Developers
 maintainer_email: mambaframework@gmail.com
 
 instrument:
-  visa_sim: mock/visa/switch_matrix/ks_z2091c.yml
+  visa_sim: visa_sim.yml
   address: TCPIP0::1.2.3.4::INSTR
+  encoding: utf-8
+  terminator:
+    write: "\n"
 
 parameters:
   connected:

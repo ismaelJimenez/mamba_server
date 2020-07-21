@@ -1,7 +1,8 @@
 import os
 import pyvisa
 
-MOCK_FILE = os.path.join('mock', 'visa', 'power_supply', 'ks_n5700.yml')
+MOCK_FILE = os.path.join('marketplace', 'components', 'switch_matrix',
+                         'keysight_z2091c', 'visa_sim.yml')
 INST_ADDRESS = 'TCPIP0::1.2.3.4::INSTR'
 
 
@@ -17,11 +18,13 @@ class TestClass:
     def setup_method(self):
         """ setup_method called for every method """
         mamba_dir = os.path.join(os.path.dirname(__file__), '..', '..', '..',
-                                 'mamba')
+                                 '..', '..', 'mamba')
         asd = os.path.join(mamba_dir, MOCK_FILE)
         self.visa_inst = pyvisa.ResourceManager(
             f"{os.path.join(mamba_dir, MOCK_FILE)}@sim").open_resource(
                 INST_ADDRESS, write_termination='\n', read_termination='\n')
+
+        self.visa_inst.encoding = 'utf-8'
 
     def teardown_method(self):
         """ teardown_method called for every method """
@@ -29,23 +32,10 @@ class TestClass:
 
     def test_dialogues(self):
         assert self.visa_inst.query(
-            '*IDN?') == 'Keysight Technologies,5700A,12345,A.11.22,A.33.44'
+            '*IDN?'
+        ) == 'Keysight Technologies,Z2091C-001,US56400131,1.1.6450.15113'
 
     def test_properties(self):
-        self.visa_inst.write('*RST')
-
-        assert self.visa_inst.query('CURR?') == '0'
-        self.visa_inst.write('CURR 1')
-        assert self.visa_inst.query('CURR?') == '1'
-
-        assert self.visa_inst.query('VOLT?') == '0'
-        self.visa_inst.write('VOLT 5')
-        assert self.visa_inst.query('VOLT?') == '5'
-
-        assert self.visa_inst.query('VOLT:PROT:LEV?') == '0'
-        self.visa_inst.write('VOLT:PROT:LEV 10')
-        assert self.visa_inst.query('VOLT:PROT:LEV?') == '10'
-
-        assert self.visa_inst.query('OUTP:STAT?') == '0'
-        self.visa_inst.write('OUTP:STAT 1')
-        assert self.visa_inst.query('OUTP:STAT?') == '1'
+        assert self.visa_inst.query('SYST:ERR?') == '0, No Error'
+        assert self.visa_inst.query('CONF:DIG:WIDTH? (@2001)') == 'BYTE'
+        assert self.visa_inst.query('*OPC?') == '1'

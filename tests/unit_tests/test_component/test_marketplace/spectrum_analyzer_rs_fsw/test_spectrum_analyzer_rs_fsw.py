@@ -8,19 +8,19 @@ from rx import operators as op
 
 from mamba.core.testing.utils import compose_service_info, get_config_dict, CallbackTestClass, get_provider_params_info
 from mamba.core.context import Context
-from mamba.marketplace.components.digitizer.keysight_m8131a import DigitizerKsm8131A
+from mamba.marketplace.components.spectrum_analyzer.rs_fsw import SpectrumAnalyzerRsFsw
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.msg import Empty, ServiceRequest, ServiceResponse, ParameterType
 
-component_path = os.path.join('marketplace', 'components', 'digitizer',
-                              'keysight_m8131a')
+component_path = os.path.join('marketplace', 'components', 'spectrum_analyzer',
+                              'rs_fsw')
 
 
 class TestClass:
     def setup_class(self):
         """ setup_class called once for the class """
         self.mamba_path = os.path.join(os.path.dirname(__file__), '..', '..',
-                                       '..', '..', 'mamba')
+                                       '..', '..', '..', 'mamba')
 
         self.default_component_config = get_config_dict(
             os.path.join(self.mamba_path, component_path, 'config.yml'))
@@ -38,7 +38,7 @@ class TestClass:
         self.context.set(
             'mamba_dir',
             os.path.join(os.path.dirname(__file__), '..', '..', '..', '..',
-                         'mamba'))
+                         '..', 'mamba'))
 
     def teardown_method(self):
         """ teardown_method called for every method """
@@ -47,13 +47,13 @@ class TestClass:
     def test_wo_context(self):
         """ Test component behaviour without required context """
         with pytest.raises(TypeError) as excinfo:
-            DigitizerKsm8131A()
+            SpectrumAnalyzerRsFsw()
 
         assert "missing 1 required positional argument" in str(excinfo.value)
 
     def test_w_default_context_component_creation(self):
         """ Test component creation behaviour with default context """
-        component = DigitizerKsm8131A(self.context)
+        component = SpectrumAnalyzerRsFsw(self.context)
 
         # Test default configuration load
         assert component._configuration == self.default_component_config
@@ -67,14 +67,14 @@ class TestClass:
         assert component._simulation_file is None
 
         assert component._instrument.address == 'TCPIP0::1.2.3.4::INSTR'
-        assert component._instrument.visa_sim == 'mock/visa/digitizer/ks_m8131a.yml'
+        assert component._instrument.visa_sim == 'visa_sim.yml'
         assert component._instrument.encoding == 'ascii'
         assert component._instrument.terminator_write == '\r\n'
         assert component._instrument.terminator_read == '\n'
 
     def test_w_default_context_component_initialization(self):
         """ Test component initialization behaviour with default context """
-        component = DigitizerKsm8131A(self.context)
+        component = SpectrumAnalyzerRsFsw(self.context)
         component.initialize()
 
         # Test default configuration load
@@ -83,22 +83,25 @@ class TestClass:
         # Test custom variables default values
         assert component._shared_memory == {
             'connected': False,
-            'raw_query': ''
+            'raw_query': '',
+            'trigger_in': 0
         }
         assert component._shared_memory_getter == {
             'connected': 'connected',
-            'raw_query': 'raw_query'
+            'raw_query': 'raw_query',
+            'trigger_in': 'trigger_in'
         }
         assert component._shared_memory_setter == {
             'connect': 'connected',
-            'raw_query': 'raw_query'
+            'raw_query': 'raw_query',
+            'trigger_in': 'trigger_in'
         }
         assert component._parameter_info == self.default_service_info
         assert component._inst is None
-        assert 'ks_m8131a.yml' in component._simulation_file
+        assert 'visa_sim.yml' in component._simulation_file
 
         assert component._instrument.address == 'TCPIP0::1.2.3.4::INSTR'
-        assert component._instrument.visa_sim == 'mock/visa/digitizer/ks_m8131a.yml'
+        assert component._instrument.visa_sim == 'visa_sim.yml'
         assert component._instrument.encoding == 'ascii'
         assert component._instrument.terminator_write == '\r\n'
         assert component._instrument.terminator_read == '\n'
@@ -112,7 +115,7 @@ class TestClass:
 
         os.chdir(temp_file_folder)
 
-        component = DigitizerKsm8131A(
+        component = SpectrumAnalyzerRsFsw(
             self.context,
             local_config={'instrument': {
                 'visa_sim': temp_file_name
@@ -127,37 +130,36 @@ class TestClass:
         """ Test component creation behaviour with default context """
         os.chdir('/tmp')
 
-        component = DigitizerKsm8131A(self.context)
+        component = SpectrumAnalyzerRsFsw(self.context)
         component.initialize()
 
-        assert 'ks_m8131a.yml' in component._simulation_file
+        assert 'visa_sim.yml' in component._simulation_file
 
     def test_w_custom_context(self):
         """ Test component creation behaviour with default context """
-        component = DigitizerKsm8131A(self.context,
-                                      local_config={
-                                          'name': 'custom_name',
-                                          'instrument': {
-                                              'visa_sim': None
-                                          },
-                                          'parameters': {
-                                              'new_param': {
-                                                  'description':
-                                                  'New parameter description',
-                                                  'set': {
-                                                      'signature': [{
-                                                          'param_1': {
-                                                              type: str
-                                                          }
-                                                      }],
-                                                      'instrument_command': [{
-                                                          'write':
-                                                          '{:}'
-                                                      }]
-                                                  },
-                                              }
-                                          }
-                                      })
+        component = SpectrumAnalyzerRsFsw(
+            self.context,
+            local_config={
+                'name': 'custom_name',
+                'instrument': {
+                    'visa_sim': None
+                },
+                'parameters': {
+                    'new_param': {
+                        'description': 'New parameter description',
+                        'set': {
+                            'signature': [{
+                                'param_1': {
+                                    type: str
+                                }
+                            }],
+                            'instrument_command': [{
+                                'write': '{:}'
+                            }]
+                        },
+                    }
+                }
+            })
         component.initialize()
 
         custom_component_config = copy.deepcopy(self.default_component_config)
@@ -183,15 +185,18 @@ class TestClass:
         # Test custom variables default values
         assert component._shared_memory == {
             'connected': False,
-            'raw_query': ''
+            'raw_query': '',
+            'trigger_in': 0
         }
         assert component._shared_memory_getter == {
             'connected': 'connected',
-            'raw_query': 'raw_query'
+            'raw_query': 'raw_query',
+            'trigger_in': 'trigger_in'
         }
         assert component._shared_memory_setter == {
             'connect': 'connected',
-            'raw_query': 'raw_query'
+            'raw_query': 'raw_query',
+            'trigger_in': 'trigger_in'
         }
 
         custom_service_info = compose_service_info(custom_component_config)
@@ -204,37 +209,41 @@ class TestClass:
 
         # Test with wrong topics dictionary
         with pytest.raises(ComponentConfigException) as excinfo:
-            DigitizerKsm8131A(self.context,
-                              local_config={
-                                  'parameters': 'wrong'
-                              }).initialize()
+            SpectrumAnalyzerRsFsw(self.context,
+                                  local_config={
+                                      'parameters': 'wrong'
+                                  }).initialize()
         assert 'Parameters configuration: wrong format' in str(excinfo.value)
 
         # In case no new parameters are given, use the default ones
-        component = DigitizerKsm8131A(self.context,
-                                      local_config={'parameters': {}})
+        component = SpectrumAnalyzerRsFsw(self.context,
+                                          local_config={'parameters': {}})
         component.initialize()
 
         assert component._configuration == self.default_component_config
 
         # Test with missing simulation file
         with pytest.raises(ComponentConfigException) as excinfo:
-            DigitizerKsm8131A(self.context,
-                              local_config={
-                                  'instrument': {
-                                      'visa_sim': 'non-existing'
-                                  }
-                              }).initialize()
+            SpectrumAnalyzerRsFsw(self.context,
+                                  local_config={
+                                      'instrument': {
+                                          'visa_sim': 'non-existing'
+                                      }
+                                  }).initialize()
         assert "Visa-sim file has not been found" in str(excinfo.value)
 
         # Test case properties do not have a getter, setter or default
-        component = DigitizerKsm8131A(
+        component = SpectrumAnalyzerRsFsw(
             self.context, local_config={'parameters': {
                 'new_param': {}
             }})
         component.initialize()
 
-        assert component._shared_memory == {'connected': 0, 'raw_query': ''}
+        assert component._shared_memory == {
+            'connected': 0,
+            'raw_query': '',
+            'trigger_in': 0
+        }
 
     def test_io_signature_publication(self):
         """ Test component io_signature observable """
@@ -244,7 +253,7 @@ class TestClass:
         self.context.rx['io_service_signature'].subscribe(
             dummy_test_class.test_func_1)
 
-        component = DigitizerKsm8131A(self.context)
+        component = SpectrumAnalyzerRsFsw(self.context)
         component.initialize()
 
         time.sleep(.1)
@@ -261,30 +270,29 @@ class TestClass:
         ])
         assert received_params_info == expected_params_info
 
-        component = DigitizerKsm8131A(self.context,
-                                      local_config={
-                                          'name': 'custom_name',
-                                          'instrument': {
-                                              'visa_sim': None
-                                          },
-                                          'parameters': {
-                                              'new_param': {
-                                                  'description':
-                                                  'New parameter description',
-                                                  'set': {
-                                                      'signature': [{
-                                                          'param_1': {
-                                                              type: str
-                                                          }
-                                                      }],
-                                                      'instrument_command': [{
-                                                          'write':
-                                                          '{:}'
-                                                      }]
-                                                  },
-                                              }
-                                          }
-                                      })
+        component = SpectrumAnalyzerRsFsw(
+            self.context,
+            local_config={
+                'name': 'custom_name',
+                'instrument': {
+                    'visa_sim': None
+                },
+                'parameters': {
+                    'new_param': {
+                        'description': 'New parameter description',
+                        'set': {
+                            'signature': [{
+                                'param_1': {
+                                    type: str
+                                }
+                            }],
+                            'instrument_command': [{
+                                'write': '{:}'
+                            }]
+                        },
+                    }
+                }
+            })
         component.initialize()
 
         time.sleep(.1)
@@ -328,7 +336,7 @@ class TestClass:
 
     def test_io_service_request_observer(self):
         """ Test component io_service_request observer """
-        component = DigitizerKsm8131A(self.context)
+        component = SpectrumAnalyzerRsFsw(self.context)
         component.initialize()
         dummy_test_class = CallbackTestClass()
 
@@ -340,10 +348,11 @@ class TestClass:
 
         # 1 - Test that component only gets activated for implemented services
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_m8131a_digitizer_controller',
-                           id='NOT_EXISTING',
-                           type='any',
-                           args=[]))
+            ServiceRequest(
+                provider='r&s_fsw_signal_and_spectrum_analyzer_controller',
+                id='NOT_EXISTING',
+                type='any',
+                args=[]))
 
         assert dummy_test_class.func_1_times_called == 0
         assert dummy_test_class.func_1_last_value is None
@@ -359,10 +368,11 @@ class TestClass:
 
         # 2 - Test generic command before connection to the instrument has been established
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_m8131a_digitizer_controller',
-                           id='idn',
-                           type=ParameterType.get,
-                           args=[]))
+            ServiceRequest(
+                provider='r&s_fsw_signal_and_spectrum_analyzer_controller',
+                id='idn',
+                type=ParameterType.get,
+                args=[]))
 
         time.sleep(.1)
 
@@ -375,10 +385,11 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_m8131a_digitizer_controller',
-                           id='connect',
-                           type=ParameterType.set,
-                           args=['1']))
+            ServiceRequest(
+                provider='r&s_fsw_signal_and_spectrum_analyzer_controller',
+                id='connect',
+                type=ParameterType.set,
+                args=['1']))
 
         time.sleep(.1)
 
@@ -390,9 +401,10 @@ class TestClass:
 
         # 4 - Test no system errors
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_m8131a_digitizer_controller',
-                           id='sys_err',
-                           type=ParameterType.get))
+            ServiceRequest(
+                provider='r&s_fsw_signal_and_spectrum_analyzer_controller',
+                id='sys_err',
+                type=ParameterType.get))
 
         time.sleep(.1)
 
@@ -403,10 +415,11 @@ class TestClass:
 
         # 5 - Test generic command
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_m8131a_digitizer_controller',
-                           id='clear',
-                           type=ParameterType.set,
-                           args=[]))
+            ServiceRequest(
+                provider='r&s_fsw_signal_and_spectrum_analyzer_controller',
+                id='clear',
+                type=ParameterType.set,
+                args=[]))
 
         time.sleep(.1)
 
@@ -417,32 +430,39 @@ class TestClass:
 
         # 6 - Test generic query
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_m8131a_digitizer_controller',
-                           id='idn',
-                           type=ParameterType.get,
-                           args=[]))
+            ServiceRequest(
+                provider='r&s_fsw_signal_and_spectrum_analyzer_controller',
+                id='idn',
+                type=ParameterType.get,
+                args=[]))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 5
         assert dummy_test_class.func_1_last_value.id == 'idn'
         assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == 'Keysight_Technologies,_M8131A,_SN_XXXX'
+        assert dummy_test_class.func_1_last_value.value == 'Rohde&Schwarz,FSW-26,1312.8000K26/100005,1.30'
 
         # 7 - Test shared memory set
-        assert component._shared_memory == {'connected': 1, 'raw_query': ''}
+        assert component._shared_memory == {
+            'connected': 1,
+            'raw_query': '',
+            'trigger_in': 0
+        }
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_m8131a_digitizer_controller',
-                           id='raw_query',
-                           type=ParameterType.set,
-                           args=['*IDN?']))
+            ServiceRequest(
+                provider='r&s_fsw_signal_and_spectrum_analyzer_controller',
+                id='raw_query',
+                type=ParameterType.set,
+                args=['*IDN?']))
 
         time.sleep(.1)
 
         assert component._shared_memory == {
             'connected': 1,
-            'raw_query': 'Keysight_Technologies,_M8131A,_SN_XXXX'
+            'raw_query': 'Rohde&Schwarz,FSW-26,1312.8000K26/100005,1.30',
+            'trigger_in': 0
         }
 
         assert dummy_test_class.func_1_times_called == 6
@@ -452,93 +472,90 @@ class TestClass:
 
         # 8 - Test shared memory get
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_m8131a_digitizer_controller',
-                           id='raw_query',
-                           type=ParameterType.get,
-                           args=[]))
+            ServiceRequest(
+                provider='r&s_fsw_signal_and_spectrum_analyzer_controller',
+                id='raw_query',
+                type=ParameterType.get,
+                args=[]))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 7
         assert dummy_test_class.func_1_last_value.id == 'raw_query'
         assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == 'Keysight_Technologies,_M8131A,_SN_XXXX'
+        assert dummy_test_class.func_1_last_value.value == 'Rohde&Schwarz,FSW-26,1312.8000K26/100005,1.30'
 
-        # 9 - Test special case of msg command with multiple args
+        # 9 - Test especific command
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_m8131a_digitizer_controller',
-                           id='raw_write',
-                           type=ParameterType.set,
-                           args=[':TIMebase:REFClock', 'E10']))
+            ServiceRequest(
+                provider='r&s_fsw_signal_and_spectrum_analyzer_controller',
+                id='raw_query',
+                type=ParameterType.set,
+                args=['*OPC?']))
 
         time.sleep(.1)
 
-        assert dummy_test_class.func_1_times_called == 8
-        assert dummy_test_class.func_1_last_value.id == 'raw_write'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.set
-        assert dummy_test_class.func_1_last_value.value is None
+        assert component._shared_memory == {
+            'connected': 1,
+            'raw_query': '1',
+            'trigger_in': 0
+        }
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_m8131a_digitizer_controller',
-                           id='raw_query',
-                           type=ParameterType.set,
-                           args=[':TIMebase:REFClock?']))
+            ServiceRequest(
+                provider='r&s_fsw_signal_and_spectrum_analyzer_controller',
+                id='raw_query',
+                type=ParameterType.get,
+                args=[]))
 
         time.sleep(.1)
 
-        assert component._shared_memory == {'connected': 1, 'raw_query': 'E10'}
+        assert dummy_test_class.func_1_times_called == 9
+        assert dummy_test_class.func_1_last_value.id == 'raw_query'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.get
+        assert dummy_test_class.func_1_last_value.value == '1'
 
+        # 10 - Test no system errors
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_m8131a_digitizer_controller',
-                           id='raw_query',
-                           type=ParameterType.get,
-                           args=[]))
+            ServiceRequest(
+                provider='r&s_fsw_signal_and_spectrum_analyzer_controller',
+                id='sys_err',
+                type=ParameterType.get))
 
         time.sleep(.1)
 
         assert dummy_test_class.func_1_times_called == 10
-        assert dummy_test_class.func_1_last_value.id == 'raw_query'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.get
-        assert dummy_test_class.func_1_last_value.value == 'E10'
-
-        # 10 - Test no system errors
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_m8131a_digitizer_controller',
-                           id='sys_err',
-                           type=ParameterType.get))
-
-        time.sleep(.1)
-
-        assert dummy_test_class.func_1_times_called == 11
         assert dummy_test_class.func_1_last_value.id == 'sys_err'
         assert dummy_test_class.func_1_last_value.type == ParameterType.get
         assert dummy_test_class.func_1_last_value.value == '0,_No_Error'
 
         # 11 - Test disconnection to the instrument
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_m8131a_digitizer_controller',
-                           id='connect',
-                           type=ParameterType.set,
-                           args=['0']))
+            ServiceRequest(
+                provider='r&s_fsw_signal_and_spectrum_analyzer_controller',
+                id='connect',
+                type=ParameterType.set,
+                args=['0']))
 
         time.sleep(.1)
 
         assert component._inst is None
-        assert dummy_test_class.func_1_times_called == 12
+        assert dummy_test_class.func_1_times_called == 11
         assert dummy_test_class.func_1_last_value.id == 'connect'
         assert dummy_test_class.func_1_last_value.type == ParameterType.set
         assert dummy_test_class.func_1_last_value.value is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_m8131a_digitizer_controller',
-                           id='connected',
-                           type=ParameterType.get,
-                           args=[]))
+            ServiceRequest(
+                provider='r&s_fsw_signal_and_spectrum_analyzer_controller',
+                id='connected',
+                type=ParameterType.get,
+                args=[]))
 
         time.sleep(.1)
 
         assert component._inst is None
-        assert dummy_test_class.func_1_times_called == 13
+        assert dummy_test_class.func_1_times_called == 12
         assert dummy_test_class.func_1_last_value.id == 'connected'
         assert dummy_test_class.func_1_last_value.type == ParameterType.get
         assert dummy_test_class.func_1_last_value.value == 0
@@ -553,7 +570,7 @@ class TestClass:
                     dummy_test_class.test_func_1)
 
         # Test simulated normal connection to the instrument
-        component = DigitizerKsm8131A(
+        component = SpectrumAnalyzerRsFsw(
             self.context,
             local_config={'instrument': {
                 'address': 'TCPIP0::4.3.2.1::INSTR'
@@ -563,10 +580,11 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_m8131a_digitizer_controller',
-                           id='connect',
-                           type=ParameterType.set,
-                           args=['1']))
+            ServiceRequest(
+                provider='r&s_fsw_signal_and_spectrum_analyzer_controller',
+                id='connect',
+                type=ParameterType.set,
+                args=['1']))
 
         time.sleep(.1)
 
@@ -585,16 +603,17 @@ class TestClass:
                     dummy_test_class.test_func_1)
 
         # Test real connection to missing instrument
-        component = DigitizerKsm8131A(self.context)
+        component = SpectrumAnalyzerRsFsw(self.context)
         component.initialize()
 
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_m8131a_digitizer_controller',
-                           id='connect',
-                           type=ParameterType.set,
-                           args=['0']))
+            ServiceRequest(
+                provider='r&s_fsw_signal_and_spectrum_analyzer_controller',
+                id='connect',
+                type=ParameterType.set,
+                args=['0']))
 
         time.sleep(.1)
 
@@ -606,71 +625,71 @@ class TestClass:
 
     def test_service_invalid_info(self):
         with pytest.raises(ComponentConfigException) as excinfo:
-            DigitizerKsm8131A(self.context,
-                              local_config={
-                                  'parameters': {
-                                      'new_param': {
-                                          'type': 'str',
-                                          'description':
-                                          'New parameter description',
-                                          'set': {
-                                              'signature':
-                                              'wrong',
-                                              'instrument_command': [{
-                                                  'write':
-                                                  '{:}'
-                                              }]
-                                          },
+            SpectrumAnalyzerRsFsw(self.context,
+                                  local_config={
+                                      'parameters': {
+                                          'new_param': {
+                                              'type': 'str',
+                                              'description':
+                                              'New parameter description',
+                                              'set': {
+                                                  'signature':
+                                                  'wrong',
+                                                  'instrument_command': [{
+                                                      'write':
+                                                      '{:}'
+                                                  }]
+                                              },
+                                          }
                                       }
-                                  }
-                              }).initialize()
+                                  }).initialize()
 
         assert '"new_param" is invalid. Format shall' \
                ' be [[arg_1, arg_2, ...], return_type]' in str(excinfo.value)
 
         with pytest.raises(ComponentConfigException) as excinfo:
-            DigitizerKsm8131A(self.context,
-                              local_config={
-                                  'parameters': {
-                                      'new_param': {
-                                          'type': 'str',
-                                          'description':
-                                          'New parameter description',
-                                          'get': {
-                                              'signature': [{
-                                                  'arg': {
-                                                      'type': 'str'
-                                                  }
-                                              }],
-                                              'instrument_command': [{
-                                                  'write':
-                                                  '{:}'
-                                              }]
-                                          },
+            SpectrumAnalyzerRsFsw(self.context,
+                                  local_config={
+                                      'parameters': {
+                                          'new_param': {
+                                              'type': 'str',
+                                              'description':
+                                              'New parameter description',
+                                              'get': {
+                                                  'signature': [{
+                                                      'arg': {
+                                                          'type': 'str'
+                                                      }
+                                                  }],
+                                                  'instrument_command': [{
+                                                      'write':
+                                                      '{:}'
+                                                  }]
+                                              },
+                                          }
                                       }
-                                  }
-                              }).initialize()
+                                  }).initialize()
 
         assert '"new_param" Signature for GET is still not allowed' in str(
             excinfo.value)
 
         with pytest.raises(ComponentConfigException) as excinfo:
-            DigitizerKsm8131A(self.context,
-                              local_config={
-                                  'parameters': {
-                                      'new_param': {
-                                          'type': 'str',
-                                          'description':
-                                          'New parameter description',
-                                          'get': {
-                                              'instrument_command': [{
-                                                  'write':
-                                                  '{:}'
-                                              }]
-                                          },
+            SpectrumAnalyzerRsFsw(self.context,
+                                  local_config={
+                                      'parameters': {
+                                          'new_param': {
+                                              'type': 'str',
+                                              'description':
+                                              'New parameter description',
+                                              'get': {
+                                                  'instrument_command': [{
+                                                      'write':
+                                                      '{:}'
+                                                  }]
+                                              },
+                                          }
                                       }
-                                  }
-                              }).initialize()
+                                  }).initialize()
 
         assert '"new_param" Command for GET does not have a Query' in str(
             excinfo.value)
@@ -685,7 +704,7 @@ class TestClass:
                     dummy_test_class.test_func_1)
 
         # Test real connection to missing instrument
-        component = DigitizerKsm8131A(
+        component = SpectrumAnalyzerRsFsw(
             self.context, local_config={'instrument': {
                 'visa_sim': None
             }})
@@ -694,10 +713,11 @@ class TestClass:
         assert component._inst is None
 
         self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='keysight_m8131a_digitizer_controller',
-                           id='connect',
-                           type=ParameterType.set,
-                           args=['1']))
+            ServiceRequest(
+                provider='r&s_fsw_signal_and_spectrum_analyzer_controller',
+                id='connect',
+                type=ParameterType.set,
+                args=['1']))
 
         time.sleep(.1)
 
@@ -715,7 +735,7 @@ class TestClass:
             def close(self):
                 self.called = True
 
-        component = DigitizerKsm8131A(self.context)
+        component = SpectrumAnalyzerRsFsw(self.context)
         component.initialize()
 
         # Test quit while on load window

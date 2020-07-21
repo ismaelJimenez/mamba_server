@@ -13,7 +13,7 @@ maintainer: Mamba Developers
 maintainer_email: mambaframework@gmail.com
 
 instrument:
-  visa_sim: mock/visa/amplifier/ks_33502a.yml
+  visa_sim: visa_sim.yml
   address: TCPIP0::1.2.3.4::INSTR
 
 parameters:

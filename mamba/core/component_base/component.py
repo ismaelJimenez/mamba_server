@@ -27,6 +27,7 @@ class Component:
                  local_config: Optional[dict] = None) -> None:
         # Retrieve component configuration
         self._context = context
+        self._config_folder = config_folder
 
         try:
             with open(os.path.join(config_folder,

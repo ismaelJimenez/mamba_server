@@ -28,14 +28,14 @@ devices:
       close_channel:
         default: 1
         getter:
-          q: "ROUT:CLOSe? {:}"
+          q: "ROUT:CLOSe? (@1101)"
           r: "{:}"
         setter:
           q: "ROUT:CLOS {:}"
       open_channel:
         default: 1
         getter:
-          q: "ROUT:OPEN? {:}"
+          q: "ROUT:OPEN? (@1101)"
           r: "{:}"
         setter:
           q: "ROUT:OPEN {:}"
@@ -54,17 +54,17 @@ devices:
       channel_resistance:
         default: 100
         getter:
-          q: "MEAS:RES? {:}"
+          q: "MEAS:RES? (@1101)"
           r: "{:}"
       channel_trace:
         default: 1
         getter:
-          q: "SOUR:FUNC:ENAB? {:}"
+          q: "SOUR:FUNC:ENAB? (@1101)"
           r: "{:}"
       channel_freq:
         default: 1000
         getter:
-          q: "SOUR:FUNC:FREQ? {:}"
+          q: "SOUR:FUNC:FREQ? (@1101)"
           r: "{:}"
 
 resources:

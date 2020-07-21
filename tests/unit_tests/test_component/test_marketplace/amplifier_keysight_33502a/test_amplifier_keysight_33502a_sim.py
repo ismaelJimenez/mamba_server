@@ -1,7 +1,8 @@
 import os
 import pyvisa
 
-MOCK_FILE = os.path.join('mock', 'visa', 'amplifier', 'ks_33502a.yml')
+MOCK_FILE = os.path.join('marketplace', 'components', 'amplifier',
+                         'keysight_33502a', 'visa_sim.yml')
 INST_ADDRESS = 'TCPIP0::1.2.3.4::INSTR'
 
 
@@ -17,7 +18,7 @@ class TestClass:
     def setup_method(self):
         """ setup_method called for every method """
         mamba_dir = os.path.join(os.path.dirname(__file__), '..', '..', '..',
-                                 'mamba')
+                                 '..', '..', 'mamba')
         asd = os.path.join(mamba_dir, MOCK_FILE)
         self.visa_inst = pyvisa.ResourceManager(
             f"{os.path.join(mamba_dir, MOCK_FILE)}@sim").open_resource(
