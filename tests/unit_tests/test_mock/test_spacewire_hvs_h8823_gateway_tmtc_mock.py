@@ -2,7 +2,7 @@ import socket
 import time
 
 from mamba.core.context import Context
-from mamba.marketplace.components.simulator.tcp.spacewire_gateway.hvs_h8823_gateway_tmtc_mock import H8823GatewayTmTcMock
+from mamba.marketplace.components.simulator.spacewire_gateway_hvs_h8823_tmtc_sim import H8823GatewayTmTcMock
 
 
 class TestClass:

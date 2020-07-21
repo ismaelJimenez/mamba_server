@@ -7,7 +7,7 @@ from rx import operators as op
 
 from mamba.core.testing.utils import compose_service_info, get_config_dict, CallbackTestClass, get_provider_params_info
 from mamba.core.context import Context
-from mamba.marketplace.components.simulator.tcp.spacewire_gateway.hvs_h8823_gateway_spw_rmap_mock import H8823GatewaySpwRmapMock
+from mamba.marketplace.components.simulator.spacewire_gateway_hvs_h8823_rmap_sim import H8823GatewaySpwRmapMock
 from mamba.marketplace.components.spacewire_gateway.hvs_h8823_rmap import H8823SpwRmapController
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.msg import Empty, ServiceRequest, ServiceResponse, ParameterType
