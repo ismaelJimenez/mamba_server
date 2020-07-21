@@ -1,7 +1,7 @@
 import xmlrpc.client
 
 from mamba.core.context import Context
-from mamba.marketplace.components.simulator.rpc.xmlrpc_mock import XmlRpcMock
+from mamba.marketplace.components.simulator.xmlrpc_server_sim import XmlRpcMock
 
 
 class TestClass:
