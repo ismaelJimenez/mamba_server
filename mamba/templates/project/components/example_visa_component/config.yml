@@ -9,7 +9,7 @@
 name: Example VISA Component
 
 instrument:
-  visa_sim: mock/visa/power_supply/ks_n5700.yml
+  visa_sim: visa_sim.yml
   address: TCPIP0::1.2.3.4::INSTR
   terminator:
     write: "\n"
