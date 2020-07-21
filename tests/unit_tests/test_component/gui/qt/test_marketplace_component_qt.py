@@ -31,7 +31,7 @@ class TestClass:
         component.initialize()
 
         assert component._configuration == {
-            'menu': '&Plugins',
+            'menu': '&Marketplace',
             'name': 'Component',
             'shortcut': 'Ctrl+C'
         }
@@ -47,7 +47,7 @@ class TestClass:
         component.initialize()
 
         assert component._configuration == {
-            'menu': '&Plugins',
+            'menu': '&Marketplace',
             'name': 'Component',
             'shortcut': 'Ctrl+C'
         }
@@ -136,15 +136,15 @@ class TestClass:
         component.initialize()
 
         assert component._configuration == {
-            'menu': '&Plugins',
+            'menu': '&Marketplace',
             'name': 'Component',
             'shortcut': 'Ctrl+C'
         }
 
         assert component._app is not None
 
-        assert main_window._exists_menu('&Plugins')
-        assert main_window._is_action_in_menu('&Plugins', 'Component')
+        assert main_window._exists_menu('&Marketplace')
+        assert main_window._is_action_in_menu('&Marketplace', 'Component')
 
         main_window._close(Empty())
         main_window._qt_app.quit()
