@@ -5,7 +5,7 @@
 # license information.
 #
 ############################################################################
-""" Keysight Series N5700 DC Power Supply Controller"""
+""" VISA Controller"""
 
 from typing import Optional
 import os
@@ -14,8 +14,8 @@ from mamba.core.context import Context
 from mamba.core.component_base import VisaInstrumentDriver
 
 
-class PowerSupplyKsN5700(VisaInstrumentDriver):
-    """ Keysight Series N5700 DC Power Supply Controller class """
+class VisaControllerComponent(VisaInstrumentDriver):
+    """ VISA Controller class """
     def __init__(self,
                  context: Context,
                  local_config: Optional[dict] = None) -> None:
