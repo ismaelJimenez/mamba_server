@@ -7,7 +7,6 @@
 ############################################################################
 """ Compose Mamba App from launch file """
 
-import sys
 import yaml
 
 from typing import Optional
@@ -23,7 +22,8 @@ context = Context()
 
 def compose_parser(compose_file: str,
                    mamba_dir: str,
-                   project_dir: Optional[str] = None) -> int:
+                   project_dir: Optional[str] = None,
+                   local_context: Context = context) -> int:
     """ Compose Mamba App from launch file """
     component_folders = ['mamba.component']
 
@@ -33,13 +33,14 @@ def compose_parser(compose_file: str,
     with open(compose_file) as file:
         compose_config = yaml.load(file, Loader=yaml.FullLoader)
 
-        context.set('mamba_dir', mamba_dir)
-        context.set('project_dir', project_dir)
+        local_context.set('mamba_dir', mamba_dir)
+        local_context.set('project_dir', project_dir)
 
         if isinstance(compose_config,
                       dict) and compose_config.get('services') is not None:
             services = get_components(compose_config['services'],
-                                      component_folders, Component, context)
+                                      component_folders, Component,
+                                      local_context)
 
             for key, service in services.items():
                 if isinstance(service, Component):
@@ -50,6 +51,6 @@ def compose_parser(compose_file: str,
             return 1
 
 
-def start_mamba_app() -> None:
+def start_mamba_app(local_context: Context = context) -> None:
     # Start Mamba App
-    context.rx['app_status'].on_next(AppStatus.Running)
+    local_context.rx['app_status'].on_next(AppStatus.Running)

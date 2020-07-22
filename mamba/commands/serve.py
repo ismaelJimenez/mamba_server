@@ -43,7 +43,7 @@ class Command(MambaCommand):
             if exists(args.load_standalone_composer) and exists(
                     join(project_dir, 'mamba.cfg')):
                 compose_parser(args.load_standalone_composer, mamba_dir,
-                               join(project_dir))
+                               project_dir)
             else:
                 return 1
         else:
@@ -59,7 +59,7 @@ class Command(MambaCommand):
                 if exists(args.load_composer):
                     if exists(join(project_dir, 'mamba.cfg')):
                         compose_parser(args.load_composer, mamba_dir,
-                                       join(project_dir))
+                                       project_dir)
                     else:
                         print(f'Invalid Mamba Project: {project_dir}')
                         return 1

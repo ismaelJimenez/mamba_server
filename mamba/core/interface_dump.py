@@ -5,18 +5,18 @@
 # license information.
 #
 ############################################################################
-""" Compose Mamba App from launch file """
+""" Compose Mamba IF from launch file """
 
-import yaml
 import time
 import json
 
 from typing import Optional, List, Dict
 
 from mamba.core.context import Context
-from mamba.core.utils import get_components
-from mamba.core.component_base import Component
-from mamba.core.msg import ParameterInfo, ParameterType
+from mamba.core.msg import ParameterInfo
+from mamba.core.composer_parser import compose_parser
+
+context = Context()
 
 
 def io_service_signature(parameters_info: List[ParameterInfo],
@@ -34,41 +34,23 @@ def io_service_signature(parameters_info: List[ParameterInfo],
 def interface_dump(compose_file: str,
                    mamba_dir: str,
                    output_file: str,
-                   project_dir: Optional[str] = None) -> int:
-    """ Compose Mamba App from launch file """
+                   project_dir: Optional[str] = None,
+                   local_context: Context = context) -> int:
+    """ Compose Mamba IF from launch file """
 
     io_services: Dict[str, List[ParameterInfo]] = {}
 
-    component_folders = ['mamba.component', 'mamba.mock']
+    local_context.rx['io_service_signature'].subscribe(
+        on_next=lambda parameters_info: io_service_signature(
+            parameters_info, io_services))
 
-    if project_dir is not None:
-        component_folders.append('component')
+    result = compose_parser(compose_file, mamba_dir, project_dir,
+                            local_context)
 
-    with open(compose_file) as file:
-        compose_config = yaml.load(file, Loader=yaml.FullLoader)
+    if result == 0:
+        time.sleep(1)
 
-        context = Context()
-        context.set('mamba_dir', mamba_dir)
-        context.set('project_dir', project_dir)
-
-        context.rx['io_service_signature'].subscribe(
-            on_next=lambda parameters_info: io_service_signature(
-                parameters_info, io_services))
-
-        if isinstance(compose_config,
-                      dict) and compose_config.get('services') is not None:
-            services = get_components(compose_config['services'],
-                                      component_folders, Component, context)
-
-            for key, service in services.items():
-                if isinstance(service, Component):
-                    service.initialize()
-
-            time.sleep(1)
-
-            with open(output_file, 'w') as outfile:
-                json.dump(io_services, outfile)
-
-            return 0
-        else:
-            return 1
+        with open(output_file, 'w') as outfile:
+            json.dump(io_services, outfile)
+    else:
+        return 1
