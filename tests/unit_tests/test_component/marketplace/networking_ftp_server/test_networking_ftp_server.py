@@ -303,6 +303,10 @@ class TestClass:
         assert str(excinfo.value) == '[Errno 111] Connection refused'
 
         # 3 - Start FTP Server
+        assert component._shared_memory == {
+            'connected': 0
+        }
+
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(provider='ftp_server',
                            id='connect',
@@ -310,6 +314,10 @@ class TestClass:
                            args=['1']))
 
         time.sleep(.1)
+
+        assert component._shared_memory == {
+            'connected': 1
+        }
 
         assert dummy_test_class.func_1_times_called == 1
         assert dummy_test_class.func_1_last_value.id == 'connect'
@@ -360,6 +368,10 @@ class TestClass:
                            args=['0']))
 
         time.sleep(.1)
+
+        assert component._shared_memory == {
+            'connected': 0
+        }
 
         assert dummy_test_class.func_1_times_called == 2
         assert dummy_test_class.func_1_last_value.id == 'connect'

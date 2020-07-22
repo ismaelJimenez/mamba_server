@@ -61,41 +61,47 @@ class FTPServerComponent(InstrumentDriver):
     def _instrument_connect(self,
                             result: Optional[ServiceResponse] = None) -> None:
 
-        ftp_config = self._configuration.get('ftp')
+        if self._ftp_server is None:
+            ftp_config = self._configuration.get('ftp')
 
-        # Instantiate a dummy authorizer for managing 'virtual' users
-        authorizer = DummyAuthorizer()
+            # Instantiate a dummy authorizer for managing 'virtual' users
+            authorizer = DummyAuthorizer()
 
-        # Define a new user having full r/w permissions and a read-only
-        # anonymous user
-        authorizer.add_user(ftp_config['user_name'],
-                            ftp_config['user_password'],
-                            self._ftp_folder,
-                            perm='elradfmwMT')
+            # Define a new user having full r/w permissions and a read-only
+            # anonymous user
+            authorizer.add_user(ftp_config['user_name'],
+                                ftp_config['user_password'],
+                                self._ftp_folder,
+                                perm='elradfmwMT')
 
-        # Instantiate FTP handler class
-        handler = FTPHandler
-        handler.authorizer = authorizer
+            # Instantiate FTP handler class
+            handler = FTPHandler
+            handler.authorizer = authorizer
 
-        # Define a customized banner (string returned when client connects)
-        handler.banner = "pyftpdlib based ftpd ready."
+            # Define a customized banner (string returned when client connects)
+            handler.banner = "pyftpdlib based ftpd ready."
 
-        # Specify a masquerade address and the range of ports to use for
-        # passive connections.  Decomment in case you're behind a NAT.
-        # handler.masquerade_address = '151.25.42.11'
-        handler.passive_ports = range(60000, 65535)
+            # Specify a masquerade address and the range of ports to use for
+            # passive connections.  Decomment in case you're behind a NAT.
+            # handler.masquerade_address = '151.25.42.11'
+            handler.passive_ports = range(60000, 65535)
 
-        # Instantiate FTP server class and listen on 0.0.0.0:port
-        address = ('', ftp_config['port'])
-        self._ftp_server = FTPServer(address, handler)
+            # Instantiate FTP server class and listen on 0.0.0.0:port
+            address = ('', ftp_config['port'])
+            self._ftp_server = FTPServer(address, handler)
 
-        # set a limit for connections
-        self._ftp_server.max_cons = 256
-        self._ftp_server.max_cons_per_ip = 5
+            # set a limit for connections
+            self._ftp_server.max_cons = 256
+            self._ftp_server.max_cons_per_ip = 5
 
-        # start ftp server
-        self._ftp_process = Process(target=self._ftp_server.serve_forever)
-        self._ftp_process.start()
+            # start ftp server
+            self._ftp_process = Process(target=self._ftp_server.serve_forever)
+            self._ftp_process.start()
+
+        if result is not None and result.id in self._shared_memory_setter:
+            self._shared_memory[self._shared_memory_setter[result.id]] = 1
+
+        self._log_dev("Established connection to Instrument")
 
     def _instrument_disconnect(self,
                                result: Optional[ServiceResponse] = None
@@ -104,3 +110,8 @@ class FTPServerComponent(InstrumentDriver):
             self._ftp_server.close_all()
             self._ftp_process.terminate()
             self._ftp_server = None
+
+            if result is not None and result.id in self._shared_memory_setter:
+                self._shared_memory[self._shared_memory_setter[result.id]] = 0
+
+            self._log_dev("Closed connection to Instrument")
