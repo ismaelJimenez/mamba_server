@@ -302,6 +302,21 @@ class TestClass:
 
         assert str(excinfo.value) == '[Errno 111] Connection refused'
 
+        # Check connection status
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='ftp_server',
+                           id='connected',
+                           type=ParameterType.get,
+                           args=[]))
+
+        time.sleep(.1)
+
+        assert component._inst is None
+        assert dummy_test_class.func_1_times_called == 1
+        assert dummy_test_class.func_1_last_value.id == 'connected'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.get
+        assert dummy_test_class.func_1_last_value.value == 0
+
         # 3 - Start FTP Server
         assert component._shared_memory == {
             'connected': 0
@@ -319,10 +334,25 @@ class TestClass:
             'connected': 1
         }
 
-        assert dummy_test_class.func_1_times_called == 1
+        assert dummy_test_class.func_1_times_called == 2
         assert dummy_test_class.func_1_last_value.id == 'connect'
         assert dummy_test_class.func_1_last_value.type == ParameterType.set
         assert dummy_test_class.func_1_last_value.value is None
+
+        # Check connection status
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='ftp_server',
+                           id='connected',
+                           type=ParameterType.get,
+                           args=[]))
+
+        time.sleep(.1)
+
+        assert component._inst is None
+        assert dummy_test_class.func_1_times_called == 3
+        assert dummy_test_class.func_1_last_value.id == 'connected'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.get
+        assert dummy_test_class.func_1_last_value.value == 1
 
         # 4 - Test FTP Read command
         ftp.connect(host='localhost', port=2121)
@@ -373,7 +403,7 @@ class TestClass:
             'connected': 0
         }
 
-        assert dummy_test_class.func_1_times_called == 2
+        assert dummy_test_class.func_1_times_called == 4
         assert dummy_test_class.func_1_last_value.id == 'connect'
         assert dummy_test_class.func_1_last_value.type == ParameterType.set
         assert dummy_test_class.func_1_last_value.value is None
