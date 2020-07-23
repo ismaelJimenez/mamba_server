@@ -16,60 +16,44 @@ instrument:
   address: None
   port: 0
 
-source_folder:
-  local: scripts
-
 parameters:
-  python_cmd_exec:
-    # Set parameter description.
-    description: Execute local python script
+  cwd:
+    # Set parameter type.
+    type: str
 
     # Parameter setter configuration.
     set:
-      signature:
-        - args:
-            type: str
+      signature: [path: {type: str}]
       instrument_command:
-        - script:
-            type: python
+        - write: 'os.chdir("{:}")'
 
-  bash_cmd_exec:
-    # Set parameter description.
-    description: Execute local bash script
+    # Parameter getter configuration.
+    get:
+      instrument_command:
+        - query: 'os.getcwd()'
+
+  bash_cmd:
+    # Set parameter type.
+    type: str
 
     # Parameter setter configuration.
     set:
-      signature:
-        - args:
-            type: str
+      signature: [cmd: {type: str}]
       instrument_command:
-        - script:
-            type: bash
+        - bash_script: '{:}'
 
-  dump_to_file:
-    # Set parameter description.
-    description: Execute dump_to_file python script
+    # Parameter getter configuration.
+    get:
+
+  python_cmd:
+    # Set parameter type.
+    type: str
 
     # Parameter setter configuration.
     set:
-      signature:
-        - args:
-            type: str
+      signature: [cmd: {type: str}]
       instrument_command:
-        - script:
-            type: python
-            command: dump_to_file.py
+        - python_script: '{:}'
 
-  clean_dump:
-    # Set parameter description.
-    description: Execute clean_dump bash script
-
-    # Parameter setter configuration.
-    set:
-      signature:
-        - args:
-            type: str
-      instrument_command:
-        - script:
-            type: bash
-            command: clean_dump.sh
+    # Parameter getter configuration.
+    get:

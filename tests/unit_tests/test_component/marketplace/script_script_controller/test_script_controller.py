@@ -71,8 +71,6 @@ class TestClass:
         assert component._instrument.terminator_write == '\r\n'
         assert component._instrument.terminator_read == '\n'
 
-        assert 'mamba-server/mamba/marketplace/components/script/script_controller/scripts' in component._scripts_folder
-
     def test_w_default_context_component_initialization(self):
         """ Test component initialization behaviour with default context """
         component = ScriptInstrumentDriver(self.context)
@@ -82,9 +80,9 @@ class TestClass:
         assert component._configuration == self.default_component_config
 
         # Test custom variables default values
-        assert component._shared_memory == {}
-        assert component._shared_memory_getter == {}
-        assert component._shared_memory_setter == {}
+        assert component._shared_memory == {'bash_cmd': None, 'python_cmd': None}
+        assert component._shared_memory_getter == {'bash_cmd': 'bash_cmd', 'python_cmd': 'python_cmd'}
+        assert component._shared_memory_setter == {'bash_cmd': 'bash_cmd', 'python_cmd': 'python_cmd'}
         assert component._parameter_info == self.default_service_info
         assert component._inst == 0
 
@@ -93,37 +91,6 @@ class TestClass:
         assert component._instrument.encoding == 'ascii'
         assert component._instrument.terminator_write == '\r\n'
         assert component._instrument.terminator_read == '\n'
-
-        assert 'mamba-server/mamba/marketplace/components/script/script_controller/scripts' in component._scripts_folder
-
-    def test_w_global_source_folder(self):
-        """ Test component creation behaviour with default context """
-        component = ScriptInstrumentDriver(self.context,
-                                           local_config={
-                                               'name': 'custom_name',
-                                               'source_folder': {
-                                                   'global': '/usr/test'
-                                               }
-                                           })
-        component.initialize()
-
-        custom_component_config = copy.deepcopy(self.default_component_config)
-        custom_component_config['name'] = 'custom_name'
-        custom_component_config['source_folder']['global'] = '/usr/test'
-
-        # Test default configuration load
-        assert component._configuration == custom_component_config
-
-        # Test custom variables default values
-        assert component._shared_memory == {}
-        assert component._shared_memory_getter == {}
-        assert component._shared_memory_setter == {}
-
-        custom_service_info = compose_service_info(custom_component_config)
-        assert component._parameter_info == custom_service_info
-        assert component._inst == 0
-
-        assert component._scripts_folder == '/usr/test'
 
     def test_w_wrong_custom_context(self):
         """ Test component creation behaviour with default context """
@@ -161,7 +128,7 @@ class TestClass:
             }})
         component.initialize()
 
-        assert component._shared_memory == {}
+        assert component._shared_memory == {'bash_cmd': None, 'python_cmd': None}
 
     def test_io_signature_publication(self):
         """ Test component io_signature observable """
@@ -220,172 +187,206 @@ class TestClass:
         assert dummy_test_class.func_1_times_called == 0
         assert dummy_test_class.func_1_last_value is None
 
-        # 2 - Test generic python command execution
+        # 2 - Test CWD
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(provider='script_controller',
-                           id='python_cmd_exec',
-                           type=ParameterType.set,
-                           args=['dump_to_file.py test_file.txt 1 2 3 4']))
-
-        time.sleep(.1)
-
-        assert exists('test_file.txt')
-        f = open('test_file.txt', 'r')
-        assert f.read() == '1 2 3 4'
-        f.close()
+                           id='cwd',
+                           type=ParameterType.get))
 
         assert dummy_test_class.func_1_times_called == 1
-        assert dummy_test_class.func_1_last_value.id == 'python_cmd_exec'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.set
-        assert dummy_test_class.func_1_last_value.value is None
+        assert dummy_test_class.func_1_last_value.id == 'cwd'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.get
 
-        # 3 - Test generic bash command execution
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(provider='script_controller',
-                           id='bash_cmd_exec',
+                           id='cwd',
                            type=ParameterType.set,
-                           args=['clean_dump.sh test_file.txt']))
-
-        time.sleep(.1)
-
-        assert not exists('test_file.txt')
+                           args=['..']))
 
         assert dummy_test_class.func_1_times_called == 2
-        assert dummy_test_class.func_1_last_value.id == 'bash_cmd_exec'
+        assert dummy_test_class.func_1_last_value.id == 'cwd'
         assert dummy_test_class.func_1_last_value.type == ParameterType.set
         assert dummy_test_class.func_1_last_value.value is None
 
-        # 4 - Test specific python command execution
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(provider='script_controller',
-                           id='dump_to_file',
-                           type=ParameterType.set,
-                           args=['test_file.txt 1 2 3 4']))
-
-        time.sleep(.1)
-
-        assert exists('test_file.txt')
-        f = open('test_file.txt', 'r')
-        assert f.read() == '1 2 3 4'
-        f.close()
+                           id='cwd',
+                           type=ParameterType.get))
 
         assert dummy_test_class.func_1_times_called == 3
-        assert dummy_test_class.func_1_last_value.id == 'dump_to_file'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.set
-        assert dummy_test_class.func_1_last_value.value is None
+        assert dummy_test_class.func_1_last_value.id == 'cwd'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.get
+        assert 'tests' not in dummy_test_class.func_1_last_value.value
 
-        # 5 - Test specific bash command execution
+        # 3 - Test bash command
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(provider='script_controller',
-                           id='clean_dump',
+                           id='bash_cmd',
                            type=ParameterType.set,
-                           args=['test_file.txt']))
-
-        time.sleep(.1)
-
-        assert not exists('test_file.txt')
+                           args=[os.path.join(self.mamba_path, 'marketplace', 'components', 'script',
+                                'script_controller', 'scripts', 'script_1')]))
 
         assert dummy_test_class.func_1_times_called == 4
-        assert dummy_test_class.func_1_last_value.id == 'clean_dump'
+        assert dummy_test_class.func_1_last_value.id == 'bash_cmd'
         assert dummy_test_class.func_1_last_value.type == ParameterType.set
         assert dummy_test_class.func_1_last_value.value is None
 
-        # 6 - Test generic bash command execution - Unexisting script
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(provider='script_controller',
-                           id='python_cmd_exec',
-                           type=ParameterType.set,
-                           args=['non_existing.px test_file.txt 1 2 3 4']))
-
-        time.sleep(.1)
-
-        assert not exists('test_file.txt')
+                           id='bash_cmd',
+                           type=ParameterType.get))
 
         assert dummy_test_class.func_1_times_called == 5
-        assert dummy_test_class.func_1_last_value.id == 'python_cmd_exec'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.error
-        assert dummy_test_class.func_1_last_value.value == 'Script execution error.'
+        assert dummy_test_class.func_1_last_value.id == 'bash_cmd'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.get
+        assert dummy_test_class.func_1_last_value.value == 'script 1\n'
 
-        self.context.rx['quit'].on_next(Empty())
-
-        # 7 - Test generic python command execution - Missing parameters
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(provider='script_controller',
-                           id='python_cmd_exec',
+                           id='bash_cmd',
                            type=ParameterType.set,
-                           args=['dump_to_file.py']))
-
-        time.sleep(.1)
-
-        assert not exists('test_file.txt')
+                           args=[os.path.join(self.mamba_path, 'marketplace', 'components', 'script',
+                                'script_controller', 'scripts', 'script_2')]))
 
         assert dummy_test_class.func_1_times_called == 6
-        assert dummy_test_class.func_1_last_value.id == 'python_cmd_exec'
+        assert dummy_test_class.func_1_last_value.id == 'bash_cmd'
         assert dummy_test_class.func_1_last_value.type == ParameterType.error
-        assert dummy_test_class.func_1_last_value.value == 'Script execution error.'
+        assert dummy_test_class.func_1_last_value.value == 'Return code 1'
 
-        # 8 - Test valid generic python command execution
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(provider='script_controller',
-                           id='python_cmd_exec',
-                           type=ParameterType.set,
-                           args=['dump_to_file.py test_file.txt 1 2 3 4']))
-
-        time.sleep(.1)
-
-        assert exists('test_file.txt')
-        f = open('test_file.txt', 'r')
-        assert f.read() == '1 2 3 4'
-        f.close()
+                           id='bash_cmd',
+                           type=ParameterType.get))
 
         assert dummy_test_class.func_1_times_called == 7
-        assert dummy_test_class.func_1_last_value.id == 'python_cmd_exec'
+        assert dummy_test_class.func_1_last_value.id == 'bash_cmd'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.get
+        assert dummy_test_class.func_1_last_value.value == ''
+
+        # 4 - Test python command
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='script_controller',
+                           id='python_cmd',
+                           type=ParameterType.set,
+                           args=[os.path.join(self.mamba_path, 'marketplace', 'components', 'script',
+                                'script_controller', 'scripts', 'script_3.py')]))
+
+        assert dummy_test_class.func_1_times_called == 8
+        assert dummy_test_class.func_1_last_value.id == 'python_cmd'
         assert dummy_test_class.func_1_last_value.type == ParameterType.set
         assert dummy_test_class.func_1_last_value.value is None
 
-        # 9 - Test generic bash command execution - Unexisting script
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(provider='script_controller',
-                           id='bash_cmd_exec',
-                           type=ParameterType.set,
-                           args=['non_existing.sh test_file.txt']))
-
-        time.sleep(.1)
-
-        assert exists('test_file.txt')
-
-        # 10 - Test generic bash command execution - Unexisting dump file
-        self.context.rx['io_service_request'].on_next(
-            ServiceRequest(provider='script_controller',
-                           id='bash_cmd_exec',
-                           type=ParameterType.set,
-                           args=['clean_dump.sh non_existing.txt']))
-
-        time.sleep(.1)
-
-        assert exists('test_file.txt')
+                           id='python_cmd',
+                           type=ParameterType.get))
 
         assert dummy_test_class.func_1_times_called == 9
-        assert dummy_test_class.func_1_last_value.id == 'bash_cmd_exec'
-        assert dummy_test_class.func_1_last_value.type == ParameterType.error
-        assert dummy_test_class.func_1_last_value.value == 'Script execution error.'
+        assert dummy_test_class.func_1_last_value.id == 'python_cmd'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.get
+        assert dummy_test_class.func_1_last_value.value == 'script 3\n'
 
-        # 11 - Test valid generic bash command execution
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(provider='script_controller',
-                           id='bash_cmd_exec',
+                           id='python_cmd',
                            type=ParameterType.set,
-                           args=['clean_dump.sh test_file.txt']))
-
-        time.sleep(.1)
-
-        assert not exists('test_file.txt')
+                           args=[os.path.join(self.mamba_path, 'marketplace', 'components', 'script',
+                                'script_controller', 'scripts', 'script_4.py')]))
 
         assert dummy_test_class.func_1_times_called == 10
-        assert dummy_test_class.func_1_last_value.id == 'bash_cmd_exec'
+        assert dummy_test_class.func_1_last_value.id == 'python_cmd'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.error
+        assert dummy_test_class.func_1_last_value.value == 'Return code 1'
+
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='script_controller',
+                           id='python_cmd',
+                           type=ParameterType.get))
+
+        assert dummy_test_class.func_1_times_called == 11
+        assert dummy_test_class.func_1_last_value.id == 'python_cmd'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.get
+        assert dummy_test_class.func_1_last_value.value == ''
+
+        a = os.path.join(self.mamba_path, 'marketplace', 'components', 'script',
+                         'script_controller', 'scripts', 'non-existing')
+
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='script_controller',
+                           id='python_cmd',
+                           type=ParameterType.set,
+                           args=[os.path.join(self.mamba_path, 'marketplace', 'components', 'script',
+                                'script_controller', 'scripts', 'non-existing')]))
+
+        assert dummy_test_class.func_1_times_called == 12
+        assert dummy_test_class.func_1_last_value.id == 'python_cmd'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.error
+        assert dummy_test_class.func_1_last_value.value == 'Return code 2'
+
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='script_controller',
+                           id='python_cmd',
+                           type=ParameterType.get))
+
+        assert dummy_test_class.func_1_times_called == 13
+        assert dummy_test_class.func_1_last_value.id == 'python_cmd'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.get
+        assert 'No such file or directory' in dummy_test_class.func_1_last_value.value
+
+        # 5 - Test bash command locally
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='script_controller',
+                           id='bash_cmd',
+                           type=ParameterType.set,
+                           args=[os.path.join(self.mamba_path, 'marketplace', 'components', 'script',
+                                'script_controller', 'scripts', 'script_5'), '1', '2', '3']))
+
+        assert dummy_test_class.func_1_times_called == 14
+        assert dummy_test_class.func_1_last_value.id == 'bash_cmd'
         assert dummy_test_class.func_1_last_value.type == ParameterType.set
         assert dummy_test_class.func_1_last_value.value is None
 
-        self.context.rx['quit'].on_next(Empty())
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='script_controller',
+                           id='bash_cmd',
+                           type=ParameterType.get))
 
-        time.sleep(1)
+        assert dummy_test_class.func_1_times_called == 15
+        assert dummy_test_class.func_1_last_value.id == 'bash_cmd'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.get
+        assert dummy_test_class.func_1_last_value.value == '1 2 3\n'
+
+        # 6 - Test bash command locally
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='script_controller',
+                           id='bash_cmd',
+                           type=ParameterType.set,
+                           args=['./script_1']))
+
+        assert dummy_test_class.func_1_times_called == 16
+        assert dummy_test_class.func_1_last_value.id == 'bash_cmd'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.error
+        assert dummy_test_class.func_1_last_value.value == 'Return code 127'
+
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='script_controller',
+                           id='cwd',
+                           type=ParameterType.set,
+                           args=[os.path.join(self.mamba_path, 'marketplace', 'components', 'script',
+                                'script_controller', 'scripts')]))
+
+        assert dummy_test_class.func_1_times_called == 17
+        assert dummy_test_class.func_1_last_value.id == 'cwd'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.set
+        assert dummy_test_class.func_1_last_value.value is None
+
+        self.context.rx['io_service_request'].on_next(
+            ServiceRequest(provider='script_controller',
+                           id='bash_cmd',
+                           type=ParameterType.set,
+                           args=['./script_1']))
+
+        assert dummy_test_class.func_1_times_called == 18
+        assert dummy_test_class.func_1_last_value.id == 'bash_cmd'
+        assert dummy_test_class.func_1_last_value.type == ParameterType.set
+        assert dummy_test_class.func_1_last_value.value is None

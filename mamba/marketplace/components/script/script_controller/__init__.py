@@ -10,14 +10,25 @@
 from typing import Optional
 import os
 import sys
-import subprocess
-import tempfile
+from subprocess import check_output, CalledProcessError
+
+from tempfile import TemporaryFile
 
 from mamba.core.context import Context
 from mamba.core.exceptions import ComponentConfigException
 from mamba.core.component_base import InstrumentDriver
 from mamba.core.msg import ServiceRequest, \
     ServiceResponse, ParameterType
+
+
+def _get_out(args):
+    with TemporaryFile() as t:
+        try:
+            out = check_output(args, stderr=t)
+            return 0, out
+        except CalledProcessError as e:
+            t.seek(0)
+            return e.returncode, t.read()
 
 
 class ScriptInstrumentDriver(InstrumentDriver):
@@ -27,21 +38,6 @@ class ScriptInstrumentDriver(InstrumentDriver):
                  local_config: Optional[dict] = None) -> None:
         super().__init__(os.path.dirname(__file__), context, local_config)
 
-        if self._configuration.get('source_folder') is None:
-            raise ComponentConfigException(
-                'Missing Source Folder in Script Controller Configuration')
-
-        self._scripts_folder = None
-        if self._configuration.get('source_folder',
-                                   {}).get('global') is not None:
-            self._scripts_folder = self._configuration.get(
-                'source_folder', {}).get('global')
-        elif self._configuration.get('source_folder',
-                                     {}).get('local') is not None:
-            self._scripts_folder = os.path.join(
-                os.path.dirname(__file__),
-                self._configuration.get('source_folder', {}).get('local'))
-
     def initialize(self) -> None:
         super().initialize()
         self._inst = 0
@@ -49,50 +45,45 @@ class ScriptInstrumentDriver(InstrumentDriver):
     def _process_inst_command(self, cmd_type: str, cmd: str,
                               service_request: ServiceRequest,
                               result: ServiceResponse) -> None:
-        script_state = 1
 
-        if cmd_type == 'script':
-            arguments = service_request.args[0].split(' ')
-            if cmd.get('type') == 'python':
-                if cmd.get('command') is None:
-                    with tempfile.TemporaryFile() as out:
-                        script_state = subprocess.call([
-                            sys.executable,
-                            os.path.join(self._scripts_folder, arguments[0])
-                        ] + arguments[1:],
-                                                       stdout=out,
-                                                       stderr=out)
-                else:
-                    with tempfile.TemporaryFile() as out:
-                        script_state = subprocess.call([
-                            sys.executable,
-                            os.path.join(self._scripts_folder,
-                                         cmd.get('command'))
-                        ] + arguments,
-                                                       stdout=out,
-                                                       stderr=out)
-            elif cmd.get('type') == 'bash':
-                if cmd.get('command') is None:
-                    with tempfile.TemporaryFile() as out:
-                        script_state = subprocess.call([
-                            '/bin/bash',
-                            os.path.join(self._scripts_folder, arguments[0])
-                        ] + arguments[1:],
-                                                       stdout=out,
-                                                       stderr=out)
-                else:
-                    with tempfile.TemporaryFile() as out:
-                        script_state = subprocess.call([
-                            '/bin/bash',
-                            os.path.join(self._scripts_folder,
-                                         cmd.get('command'))
-                        ] + arguments,
-                                                       stdout=out,
-                                                       stderr=out)
+        self._log_dev(cmd.format(*service_request.args))
+
+        if cmd_type == 'query':
+            value = eval(cmd.format(*service_request.args))
+
+            if service_request.type == ParameterType.set:
+                self._shared_memory[self._shared_memory_setter[
+                    service_request.id]] = value
             else:
-                raise ComponentConfigException('Unrecognized script type')
+                result.value = value
 
-        if script_state != 0:
-            result.type = ParameterType.error
-            result.value = 'Script execution error.'
-            self._log_error(result.value)
+        elif cmd_type == 'write':
+            eval(cmd.format(*service_request.args))
+
+        elif cmd_type == 'python_script' or cmd_type == 'bash_script':
+            script_cmd = None
+
+            if cmd_type == 'bash_script':
+                script_cmd = '/bin/bash'
+            elif cmd_type == 'python_script':
+                script_cmd = sys.executable
+            else:
+                result.type = ParameterType.error
+                result.value = f'Unrecognized command type'
+
+            if script_cmd is not None:
+                (code, output) = _get_out([
+                            script_cmd
+                        ] + cmd.format(*service_request.args).split(' '))
+
+                output = output.decode('utf-8')
+
+                if service_request.type == ParameterType.set:
+                    if code != 0:
+                        result.type = ParameterType.error
+                        result.value = f'Return code {code}'
+
+                    self._shared_memory[self._shared_memory_setter[
+                        service_request.id]] = output
+                else:
+                    result.value = output
