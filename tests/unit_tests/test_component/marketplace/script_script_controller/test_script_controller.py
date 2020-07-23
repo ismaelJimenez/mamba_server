@@ -269,7 +269,7 @@ class TestClass:
                            id='python_cmd',
                            type=ParameterType.set,
                            args=[os.path.join(self.mamba_path, 'marketplace', 'components', 'script',
-                                'script_controller', 'scripts', 'script_3.py')]))
+                                'script_controller', 'scripts', 'script_3')]))
 
         assert dummy_test_class.func_1_times_called == 8
         assert dummy_test_class.func_1_last_value.id == 'python_cmd'
@@ -291,7 +291,7 @@ class TestClass:
                            id='python_cmd',
                            type=ParameterType.set,
                            args=[os.path.join(self.mamba_path, 'marketplace', 'components', 'script',
-                                'script_controller', 'scripts', 'script_4.py')]))
+                                'script_controller', 'scripts', 'script_4')]))
 
         assert dummy_test_class.func_1_times_called == 10
         assert dummy_test_class.func_1_last_value.id == 'python_cmd'
