@@ -308,9 +308,6 @@ class TestClass:
         assert dummy_test_class.func_1_last_value.type == ParameterType.get
         assert dummy_test_class.func_1_last_value.value == ''
 
-        a = os.path.join(self.mamba_path, 'marketplace', 'components', 'script',
-                         'script_controller', 'scripts', 'non-existing')
-
         self.context.rx['io_service_request'].on_next(
             ServiceRequest(provider='script_controller',
                            id='python_cmd',
