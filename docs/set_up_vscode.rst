@@ -35,7 +35,7 @@ Inside Visual Code:
                 "type": "python",
                 "request": "launch",
                 "program": "venv/bin/mamba",
-                "args": ["serve", "-r", "project"],
+                "args": ["serve", "-l", "composer/project-compose.yml"],
                 "console": "integratedTerminal"
             }
         ]
