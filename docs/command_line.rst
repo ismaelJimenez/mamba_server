@@ -46,17 +46,17 @@ All project specific components will be contained in the "component" folder. In 
 
 Mamba Serve
 -----------
-Mamba Server has to be run inside the mamba server project directory, and it will start a mamba server from a given composer file.
+Mamba Serve will instantiate a mamba server appliaction from a given composer file
 
 .. code:: console
 
     mamba serve -r <composer_file>
 
-Mamba start generates a default composer file (project-compose.yml), that can be used as a template to generate the project specific composer file.
+Mamba start generates a default composer file (project-compose.yml), that can be used as a template to generate the project specific composer file. From the  mamba server project directory, you can run:
 
 .. code:: console
 
-    mamba serve -r project
+    mamba serve -l composer/project-compose.yml
 
 After execution of the previous command the Mamba Server Graphical interface loading window shall be shown:
 
@@ -99,7 +99,7 @@ The Mamba CLI dump_if command is very useful to export the mamba interface to a 
 
 .. code:: console
 
-    mamba dump_if -r <composer_file>
+    mamba dump_if -l <composer_file>
 
 This will generate an mamba_if.yml file that can be imported directly into a mamba client application.
 
